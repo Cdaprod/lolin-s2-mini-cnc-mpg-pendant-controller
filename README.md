@@ -101,6 +101,18 @@ selectors, buttons, dead-man/E-stop observation, board display, SD, and the
 verified external indicator interface. Enabling inputs does not waive the
 electrical verification requirements in `docs/HARDWARE.md`.
 
+The proposed LOLIN S2 Mini/MCP23017 allocation can populate the blank settings
+without enabling them:
+
+```toml
+MPG_HARDWARE_PROFILE="lolin_s2_mini_v1"
+```
+
+This reference profile uses CircuitPython's `IO<n>` aliases, shared predefined
+SPI/I2C pins, native GPIO for conditioned MPG A/B, and MCP23017 inputs for the
+slow selectors. Review the complete table and verification gates in
+`docs/HARDWARE.md` before setting `MPG_INPUTS_ENABLED` or any verification flag.
+
 ## Runtime architecture
 
 GPIO adapters emit normalized input events. Inputs never write serial data.

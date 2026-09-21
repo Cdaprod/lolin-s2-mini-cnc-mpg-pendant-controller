@@ -260,3 +260,84 @@ actual pixel dimensions and measure refresh time and heap usage on the S2 Mini.
 
 Every related `settings.toml` entry defaults to blank/disabled. No default GPIO
 reading can enable motion.
+
+## Proposed LOLIN S2 Mini v1.0.0 reference profile
+
+Selecting `MPG_HARDWARE_PROFILE="lolin_s2_mini_v1"` fills blank configuration
+values with this proposed allocation. It does **not** enable inputs, display,
+SD, or indicator output, and it does not mark any electrical interface as
+verified. Explicit per-signal configuration overrides the profile.
+
+CircuitPython exposes these pins as `board.IO<n>`. Its board definition confirms
+default I2C SDA/SCL on GPIO33/35 and default SPI SCK/MOSI/MISO on GPIO7/11/9.
+
+| GPIO | CircuitPython | Proposed role | Verification boundary |
+| ---: | --- | --- | --- |
+| 1 | `IO1` | conditioned MPG A | Never raw pendant A/A- |
+| 2 | `IO2` | conditioned MPG B | Never raw pendant B/B- |
+| 3 | `IO3` | auxiliary E-stop observation | Isolated/conditioned; not safety circuit |
+| 4 | `IO4` | SELECT button | Local 3.3 V contact circuit |
+| 5 | `IO5` | BACK/CANCEL button | Emits contextual CANCEL |
+| 6 | `IO6` | FN button | Local 3.3 V contact circuit |
+| 7 | `IO7` / `SCK` | shared SPI SCK | LCD and SD after module selection |
+| 9 | `IO9` / `MISO` | shared SPI MISO | SD; display normally does not return data |
+| 10 | `IO10` | SD CS | SD module still TBD |
+| 11 | `IO11` / `MOSI` | shared SPI MOSI | LCD and SD after module selection |
+| 12 | `IO12` | proposed LCD CS | LCD controller/module still TBD |
+| 13 | `IO13` | proposed LCD D/C | Verify board silkscreen warning below |
+| 14 | `IO14` | proposed LCD reset | LCD controller/module still TBD |
+| 17 | `IO17` | GRBL UART TX | Machine adapter level/isolation TBD |
+| 18 | `IO18` | GRBL UART RX | Machine adapter level/isolation TBD |
+| 33 | `IO33` / `SDA` | MCP23017 SDA | Shared I2C |
+| 35 | `IO35` / `SCL` | MCP23017 SCL | Shared I2C |
+
+GPIO8, GPIO16, GPIO21, GPIO34, and GPIO36–40 remain unassigned spares. GPIO41
+and GPIO42 exist on the ESP32-S2 but are not broken out by this CircuitPython
+board definition, so they are not claimed as usable expansion pins. GPIO0 is
+reserved for BOOT, GPIO19/20 for native USB D-/D+, and GPIO15 for onboard status
+LED circuitry.
+
+Some v1.0.0 boards have the documented GPIO12/GPIO13 silkscreen reversal. Use
+the actual CircuitPython `IO12`/`IO13` identities and continuity-check the
+particular board rather than trusting its printed labels.
+
+### Shared SPI contract
+
+Display and SD share SCK/MOSI; SD additionally uses MISO. Each device has a
+distinct CS. The SD adapter accepts an injected shared `busio.SPI` object so the
+eventual verified LCD driver and SD card can use one bus. The reference profile
+records proposed LCD control pins but cannot construct a display until its
+controller, module voltage, geometry, offsets, and backlight circuit are known.
+
+### MCP23017 selector allocation
+
+The profile selects MCP23017 address `0x20` on the predefined I2C bus:
+
+| MCP23017 bit | Port pin | Manufacturer pendant contact |
+| ---: | --- | --- |
+| 0 | GPA0 | Yellow — X |
+| 1 | GPA1 | Yellow/Black — Y |
+| 2 | GPA2 | Brown — Z |
+| 3 | GPA3 | Brown/Black — 4 |
+| 4 | GPA4 | Pink — 5 |
+| 5 | GPA5 | Pink/Black — 6 |
+| 6 | GPA6 | Gray — x1 |
+| 7 | GPA7 | Gray/Black — x10 |
+| 8 | GPB0 | Orange — x100 |
+| 9–15 | GPB1–GPB7 | spare |
+
+Orange/Black `COM` consumes no GPIO. The expander driver configures bits 0–8 as
+pulled-up inputs and reads one cached 16-bit snapshot per application poll. It
+is instantiated only when physical inputs are enabled **and**
+`MPG_SELECTOR_INTERFACE_VERIFIED=true`; until the dry-contact/common reference
+is measured and approved, selectors remain safely OFF.
+
+The handwheel stays on priority native GPIO through its external differential
+receiver. It is intentionally not routed through the MCP23017.
+
+### Reference sources
+
+- [CircuitPython LOLIN S2 Mini board page](https://circuitpython.org/board/lolin_s2_mini/)
+- [CircuitPython board pin definitions](https://github.com/adafruit/circuitpython/blob/main/ports/espressif/boards/lolin_s2_mini/pins.c)
+- [CircuitPython default bus definitions](https://github.com/adafruit/circuitpython/blob/main/ports/espressif/boards/lolin_s2_mini/mpconfigboard.h)
+- [WEMOS LOLIN S2 Mini documentation](https://www.wemos.cc/en/latest/s2/s2_mini.html)

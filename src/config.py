@@ -2,6 +2,8 @@
 
 import os
 
+from src.hardware_profiles import apply_hardware_profile
+
 
 def _get(name, default=""):
     value = os.getenv(name)
@@ -35,7 +37,8 @@ def _pin_map(prefix, names):
 
 
 def load_config():
-    return {
+    config = {
+        "hardware_profile": _get("MPG_HARDWARE_PROFILE", ""),
         "wifi_ssid": _get("CIRCUITPY_WIFI_SSID"),
         "wifi_password": _get("CIRCUITPY_WIFI_PASSWORD"),
         "hostname": _get("MPG_HOSTNAME", "cda-lolin-s2-mpg"),
@@ -92,4 +95,27 @@ def load_config():
         "indicator_verified": _get_bool("MPG_INDICATOR_ELECTRICALLY_VERIFIED"),
         "indicator_pin": _get("MPG_INDICATOR_PIN", ""),
         "indicator_active_high": _get_bool("MPG_INDICATOR_ACTIVE_HIGH", True),
+        "selector_backend": _get("MPG_SELECTOR_BACKEND", "").lower(),
+        "selector_interface_verified": _get_bool(
+            "MPG_SELECTOR_INTERFACE_VERIFIED"
+        ),
+        "i2c_sda_pin": _get("MPG_I2C_SDA_PIN", ""),
+        "i2c_scl_pin": _get("MPG_I2C_SCL_PIN", ""),
+        "mcp23017_address": _get_int("MPG_MCP23017_ADDRESS", 0x20),
+        "mcp23017_axis_bits": {
+            "X": 0, "Y": 1, "Z": 2, "4": 3, "5": 4, "6": 5,
+        },
+        "mcp23017_multiplier_bits": {"X1": 6, "X10": 7, "X100": 8},
+        "spi_sck_pin": _get("MPG_SPI_SCK_PIN", ""),
+        "spi_mosi_pin": _get("MPG_SPI_MOSI_PIN", ""),
+        "spi_miso_pin": _get("MPG_SPI_MISO_PIN", ""),
+        "display_sck_pin": _get("MPG_DISPLAY_SCK_PIN", ""),
+        "display_mosi_pin": _get("MPG_DISPLAY_MOSI_PIN", ""),
+        "display_cs_pin": _get("MPG_DISPLAY_CS_PIN", ""),
+        "display_dc_pin": _get("MPG_DISPLAY_DC_PIN", ""),
+        "display_reset_pin": _get("MPG_DISPLAY_RESET_PIN", ""),
     }
+    configured = apply_hardware_profile(config)
+    if not configured.get("selector_backend"):
+        configured["selector_backend"] = "direct"
+    return configured

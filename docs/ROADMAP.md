@@ -84,6 +84,20 @@ runtime responsiveness on the S2 Mini.
 **Physical exit remains open:** verify/select the electrical interfaces, LCD,
 SD hardware, and pin allocation, then run bench timing/heap/readability tests.
 
+## M3C — Reference carrier allocation (implemented, verification open)
+
+- Provide an opt-in LOLIN S2 Mini v1.0.0 profile with shared SPI, predefined
+  I2C, native conditioned MPG/E-stop inputs, local UI buttons, GRBL UART, and
+  unassigned spare pins.
+- Move selector contacts to a cached MCP23017 input bank while retaining
+  electrical verification and global input-enable gates.
+- Preserve explicit overrides and prevent the profile from enabling any
+  unknown-voltage interface by itself.
+
+**Exit remains open:** continuity-check GPIO12/13 on the actual board; verify
+the selector common/contact circuit, LCD, SD, MPG receiver, E-stop observation,
+and machine adapter before enabling the profile on hardware.
+
 ## M4 — Safe incremental MPG motion (complete in host simulation)
 
 - Implement named actions and controller-state interlocks.

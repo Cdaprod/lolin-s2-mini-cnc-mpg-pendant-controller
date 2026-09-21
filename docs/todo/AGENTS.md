@@ -4,6 +4,24 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-09-21 — LOLIN S2 Mini reference pin profile
+
+- [x] Encode the proposed LOLIN S2 Mini v1.0.0 pin allocation as an opt-in
+  profile using actual CircuitPython `IO<n>` board aliases.
+- [x] Keep all enable and electrical-verification gates false when the profile
+  fills pin values; explicit settings continue to override profile values.
+- [x] Implement and test cached MCP23017 selector inputs at address `0x20` for
+  X/Y/Z/4/5/6 and x1/x10/x100, leaving GPB1–GPB7 spare.
+- [x] Encode shared SPI metadata and allow the SD mount to consume an injected
+  SPI bus for eventual sharing with the verified LCD driver.
+- [x] Document reserved/spare pins, native USB/BOOT/onboard LED exclusions, and
+  the GPIO12/GPIO13 silkscreen warning.
+- [ ] Verify the selector contacts are dry, establish the correct `COM`
+  reference, and approve the MCP23017 input circuit before setting
+  `MPG_SELECTOR_INTERFACE_VERIFIED=true`.
+- [ ] Identify the LCD controller/module and verify its voltage, control pins,
+  offsets, backlight circuit, and the particular board's GPIO12/13 labeling.
+
 ## 2026-09-21 — On-device hardware integration layer
 
 - [x] Compose conditioned MPG, selector, button, dead-man, and observed E-stop

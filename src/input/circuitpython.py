@@ -12,7 +12,8 @@ class CircuitPythonInputAdapter:
                  estop_input=None, mpg_active_low=False,
                  selector_active_low=True, button_active_low=True,
                  estop_active_low=True, deadman_input=None,
-                 deadman_active_low=True, encoder=None):
+                 deadman_active_low=True, encoder=None, selector_refresh=None,
+                 resources=None):
         self.inputs = inputs
         self.axis_inputs = axis_inputs
         self.multiplier_inputs = multiplier_inputs
@@ -26,12 +27,16 @@ class CircuitPythonInputAdapter:
         self.deadman_active_low = bool(deadman_active_low)
         self.encoder = encoder
         self.encoder_position = encoder.position if encoder is not None else 0
+        self.selector_refresh = selector_refresh
+        self.resources = resources or ()
 
     def _active(self, pin, active_low):
         value = bool(pin.value)
         return not value if active_low else value
 
     def read(self):
+        if self.selector_refresh is not None:
+            self.selector_refresh()
         axes = tuple(name for name, pin in self.axis_inputs.items()
                      if self._active(pin, self.selector_active_low))
         multipliers = tuple(name for name, pin in self.multiplier_inputs.items()
@@ -90,12 +95,33 @@ def from_config(config):
             "A": _input_pin(board, digitalio, required[0], mpg_active_low),
             "B": _input_pin(board, digitalio, required[1], mpg_active_low),
         }
-    axes = dict((name, _input_pin(board, digitalio, pin, selector_active_low))
-                for name, pin in config.get("axis_pins", {}).items() if pin)
-    multipliers = dict(
-        (name, _input_pin(board, digitalio, pin, selector_active_low))
-        for name, pin in config.get("multiplier_pins", {}).items() if pin
-    )
+    selector_refresh = None
+    resources = []
+    if (config.get("selector_backend") == "mcp23017" and
+            config.get("selector_interface_verified")):
+        import busio
+        from .mcp23017 import MCP23017InputBank
+        sda_name = config.get("i2c_sda_pin")
+        scl_name = config.get("i2c_scl_pin")
+        if not sda_name or not scl_name:
+            raise ValueError("MCP23017 selector backend requires I2C pins")
+        i2c = busio.I2C(getattr(board, scl_name), getattr(board, sda_name))
+        bank = MCP23017InputBank(
+            i2c, config.get("mcp23017_address", 0x20), 0x01FF
+        )
+        axes = dict((name, bank.pin(bit)) for name, bit in
+                    config.get("mcp23017_axis_bits", {}).items())
+        multipliers = dict((name, bank.pin(bit)) for name, bit in
+                           config.get("mcp23017_multiplier_bits", {}).items())
+        selector_refresh = bank.refresh
+        resources.extend((i2c, bank))
+    else:
+        axes = dict((name, _input_pin(board, digitalio, pin, selector_active_low))
+                    for name, pin in config.get("axis_pins", {}).items() if pin)
+        multipliers = dict(
+            (name, _input_pin(board, digitalio, pin, selector_active_low))
+            for name, pin in config.get("multiplier_pins", {}).items() if pin
+        )
     buttons = dict((name, _input_pin(board, digitalio, pin, button_active_low))
                    for name, pin in config.get("button_pins", {}).items() if pin)
     estop = None
@@ -111,5 +137,6 @@ def from_config(config):
         pins, axes, multipliers, buttons, estop, mpg_active_low,
         selector_active_low, button_active_low,
         config.get("estop_active_low", True), deadman,
-        config.get("deadman_active_low", True), encoder
+        config.get("deadman_active_low", True), encoder, selector_refresh,
+        resources
     )

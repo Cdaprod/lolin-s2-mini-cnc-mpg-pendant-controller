@@ -28,7 +28,7 @@ def build_display(config):
     return ConsoleDisplay()
 
 
-def build_storage(config):
+def build_storage(config, shared_spi=None):
     mount = None
     status = None
     error = None
@@ -37,7 +37,7 @@ def build_storage(config):
     config_path = "/config"
     if config.get("sd_enabled"):
         from src.storage.circuitpython_sd import mount_from_config
-        mount, status, error = mount_from_config(config)
+        mount, status, error = mount_from_config(config, shared_spi)
         root = config.get("sd_mount_path", "/sd").rstrip("/")
         jobs_path = root + "/jobs"
         macros_path = root + "/macros"
