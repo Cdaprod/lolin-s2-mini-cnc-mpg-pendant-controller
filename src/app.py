@@ -47,7 +47,7 @@ class PendantApplication:
     def from_config(cls, config, transport=None, display=None,
                     clock=time.monotonic, network_service=None,
                     input_manager=None, input_adapter=None, storage=None,
-                    indicator_output=None):
+                    indicator_output=None, shared_spi=None):
         state = PendantState(config.get("base_increment", 0.001))
         mode = config.get("controller_mode", "disabled")
         if transport is None:
@@ -77,7 +77,7 @@ class PendantApplication:
         )
         sd_mount = None
         if storage is None:
-            storage, sd_mount = build_storage(config)
+            storage, sd_mount = build_storage(config, shared_spi)
         macros = MacroLibrary(storage.macros_path)
         streamer = GCodeStreamer(state, controller, clock=clock)
         ui = UIManager(state)

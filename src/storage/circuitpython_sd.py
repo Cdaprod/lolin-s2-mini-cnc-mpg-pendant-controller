@@ -9,7 +9,7 @@ class SDMount:
         self.mounted = True
 
 
-def mount_from_config(config):
+def mount_from_config(config, spi=None):
     """Mount configured SD hardware or return `(None, status, error)`."""
     if not config.get("sd_enabled"):
         return None, "unconfigured", None
@@ -24,9 +24,10 @@ def mount_from_config(config):
         import busio
         import sdcardio
         import storage
-        spi = busio.SPI(getattr(board, names[0]),
-                        MOSI=getattr(board, names[1]),
-                        MISO=getattr(board, names[2]))
+        if spi is None:
+            spi = busio.SPI(getattr(board, names[0]),
+                            MOSI=getattr(board, names[1]),
+                            MISO=getattr(board, names[2]))
         card = sdcardio.SDCard(spi, getattr(board, names[3]))
         mount_path = config.get("sd_mount_path", "/sd")
         storage.mount(storage.VfsFat(card), mount_path)

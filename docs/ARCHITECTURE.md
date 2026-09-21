@@ -97,6 +97,13 @@ same bounded `InputManager` applies counts-per-detent and emits contextual
 semantic wheel events. A polling decoder remains available for host simulation
 and verified interfaces where `rotaryio` is intentionally disabled.
 
+`src/hardware_profiles.py` fills otherwise blank assignments without enabling
+hardware. The LOLIN S2 Mini profile places the MPG and E-stop observation on
+native conditioned GPIO, UI buttons on local GPIO, GRBL on UART1 pins, LCD/SD
+on shared SPI, and selector contacts on an MCP23017 using predefined I2C pins.
+The minimal MCP23017 driver caches one 16-bit read per application poll, so UI
+lookups do not cause repeated I2C transactions.
+
 The DisplayIO backend accepts the already initialized display object and keeps
 fixed header, body, footer, and overlay objects. It updates changed text only
 and skips unchanged frames. It deliberately does not select an LCD controller,
