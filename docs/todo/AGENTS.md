@@ -4,6 +4,24 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-09-21 — Cohesive HMI and contextual MPG
+
+- [x] Define the authoritative IA, navigation grammar, handwheel modes, screen
+  contracts, overlays, representative wireframes, and acceptance rules.
+- [x] Implement UIManager with bounded navigation, focus, confirmations,
+  dynamic files/macros/SSIDs, disabled entries, dirty state, and safe Home.
+- [x] Implement reusable masked wheel-driven text entry and real Wi-Fi scan,
+  connect/disconnect, and CircuitPython-appropriate credential persistence.
+- [x] Expose jobs and macros through confirmation-driven UI workflows and route
+  all UI commands through the application/service boundaries.
+- [x] Independently gate MPG jogging on the central UI `MOTION` context.
+- [x] Add overlay, navigation, text, job, macro, Wi-Fi, and same-wheel
+  contextual end-to-end host tests.
+- [ ] Select the physical display/controller and implement its thin `displayio`
+  renderer against `UIManager.view_model()` without changing HMI behavior.
+- [ ] Validate layout readability, heap use, dirty refresh cost, and HOLD/CANCEL/
+  E-stop responsiveness on the physical S2 Mini.
+
 ## 2026-09-21 — Hardware-neutral firmware foundation
 
 - [x] Record the manufacturer conductor map and replace the mystery-cable survey

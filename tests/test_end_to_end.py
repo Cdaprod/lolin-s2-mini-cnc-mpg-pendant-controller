@@ -35,6 +35,7 @@ class EndToEndTests(unittest.TestCase):
         app.state.connection_state = "connected"
         app.state.machine_state = "idle"
         app.state.deadman_enabled = True
+        app.ui.refresh_context()
         selectors = SelectorModel(app.state)
         selectors.select_axis("X")
         selectors.select_multiplier("X10")

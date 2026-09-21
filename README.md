@@ -29,6 +29,8 @@ developed and simulated without connecting unknown-voltage pendant signals.
 - [`docs/HARDWARE.md`](docs/HARDWARE.md) — manufacturer wiring map, unresolved
   electrical properties, interface rules, and verification checklist
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — runtime boundaries and flow
+- [`docs/UI-IA-WIREFRAME.md`](docs/UI-IA-WIREFRAME.md) — authoritative HMI tree,
+  contextual wheel ownership, overlays, interaction rules, and wireframes
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) — staged hardware/firmware integration
 - [`docs/todo/AGENTS.md`](docs/todo/AGENTS.md) — engineering ledger
 
@@ -117,6 +119,11 @@ are safe.
 The software E-stop input is supplementary. The blue `C` and blue/black
 `NC/CN` physical contact must interrupt the appropriate machine safety circuit
 independently of the ESP32 and firmware.
+
+The same physical MPG wheel is routed through `UIManager`: it creates semantic
+jog events only on Home, and otherwise navigates menus, jobs, macros, SSIDs, or
+text entry. `SafetyStateMachine` independently checks the mirrored UI ownership
+before accepting a wheel-generated jog.
 
 ## Host tests
 

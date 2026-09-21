@@ -60,6 +60,20 @@ and storage independent while sharing one `PendantState` instance.
 - `src/display/` renders shared state and exposes a logical LED abstraction
   without assuming unverified LED drive voltage/current.
 
+## HMI event boundary
+
+`UIManager` owns the bounded navigation stack, focus, contextual wheel mode,
+text editor, confirmation modal, and prioritized global overlays. It emits
+semantic `UICommand` values; `PendantApplication` routes those commands to the
+existing action, streamer, storage, macro, and network services. Screens never
+call a backend directly.
+
+The active UI handwheel mode is mirrored in `PendantState`. The safety layer
+requires `MOTION` in addition to controller, selector, dead-man, alarm, and
+E-stop checks. Therefore neither a display bug nor a menu transition can make a
+navigation wheel event into machine motion. The complete contract lives in
+`UI-IA-WIREFRAME.md`.
+
 CircuitPython hardware imports are isolated in `src/transport/uart.py`. Future
 GPIO/display/SD hardware adapters must retain this boundary so host tests can
 exercise all policy and protocol logic.

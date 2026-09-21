@@ -8,6 +8,10 @@ class ConsoleDisplay(Display):
     def __init__(self, output=print):
         self.output = output
         self.last_frame = None
+        self.ui = None
+
+    def bind_ui(self, ui):
+        self.ui = ui
 
     def format(self, state):
         title = "{} {:>12}".format(
@@ -45,8 +49,42 @@ class ConsoleDisplay(Display):
         return "\n".join(rows)
 
     def render(self, state):
-        frame = self.format(state)
+        frame = self.format_ui(state) if self.ui else self.format(state)
         if frame != self.last_frame:
             self.output(frame)
             self.last_frame = frame
+        return frame
+
+    def format_ui(self, state):
+        model = self.ui.view_model()
+        if model["screen"] == "HOME":
+            frame = self.format(state)
+        else:
+            rows = [model["title"], "Wheel: " + model["wheel_mode"]]
+            for index, item in enumerate(model["items"]):
+                marker = ">" if index == model["selected"] else " "
+                suffix = "" if item[1] else " [unavailable]"
+                rows.append("{} {}{}".format(marker, item[0], suffix))
+            if "filename" in model:
+                rows.append("File: " + str(model["filename"]))
+            if "macro" in model:
+                rows.append("Macro: " + str(model["macro"]))
+            if model["screen"] == "ACTIVE_JOB":
+                rows.append("Progress: {:.1f}% ({})".format(
+                    model["progress"] * 100, model["stream_state"]
+                ))
+                rows.append("Controller: {} F:{:.1f} S:{:.0f}".format(
+                    model["controller_state"], model["feed"], model["spindle"]
+                ))
+            if "text" in model:
+                rows.extend((model["text"] + "_", "[{}] group {}".format(
+                    model["character"], model["group"]
+                )))
+            for label, value in model.get("details", ()):
+                rows.append("{}: {}".format(label, value))
+            frame = "\n".join(rows)
+        if model["overlay"]:
+            frame += "\n--- {} ---\n{}".format(
+                model["overlay"][0], model["overlay"][1]
+            )
         return frame

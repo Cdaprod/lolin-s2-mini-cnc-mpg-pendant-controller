@@ -27,6 +27,8 @@ class SafetyStateMachine:
         reason = self.inhibit_reason(require_deadman=True)
         if reason:
             raise SafetyError(reason)
+        if self.state.ui_handwheel_mode != "MOTION":
+            raise SafetyError("UI context does not own machine motion")
         if self.state.machine_state not in self.JOG_STATES:
             raise SafetyError("jog disallowed in " + self.state.machine_state)
         if self.state.selected_axis is None:

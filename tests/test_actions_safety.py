@@ -15,6 +15,7 @@ class ActionSafetyTests(unittest.TestCase):
         self.state.connection_state = "connected"
         self.state.machine_state = "idle"
         self.state.deadman_enabled = True
+        self.state.ui_handwheel_mode = "MOTION"
         SelectorModel(self.state).select_axis("X")
         self.transport = MockTransport()
         self.controller = GRBLController(self.state, self.transport)

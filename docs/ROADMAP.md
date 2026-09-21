@@ -51,6 +51,25 @@ fails closed, and disabled mode cannot emit a controller byte.
 **Exit:** Transcript tests cover partial/interleaved/malformed messages, and a
 bench controller shows correctly labeled controller-reported coordinates.
 
+## M3A — Cohesive embedded HMI/IA (complete in host simulation)
+
+- Define the authoritative menu tree, contextual handwheel modes, navigation
+  grammar, screen contracts, and global overlay priorities.
+- Implement bounded navigation/focus, confirmations, text entry, unavailable
+  item handling, backend-independent view models, and dirty rendering.
+- Route all screen output as semantic commands through application services.
+- Expose jobs, macros, machine actions, controller status, Wi-Fi scan/password
+  entry, settings availability, and system information in one interaction model.
+- Prove that one wheel event jogs only on Home and navigates/edits everywhere
+  else without emitting GRBL motion.
+
+**Host-simulation exit:** UI state, job/macro/network workflows, overlay
+priority, password masking, and contextual wheel tests pass.
+
+**Hardware exit remains open:** select the actual display and validate the
+`displayio` driver, retained layout, readability, heap use, refresh cost, and
+runtime responsiveness on the S2 Mini.
+
 ## M4 — Safe incremental MPG motion (complete in host simulation)
 
 - Implement named actions and controller-state interlocks.
