@@ -1,6 +1,17 @@
 # LOLIN S2 Mini CNC MPG Pendant Controller
 
-CircuitPython firmware scaffold for a Wi-Fi connected CNC MPG/pendant built around the **LOLIN S2 Mini (ESP32-S2)**.
+CircuitPython firmware scaffold for a standalone, controller-agnostic CNC
+MPG pendant built around the **LOLIN S2 Mini (ESP32-S2)**.
+
+The product target, hardware constraints, and staged delivery plan are now
+captured in:
+
+- [`docs/PRODUCT-SPEC.md`](docs/PRODUCT-SPEC.md) — behavior, controls, display,
+  safety, storage, and acceptance criteria
+- [`docs/HARDWARE.md`](docs/HARDWARE.md) — connector policy, interfaces,
+  provisional GPIO budget, and the required 24-wire MPG survey
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — dependency-ordered implementation
+  milestones and release gates
 
 The initial milestone is deliberately small and safe:
 
@@ -160,19 +171,9 @@ Override it with:
 CIRCUITPY=/path/to/CIRCUITPY ./deploy.sh
 ```
 
-## Next milestone
+## Current milestone
 
-The next implementation should map the actual MPG hardware:
-
-- axis selector
-- increment selector
-- encoder A/B
-- enable/dead-man input
-- cycle start
-- feed hold
-- reset
-- home
-- probe
-- display/OLED if used
-
-Then connect those actions to either ESP3D or UGS through `src/controller.py`.
+Firmware remains deliberately motion-disabled while the actual 24-wire MPG is
+surveyed. Follow the measurement procedure and record results in
+[`docs/HARDWARE.md`](docs/HARDWARE.md); pin assignment and motion firmware must
+not be finalized before that evidence is available.
