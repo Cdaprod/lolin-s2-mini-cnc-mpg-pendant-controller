@@ -1,0 +1,15 @@
+# Copy this file to settings.toml on CIRCUITPY.
+# Never commit the real settings.toml.
+
+CIRCUITPY_WIFI_SSID="cda_Lab"
+CIRCUITPY_WIFI_PASSWORD="CHANGE_ME"
+
+# DHCP/mDNS-friendly hostname. Keep it lowercase and avoid spaces.
+MPG_HOSTNAME="cda-lolin-s2-mpg"
+
+# disabled | ugs | esp3d | grbl
+MPG_CONTROLLER_MODE="disabled"
+
+# Leave blank while mode=disabled.
+MPG_CONTROLLER_HOST=""
+MPG_CONTROLLER_PORT="8080"
