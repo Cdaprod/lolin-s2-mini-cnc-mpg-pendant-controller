@@ -84,6 +84,27 @@ class StreamerTests(unittest.TestCase):
         self.streamer.cancel()
         self.assertEqual(self.state.sd_job_state, "cancelled")
 
+    def test_card_read_failure_stops_stream(self):
+        class FailingJob:
+            path = "/sd/jobs/fail.nc"
+            progress = 0.0
+            line_number = 0
+            bytes_read = 0
+
+            def open(self):
+                return self
+
+            def next_command(self):
+                raise OSError("card removed")
+
+            def close(self):
+                return None
+
+        self.streamer.start(FailingJob(), 0)
+        self.streamer.poll(0)
+        self.assertEqual(self.state.sd_job_state, "error")
+        self.assertIn("job read failed", self.state.error)
+
 
 class MacroTests(unittest.TestCase):
     def test_macro_load_and_queue(self):

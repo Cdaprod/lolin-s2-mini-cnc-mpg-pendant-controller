@@ -4,6 +4,23 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-09-21 — On-device hardware integration layer
+
+- [x] Compose conditioned MPG, selector, button, dead-man, and observed E-stop
+  input polling into `PendantApplication.poll()` before controller processing.
+- [x] Implement bounded normalized events, debounce/short/long presses, and one
+  contextual physical wheel stream with independent UI-motion safety gating.
+- [x] Implement retained DisplayIO rendering, frame-change suppression, physical
+  SD mount adapter, optional verified indicator output, and runtime diagnostics.
+- [x] Centralize all optional hardware pin/configuration with safe disabled
+  defaults and preserve the small root `code.py` composition entry point.
+- [x] Add host tests for physical/synthetic input, application polling, E-stop
+  preemption/recovery, DisplayIO retention/overlays, storage, and indicator.
+- [ ] Obtain and verify the exact MPG interface, LCD, SD, Doesbot connector, LED
+  driver, shield, and pin-allocation information listed in `docs/HARDWARE.md`.
+- [ ] Run physical S2 Mini heap/timing, display readability, input trace, SD
+  removal, Wi-Fi scan, and guarded unpowered-controller bench validation.
+
 ## 2026-09-21 — Cohesive HMI and contextual MPG
 
 - [x] Define the authoritative IA, navigation grammar, handwheel modes, screen

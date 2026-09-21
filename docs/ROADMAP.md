@@ -70,6 +70,20 @@ priority, password masking, and contextual wheel tests pass.
 `displayio` driver, retained layout, readability, heap use, refresh cost, and
 runtime responsiveness on the S2 Mini.
 
+## M3B — Hardware-neutral on-device integration (complete in host simulation)
+
+- Compose conditioned MPG, selectors, configurable buttons, dead-man, and
+  supplementary E-stop observation into the cooperative application loop.
+- Add centralized opt-in hardware configuration with no default GPIOs.
+- Add a retained-object DisplayIO renderer for an existing configured display,
+  optional SPI SD mounting, optional verified indicator output, and runtime
+  loop/render/heap/status-age diagnostics.
+- Keep Wi-Fi scan consumption, input events, navigation, and command queues
+  bounded and non-looping.
+
+**Physical exit remains open:** verify/select the electrical interfaces, LCD,
+SD hardware, and pin allocation, then run bench timing/heap/readability tests.
+
 ## M4 — Safe incremental MPG motion (complete in host simulation)
 
 - Implement named actions and controller-state interlocks.
