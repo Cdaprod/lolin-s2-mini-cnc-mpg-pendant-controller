@@ -14,9 +14,10 @@ criteria of an earlier safety gate.
 **Exit:** Product and hardware requirements are reviewable without enabling
 motion in firmware.
 
-## M1 — Hardware evidence and feasibility
+## M1 — Electrical evidence and integration feasibility (in progress)
 
-- Complete the `HARDWARE.md` 24-wire survey with photographs and measurements.
+- Use the manufacturer-confirmed conductor map in `HARDWARE.md` and complete
+  its focused electrical-verification checklist with photographs/measurements.
 - Identify the Doesbot connector, protocol, voltage levels, and grounding.
 - Choose the display, microSD interface, input expander, and keyed machine port.
 - Produce a physical GPIO allocation with ESP32-S2 boot/USB constraints.
@@ -26,7 +27,7 @@ motion in firmware.
 **Exit:** Reviewed schematics/pinout have no unknown powered connections and at
 least two spare GPIOs; every interface has a bench-verification plan.
 
-## M2 — Testable input and state foundation
+## M2 — Testable input and state foundation (complete)
 
 - Refactor the runtime into input, state, action/safety, controller-protocol,
   transport, and display boundaries without enabling output by default.
@@ -38,7 +39,7 @@ least two spare GPIOs; every interface has a bench-verification plan.
 **Exit:** Recorded input traces pass automated tests, invalid/bouncing input
 fails closed, and disabled mode cannot emit a controller byte.
 
-## M3 — Read-only GRBL status and display
+## M3 — GRBL status and display foundation (complete in host simulation)
 
 - Implement a UART transport with bounded receive parsing and reconnect state.
 - Parse GRBL status, response, alarm, and startup messages without sending
@@ -50,7 +51,7 @@ fails closed, and disabled mode cannot emit a controller byte.
 **Exit:** Transcript tests cover partial/interleaved/malformed messages, and a
 bench controller shows correctly labeled controller-reported coordinates.
 
-## M4 — Safe incremental MPG motion
+## M4 — Safe incremental MPG motion (complete in host simulation)
 
 - Implement named actions and controller-state interlocks.
 - Generate explicit GRBL 1.1 `$J=` incremental commands from validated state.

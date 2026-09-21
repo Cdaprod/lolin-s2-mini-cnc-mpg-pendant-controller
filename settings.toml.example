@@ -7,9 +7,24 @@ CIRCUITPY_WIFI_PASSWORD="CHANGE_ME"
 # DHCP/mDNS-friendly hostname. Keep it lowercase and avoid spaces.
 MPG_HOSTNAME="cda-lolin-s2-mpg"
 
-# disabled | ugs | esp3d | grbl
+# disabled | uart | mock
 MPG_CONTROLLER_MODE="disabled"
 
 # Leave blank while mode=disabled.
 MPG_CONTROLLER_HOST=""
 MPG_CONTROLLER_PORT="8080"
+
+# Direct GRBL 1.1 UART. Leave pins blank until electrical verification and a
+# reviewed S2 Mini GPIO allocation are complete. Values are board pin names.
+MPG_UART_TX_PIN=""
+MPG_UART_RX_PIN=""
+MPG_UART_BAUDRATE="115200"
+
+MPG_BASE_INCREMENT="0.001"
+MPG_JOG_FEED="500"
+MPG_STATUS_INTERVAL="0.2"
+MPG_JOBS_PATH="/jobs"
+MPG_MACROS_PATH="/macros"
+MPG_PROBE_Z="G91 G38.2 Z-10 F100"
+MPG_SAFE_Z="G53 G0 Z0"
+MPG_PARK="G53 G0 X0 Y0"

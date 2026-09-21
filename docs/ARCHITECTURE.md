@@ -2,7 +2,8 @@
 
 ## Goal
 
-Keep physical control logic independent of the network/backend used to reach GRBL.
+Keep physical controls, safety policy, controller protocol, transport, display,
+and storage independent while sharing one `PendantState` instance.
 
 ```text
 ┌─────────────────────────────┐
@@ -16,7 +17,7 @@ Keep physical control logic independent of the network/backend used to reach GRB
 │  └─ buttons                 │
 │          │                  │
 │          ▼                  │
-│  Pendant State Machine      │
+│  Central PendantState       │
 │          │                  │
 │          ▼                  │
 │  Safety / Action Layer      │
@@ -24,14 +25,14 @@ Keep physical control logic independent of the network/backend used to reach GRB
 │          ▼                  │
 │  Controller Interface       │
 └──────────┬──────────────────┘
-           │ Wi-Fi / serial
+           │ protocol-neutral transport
            ▼
      ┌───────────────┐
      │ Adapter       │
      ├───────────────┤
-     │ UGS HTTP      │
-     │ ESP3D         │
-     │ direct GRBL   │
+     │ UART (now)    │
+     │ mock (tests)  │
+     │ future ports  │
      └───────────────┘
 ```
 
@@ -43,3 +44,22 @@ Keep physical control logic independent of the network/backend used to reach GRB
 4. A future jog implementation should use a watchdog/dead-man mechanism.
 5. Machine-state-changing actions should be explicit named actions.
 6. Wi-Fi configuration stays in `settings.toml`, not source code.
+
+## Implemented module boundaries
+
+- `code.py` is the CircuitPython-discovered composition entry point.
+- `src/app.py` constructs and cooperatively polls the application components.
+- `src/state.py` is the only shared pendant/controller/job state model.
+- `src/input/` converts normalized electrical input into detents, selections,
+  and semantic actions without performing I/O.
+- `src/safety/` enforces fail-closed state policy and watchdog deadlines.
+- `src/controller/grbl.py` owns GRBL 1.1 parsing and command serialization.
+- `src/transport/` contains hardware UART and in-memory test transports.
+- `src/storage/` reads job files incrementally; `src/gcode/` streams commands
+  and loads bounded named macros.
+- `src/display/` renders shared state and exposes a logical LED abstraction
+  without assuming unverified LED drive voltage/current.
+
+CircuitPython hardware imports are isolated in `src/transport/uart.py`. Future
+GPIO/display/SD hardware adapters must retain this boundary so host tests can
+exercise all policy and protocol logic.

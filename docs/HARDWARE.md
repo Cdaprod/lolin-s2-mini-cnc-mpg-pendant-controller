@@ -2,10 +2,12 @@
 
 ## Status
 
-This is a requirements and measurement document, not a fabrication-ready
-pinout. The actual MPG cable and target controller must be surveyed before any
-signal is attached to the LOLIN S2 Mini. Unknown conductors must remain marked
-`TBD`; guesses must not be promoted to pin assignments.
+This is a requirements and integration document, not a fabrication-ready
+pinout. Manufacturer documentation now establishes the pendant conductor
+functions and that `COM` is the common terminal for its switches. Electrical
+levels and interface requirements remain subject to measurement before any
+unknown-voltage signal is attached to the LOLIN S2 Mini. Those measurements are
+a hardware-integration gate; they do not block hardware-neutral firmware.
 
 ## Physical architecture
 
@@ -109,88 +111,80 @@ No physical GPIO number is assigned until the conductor survey, chosen display,
 chosen SD breakout, CircuitPython board pin aliases, and ESP32-S2 boot-strapping
 constraints have all been checked together.
 
-## 24-wire MPG survey
+## Manufacturer-confirmed pendant wiring
 
-### Equipment
+The supplied MBLKJ manufacturer sheets are authoritative for identity and
+function. They do not establish the safe ESP32 interface voltage for the
+purchased unit. Signal names in this table are also the names used by firmware.
 
-- disconnected pendant and controller;
-- multimeter with continuity, resistance, diode, and DC-voltage modes;
-- current-limited bench supply only if passive measurements are insufficient;
-- oscilloscope or logic analyzer for powered encoder verification;
-- breakout leads, labels, and photographs of both connector faces.
+| Wire | Signal | Manufacturer-documented function |
+| --- | --- | --- |
+| Red | `VCC` | MPG encoder supply |
+| Black | `0V` | Encoder ground |
+| Green | `A` | Encoder A phase |
+| White | `B` | Encoder B phase |
+| Violet | `A-` | Differential/inverted A |
+| Violet/Black | `B-` | Differential/inverted B |
+| Yellow | `X` | X-axis selector |
+| Yellow/Black | `Y` | Y-axis selector |
+| Brown | `Z` | Z-axis selector |
+| Brown/Black | `4` | Axis 4 selector |
+| Pink | `5` | Axis 5 selector |
+| Pink/Black | `6` | Axis 6 selector |
+| Gray | `X1` | x1 multiplier selector |
+| Gray/Black | `X10` | x10 multiplier selector |
+| Orange | `X100` | x100 multiplier selector |
+| Orange/Black | `COM` | Required selector common |
+| Blue | `C` | Emergency-stop contact |
+| Blue/Black | `NC/CN` | Emergency-stop NC contact |
+| Green/Black | `LED+` | Pendant indicator LED positive |
+| White/Black | `LED-` | Pendant indicator LED negative |
+| Shield | `Shield` | Cable shield |
 
-### Procedure
+The switch inputs share `COM`. The firmware models axis positions `OFF`, `X`,
+`Y`, `Z`, `4`, `5`, and `6`, with default logical mapping `4` → A, `5` → B,
+and `6` → C. It models multiplier contacts as the ratios x1, x10, and x100.
+`A-` and `B-` terminate in future verified receiver/interface circuitry; the
+application quadrature decoder consumes normalized A/B logic and therefore
+does not depend on the eventual receiver choice.
 
-1. Photograph the cable, connector orientation, PCB markings, selectors, all
-   switches, and handwheel. Assign conductor IDs `W01` through `W24` by color
-   and connector position; do not rely on color alone.
-2. With all power removed, map continuity to shields, chassis, commons, switch
-   contacts, and any LED/buzzer leads. Record resistance, not just continuity.
-3. Exercise every selector position and button separately. Record all contact
-   combinations and distinguish break-before-make, make-before-break, binary,
-   one-hot, and resistor-ladder behavior.
-4. Rotate the handwheel slowly in both directions. Identify passive A/B/common
-   contacts or powered encoder supply/output conductors. Do not apply power to
-   an unidentified encoder.
-5. Identify diodes, lamps, LEDs, resistors, or active devices with polarity and
-   resistance/diode measurements. Trace the pendant PCB where accessible.
-6. Separately survey the controller-side connector while powered and
-   disconnected from the pendant. Record steady voltage, transient range,
-   source impedance where safe, and behavior in every controller state.
-7. If an encoder needs power, apply only its verified voltage through a current
-   limit. Capture A/B low/high levels, phase order, pulses per detent/revolution,
-   maximum observed edge rate, and bounce/noise.
-8. Repeat continuity and powered observations to rule out probe/orientation
-   errors. A second reviewer must compare the table to connector photographs.
-9. Only then design protection/translation and assign S2 Mini GPIO pins.
+`C` and `NC/CN` form the physical emergency-stop contact. Firmware may observe
+that contact, inhibit commands, cancel software activity, and display E-STOP,
+but it is not the primary safety mechanism. The contact must ultimately
+interrupt the appropriate machine safety/control circuit independently of the
+ESP32-S2 and CircuitPython.
 
-### Survey record
+## Electrical verification before connection
 
-Populate every row; use `NC` only after verification and retain `TBD` for
-unknowns.
+Use a disconnected pendant, multimeter, current-limited supply where justified,
+and oscilloscope/logic analyzer. Record the instrument, setup, measured values,
+and photographs for each result. Verify all of the following before selecting
+interface circuitry or GPIO pins:
 
-| ID | Color/marking | Pendant endpoint | Behavior by control position | Passive measurements | Powered range/source | Proposed role | Confidence/evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| W01 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W02 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W03 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W04 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W05 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W06 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W07 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W08 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W09 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W10 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W11 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W12 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W13 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W14 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W15 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W16 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W17 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W18 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W19 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W20 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W21 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W22 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W23 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| W24 | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
+- [ ] Purchased-unit encoder `VCC` requirement; the manufacturer sheets warn
+  that units may be supplied for different voltages, so do not infer it.
+- [ ] `A`/`A-` and `B`/`B-` low/high/common-mode levels, phase relationship,
+  edge rate, pulses/counts per detent, noise, and output topology.
+- [ ] Whether a differential receiver or level translator is required and the
+  exact qualified part/circuit.
+- [ ] Selector `COM` behavior, contact resistance, active polarity,
+  break/make behavior, and isolation from encoder `0V`.
+- [ ] E-stop `C` to `NC/CN` normal/pressed behavior, contact rating, and the
+  independent machine safety circuit in which it will be installed.
+- [ ] `LED+`/`LED-` operating voltage, current, polarity, and required driver;
+  do not drive it from a GPIO before this is known.
+- [ ] Shield-to-pendant/chassis continuity and the final single-/multi-point
+  chassis termination strategy.
+- [ ] Doesbot 8-pin connector numbering, UART/other protocol, voltage levels,
+  grounding/isolation, power direction, and safe behavior when either side is
+  unpowered.
+- [ ] Final keyed direct-controller connector pinout and final ESP32-S2 GPIO
+  assignment after the interface circuits and peripherals are selected.
 
-Also record:
-
-| Property | Result |
-| --- | --- |
-| Connector manufacturer/series | TBD |
-| Connector key orientation and pin numbering source | TBD |
-| Cable shield/drain termination | TBD |
-| Encoder type and supply | TBD |
-| Encoder pulses/detents per revolution | TBD |
-| Axis selector encoding/common | TBD |
-| Increment selector encoding/common | TBD |
-| Enable switch normal and active states | TBD |
-| Button normal and active states | TBD |
-| Indicators/loads and current | TBD |
-| Controller connector voltages | TBD |
+Explicitly unresolved are encoder VCC, A/A-/B/B- voltage and topology, receiver
+or level translator choice, LED voltage/current, shield termination, GPIO
+assignment, direct-controller connector pinout, and Doesbot 8-pin electrical
+pinout. No unresolved signal is approved for direct connection to 3.3 V GPIO.
 
 ## Display requirements and selection gate
 
@@ -217,7 +211,8 @@ actual pixel dimensions and measure refresh time and heap usage on the S2 Mini.
 
 ## Hardware verification checklist
 
-- [ ] Complete and photograph the 24-wire survey.
+- [x] Record manufacturer-confirmed conductor functions and selector common.
+- [ ] Complete and photograph the electrical-verification checklist.
 - [ ] Verify the Doesbot connector identity, levels, and protocol.
 - [ ] Select the keyed machine connector and publish its numbered pinout.
 - [ ] Decide isolated versus common-ground UART from measurements.

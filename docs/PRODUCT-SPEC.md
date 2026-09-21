@@ -189,7 +189,8 @@ behavior.
 
 ### Hardware-definition gate
 
-- Every conductor in the actual 24-wire MPG cable is identified by measurement.
+- Every conductor function is identified from the manufacturer map, and each
+  electrical property required by `HARDWARE.md` is verified by measurement.
 - The machine controller connector is identified by measurement/documentation.
 - Voltage levels, common conductors, shielding, active polarity, and isolation
   needs are known before either device is connected to the S2 Mini.
