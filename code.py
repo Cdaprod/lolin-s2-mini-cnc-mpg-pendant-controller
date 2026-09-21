@@ -1,13 +1,9 @@
-"""
-LOLIN S2 Mini CNC MPG Pendant Controller
-CircuitPython entry point.
-"""
+"""CircuitPython entry point; composes the pendant and runs its event loop."""
 
 import time
 
 from src.config import load_config
-from src.network import connect_wifi
-from src.controller import Controller
+from src.app import PendantApplication
 
 
 def main():
@@ -16,31 +12,12 @@ def main():
 
     config = load_config()
 
-    network = connect_wifi(
-        ssid=config["wifi_ssid"],
-        password=config["wifi_password"],
-        hostname=config["hostname"],
-    )
-
-    controller = Controller(
-        mode=config["controller_mode"],
-        host=config["controller_host"],
-        port=config["controller_port"],
-        network=network,
-    )
-
-    controller.begin()
-
+    app = PendantApplication.from_config(config)
     print("[ready] pendant runtime started")
 
     while True:
-        # Future:
-        # - scan MPG inputs
-        # - update display/pattern
-        # - dispatch safe pendant actions
-        # - maintain controller connection
-        controller.poll()
-        time.sleep(0.05)
+        app.poll()
+        time.sleep(0.01)
 
 
 try:

@@ -1,15 +1,112 @@
 # Copy this file to settings.toml on CIRCUITPY.
 # Never commit the real settings.toml.
 
+# Optional proposed pin allocation. This fills blank pin settings but does not
+# enable inputs/display/SD/indicator or assert electrical verification.
+# MPG_HARDWARE_PROFILE="lolin_s2_mini_v1"
+MPG_HARDWARE_PROFILE=""
+
 CIRCUITPY_WIFI_SSID="cda_Lab"
 CIRCUITPY_WIFI_PASSWORD="CHANGE_ME"
 
 # DHCP/mDNS-friendly hostname. Keep it lowercase and avoid spaces.
 MPG_HOSTNAME="cda-lolin-s2-mpg"
 
-# disabled | ugs | esp3d | grbl
+# disabled | uart | mock
 MPG_CONTROLLER_MODE="disabled"
 
 # Leave blank while mode=disabled.
 MPG_CONTROLLER_HOST=""
 MPG_CONTROLLER_PORT="8080"
+
+# Direct GRBL 1.1 UART. Leave pins blank until electrical verification and a
+# reviewed S2 Mini GPIO allocation are complete. Values are board pin names.
+MPG_UART_TX_PIN=""
+MPG_UART_RX_PIN=""
+MPG_UART_BAUDRATE="115200"
+
+MPG_BASE_INCREMENT="0.001"
+MPG_JOG_FEED="500"
+MPG_STATUS_INTERVAL="0.2"
+MPG_JOBS_PATH="/jobs"
+MPG_MACROS_PATH="/macros"
+MPG_PROBE_Z="G91 G38.2 Z-10 F100"
+MPG_SAFE_Z="G53 G0 Z0"
+MPG_PARK="G53 G0 X0 Y0"
+
+# Physical inputs remain disabled until the external differential receiver /
+# level interface and all active levels have been electrically verified.
+MPG_INPUTS_ENABLED="false"
+MPG_ENCODER_ACTIVE_LOW="false"
+MPG_USE_ROTARYIO="true"
+MPG_SELECTOR_ACTIVE_LOW="true"
+MPG_BUTTON_ACTIVE_LOW="true"
+MPG_PIN_A=""
+MPG_PIN_B=""
+MPG_COUNTS_PER_DETENT="4"
+MPG_DIRECTION="1"
+MPG_AXIS_MAP_X="X"
+MPG_AXIS_MAP_Y="Y"
+MPG_AXIS_MAP_Z="Z"
+MPG_AXIS_MAP_4="A"
+MPG_AXIS_MAP_5="B"
+MPG_AXIS_MAP_6="C"
+MPG_PIN_AXIS_X=""
+MPG_PIN_AXIS_Y=""
+MPG_PIN_AXIS_Z=""
+MPG_PIN_AXIS_4=""
+MPG_PIN_AXIS_5=""
+MPG_PIN_AXIS_6=""
+MPG_PIN_MULTIPLIER_X1=""
+MPG_PIN_MULTIPLIER_X10=""
+MPG_PIN_MULTIPLIER_X100=""
+MPG_PIN_BUTTON_SELECT=""
+MPG_PIN_BUTTON_BACK=""
+MPG_PIN_BUTTON_FN=""
+MPG_PIN_BUTTON_CANCEL=""
+MPG_PIN_ESTOP_OBSERVE=""
+MPG_ESTOP_ACTIVE_LOW="true"
+MPG_PIN_DEADMAN=""
+MPG_DEADMAN_ACTIVE_LOW="true"
+MPG_BUTTON_DEBOUNCE="0.03"
+MPG_BUTTON_LONG_PRESS="0.8"
+
+# Reference profile selector backend. Keep verification false until COM/contact
+# behavior and the MCP23017 wiring have been electrically checked.
+MPG_SELECTOR_BACKEND=""
+MPG_SELECTOR_INTERFACE_VERIFIED="false"
+MPG_I2C_SDA_PIN=""
+MPG_I2C_SCL_PIN=""
+MPG_MCP23017_ADDRESS="32"
+
+# Shared SPI routing metadata. Display controller construction remains TBD.
+MPG_SPI_SCK_PIN=""
+MPG_SPI_MOSI_PIN=""
+MPG_SPI_MISO_PIN=""
+
+# A generic retained DisplayIO renderer can use an already-created
+# board.DISPLAY. No controller, bus, pins, offsets, or resolution are assumed.
+MPG_DISPLAY_ENABLED="false"
+MPG_DISPLAY_USE_BOARD_DISPLAY="false"
+MPG_DISPLAY_WIDTH="0"
+MPG_DISPLAY_HEIGHT="0"
+MPG_DISPLAY_ROTATION="0"
+MPG_DISPLAY_SCK_PIN=""
+MPG_DISPLAY_MOSI_PIN=""
+MPG_DISPLAY_CS_PIN=""
+MPG_DISPLAY_DC_PIN=""
+MPG_DISPLAY_RESET_PIN=""
+
+# Optional physical SD mount. All four SPI pins are required when enabled.
+MPG_SD_ENABLED="false"
+MPG_SD_SCK_PIN=""
+MPG_SD_MOSI_PIN=""
+MPG_SD_MISO_PIN=""
+MPG_SD_CS_PIN=""
+MPG_SD_MOUNT_PATH="/sd"
+
+# Never enable until the LED voltage/current and external driver are verified.
+MPG_INDICATOR_ENABLED="false"
+MPG_INDICATOR_ELECTRICALLY_VERIFIED="false"
+MPG_INDICATOR_PIN=""
+MPG_INDICATOR_ACTIVE_HIGH="true"
