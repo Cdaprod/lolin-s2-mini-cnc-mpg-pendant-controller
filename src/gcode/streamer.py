@@ -84,7 +84,12 @@ class GCodeStreamer:
                 self.state.error = "stream response timeout"
                 self._finish("error")
             return
-        command = self.job.next_command()
+        try:
+            command = self.job.next_command()
+        except OSError as exc:
+            self.state.error = "job read failed: {}".format(type(exc).__name__)
+            self._finish("error")
+            return
         if command is None:
             self.state.streaming_progress = 1.0
             self._finish("complete")

@@ -69,6 +69,12 @@ class ConsoleDisplay(Display):
                 rows.append("File: " + str(model["filename"]))
             if "macro" in model:
                 rows.append("Macro: " + str(model["macro"]))
+            if "storage_state" in model:
+                rows.append("Storage: {}{}".format(
+                    model["storage_state"],
+                    " ({})".format(model["storage_error"])
+                    if model["storage_error"] else ""
+                ))
             if model["screen"] == "ACTIVE_JOB":
                 rows.append("Progress: {:.1f}% ({})".format(
                     model["progress"] * 100, model["stream_state"]

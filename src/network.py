@@ -103,6 +103,10 @@ class WiFiService:
         self.radio = radio
         self.credentials = credential_store or CredentialStore()
         self.last_error = None
+        self._scan_iterator = None
+        self._scan_found = {}
+        self.scan_results = []
+        self.scanning = False
 
     @property
     def enabled(self):
@@ -128,6 +132,48 @@ class WiFiService:
         finally:
             self.radio.stop_scanning_networks()
         return sorted(found.items(), key=lambda item: item[1], reverse=True)
+
+    def start_scan(self):
+        if self.scanning:
+            return
+        self._scan_found = {}
+        self.scan_results = []
+        self._scan_iterator = iter(self.radio.start_scanning_networks())
+        self.scanning = True
+
+    def poll_scan(self, budget=2):
+        """Consume a bounded number of scan results per cooperative poll."""
+        if not self.scanning:
+            return True
+        for _ in range(budget):
+            try:
+                network = next(self._scan_iterator)
+            except StopIteration:
+                self.radio.stop_scanning_networks()
+                self.scanning = False
+                self._scan_iterator = None
+                self.scan_results = sorted(
+                    self._scan_found.items(), key=lambda item: item[1],
+                    reverse=True
+                )[:32]
+                return True
+            except Exception as exc:
+                try:
+                    self.radio.stop_scanning_networks()
+                except Exception:
+                    pass
+                self.scanning = False
+                self._scan_iterator = None
+                self.last_error = "Wi-Fi scan failed: {}".format(
+                    type(exc).__name__
+                )
+                return True
+            ssid = str(network.ssid)
+            rssi = int(network.rssi)
+            if (ssid and (ssid not in self._scan_found or
+                          rssi > self._scan_found[ssid])):
+                self._scan_found[ssid] = rssi
+        return False
 
     def connect(self, ssid, password, persist=True):
         self.last_error = None
@@ -169,12 +215,21 @@ class MockWiFiService:
         self.connected = False
         self.ssid = None
         self.password_length = 0
+        self.scan_results = []
+        self.scanning = False
 
     def set_enabled(self, enabled):
         self.enabled = bool(enabled)
 
     def scan(self):
         return list(self.networks)
+
+    def start_scan(self):
+        self.scan_results = list(self.networks)[:32]
+        self.scanning = False
+
+    def poll_scan(self, budget=2):
+        return True
 
     def connect(self, ssid, password, persist=True):
         self.connected = True

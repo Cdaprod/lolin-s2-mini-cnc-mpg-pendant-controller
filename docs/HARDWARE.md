@@ -220,3 +220,43 @@ actual pixel dimensions and measure refresh time and heap usage on the S2 Mini.
 - [ ] Allocate GPIOs and audit boot straps, USB, UART, I2C/SPI, and board aliases.
 - [ ] Verify every external signal is safe with either side unpowered.
 - [ ] Bench-test with a controller/simulator before attaching machine motion.
+
+## Integration implementation status
+
+### Implemented and host-tested
+
+- One cooperative conditioned-A/B MPG stream routes through `InputManager` to
+  contextual UI events; selector, debounce/long-press, dead-man, and E-stop
+  observation behavior are covered by host tests.
+- Physical axis X/Y/Z/4/5/6 and multiplier x1/x10/x100 configuration update the
+  shared state, with OFF failing closed.
+- Retained DisplayIO view-model rendering, dirty-frame suppression, overlay
+  precedence, long coordinate handling, and missing values are host-tested.
+- Optional SD mount failure/missing/empty storage and optional logical indicator
+  adapters fail safely in host tests.
+
+### Implemented but requiring physical verification
+
+- `CircuitPythonInputAdapter` can read configured GPIO only after A/A-/B/B-
+  conditioning, selector/button polarity, E-stop observation, and dead-man
+  circuitry have been reviewed and measured.
+- `DisplayIOBackend` can render to an existing `board.DISPLAY`; the final LCD
+  controller, bus construction, geometry, offsets, and pins are not selected.
+- `mount_from_config()` can mount a configured SPI SD card, but its SPI pins and
+  card hardware are not selected.
+- `DigitalIndicatorOutput` can drive a verified external interface input; it is
+  not approval to connect the manufacturer `LED+`/`LED-` wires to a GPIO.
+
+### Not configured / hardware TBD
+
+- Doesbot 8-pin offline-controller electrical pinout and isolation.
+- Purchased MPG encoder supply and A/A-/B/B- voltage/output topology, plus the
+  required differential receiver/level interface.
+- Final selector, button, dead-man, and supplementary E-stop input circuits.
+- Manufacturer LED voltage/current and external driver.
+- LCD model/controller/resolution/bus/pins/offsets/rotation.
+- SD socket/module and SPI pins.
+- Final keyed machine port, shield/chassis strategy, and ESP32-S2 GPIO allocation.
+
+Every related `settings.toml` entry defaults to blank/disabled. No default GPIO
+reading can enable motion.

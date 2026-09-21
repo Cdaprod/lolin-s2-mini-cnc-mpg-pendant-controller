@@ -18,6 +18,11 @@ The firmware currently provides:
 - incremental `.nc`, `.gcode`, and `.tap` access, send-response streaming, and
   file-backed macros;
 - CPython tests including an MPG-to-GRBL-to-display simulation.
+- a cooperatively polled physical-input pipeline for conditioned MPG A/B,
+  selectors, configurable buttons, dead-man, and supplementary E-stop state;
+- a retained-object DisplayIO renderer for an already initialized, explicitly
+  configured display, plus optional configured SPI SD mounting and indicator
+  output adapters.
 
 Physical GPIO assignments remain intentionally unset until the documented
 electrical measurements and interface design are complete. Firmware can be
@@ -89,6 +94,12 @@ MPG_UART_BAUDRATE="115200"
 
 Do not populate the pin names from guesswork. The machine UART and pendant MPG
 inputs require their documented interface/protection circuitry.
+
+All optional hardware is disabled when its pin/configuration values are blank.
+`settings.toml.example` is the centralized inventory for UART, conditioned MPG,
+selectors, buttons, dead-man/E-stop observation, board display, SD, and the
+verified external indicator interface. Enabling inputs does not waive the
+electrical verification requirements in `docs/HARDWARE.md`.
 
 ## Runtime architecture
 

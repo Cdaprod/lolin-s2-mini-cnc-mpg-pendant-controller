@@ -77,3 +77,27 @@ navigation wheel event into machine motion. The complete contract lives in
 CircuitPython hardware imports are isolated in `src/transport/uart.py`. Future
 GPIO/display/SD hardware adapters must retain this boundary so host tests can
 exercise all policy and protocol logic.
+
+## On-device cooperative integration
+
+`PendantApplication.poll()` samples the supplementary E-stop and controls
+first, dispatches bounded normalized UI events, services an incremental Wi-Fi
+scan, polls GRBL and the streamer, evaluates watchdogs, refreshes UI ownership,
+updates the optional indicator, and finally renders. No input adapter writes
+GRBL and no screen reads GPIO.
+
+`src/hardware.py` is the centralized optional-hardware composition boundary.
+CircuitPython-only imports remain inside the UART, GPIO, DisplayIO, indicator,
+and SD adapters and occur only when explicitly enabled. Unconfigured devices
+degrade to null/console/filesystem implementations without selecting pins.
+
+The configured CircuitPython MPG path uses `rotaryio` with raw transition
+counting so edges are accumulated outside the Python polling cadence, then the
+same bounded `InputManager` applies counts-per-detent and emits contextual
+semantic wheel events. A polling decoder remains available for host simulation
+and verified interfaces where `rotaryio` is intentionally disabled.
+
+The DisplayIO backend accepts the already initialized display object and keeps
+fixed header, body, footer, and overlay objects. It updates changed text only
+and skips unchanged frames. It deliberately does not select an LCD controller,
+bus, offsets, rotation, or pins.

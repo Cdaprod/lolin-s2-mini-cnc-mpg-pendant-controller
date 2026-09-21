@@ -71,7 +71,8 @@ def build_screens():
         ("Home", "HOME"), ("Zero Selected Axis", "ZERO_AXIS"),
         ("Zero XYZ", "ZERO_XYZ"), ("Probe Z", "PROBE_Z"),
         ("Safe Z", "SAFE_Z"), ("Park", "PARK"),
-        ("Unlock", "UNLOCK"), ("Reset", "SOFT_RESET"),
+        ("Unlock", "UNLOCK"), ("Recover E-stop", "ESTOP_RECOVER"),
+        ("Reset", "SOFT_RESET"),
     )
     screens["MACHINE"] = Screen("MACHINE", "MACHINE", "MAIN_MENU", items=[
         MenuItem(label, command="CONFIRM_ACTION", value=action)
@@ -149,6 +150,7 @@ class UIManager:
     """Bounded navigation, overlays, focus, text entry, and wheel ownership."""
 
     MAX_STACK = 8
+    MAX_DYNAMIC_ITEMS = 64
 
     def __init__(self, state):
         self.state = state
@@ -234,7 +236,7 @@ class UIManager:
     def set_dynamic_items(self, name, values):
         if name not in self.dynamic_items:
             raise ValueError("unknown dynamic list: " + name)
-        values = list(values)
+        values = list(values)[:self.MAX_DYNAMIC_ITEMS]
         if self.dynamic_items[name] == values:
             return
         self.dynamic_items[name] = values
@@ -376,6 +378,9 @@ class UIManager:
         return None
 
     def handle(self, event):
+        if (event == LONG_SELECT and self.state.estop_latched and
+                not self.state.estop_observed):
+            return UICommand("ACTION", "ESTOP_RECOVER")
         if event == ROTATE_CW:
             return self.rotate(1)
         if event == ROTATE_CCW:
@@ -390,6 +395,8 @@ class UIManager:
             self.text_entry.next_group()
             self._changed()
             return None
+        if event == CANCEL and self.current_screen == "HOME":
+            return UICommand("ACTION", "JOG_CANCEL")
         if event == BACK and self.current_screen == "TEXT_ENTRY":
             self.text_entry.backspace()
             self._changed()
@@ -440,6 +447,7 @@ class UIManager:
                 ("Job", self.state.sd_job_state),
                 ("File", self.state.current_filename or "none"),
                 ("UI", self.current_screen),
+                ("Free heap", self.state.free_heap or "unknown"),
             )
         elif self.current_screen == "NETWORK_INFO":
             model["details"] = tuple(sorted(self.network_info.items()))
@@ -450,6 +458,9 @@ class UIManager:
             model["masked"] = self.text_entry.masked
         if self.current_screen == "JOB_DETAILS":
             model["filename"] = self.selected_job
+        if self.current_screen in ("JOBS", "JOB_BROWSER"):
+            model["storage_state"] = self.state.storage_state
+            model["storage_error"] = self.state.storage_error
         if self.current_screen == "MACRO_DETAILS":
             model["macro"] = self.selected_macro
         if self.current_screen == "ACTIVE_JOB":

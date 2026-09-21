@@ -38,6 +38,8 @@ class PendantState:
         self.pin_state = set()
         self.transport = "disabled"
         self.sd_job_state = "idle"
+        self.storage_state = "unknown"
+        self.storage_error = None
         self.current_filename = None
         self.streaming_progress = 0.0
         self.streaming_line = 0
@@ -51,6 +53,11 @@ class PendantState:
         # wheel-generated motion; display navigation is not a safety boundary.
         self.ui_screen = "BOOT"
         self.ui_handwheel_mode = "DISABLED"
+        self.loop_count = 0
+        self.last_loop_duration = 0.0
+        self.free_heap = None
+        self.render_count = 0
+        self.last_status_age = None
 
     def set_estop(self, active):
         self.estop_observed = bool(active)

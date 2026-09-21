@@ -302,3 +302,7 @@ depth, command queues, macro size, and displayed collections remain bounded.
    and exception messages.
 8. Physical display work is incomplete until a selected displayio driver and
    actual resolution pass readability, heap, refresh, and responsiveness tests.
+
+The generic retained-object DisplayIO renderer and physical-input event path are
+implemented. This does not close rule 8: the physical display controller and
+geometry are still unspecified and have not been tested on the S2 Mini.
