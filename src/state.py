@@ -47,6 +47,10 @@ class PendantState:
         self.estop_latched = False
         self.deadman_enabled = False
         self.last_controller_response = None
+        # UI context is mirrored here so the safety layer independently gates
+        # wheel-generated motion; display navigation is not a safety boundary.
+        self.ui_screen = "BOOT"
+        self.ui_handwheel_mode = "DISABLED"
 
     def set_estop(self, active):
         self.estop_observed = bool(active)
