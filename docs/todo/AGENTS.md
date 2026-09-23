@@ -4,6 +4,20 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-09-23 — XIAO round-display HMI foundation
+
+- [x] Separate board and display profiles while retaining the original
+  `hardware_profile` compatibility path.
+- [x] Add the XIAO ESP32-S3 board resources and independently selectable Seeed
+  240×240 GC9A01 display/default wiring.
+- [x] Add a retained round renderer with reusable ring, radial tabs, DRO,
+  multiplier, connectivity, menu, and overlay components driven by UIManager.
+- [x] Test profile binding, component mutation, dirty rendering, overlays, and
+  compatibility with the existing UI navigation state machine.
+- [ ] Validate the documented Seeed shield pin aliases and GC9A01 dependency on
+  physical XIAO ESP32-S3 hardware before enabling CNC motion.
+- [ ] Measure heap/frame timing and tune the production round layout on-device.
+
 ## 2026-09-21 — LOLIN S2 Mini reference pin profile
 
 - [x] Encode the proposed LOLIN S2 Mini v1.0.0 pin allocation as an opt-in
