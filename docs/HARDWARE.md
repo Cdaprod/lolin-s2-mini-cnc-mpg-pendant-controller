@@ -341,3 +341,25 @@ receiver. It is intentionally not routed through the MCP23017.
 - [CircuitPython board pin definitions](https://github.com/adafruit/circuitpython/blob/main/ports/espressif/boards/lolin_s2_mini/pins.c)
 - [CircuitPython default bus definitions](https://github.com/adafruit/circuitpython/blob/main/ports/espressif/boards/lolin_s2_mini/mpconfigboard.h)
 - [WEMOS LOLIN S2 Mini documentation](https://www.wemos.cc/en/latest/s2/s2_mini.html)
+# XIAO ESP32-S3 + Seeed round display
+
+Board and display selection are independent.  For the Seeed XIAO ESP32-S3
+with the 1.28-inch 240×240 GC9A01 round display, add the following to
+`settings.toml` on `CIRCUITPY`:
+
+```toml
+MPG_BOARD_PROFILE="xiao_esp32s3"
+MPG_DISPLAY_PROFILE="seeed_round_240"
+MPG_DISPLAY_ENABLED=true
+```
+
+Copy `code.py`, `src/`, and the GC9A01 dependency bundle library
+`adafruit_gc9a01a.mpy` to `CIRCUITPY`.  The display profile supplies the
+round-board default wiring, while any `MPG_DISPLAY_*_PIN` setting overrides
+that binding for another compatible board.  The profile selects the retained
+round renderer; the existing board-display renderer remains unchanged.
+
+For an unconnected visual hardware test, also set
+`MPG_ROUND_UI_BOOTSTRAP=true` and leave `MPG_CONTROLLER_MODE="disabled"`.
+This populates representative X/Y/Z/A, multiplier, controller, Wi-Fi, and SD
+state and renders it through the same retained components used by the runtime.

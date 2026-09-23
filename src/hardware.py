@@ -23,6 +23,9 @@ def build_inputs(config, state):
 
 def build_display(config):
     if config.get("display_enabled"):
+        if config.get("display_renderer") == "round":
+            from src.display.round_ui.display import from_config
+            return from_config(config)
         from src.display.displayio_backend import from_config
         return from_config(config)
     return ConsoleDisplay()

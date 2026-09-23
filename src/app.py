@@ -50,6 +50,8 @@ class PendantApplication:
                     indicator_output=None, shared_spi=None):
         state = PendantState(config.get("base_increment", 0.001))
         mode = config.get("controller_mode", "disabled")
+        if config.get("round_ui_bootstrap") and mode == "disabled":
+            mode = "mock"
         if transport is None:
             if mode == "uart":
                 transport = UARTTransport.from_pin_names(
@@ -101,6 +103,9 @@ class PendantApplication:
         indicator_output = indicator_output or build_indicator(config)
         state.storage_state = storage.status
         state.storage_error = storage.error
+        if config.get("round_ui_bootstrap"):
+            from src.display.round_ui.bootstrap import apply_mock_state
+            apply_mock_state(state)
         return cls(state, transport, controller, safety, actions,
                    renderer, storage, streamer, watchdog, Indicator(), ui,
                    network_service, macros, input_manager, indicator_output,
@@ -225,6 +230,10 @@ class PendantApplication:
         if "jog_timeout" in events and self.transport.connected:
             self.controller.cancel_jog()
         self.ui.refresh_context()
+        if not self.state.round_ui_bootstrap:
+            self.state.wifi_state = (
+                "connected" if self.network_service.connected else "disconnected"
+            )
         self._update_indicator()
         self.display.render(self.state)
         self.state.render_count = getattr(self.display, "render_count", 0)
