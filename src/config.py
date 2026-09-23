@@ -39,6 +39,8 @@ def _pin_map(prefix, names):
 def load_config():
     config = {
         "hardware_profile": _get("MPG_HARDWARE_PROFILE", ""),
+        "board_profile": _get("MPG_BOARD_PROFILE", ""),
+        "display_profile": _get("MPG_DISPLAY_PROFILE", ""),
         "wifi_ssid": _get("CIRCUITPY_WIFI_SSID"),
         "wifi_password": _get("CIRCUITPY_WIFI_PASSWORD"),
         "hostname": _get("MPG_HOSTNAME", "cda-lolin-s2-mpg"),
@@ -85,6 +87,9 @@ def load_config():
         "display_width": _get_int("MPG_DISPLAY_WIDTH", 0),
         "display_height": _get_int("MPG_DISPLAY_HEIGHT", 0),
         "display_rotation": _get_int("MPG_DISPLAY_ROTATION", 0),
+        "display_driver": _get("MPG_DISPLAY_DRIVER", "").lower(),
+        "display_renderer": _get("MPG_DISPLAY_RENDERER", "").lower(),
+        "round_ui_bootstrap": _get_bool("MPG_ROUND_UI_BOOTSTRAP"),
         "sd_enabled": _get_bool("MPG_SD_ENABLED"),
         "sd_sck_pin": _get("MPG_SD_SCK_PIN", ""),
         "sd_mosi_pin": _get("MPG_SD_MOSI_PIN", ""),
@@ -114,6 +119,9 @@ def load_config():
         "display_cs_pin": _get("MPG_DISPLAY_CS_PIN", ""),
         "display_dc_pin": _get("MPG_DISPLAY_DC_PIN", ""),
         "display_reset_pin": _get("MPG_DISPLAY_RESET_PIN", ""),
+        "display_backlight_pin": _get("MPG_DISPLAY_BACKLIGHT_PIN", ""),
+        "display_touch_sda_pin": _get("MPG_DISPLAY_TOUCH_SDA_PIN", ""),
+        "display_touch_scl_pin": _get("MPG_DISPLAY_TOUCH_SCL_PIN", ""),
     }
     configured = apply_hardware_profile(config)
     if not configured.get("selector_backend"):

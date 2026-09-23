@@ -3,7 +3,8 @@ import unittest
 from unittest.mock import patch
 
 from src.config import load_config
-from src.hardware_profiles import LOLIN_S2_MINI_V1, apply_hardware_profile
+from src.hardware_profiles import (LOLIN_S2_MINI_V1, SEEED_ROUND_240,
+                                   XIAO_ESP32S3, apply_hardware_profile)
 from src.input.mcp23017 import MCP23017InputBank
 
 
@@ -47,6 +48,29 @@ class HardwareProfileTests(unittest.TestCase):
     def test_unknown_profile_fails_closed(self):
         with self.assertRaises(ValueError):
             apply_hardware_profile({"hardware_profile": "unknown"})
+
+    def test_board_and_display_profiles_are_independent(self):
+        config = apply_hardware_profile({
+            "board_profile": XIAO_ESP32S3,
+            "display_profile": SEEED_ROUND_240,
+            "display_enabled": True,
+        })
+        self.assertEqual(config["uart_tx_pin"], "TX")
+        self.assertEqual(config["display_driver"], "gc9a01")
+        self.assertEqual(config["display_renderer"], "round")
+        self.assertEqual(config["display_width"], 240)
+        self.assertEqual(config["display_sck_pin"], "D8")
+
+    def test_display_profile_can_bind_to_another_board(self):
+        config = apply_hardware_profile({
+            "board_profile": LOLIN_S2_MINI_V1,
+            "display_profile": SEEED_ROUND_240,
+            "display_enabled": True,
+            "display_sck_pin": "IO7", "display_mosi_pin": "IO11",
+            "display_cs_pin": "IO12", "display_dc_pin": "IO13",
+        })
+        self.assertEqual(config["display_sck_pin"], "IO7")
+        self.assertEqual(config["display_renderer"], "round")
 
 
 class FakeI2C:
