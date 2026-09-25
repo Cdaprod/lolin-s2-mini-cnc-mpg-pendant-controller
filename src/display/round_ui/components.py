@@ -30,6 +30,11 @@ class StatusRing:
         self.node.color = theme.MACHINE_COLORS.get(state, theme.MUTED)
         return True
 
+    def activity(self, value, armed):
+        if hasattr(self.node, "set_activity"):
+            return self.node.set_activity(value, armed)
+        return False
+
 
 class AxisReadout:
     def __init__(self, axis_line, value_line, secondary_line):
@@ -37,8 +42,9 @@ class AxisReadout:
         self.value = TextComponent(value_line)
         self.secondary = TextComponent(secondary_line)
 
-    def update(self, axis, value, coordinates):
-        changed = self.axis.set(axis or "—")
+    def update(self, axis, value, coordinates, transition=0):
+        marker = "›" if transition > 0 else "‹" if transition < 0 else ""
+        changed = self.axis.set(marker + (axis or "OFF"))
         shown = "---" if value is None else "{:+.3f}".format(value)
         changed = self.value.set(shown) or changed
         values = []
@@ -69,11 +75,12 @@ class JogMultiplier:
     def __init__(self, line):
         self.text = TextComponent(line)
 
-    def set(self, selected):
+    def set(self, selected, transition=0):
         labels = []
         for value in ("X1", "X10", "X100"):
             labels.append("[{}]".format(value) if value == selected else value)
-        return self.text.set("  ".join(labels))
+        marker = " ›" if transition > 0 else " ‹" if transition < 0 else ""
+        return self.text.set("  ".join(labels) + marker)
 
 
 class IndicatorStrip:

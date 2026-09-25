@@ -80,7 +80,7 @@ class DisplayIOBackendTests(unittest.TestCase):
         state.set_estop(True)
         ui.refresh_context()
         renderer.render(state)
-        self.assertIn("E-STOP", renderer.overlay.text)
+        self.assertIn("MOTION INHIBITED", renderer.overlay.text)
 
 
 if __name__ == "__main__":

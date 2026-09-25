@@ -16,6 +16,16 @@ FN = "FN"
 CANCEL = "CANCEL"
 LONG_SELECT = "LONG_SELECT"
 LONG_FN = "LONG_FN"
+HOME = "HOME"
+
+
+class TouchEvent:
+    """Normalized touch input consumed only by UIManager."""
+
+    def __init__(self, kind, x, y):
+        self.kind = kind
+        self.x = int(x)
+        self.y = int(y)
 
 
 class UICommand:
@@ -291,6 +301,7 @@ class UIManager:
                 ("Hostname", self.state.hostname or "unknown"),
                 ("Controller", self.state.connection_state),
                 ("Selector", self.state.selector_backend),
+                ("Touch", self.state.subsystems.get("touch", "unknown")),
                 ("I2C error", self.state.i2c_error or "none"),
                 ("Last error", self.state.network_error or
                  self.state.controller_error or self.state.input_error or
@@ -431,6 +442,13 @@ class UIManager:
         return None
 
     def handle(self, event):
+        if isinstance(event, TouchEvent):
+            event = self._touch_event(event)
+            if event is None:
+                return None
+        if event == HOME:
+            self.home()
+            return None
         if (event == LONG_SELECT and self.state.estop_latched and
                 not self.state.estop_observed):
             return UICommand("ACTION", "ESTOP_RECOVER")
@@ -459,9 +477,36 @@ class UIManager:
             self.back()
         return None
 
+    def _touch_event(self, event):
+        """Map large round-screen targets to the existing normalized grammar."""
+        if event.kind == "long_press":
+            return LONG_SELECT
+        if self.current_screen == "HOME":
+            return SELECT
+        if event.y >= 190:
+            return BACK if event.x < 120 else HOME
+        if event.y < 45:
+            return BACK
+        row = (event.y - 52) // 18
+        if not 0 <= row < 6:
+            return None
+        items = self.items()
+        if not items:
+            return None
+        selected = min(self.focus.get(self.current_screen, 0), len(items) - 1)
+        start = max(0, min(selected - 5, len(items) - 6))
+        target = start + row
+        if target >= len(items):
+            return None
+        self.focus[self.current_screen] = target
+        self._changed()
+        return SELECT
+
     def active_overlay(self):
-        if self.state.estop_observed or self.state.estop_latched:
-            return ("ESTOP", "E-STOP / INHIBITED", 100)
+        if self.state.estop_observed:
+            return ("E-STOP", "MOTION INHIBITED", 100)
+        if self.state.estop_latched:
+            return ("E-STOP", "RECOVERY REQUIRED", 100)
         if self.state.alarm is not None:
             return ("ALARM", "Controller alarm: " + str(self.state.alarm), 90)
         if self.state.sd_job_state in ("error", "alarm"):
@@ -478,11 +523,30 @@ class UIManager:
         """Return backend-independent primitives without exposing passwords."""
         items = self.items()
         selected = self.focus.get(self.current_screen, 0)
+        motion_available = bool(
+            self.current_screen == "HOME" and
+            self.state.connection_state == "connected" and
+            self.state.machine_state in ("idle", "jog") and
+            self.state.selected_axis is not None and
+            self.state.deadman_enabled and not self.state.estop_latched and
+            self.state.alarm is None)
         model = {
             "screen": self.current_screen, "title": self.screen.title,
             "wheel_mode": self.handwheel_mode, "selected": selected,
             "items": [(item.label, item.enabled, item.reason) for item in items],
             "overlay": self.active_overlay(), "dirty": self.dirty,
+            "axis_selector": self.state.selected_axis or "OFF",
+            "resolution_selector": self.state.selected_multiplier,
+            "jog_hold": bool(self.state.deadman_enabled),
+            "jog_armed": motion_available,
+            "mpg_activity": self.state.mpg_activity,
+            "axis_transition_direction": self.state.axis_transition_direction,
+            "resolution_transition_direction":
+                self.state.resolution_transition_direction,
+            "estop_state": ("ACTIVE" if self.state.estop_observed else
+                            "RECOVERY_REQUIRED" if self.state.estop_latched else
+                            "CLEAR"),
+            "motion_available": motion_available,
         }
         if self.current_screen == "CONTROLLER_INFO":
             model["title"] = self.detail_title or model["title"]

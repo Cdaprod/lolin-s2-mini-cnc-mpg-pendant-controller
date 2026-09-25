@@ -351,6 +351,7 @@ with the 1.28-inch 240×240 GC9A01 round display, add the following to
 MPG_BOARD_PROFILE="xiao_esp32s3"
 MPG_DISPLAY_PROFILE="seeed_round_240"
 MPG_DISPLAY_ENABLED=true
+MPG_TOUCH_ENABLED=true
 ```
 
 Copy `code.py`, `src/`, and the GC9A01 dependency bundle library

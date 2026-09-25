@@ -4,6 +4,19 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-09-25 — Physical MPG and touch HMI integration
+
+- [x] Expose authoritative axis, resolution, Jog Hold, relative MPG activity,
+  and latched E-stop semantics through the existing state/view model.
+- [x] Add lightweight retained radial activity and discrete selector feedback
+  without treating the relative MPG as an absolute-position wheel.
+- [x] Route CST8XX touch on shared I²C through normalized UI events and the
+  existing UIManager/semantic-command/safety path.
+- [x] Preserve all secondary menus and long-list windowing behind large touch
+  targets while keeping physical selectors authoritative for jogging.
+- [ ] Validate touch orientation/calibration, selector direction, Jog Hold
+  accent, MPG animation rate, and E-stop presentation on physical hardware.
+
 ## 2026-09-25 — Physical XIAO stabilization
 
 - [x] Route XIAO D4/D5 diagnostics and verified selectors through one shared

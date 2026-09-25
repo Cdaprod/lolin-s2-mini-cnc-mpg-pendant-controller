@@ -25,7 +25,7 @@ class PendantApplication:
     def __init__(self, state, transport, controller, safety, actions, display,
                  storage, streamer, watchdog, indicator, ui, network_service,
                  macros, input_manager, indicator_output, sd_mount=None,
-                 clock=time.monotonic):
+                 touch_manager=None, clock=time.monotonic):
         self.state = state
         self.transport = transport
         self.controller = controller
@@ -42,13 +42,15 @@ class PendantApplication:
         self.input_manager = input_manager
         self.indicator_output = indicator_output
         self.sd_mount = sd_mount
+        self.touch_manager = touch_manager
         self.clock = clock
 
     @classmethod
     def from_config(cls, config, transport=None, display=None,
                     clock=time.monotonic, network_service=None,
                     input_manager=None, input_adapter=None, storage=None,
-                    indicator_output=None, shared_spi=None, shared_i2c=None):
+                    indicator_output=None, shared_spi=None, shared_i2c=None,
+                    touch_manager=None, touch_source=None):
         state = PendantState(config.get("base_increment", 0.001))
         state.runtime_version = getattr(sys, "version", "unknown").split(";", 1)[0]
         state.board_profile = config.get("board_profile", "") or "default"
@@ -128,6 +130,20 @@ class PendantApplication:
                     type(exc).__name__)
                 input_manager = build_inputs({}, state)
         indicator_output = indicator_output or build_indicator(config)
+        touch_error = None
+        if (touch_manager is None and touch_source is None and
+                config.get("touch_enabled")):
+            try:
+                if shared_i2c is None:
+                    raise RuntimeError("shared I2C unavailable")
+                from src.input.touch import build_cst8xx
+                touch_source = build_cst8xx(shared_i2c)
+            except Exception as exc:
+                touch_error = "touch initialization failed: {}".format(
+                    type(exc).__name__)
+        if touch_manager is None and touch_source is not None:
+            from src.input.touch import TouchInput
+            touch_manager = TouchInput(touch_source, clock=clock)
         state.storage_state = storage.status
         state.storage_error = storage.error
         addresses, i2c_error = scan_i2c(shared_i2c)
@@ -136,6 +152,7 @@ class PendantApplication:
         state.mcp23017_address = expected_address if state.mcp23017_detected else None
         state.i2c_error = i2c_init_error or i2c_error
         state.display_error = display_error
+        state.touch_error = touch_error
         storage_status = str(state.storage_state).lower()
         state.subsystems = {
             "display": "ERROR" if state.display_error else
@@ -152,11 +169,13 @@ class PendantApplication:
                    "OK" if shared_i2c is not None else "DISABLED",
             "inputs": "ERROR" if state.input_error else
                       "OK" if config.get("inputs_enabled") else "DISABLED",
+            "touch": "ERROR" if state.touch_error else
+                     "OK" if touch_manager is not None else "DISABLED",
             "wifi": network_service.state,
             "controller": ("DISABLED" if mode == "disabled" else "CONNECTING"),
         }
-        for name in ("display", "storage", "sd", "i2c", "inputs", "wifi",
-                     "controller"):
+        for name in ("display", "storage", "sd", "i2c", "inputs", "touch",
+                     "wifi", "controller"):
             print("{:<13} {}".format(name, state.subsystems[name]))
         if config.get("round_ui_bootstrap"):
             from src.display.round_ui.bootstrap import apply_mock_state
@@ -164,7 +183,7 @@ class PendantApplication:
         return cls(state, transport, controller, safety, actions,
                    renderer, storage, streamer, watchdog, Indicator(), ui,
                    network_service, macros, input_manager, indicator_output,
-                   sd_mount, clock)
+                   sd_mount, touch_manager, clock)
 
     def observe_estop(self, active):
         """Observe supplementary E-stop contact and immediately inhibit I/O."""
@@ -261,6 +280,22 @@ class PendantApplication:
         started = self.clock()
         self.network_service.poll()
         sample = self.input_manager.poll(started)
+        if sample.mpg_activity:
+            self.state.mpg_activity = sample.mpg_activity
+            self.state.mpg_activity_timestamp = started
+        elif (self.state.mpg_activity_timestamp is not None and
+              started - self.state.mpg_activity_timestamp >= 0.20):
+            self.state.mpg_activity = 0
+        if sample.selector_changed:
+            self._record_selector_transition(
+                "axis", sample.selector_direction, started)
+        if sample.multiplier_changed:
+            self._record_selector_transition(
+                "resolution", sample.multiplier_direction, started)
+        for kind in ("axis", "resolution"):
+            timestamp = getattr(self.state, kind + "_transition_timestamp")
+            if timestamp is not None and started - timestamp >= 0.30:
+                setattr(self.state, kind + "_transition_direction", 0)
         if sample.estop_changed:
             self.observe_estop(sample.estop)
         if ((sample.deadman_changed and not self.state.deadman_enabled) or
@@ -273,6 +308,12 @@ class PendantApplication:
                 self.handle_ui_event(event)
             except SafetyError as exc:
                 self.ui.toast = str(exc)
+        if self.touch_manager is not None:
+            for event in self.touch_manager.poll():
+                try:
+                    self.handle_ui_event(event)
+                except SafetyError as exc:
+                    self.ui.toast = str(exc)
         if getattr(self.network_service, "scanning", False):
             if self.network_service.poll_scan():
                 self.ui.set_dynamic_items(
@@ -313,6 +354,10 @@ class PendantApplication:
         self.state.last_status_age = (None if last is None else
                                       max(0.0, finished - last))
         self.state.free_heap = gc.mem_free() if hasattr(gc, "mem_free") else None
+
+    def _record_selector_transition(self, kind, direction, now):
+        setattr(self.state, kind + "_transition_direction", int(direction))
+        setattr(self.state, kind + "_transition_timestamp", now)
 
     def _update_indicator(self):
         if self.state.connection_state != "connected":

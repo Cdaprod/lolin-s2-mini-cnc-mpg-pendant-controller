@@ -84,6 +84,13 @@ semantic `UICommand` values; `PendantApplication` routes those commands to the
 existing action, streamer, storage, macro, and network services. Screens never
 call a backend directly.
 
+Physical selectors remain authoritative for jog axis and resolution. The MPG
+is modeled only as signed recent activity, and Jog Hold remains the dead-man
+safety input. Touch is normalized into the same UI event grammar before it
+reaches `UIManager`; neither the touch adapter nor a renderer can dispatch a
+controller operation. Round-only radial feedback consumes the display-neutral
+view model and is not part of the safety or application layers.
+
 The active UI handwheel mode is mirrored in `PendantState`. The safety layer
 requires `MOTION` in addition to controller, selector, dead-man, alarm, and
 E-stop checks. Therefore neither a display bug nor a menu transition can make a
