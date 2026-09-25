@@ -27,6 +27,7 @@ PROFILE_DEPENDENCIES = {
 }
 SECRET_MARKERS = ("PASSWORD", "SECRET", "TOKEN", "KEY")
 WIFI_CREDENTIALS = {"CIRCUITPY_WIFI_SSID", "CIRCUITPY_WIFI_PASSWORD"}
+RETIRED_MANAGED_PATHS = frozenset(("boot.py",))
 DISKUTIL_TIMEOUT = 3
 MACOS_RECOVERY_COMMAND = (
     "sudo killall -9 com.apple.fskit.msdos fskit_helper fskitd "
@@ -314,17 +315,24 @@ def read_manifest(target):
         return {}
     managed = data.get("managed_files", [])
     if not isinstance(managed, list) or not all(
-            isinstance(item, str) and managed_path(item) for item in managed):
+            isinstance(item, str) and historical_managed_path(item)
+            for item in managed):
         raise DeployError("deployment manifest contains an unsafe managed path")
     return data
 
 
 def managed_path(relative):
+    """Return whether a path may be written into a new deployment manifest."""
     path = Path(relative)
     if path.is_absolute() or ".." in path.parts:
         return False
     return (relative in ("code.py", "patterns.py") or
             (path.parts and path.parts[0] in ("src", "lib")))
+
+
+def historical_managed_path(relative):
+    """Accept current paths plus narrowly retired paths safe to reconcile."""
+    return relative in RETIRED_MANAGED_PATHS or managed_path(relative)
 
 
 def target_is_writable(target):

@@ -138,6 +138,7 @@ class ReconciliationTests(unittest.TestCase):
     def test_boot_workaround_is_not_managed_runtime(self):
         self.assertNotIn("boot.py", deploy.runtime_files())
         self.assertFalse(deploy.managed_path("boot.py"))
+        self.assertTrue(deploy.historical_managed_path("boot.py"))
 
 class DeploymentCLITests(unittest.TestCase):
     def run_cli(self, target, *arguments):
@@ -216,6 +217,37 @@ class DeploymentCLITests(unittest.TestCase):
                 {path.name: path.read_bytes() for path in target.iterdir()}, before)
             self.assertFalse(any(target.rglob("*.tmp")))
 
+    def test_previous_boot_manifest_is_safely_reconciled(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.mark_circuitpython(target)
+            (target / "settings.toml").write_text(
+                'MPG_BOARD_PROFILE="xiao_esp32s3"\n'
+                'MPG_DISPLAY_PROFILE=""\n', encoding="utf-8")
+            (target / "boot.py").write_text("import storage\n", encoding="utf-8")
+            (target / deploy.MANIFEST_NAME).write_text(json.dumps({
+                "format": 1,
+                "managed_files": ["boot.py", "code.py", "patterns.py"],
+            }), encoding="utf-8")
+
+            dry_run = self.run_cli(target, "--dry-run")
+            self.assertEqual(dry_run.returncode, 0, dry_run.stderr)
+            self.assertIn("runtime:  remove-managed boot.py", dry_run.stdout)
+            self.assertTrue((target / "boot.py").exists())
+
+            old_verify = self.run_cli(target, "--verify")
+            self.assertNotEqual(old_verify.returncode, 0)
+            self.assertNotIn("unsafe managed path", old_verify.stderr)
+
+            applied = self.run_cli(target)
+            self.assertEqual(applied.returncode, 0, applied.stderr)
+            self.assertFalse((target / "boot.py").exists())
+            manifest = json.loads(
+                (target / deploy.MANIFEST_NAME).read_text(encoding="utf-8"))
+            self.assertNotIn("boot.py", manifest["managed_files"])
+            verified = self.run_cli(target, "--verify")
+            self.assertEqual(verified.returncode, 0, verified.stderr)
+
     def test_verify_detects_missing_runtime_file_and_dependency(self):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
@@ -232,15 +264,18 @@ class DeploymentCLITests(unittest.TestCase):
             self.assertIn("missing dependency", result.stderr)
 
     def test_manifest_cannot_remove_paths_outside_managed_runtime(self):
-        with tempfile.TemporaryDirectory() as directory:
-            target = Path(directory)
-            self.mark_circuitpython(target)
-            (target / deploy.MANIFEST_NAME).write_text(json.dumps({
-                "managed_files": ["../settings.toml"]
-            }), encoding="utf-8")
-            result = self.run_cli(target, "--verify")
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn("unsafe managed path", result.stderr)
+        unsafe_values = ("../settings.toml", "/etc/passwd", 7, None,
+                         "other-root.py", "src/../settings.toml")
+        for unsafe in unsafe_values:
+            with self.subTest(unsafe=unsafe), tempfile.TemporaryDirectory() as directory:
+                target = Path(directory)
+                self.mark_circuitpython(target)
+                (target / deploy.MANIFEST_NAME).write_text(json.dumps({
+                    "managed_files": [unsafe]
+                }), encoding="utf-8")
+                result = self.run_cli(target, "--verify")
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("unsafe managed path", result.stderr)
 
 
 class TargetValidationTests(unittest.TestCase):

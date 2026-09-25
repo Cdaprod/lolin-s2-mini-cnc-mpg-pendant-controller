@@ -92,6 +92,13 @@ Before a real deployment the tool checks host write access and aborts before
 staging any file when the mounted target is read-only; it never attempts a
 remount, host-service restart, or filesystem repair.
 
+Manifest reconciliation accepts the narrowly retired historical `boot.py`
+entry so a target written by the immediately preceding deployer can migrate
+safely. A dry run reports it as `remove-managed`; an applied deployment removes
+that formerly managed file and writes a new manifest containing only the
+current runtime. Absolute, traversing, malformed, and unrelated root paths
+remain invalid.
+
 Deployment refuses a path that is not present in the host mount table and
 requires a readable CircuitPython `boot_out.txt`; a stale directory named
 `/Volumes/CIRCUITPY` is never a valid target. On macOS every `diskutil`
