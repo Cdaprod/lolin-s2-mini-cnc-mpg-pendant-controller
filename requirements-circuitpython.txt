@@ -1,0 +1,3 @@
+# Install for the Seeed 240x240 GC9A01 display profile:
+#   circup --path /Volumes/CIRCUITPY install -r requirements-circuitpython.txt
+adafruit_gc9a01a

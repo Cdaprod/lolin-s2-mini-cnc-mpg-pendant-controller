@@ -1,8 +1,8 @@
-# LOLIN S2 Mini CNC MPG Pendant Controller
+# CircuitPython CNC MPG Pendant Controller
 
 CircuitPython firmware for a standalone, controller-agnostic CNC MPG pendant
-built around the **LOLIN S2 Mini (ESP32-S2)**. Generic GRBL 1.1 support is the
-first implemented controller protocol.
+with independent XIAO ESP32-S3 and legacy LOLIN S2 Mini board profiles. Generic
+GRBL 1.1 support is the first implemented controller protocol.
 
 The firmware currently provides:
 
@@ -65,22 +65,41 @@ CIRCUITPY/
 └── lib/
 ```
 
-`deploy.sh` recursively copies Python modules and `lib/` while preserving an
-existing board `settings.toml`:
+`deploy.sh` deploys only runtime Python files and vendored `lib/` content. It
+reconciles configuration with this default precedence:
+
+```text
+existing CIRCUITPY/settings.toml > repo-local settings.toml > settings.toml.example
+```
+
+Existing device values and secrets are preserved. Local values populate missing
+keys, and tracked defaults fill the remaining schema:
 
 ```bash
+CIRCUITPY=/path/to/CIRCUITPY ./deploy.sh --dry-run
 CIRCUITPY=/path/to/CIRCUITPY ./deploy.sh
+CIRCUITPY=/path/to/CIRCUITPY ./deploy.sh --verify
 ```
+
+`--apply-local-settings` intentionally replaces existing non-secret values from
+the ignored local file. `--apply-local-secrets` separately authorizes protected
+credential replacement. Output remains redacted. The tool backs up settings,
+stages replacements, records Git/profile/managed-file metadata, and removes
+only stale files listed by its prior manifest. Run `./deploy.sh --help` for all
+options.
 
 ## Configuration
 
-Copy `settings.toml.example` to the CIRCUITPY root as `settings.toml`. The safe
-default is:
+`settings.toml.example` is the tracked schema/default inventory. The optional
+ignored repo-local `settings.toml` contains per-device choices. Generic defaults
+select no board/display and keep physical hardware disabled:
 
 ```toml
 MPG_CONTROLLER_MODE="disabled"
 MPG_UART_TX_PIN=""
 MPG_UART_RX_PIN=""
+MPG_BOARD_PROFILE=""
+MPG_DISPLAY_PROFILE=""
 ```
 
 At boot the network service first loads `/config/wifi.json`, then uses the
@@ -114,8 +133,17 @@ selectors, buttons, dead-man/E-stop observation, board display, SD, and the
 verified external indicator interface. Enabling inputs does not waive the
 electrical verification requirements in `docs/HARDWARE.md`.
 
-The proposed LOLIN S2 Mini/MCP23017 allocation can populate the blank settings
-without enabling them:
+Board and display profiles remain independent. A repo-local configuration for
+the round-display pendant can explicitly select both:
+
+```toml
+MPG_BOARD_PROFILE="xiao_esp32s3"
+MPG_DISPLAY_PROFILE="seeed_round_240"
+MPG_DISPLAY_ENABLED="true"
+```
+
+Other XIAO devices can leave `MPG_DISPLAY_PROFILE=""`. The legacy LOLIN S2
+Mini/MCP23017 allocation remains supported without becoming a default:
 
 ```toml
 MPG_HARDWARE_PROFILE="lolin_s2_mini_v1"
@@ -125,6 +153,18 @@ This reference profile uses CircuitPython's `IO<n>` aliases, shared predefined
 SPI/I2C pins, native GPIO for conditioned MPG A/B, and MCP23017 inputs for the
 slow selectors. Review the complete table and verification gates in
 `docs/HARDWARE.md` before setting `MPG_INPUTS_ENABLED` or any verification flag.
+
+## CircuitPython dependencies
+
+`requirements-circuitpython.txt` is the deterministic dependency inventory.
+Install it before selecting the Seeed round display:
+
+```bash
+circup --path /path/to/CIRCUITPY install -r requirements-circuitpython.txt
+```
+
+Deployment and `--verify` fail when a selected display profile's required
+module is absent from both repository `lib/` and the mounted device.
 
 ## Runtime architecture
 

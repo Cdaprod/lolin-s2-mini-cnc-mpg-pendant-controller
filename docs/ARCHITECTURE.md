@@ -7,7 +7,7 @@ and storage independent while sharing one `PendantState` instance.
 
 ```text
 ┌─────────────────────────────┐
-│ LOLIN S2 Mini / ESP32-S2    │
+│ Profile-selected ESP32-Sx   │
 │ CircuitPython               │
 │                             │
 │  Inputs                     │
@@ -63,6 +63,18 @@ and storage independent while sharing one `PendantState` instance.
 - `src/network.py` owns the reusable STA/fallback-SoftAP state machine,
   credential portal, persistence, and mDNS lifecycle. Network failure never
   blocks construction or polling of the pendant application.
+- `tools/deploy.py` is the host-only provisioning boundary. It reconciles the
+  tracked schema, optional ignored local settings, and active device settings;
+  its manifest is the sole authority for stale runtime-file removal.
+
+## Deployment boundary
+
+Configuration reconciliation preserves active device values by default, uses
+repo-local values for missing keys, then fills the remainder from tracked
+defaults. Explicit local sync can replace non-secret values; secret sync needs
+a separate flag. Profile and dependency validation happens before writes.
+Deployment is restricted to `code.py`, `patterns.py`, `src/**/*.py`, and actual
+vendored `lib/` modules. Host tests use temporary fake volumes, never hardware.
 
 ## HMI event boundary
 

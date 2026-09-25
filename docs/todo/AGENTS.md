@@ -4,6 +4,23 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-09-25 — CircuitPython deployment reconciliation
+
+- [x] Reconcile tracked defaults, optional repo-local settings, and active
+  device settings while preserving device values and secrets by default.
+- [x] Add explicit non-secret/secret sync, redacted plans, backups, staged
+  writes, duplicate/profile validation, and dry-run/verify modes.
+- [x] Restrict deployment to runtime files, manifest managed paths, and remove
+  only stale files previously managed by this tool.
+- [x] Add a dependency inventory and reject selected display profiles whose
+  required CircuitPython modules are absent.
+- [x] Test blank, stale, malformed, secret, profile, dependency, dry-run,
+  idempotence, missing-volume, and verification cases on fake volumes.
+- [ ] Run dry-run, deployment, repeated deployment, and verification against a
+  backed-up physical XIAO ESP32-S3 CIRCUITPY volume.
+- [ ] Confirm `boot_out.txt` board detection across each XIAO and the retained
+  LOLIN profile before relying on mismatch warnings.
+
 ## 2026-09-25 — Common XIAO ESP32-S3 network bootstrap
 
 - [x] Model Wi-Fi as a cooperative service with disabled, connecting,
