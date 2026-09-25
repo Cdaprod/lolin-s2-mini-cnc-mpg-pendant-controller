@@ -263,7 +263,7 @@ def _validate_rendered(text):
 
 
 def runtime_files(root=ROOT):
-    paths = [Path("code.py"), Path("patterns.py")]
+    paths = [Path("boot.py"), Path("code.py"), Path("patterns.py")]
     paths.extend(path.relative_to(root) for path in sorted((root / "src").rglob("*.py"))
                  if "__pycache__" not in path.parts)
     lib = root / "lib"
@@ -323,8 +323,18 @@ def managed_path(relative):
     path = Path(relative)
     if path.is_absolute() or ".." in path.parts:
         return False
-    return (relative in ("code.py", "patterns.py") or
+    return (relative in ("boot.py", "code.py", "patterns.py") or
             (path.parts and path.parts[0] in ("src", "lib")))
+
+
+def target_is_writable(target):
+    """Return whether the mounted target permits host-side deployment writes."""
+    try:
+        flags = os.statvfs(str(target)).f_flag
+    except OSError:
+        return False
+    readonly_flag = getattr(os, "ST_RDONLY", 1)
+    return not bool(flags & readonly_flag) and os.access(str(target), os.W_OK)
 
 
 def git_value(*args):
@@ -398,6 +408,10 @@ def atomic_write(path, content, backup=False):
 def deploy(args):
     target = Path(os.environ.get("CIRCUITPY", "/Volumes/CIRCUITPY"))
     validate_target(target)
+    if not args.dry_run and not target_is_writable(target):
+        raise DeployError(
+            "CIRCUITPY is mounted read-only; deployment cannot write to the target"
+        )
     template = ROOT / "settings.toml.example"
     local = ROOT / "settings.toml"
     device = target / "settings.toml"

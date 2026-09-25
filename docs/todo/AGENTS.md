@@ -4,6 +4,15 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-09-25 — CircuitPython USB storage ownership
+
+- [x] Add minimal root `boot.py` host-write ownership configuration and manage
+  it through dry-run, manifest hashing, deployment, and verification.
+- [x] Refuse a read-only CIRCUITPY target before any staged file or target
+  mutation without attempting host repair or remounting.
+- [ ] Install `boot.py` manually through the REPL on the currently read-only
+  device, reboot, and verify macOS reports `Media Read-Only: No`.
+
 ## 2026-09-25 — Physical MPG and touch HMI integration
 
 - [x] Expose authoritative axis, resolution, Jog Hold, relative MPG activity,
