@@ -135,11 +135,9 @@ class ReconciliationTests(unittest.TestCase):
             (root / "lib/adafruit_cst8xx.mpy").write_bytes(b"driver")
             self.assertEqual(deploy.dependency_problems(settings, root=root), [])
 
-    def test_boot_is_a_managed_root_runtime_file(self):
-        files = deploy.runtime_files()
-        self.assertIn("boot.py", files)
-        self.assertTrue(deploy.managed_path("boot.py"))
-
+    def test_boot_workaround_is_not_managed_runtime(self):
+        self.assertNotIn("boot.py", deploy.runtime_files())
+        self.assertFalse(deploy.managed_path("boot.py"))
 
 class DeploymentCLITests(unittest.TestCase):
     def run_cli(self, target, *arguments):
@@ -178,7 +176,6 @@ class DeploymentCLITests(unittest.TestCase):
             self.assertEqual(settings.read_bytes(), before)
             self.assertNotIn("TopSecret", result.stdout)
             self.assertIn("<redacted>", result.stdout)
-            self.assertIn("runtime:  add           boot.py", result.stdout)
             self.assertFalse((target / deploy.MANIFEST_NAME).exists())
 
     def test_deploy_is_idempotent_writes_backup_manifest_and_verifies(self):
@@ -194,7 +191,6 @@ class DeploymentCLITests(unittest.TestCase):
             self.assertEqual(first.returncode, 0, first.stderr)
             self.assertTrue((target / "settings.toml.bak").is_file())
             manifest = json.loads((target / deploy.MANIFEST_NAME).read_text())
-            self.assertIn("boot.py", manifest["managed_files"])
             self.assertIn("src/network.py", manifest["managed_files"])
             deployed = (target / "settings.toml").read_text()
             self.assertEqual(deployed.count("MPG_BOARD_PROFILE="), 1)
@@ -203,11 +199,6 @@ class DeploymentCLITests(unittest.TestCase):
             self.assertEqual(second.returncode, 0, second.stderr)
             verified = self.run_cli(target, "--verify")
             self.assertEqual(verified.returncode, 0, verified.stderr)
-
-            (target / "boot.py").write_text("# mismatch\n", encoding="utf-8")
-            mismatch = self.run_cli(target, "--verify")
-            self.assertNotEqual(mismatch.returncode, 0)
-            self.assertIn("runtime mismatch: boot.py", mismatch.stderr)
 
     def test_read_only_preflight_refuses_before_any_write(self):
         with tempfile.TemporaryDirectory() as directory:

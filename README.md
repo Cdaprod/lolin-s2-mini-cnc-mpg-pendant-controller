@@ -49,7 +49,6 @@ libraries must be placed under `lib/` so imports resolve on the board.
 
 ```text
 CIRCUITPY/
-├── boot.py
 ├── code.py
 ├── patterns.py
 ├── settings.toml
@@ -89,12 +88,9 @@ stages replacements, records Git/profile/managed-file metadata, and removes
 only stale files listed by its prior manifest. Run `./deploy.sh --help` for all
 options.
 
-Root `boot.py` gives the USB host write ownership of CIRCUITPY before USB
-enumeration while leaving CircuitPython read-only during normal application
-execution. The deployer manages and verifies it with the other runtime files.
 Before a real deployment the tool checks host write access and aborts before
 staging any file when the mounted target is read-only; it never attempts a
-remount or host repair.
+remount, host-service restart, or filesystem repair.
 
 Deployment refuses a path that is not present in the host mount table and
 requires a readable CircuitPython `boot_out.txt`; a stale directory named
@@ -106,6 +102,12 @@ operator-reviewed recovery command but never executes it:
 ```bash
 sudo killall -9 com.apple.fskit.msdos fskit_helper fskitd fskit_agent diskarbitrationd DiskArbitrationAgent
 ```
+
+Physical validation showed that restarting the stuck macOS FSKit/Disk
+Arbitration processes changed the same connected XIAO from media/volume
+read-only to writable without any CircuitPython storage change. There is no
+repository `boot.py` storage workaround; recovery remains an explicit host
+operator action after confirming the documented `Us` process state.
 
 Do not remove the stale path, format the filesystem, or run the command unless
 the process state has been confirmed. After recovery, unplug/replug the XIAO,
