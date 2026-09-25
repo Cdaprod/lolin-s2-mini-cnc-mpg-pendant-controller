@@ -10,7 +10,7 @@ CIRCUITPY_WIFI_SSID=""
 CIRCUITPY_WIFI_PASSWORD=""
 
 # DHCP/mDNS-friendly hostname. Keep it lowercase and avoid spaces.
-MPG_HOSTNAME="cda-lolin-s2-mpg"
+MPG_HOSTNAME="cdaprod-cnc-pendant"
 # Automatic fallback setup AP lifetime in seconds; 0 disables expiry.
 MPG_NETWORK_AP_TIMEOUT="600"
 # Maximum time for an individual station connection attempt.

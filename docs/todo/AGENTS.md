@@ -16,6 +16,10 @@ enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
   network availability and cover bootstrap transitions with host tests.
 - [ ] Validate STA timeout behavior, SoftAP address, HTTP form submission, AP
   expiry, and `.local` discovery on physical XIAO ESP32-S3 hardware.
+- [ ] Replace setup-time synchronous SSID enumeration with bounded incremental
+  scanning after SoftAP-plus-scan behavior is verified on CircuitPython 10.3.1.
+- [ ] Derive an optional MAC suffix for hostnames before provisioning multiple
+  devices with the same product profile.
 - [ ] Add captive-portal DNS/OS detection only after measuring its heap cost on
   the target CircuitPython build.
 

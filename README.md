@@ -92,6 +92,10 @@ demand without that timeout. A successful connection stops the AP and enables
 the configured `<hostname>.local` mDNS name. Network failure does not stop the
 local UI, inputs, serial controller, or job runtime.
 
+The first XIAO pendant defaults to `cdaprod-cnc-pendant.local`. Override
+`MPG_HOSTNAME` with another unique, lowercase name when provisioning additional
+devices on the same network.
+
 After electrical verification and a reviewed pin allocation, direct GRBL uses:
 
 ```toml
