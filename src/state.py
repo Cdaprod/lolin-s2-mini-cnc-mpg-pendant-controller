@@ -37,7 +37,7 @@ class PendantState:
         self.message = None
         self.pin_state = set()
         self.transport = "disabled"
-        self.wifi_state = "disconnected"
+        self.wifi_state = "DISABLED"
         self.sd_job_state = "idle"
         self.storage_state = "unknown"
         self.storage_error = None

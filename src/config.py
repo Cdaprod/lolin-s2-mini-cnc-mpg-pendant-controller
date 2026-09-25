@@ -43,7 +43,11 @@ def load_config():
         "display_profile": _get("MPG_DISPLAY_PROFILE", ""),
         "wifi_ssid": _get("CIRCUITPY_WIFI_SSID"),
         "wifi_password": _get("CIRCUITPY_WIFI_PASSWORD"),
-        "hostname": _get("MPG_HOSTNAME", "cda-lolin-s2-mpg"),
+        "hostname": _get("MPG_HOSTNAME", "cdaprod-cnc-pendant"),
+        "network_ap_timeout": _get_float("MPG_NETWORK_AP_TIMEOUT", 600),
+        "network_connect_timeout": _get_float(
+            "MPG_NETWORK_CONNECT_TIMEOUT", 15
+        ),
         "controller_mode": _get("MPG_CONTROLLER_MODE", "disabled").lower(),
         "controller_host": _get("MPG_CONTROLLER_HOST", ""),
         "controller_port": _get_int("MPG_CONTROLLER_PORT", 8080),

@@ -7,7 +7,7 @@ and storage independent while sharing one `PendantState` instance.
 
 ```text
 ┌─────────────────────────────┐
-│ LOLIN S2 Mini / ESP32-S2    │
+│ Profile-selected ESP32-Sx   │
 │ CircuitPython               │
 │                             │
 │  Inputs                     │
@@ -43,7 +43,8 @@ and storage independent while sharing one `PendantState` instance.
 3. Loss of communication must never be treated as a successful stop.
 4. A future jog implementation should use a watchdog/dead-man mechanism.
 5. Machine-state-changing actions should be explicit named actions.
-6. Wi-Fi configuration stays in `settings.toml`, not source code.
+6. Wi-Fi credentials come from the credential store or `settings.toml`, never
+   from source code.
 
 ## Implemented module boundaries
 
@@ -59,6 +60,21 @@ and storage independent while sharing one `PendantState` instance.
   and loads bounded named macros.
 - `src/display/` renders shared state and exposes a logical LED abstraction
   without assuming unverified LED drive voltage/current.
+- `src/network.py` owns the reusable STA/fallback-SoftAP state machine,
+  credential portal, persistence, and mDNS lifecycle. Network failure never
+  blocks construction or polling of the pendant application.
+- `tools/deploy.py` is the host-only provisioning boundary. It reconciles the
+  tracked schema, optional ignored local settings, and active device settings;
+  its manifest is the sole authority for stale runtime-file removal.
+
+## Deployment boundary
+
+Configuration reconciliation preserves active device values by default, uses
+repo-local values for missing keys, then fills the remainder from tracked
+defaults. Explicit local sync can replace non-secret values; secret sync needs
+a separate flag. Profile and dependency validation happens before writes.
+Deployment is restricted to `code.py`, `patterns.py`, `src/**/*.py`, and actual
+vendored `lib/` modules. Host tests use temporary fake volumes, never hardware.
 
 ## HMI event boundary
 
@@ -80,8 +96,9 @@ exercise all policy and protocol logic.
 
 ## On-device cooperative integration
 
-`PendantApplication.poll()` samples the supplementary E-stop and controls
-first, dispatches bounded normalized UI events, services an incremental Wi-Fi
+`PendantApplication.poll()` services the cooperative network state machine,
+then samples the supplementary E-stop and controls, dispatches bounded
+normalized UI events, services an incremental Wi-Fi
 scan, polls GRBL and the streamer, evaluates watchdogs, refreshes UI ownership,
 updates the optional indicator, and finally renders. No input adapter writes
 GRBL and no screen reads GPIO.

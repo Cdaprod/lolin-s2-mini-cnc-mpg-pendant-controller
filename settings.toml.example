@@ -1,16 +1,22 @@
 # Copy this file to settings.toml on CIRCUITPY.
 # Never commit the real settings.toml.
 
-# Optional proposed pin allocation. This fills blank pin settings but does not
-# enable inputs/display/SD/indicator or assert electrical verification.
-# MPG_HARDWARE_PROFILE="lolin_s2_mini_v1"
+# Independent board/display profiles fill blank resource settings but never
+# enable hardware or assert electrical verification. MPG_HARDWARE_PROFILE is a
+# compatibility alias for legacy deployments; prefer MPG_BOARD_PROFILE.
 MPG_HARDWARE_PROFILE=""
+MPG_BOARD_PROFILE=""
+MPG_DISPLAY_PROFILE=""
 
-CIRCUITPY_WIFI_SSID="cda_Lab"
-CIRCUITPY_WIFI_PASSWORD="CHANGE_ME"
+CIRCUITPY_WIFI_SSID=""
+CIRCUITPY_WIFI_PASSWORD=""
 
 # DHCP/mDNS-friendly hostname. Keep it lowercase and avoid spaces.
-MPG_HOSTNAME="cda-lolin-s2-mpg"
+MPG_HOSTNAME="cdaprod-cnc-pendant"
+# Automatic fallback setup AP lifetime in seconds; 0 disables expiry.
+MPG_NETWORK_AP_TIMEOUT="600"
+# Maximum time for an individual station connection attempt.
+MPG_NETWORK_CONNECT_TIMEOUT="15"
 
 # disabled | uart | mock
 MPG_CONTROLLER_MODE="disabled"
@@ -20,7 +26,7 @@ MPG_CONTROLLER_HOST=""
 MPG_CONTROLLER_PORT="8080"
 
 # Direct GRBL 1.1 UART. Leave pins blank until electrical verification and a
-# reviewed S2 Mini GPIO allocation are complete. Values are board pin names.
+# reviewed board GPIO allocation are complete. Values are board pin names.
 MPG_UART_TX_PIN=""
 MPG_UART_RX_PIN=""
 MPG_UART_BAUDRATE="115200"
@@ -79,23 +85,28 @@ MPG_I2C_SDA_PIN=""
 MPG_I2C_SCL_PIN=""
 MPG_MCP23017_ADDRESS="32"
 
-# Shared SPI routing metadata. Display controller construction remains TBD.
+# Shared SPI routing metadata.
 MPG_SPI_SCK_PIN=""
 MPG_SPI_MOSI_PIN=""
 MPG_SPI_MISO_PIN=""
 
-# A generic retained DisplayIO renderer can use an already-created
-# board.DISPLAY. No controller, bus, pins, offsets, or resolution are assumed.
+# Display profile/controller settings remain independent of the board profile.
 MPG_DISPLAY_ENABLED="false"
 MPG_DISPLAY_USE_BOARD_DISPLAY="false"
 MPG_DISPLAY_WIDTH="0"
 MPG_DISPLAY_HEIGHT="0"
 MPG_DISPLAY_ROTATION="0"
+MPG_DISPLAY_DRIVER=""
+MPG_DISPLAY_RENDERER=""
+MPG_ROUND_UI_BOOTSTRAP="false"
 MPG_DISPLAY_SCK_PIN=""
 MPG_DISPLAY_MOSI_PIN=""
 MPG_DISPLAY_CS_PIN=""
 MPG_DISPLAY_DC_PIN=""
 MPG_DISPLAY_RESET_PIN=""
+MPG_DISPLAY_BACKLIGHT_PIN=""
+MPG_DISPLAY_TOUCH_SDA_PIN=""
+MPG_DISPLAY_TOUCH_SCL_PIN=""
 
 # Optional physical SD mount. All four SPI pins are required when enabled.
 MPG_SD_ENABLED="false"

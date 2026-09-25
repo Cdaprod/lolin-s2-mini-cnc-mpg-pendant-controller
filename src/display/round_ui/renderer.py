@@ -49,7 +49,9 @@ class RoundRenderer:
         changed = self.axis.update(selected, coordinates.get(selected),
                                    coordinates) or changed
         changed = self.multiplier.set(state.selected_multiplier) or changed
-        wifi = getattr(state, "wifi_state", "disconnected") == "connected"
+        wifi = getattr(state, "wifi_state", "DISABLED") in (
+            "CONNECTED", "connected"
+        )
         changed = self.indicators.update(
             state.connection_state == "connected", wifi,
             state.storage_state == "available"

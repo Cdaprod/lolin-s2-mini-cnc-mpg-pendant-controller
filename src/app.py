@@ -88,9 +88,17 @@ class PendantApplication:
         if hasattr(renderer, "bind_ui"):
             renderer.bind_ui(ui)
         if network_service is None:
-            network_service = (WiFiService() if
+            network_service = (WiFiService(
+                ap_timeout=config.get("network_ap_timeout", 600),
+                connect_timeout=config.get("network_connect_timeout", 15)
+            ) if
                                sys.implementation.name == "circuitpython" else
                                MockWiFiService())
+        network_service.start(
+            config.get("hostname", "cdaprod-cnc-pendant"),
+            config.get("wifi_ssid", ""),
+            config.get("wifi_password", "")
+        )
         if input_manager is None:
             input_manager = (InputManager(
                 state, input_adapter,
@@ -186,6 +194,10 @@ class PendantApplication:
             self.network_service.disconnect()
             self.ui.toast = "Wi-Fi disconnected"
             return True
+        if name == "NETWORK_SETUP_AP":
+            started = self.network_service.start_setup_ap(manual=True)
+            self.ui.toast = "Setup AP started" if started else "AP failed"
+            return started
         if name == "NETWORK_TOGGLE":
             enabled = not self.network_service.enabled
             self.network_service.set_enabled(enabled)
@@ -200,6 +212,7 @@ class PendantApplication:
 
     def poll(self):
         started = self.clock()
+        self.network_service.poll()
         sample = self.input_manager.poll(started)
         if sample.estop_changed:
             self.observe_estop(sample.estop)
@@ -231,9 +244,7 @@ class PendantApplication:
             self.controller.cancel_jog()
         self.ui.refresh_context()
         if not self.state.round_ui_bootstrap:
-            self.state.wifi_state = (
-                "connected" if self.network_service.connected else "disconnected"
-            )
+            self.state.wifi_state = self.network_service.state
         self._update_indicator()
         self.display.render(self.state)
         self.state.render_count = getattr(self.display, "render_count", 0)
