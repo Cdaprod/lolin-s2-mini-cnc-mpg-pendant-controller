@@ -60,6 +60,8 @@ class HardwareProfileTests(unittest.TestCase):
         self.assertEqual(config["display_renderer"], "round")
         self.assertEqual(config["display_width"], 240)
         self.assertEqual(config["display_sck_pin"], "D8")
+        self.assertEqual(config["i2c_sda_pin"], "D4")
+        self.assertEqual(config["i2c_scl_pin"], "D5")
 
     def test_display_profile_can_bind_to_another_board(self):
         config = apply_hardware_profile({

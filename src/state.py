@@ -43,6 +43,11 @@ class PendantState:
         self.wifi_rssi = None
         self.hostname = None
         self.network_error = None
+        self.i2c_error = None
+        self.controller_error = None
+        self.controller_enabled = False
+        self.input_error = None
+        self.display_error = None
         self.board_profile = ""
         self.display_profile = ""
         self.selector_backend = "disabled"

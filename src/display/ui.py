@@ -189,6 +189,9 @@ class UIManager:
             return DISABLED
         if self.confirmation:
             return NAVIGATION
+        if (self.current_screen == "HOME" and
+                self.state.connection_state not in ("connected", "connecting")):
+            return DISABLED
         return self.screen.wheel_mode
 
     def complete_boot(self):
@@ -246,6 +249,10 @@ class UIManager:
         self._changed()
 
     def items(self):
+        details = self.details()
+        if details:
+            return [MenuItem("{}: {}".format(key, value))
+                    for key, value in details]
         if self.screen.dynamic:
             if self.screen.dynamic == "ssids":
                 return [MenuItem("{}  {} dBm".format(value[0], value[1]),
@@ -254,6 +261,51 @@ class UIManager:
             return [MenuItem(str(value), value=value)
                     for value in self.dynamic_items[self.screen.dynamic]]
         return self.screen.items
+
+    def details(self):
+        """Return sanitized rows for the current read-only information view."""
+        if self.current_screen == "CONTROLLER_INFO":
+            return (
+                ("Identity", self.state.controller_identity or "unknown"),
+                ("Connection", self.state.connection_state),
+                ("Machine", self.state.machine_state),
+                ("Transport", self.state.transport),
+                ("Pins", "".join(sorted(self.state.pin_state)) or "none"),
+                ("Last error", self.state.controller_error or "none"),
+            )
+        if self.current_screen == "SYSTEM_INFO":
+            return (
+                ("CircuitPython", self.state.runtime_version),
+                ("Board", self.state.board_profile),
+                ("Display", self.state.display_profile),
+                ("Free heap", self.state.free_heap or "unknown"),
+                ("Storage", self.state.subsystems.get("storage", "unknown")),
+                ("SD", self.state.subsystems.get("sd", "unknown")),
+                ("I2C", self.state.subsystems.get("i2c", "unknown")),
+                ("MCP23017", "0x{:02X}".format(self.state.mcp23017_address)
+                 if self.state.mcp23017_detected else "not detected"),
+                ("Wi-Fi", self.state.wifi_state),
+                ("SSID", self.state.wifi_ssid or "none"),
+                ("IP", self.state.wifi_ip or "none"),
+                ("RSSI", self.state.wifi_rssi or "unknown"),
+                ("Hostname", self.state.hostname or "unknown"),
+                ("Controller", self.state.connection_state),
+                ("Selector", self.state.selector_backend),
+                ("I2C error", self.state.i2c_error or "none"),
+                ("Last error", self.state.network_error or
+                 self.state.controller_error or self.state.input_error or
+                 self.state.display_error or self.state.storage_error or "none"),
+            )
+        if self.current_screen == "NETWORK_INFO":
+            return (
+                ("Wi-Fi", self.state.wifi_state.replace("_", " ")),
+                ("SSID", self.state.wifi_ssid or "none"),
+                ("IP", self.state.wifi_ip or "none"),
+                ("RSSI", self.state.wifi_rssi or "unknown"),
+                ("Hostname", self.state.hostname or "unknown"),
+                ("Reason", self.state.network_error or "none"),
+            )
+        return ()
 
     def selected_item(self):
         items = self.items()
@@ -386,7 +438,8 @@ class UIManager:
             return self.rotate(1)
         if event == ROTATE_CCW:
             return self.rotate(-1)
-        if self.handwheel_mode == DISABLED and event not in (BACK, CANCEL):
+        if (self.handwheel_mode == DISABLED and event not in (BACK, CANCEL) and
+                not (event == SELECT and self.current_screen == "HOME")):
             return None
         if event == SELECT:
             return self._select()
@@ -411,8 +464,6 @@ class UIManager:
             return ("ESTOP", "E-STOP / INHIBITED", 100)
         if self.state.alarm is not None:
             return ("ALARM", "Controller alarm: " + str(self.state.alarm), 90)
-        if self.state.connection_state not in ("connected", "connecting"):
-            return ("CONTROLLER OFFLINE", "Motion unavailable", 80)
         if self.state.sd_job_state in ("error", "alarm"):
             return ("STREAM_ERROR", self.state.error or "Streaming error", 70)
         if self.confirmation:
@@ -435,45 +486,12 @@ class UIManager:
         }
         if self.current_screen == "CONTROLLER_INFO":
             model["title"] = self.detail_title or model["title"]
-            model["details"] = (
-                ("Identity", self.state.controller_identity or "unknown"),
-                ("Connection", self.state.connection_state),
-                ("Machine", self.state.machine_state),
-                ("Transport", self.state.transport),
-                ("Pins", "".join(sorted(self.state.pin_state)) or "none"),
-            )
+            model["details"] = self.details()
         elif self.current_screen == "SYSTEM_INFO":
             model["title"] = self.detail_title or model["title"]
-            model["details"] = (
-                ("Job", self.state.sd_job_state),
-                ("File", self.state.current_filename or "none"),
-                ("UI", self.current_screen),
-                ("Free heap", self.state.free_heap or "unknown"),
-                ("CircuitPython", self.state.runtime_version),
-                ("Board", self.state.board_profile),
-                ("Display", self.state.display_profile),
-                ("SD", self.state.subsystems.get("sd", "unknown")),
-                ("Wi-Fi", self.state.wifi_state),
-                ("SSID", self.state.wifi_ssid or "none"),
-                ("IP", self.state.wifi_ip or "none"),
-                ("RSSI", self.state.wifi_rssi or "unknown"),
-                ("Hostname", self.state.hostname or "unknown"),
-                ("Controller", self.state.connection_state),
-                ("Selector", self.state.selector_backend),
-                ("MCP23017", "0x{:02X}".format(self.state.mcp23017_address)
-                 if self.state.mcp23017_detected else "not detected"),
-                ("Last error", self.state.network_error or
-                 self.state.error or "none"),
-            )
+            model["details"] = self.details()
         elif self.current_screen == "NETWORK_INFO":
-            model["details"] = (
-                ("Wi-Fi", self.state.wifi_state.replace("_", " ")),
-                ("SSID", self.state.wifi_ssid or "none"),
-                ("IP", self.state.wifi_ip or "none"),
-                ("RSSI", self.state.wifi_rssi or "unknown"),
-                ("Hostname", self.state.hostname or "unknown"),
-                ("Reason", self.state.network_error or "none"),
-            )
+            model["details"] = self.details()
         if self.current_screen == "TEXT_ENTRY" and self.text_entry:
             model["text"] = self.text_entry.display_value()
             model["character"] = self.text_entry.selected_character

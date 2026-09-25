@@ -71,7 +71,7 @@ def _input_pin(board, digitalio, name, pull_up=True):
     return pin
 
 
-def from_config(config):
+def from_config(config, shared_i2c=None):
     """Build configured inputs or return `None`; never supplies default pins."""
     if not config.get("inputs_enabled"):
         return None
@@ -99,13 +99,14 @@ def from_config(config):
     resources = []
     if (config.get("selector_backend") == "mcp23017" and
             config.get("selector_interface_verified")):
-        import busio
         from .mcp23017 import MCP23017InputBank
         sda_name = config.get("i2c_sda_pin")
         scl_name = config.get("i2c_scl_pin")
         if not sda_name or not scl_name:
             raise ValueError("MCP23017 selector backend requires I2C pins")
-        i2c = busio.I2C(getattr(board, scl_name), getattr(board, sda_name))
+        if shared_i2c is None:
+            raise ValueError("MCP23017 selector backend requires shared I2C bus")
+        i2c = shared_i2c
         bank = MCP23017InputBank(
             i2c, config.get("mcp23017_address", 0x20), 0x01FF
         )
@@ -114,7 +115,7 @@ def from_config(config):
         multipliers = dict((name, bank.pin(bit)) for name, bit in
                            config.get("mcp23017_multiplier_bits", {}).items())
         selector_refresh = bank.refresh
-        resources.extend((i2c, bank))
+        resources.append(bank)
     else:
         axes = dict((name, _input_pin(board, digitalio, pin, selector_active_low))
                     for name, pin in config.get("axis_pins", {}).items() if pin)

@@ -18,11 +18,25 @@ def scan_i2c(i2c):
         i2c.unlock()
 
 
-def build_inputs(config, state):
+def build_shared_i2c(config):
+    """Construct the one configured CircuitPython I2C bus for all consumers."""
+    sda_name = config.get("i2c_sda_pin")
+    scl_name = config.get("i2c_scl_pin")
+    if not sda_name or not scl_name:
+        return None, None
+    try:
+        import board
+        import busio
+        return busio.I2C(getattr(board, scl_name), getattr(board, sda_name)), None
+    except (ImportError, AttributeError, ValueError, RuntimeError) as exc:
+        return None, "I2C initialization failed: {}".format(type(exc).__name__)
+
+
+def build_inputs(config, state, shared_i2c=None):
     adapter = None
     if config.get("inputs_enabled"):
         from src.input.circuitpython import from_config
-        adapter = from_config(config)
+        adapter = from_config(config, shared_i2c=shared_i2c)
     return InputManager(
         state, adapter or NullInputAdapter(),
         config.get("mpg_counts_per_detent", 4),

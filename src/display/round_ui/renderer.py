@@ -62,11 +62,16 @@ class RoundRenderer:
         if model.get("details"):
             items = tuple(("{}: {}".format(key, value), True, "")
                           for key, value in model["details"])
+        selected = min(model.get("selected", 0), max(0, len(items) - 1))
+        window_start = max(0, min(selected - len(self.menu) + 1,
+                                  len(items) - len(self.menu)))
+        visible_items = items[window_start:window_start + len(self.menu)]
         for index, component in enumerate(self.menu):
             text = ""
-            if index < len(items):
-                marker = "› " if index == model.get("selected") else "  "
-                text = marker + items[index][0]
+            if index < len(visible_items):
+                absolute = window_start + index
+                marker = "› " if absolute == selected else "  "
+                text = marker + visible_items[index][0]
             changed = component.set(text) or changed
         changed = self.overlay.update(model.get("overlay")) or changed
         if not changed:
