@@ -4,6 +4,19 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-09-25 — Physical XIAO stabilization
+
+- [x] Reject stale/ordinary CIRCUITPY directories, bound macOS inspection, and
+  diagnose the known Disk Arbitration/FSKit `Us` failure without remediation.
+- [x] Expose sanitized deterministic Wi-Fi/AP/reconnect state through the
+  shared runtime state, serial transitions, and round Network/Diagnostics UI.
+- [x] Separate controller-offline labeling from Wi-Fi state and centralize the
+  240×240 circular safe-area metrics used by the retained renderer.
+- [x] Preserve disabled controller behavior even when round UI sample data is
+  requested; sample rendering no longer fabricates network/storage health.
+- [ ] Physically validate STA, AP fallback/HTTP, display safe area, SD status,
+  and a non-destructive MCP23017 address scan on CircuitPython 10.3.1.
+
 ## 2026-09-25 — CircuitPython deployment reconciliation
 
 - [x] Reconcile tracked defaults, optional repo-local settings, and active

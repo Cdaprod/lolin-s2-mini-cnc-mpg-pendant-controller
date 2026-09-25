@@ -53,6 +53,11 @@ class FailingRadio(FakeRadio):
         raise ConnectionError("password must never appear here")
 
 
+class FailingAPRadio(FakeRadio):
+    def start_ap(self, ssid):
+        raise RuntimeError("radio unavailable")
+
+
 class FakePortal:
     def __init__(self, credentials=None):
         self.credentials = credentials
@@ -129,6 +134,48 @@ class NetworkTests(unittest.TestCase):
         self.assertEqual(service.state, NetworkState.CONNECTED)
         self.assertEqual(service.info()["hostname"], "cnc-pendant")
         self.assertIsNone(radio.ap_ssid)
+
+    def test_settings_credentials_reach_radio_without_password_log(self):
+        messages = []
+        radio = FakeRadio()
+        service = WiFiService(radio, CredentialStore("/missing"),
+                              portal_factory=lambda *_: FakePortal(),
+                              mdns_factory=lambda *_: FakeMDNS(),
+                              logger=messages.append)
+        with patch.dict(os.environ, {"CIRCUITPY_WIFI_SSID": "Shop",
+                                    "CIRCUITPY_WIFI_PASSWORD": "TopSecret"}):
+            config = load_config()
+        self.assertTrue(service.start("pendant", config["wifi_ssid"],
+                                      config["wifi_password"]))
+        self.assertNotIn("TopSecret", " ".join(messages) + repr(service.info()))
+
+    def test_lost_connection_reconnects_then_falls_back(self):
+        now = [0]
+        radio = FakeRadio()
+        service = self.make_service(radio, clock=lambda: now[0])
+        service.reconnect_attempts = 2
+        service.start("pendant", "Shop", "secret")
+        radio.connected = False
+        radio.connect = FailingRadio.connect.__get__(radio, FakeRadio)
+        service.poll()
+        self.assertEqual(service.state, NetworkState.RECONNECTING)
+        now[0] += service.reconnect_interval
+        service.poll()
+        self.assertEqual(service.state, NetworkState.AP_SETUP)
+
+    def test_lost_connection_can_reconnect(self):
+        radio = FakeRadio()
+        service = self.make_service(radio)
+        service.start("pendant", "Shop", "secret")
+        radio.connected = False
+        service.poll()
+        self.assertEqual(service.state, NetworkState.CONNECTED)
+
+    def test_ap_start_failure_is_diagnostic_error(self):
+        service = self.make_service(FailingAPRadio())
+        self.assertFalse(service.start("pendant"))
+        self.assertEqual(service.state, NetworkState.ERROR)
+        self.assertIn("RuntimeError", service.last_error)
 
     def test_failed_station_falls_back_and_portal_reconnects(self):
         radio = FailingRadio()
