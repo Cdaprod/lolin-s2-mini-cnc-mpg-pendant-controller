@@ -192,6 +192,56 @@ class ApplicationInputPipelineTests(unittest.TestCase):
                              jog_count)
             self.assertGreater(app.state.loop_count, 0)
 
+    def test_physical_selectors_and_relative_activity_reach_view_model(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            adapter.set(axes=("Y",), multipliers=("X100",), deadman=True,
+                        mpg_delta=4)
+            app.poll()
+            model = app.ui.view_model()
+            self.assertEqual(model["axis_selector"], "Y")
+            self.assertEqual(model["resolution_selector"], "X100")
+            self.assertTrue(model["jog_armed"])
+            self.assertEqual(model["mpg_activity"], 4)
+            self.assertEqual(model["axis_transition_direction"], 1)
+            self.assertEqual(model["resolution_transition_direction"], 1)
+            adapter.set(axes=("X",), multipliers=("X1",), deadman=True,
+                        mpg_delta=-4)
+            app.poll()
+            reverse = app.ui.view_model()
+            self.assertEqual(reverse["axis_transition_direction"], -1)
+            self.assertEqual(reverse["resolution_transition_direction"], -1)
+            self.assertEqual(reverse["mpg_activity"], -4)
+            clock.advance(0.21)
+            adapter.set(mpg_delta=0)
+            app.poll()
+            self.assertEqual(app.ui.view_model()["mpg_activity"], 0)
+            self.assertFalse(hasattr(app.state, "mpg_position"))
+
+    def test_off_and_released_jog_hold_immediately_inhibit_motion(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            writes = len(app.transport.writes)
+            adapter.set(axes=(), multipliers=("X10",), deadman=False,
+                        mpg_delta=4)
+            app.poll()
+            model = app.ui.view_model()
+            self.assertEqual(model["axis_selector"], "OFF")
+            self.assertFalse(model["jog_armed"])
+            self.assertFalse(model["motion_available"])
+            self.assertEqual(len(app.transport.writes), writes)
+
+    def test_estop_view_model_requires_explicit_recovery(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, _, _ = self.make_app(root)
+            app.observe_estop(True)
+            self.assertEqual(app.ui.view_model()["estop_state"], "ACTIVE")
+            app.observe_estop(False)
+            self.assertEqual(app.ui.view_model()["estop_state"],
+                             "RECOVERY_REQUIRED")
+            app.recover_estop()
+            self.assertEqual(app.ui.view_model()["estop_state"], "CLEAR")
+
     def test_estop_preempts_jog_stream_and_requires_long_recovery(self):
         with tempfile.TemporaryDirectory() as root:
             app, adapter, clock = self.make_app(root)
@@ -204,7 +254,7 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             app.poll()
             self.assertTrue(app.state.estop_latched)
             self.assertEqual(app.state.sd_job_state, "inhibited")
-            self.assertEqual(app.ui.active_overlay()[0], "ESTOP")
+            self.assertEqual(app.ui.active_overlay()[0], "E-STOP")
             self.assertIn(b"\x85", app.transport.writes)
             adapter.set(estop=False)
             clock.advance(0.01)

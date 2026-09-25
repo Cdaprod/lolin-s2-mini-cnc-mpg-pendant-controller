@@ -124,6 +124,17 @@ class ReconciliationTests(unittest.TestCase):
             (root / "lib/adafruit_gc9a01a.mpy").write_bytes(b"driver")
             self.assertEqual(deploy.dependency_problems(settings, root=root), [])
 
+    def test_enabled_touch_requires_cst8xx_dependency(self):
+        settings = {"MPG_DISPLAY_PROFILE": '""',
+                    "MPG_TOUCH_ENABLED": "true"}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.assertIn("adafruit_cst8xx",
+                          deploy.dependency_problems(settings, root=root)[0])
+            (root / "lib").mkdir()
+            (root / "lib/adafruit_cst8xx.mpy").write_bytes(b"driver")
+            self.assertEqual(deploy.dependency_problems(settings, root=root), [])
+
 
 class DeploymentCLITests(unittest.TestCase):
     def run_cli(self, target, *arguments):

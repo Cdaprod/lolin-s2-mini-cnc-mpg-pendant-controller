@@ -4,6 +4,8 @@ from src.input.buttons import ButtonMapper
 from src.input.mpg import MPGDecoder
 from src.input.selectors import SelectorError, SelectorModel
 from src.state import PendantState
+from src.input.touch import TouchInput
+from src.display.ui import ROTATE_CW, TouchEvent
 
 
 class MPGTests(unittest.TestCase):
@@ -55,3 +57,37 @@ class SelectorTests(unittest.TestCase):
         buttons = ButtonMapper()
         self.assertEqual(buttons.action_for("ZERO"), "ZERO_AXIS")
         self.assertEqual(buttons.action_for("ZERO", True), "ZERO_XYZ")
+
+
+class FakeTouch:
+    def __init__(self, points):
+        self.points = list(points)
+        self.last = None
+
+    def point(self):
+        point = self.points.pop(0) if self.points else None
+        if point is not None:
+            self.last = point
+        return point
+
+    def last_point(self):
+        return self.last
+
+
+class TouchTests(unittest.TestCase):
+    def test_tap_is_normalized_without_semantic_action(self):
+        now = [0.0]
+        touch = TouchInput(FakeTouch(((100, 80), None)), lambda: now[0])
+        self.assertEqual(touch.poll(), ())
+        now[0] = 0.1
+        event = touch.poll()[0]
+        self.assertIsInstance(event, TouchEvent)
+        self.assertEqual((event.kind, event.x, event.y), ("tap", 100, 80))
+
+    def test_vertical_motion_is_normalized_as_navigation(self):
+        now = [0.0]
+        source = FakeTouch(((100, 160), (100, 80), None))
+        touch = TouchInput(source, lambda: now[0])
+        touch.poll()
+        touch.poll()
+        self.assertEqual(touch.poll(), (ROTATE_CW,))

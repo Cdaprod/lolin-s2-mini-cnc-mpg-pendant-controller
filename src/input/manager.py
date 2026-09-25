@@ -39,12 +39,17 @@ class NullInputAdapter:
 
 class InputPollResult:
     def __init__(self, events, estop, estop_changed, deadman_changed,
-                 selector_changed):
+                 selector_changed, multiplier_changed=False, mpg_activity=0,
+                 selector_direction=0, multiplier_direction=0):
         self.events = events
         self.estop = estop
         self.estop_changed = estop_changed
         self.deadman_changed = deadman_changed
         self.selector_changed = selector_changed
+        self.multiplier_changed = multiplier_changed
+        self.mpg_activity = int(mpg_activity)
+        self.selector_direction = int(selector_direction)
+        self.multiplier_direction = int(multiplier_direction)
 
 
 class InputManager:
@@ -112,17 +117,23 @@ class InputManager:
                            sample.deadman != self.last_deadman)
         self.last_deadman = sample.deadman
         previous_axis = self.state.selected_axis
+        previous_multiplier = self.state.selected_multiplier
         self._update_selectors(sample)
         if getattr(self.adapter, "configured", True):
             self.state.deadman_enabled = sample.deadman
+        activity = 0
         if sample.mpg_delta is None:
             direction = self.decoder.update(sample.mpg_a, sample.mpg_b, now)
             if direction > 0:
                 self._emit(ROTATE_CW)
+                activity += 1
             elif direction < 0:
                 self._emit(ROTATE_CCW)
+                activity -= 1
         else:
-            self.hardware_accumulator += sample.mpg_delta * self.decoder.direction
+            signed_delta = sample.mpg_delta * self.decoder.direction
+            activity += signed_delta
+            self.hardware_accumulator += signed_delta
             threshold = self.decoder.counts_per_detent
             while abs(self.hardware_accumulator) >= threshold:
                 direction = 1 if self.hardware_accumulator > 0 else -1
@@ -139,10 +150,25 @@ class InputManager:
                 self._emit(BUTTON_EVENTS[name][1])
         events = self.events
         self.events = []
+        axis_order = (None, "X", "Y", "Z", "A", "B", "C")
+        multiplier_order = ("X1", "X10", "X100")
+        axis_direction = self._direction(
+            axis_order, previous_axis, self.state.selected_axis)
+        multiplier_direction = self._direction(
+            multiplier_order, previous_multiplier, self.state.selected_multiplier)
         return InputPollResult(
             events, sample.estop, estop_changed, deadman_changed,
-            previous_axis != self.state.selected_axis
+            previous_axis != self.state.selected_axis,
+            previous_multiplier != self.state.selected_multiplier, activity,
+            axis_direction, multiplier_direction
         )
+
+    @staticmethod
+    def _direction(order, previous, current):
+        if previous not in order or current not in order:
+            return 0
+        delta = order.index(current) - order.index(previous)
+        return 1 if delta > 0 else -1 if delta < 0 else 0
 
 
 class SyntheticInputAdapter:

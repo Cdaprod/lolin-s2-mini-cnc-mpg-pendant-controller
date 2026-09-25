@@ -285,7 +285,10 @@ def file_hash(path):
 def dependency_problems(settings, root=ROOT, target=None):
     profile = literal_value(settings.get("MPG_DISPLAY_PROFILE", '""'))
     problems = []
-    for module in PROFILE_DEPENDENCIES.get(profile, ()):
+    modules = list(PROFILE_DEPENDENCIES.get(profile, ()))
+    if literal_value(settings.get("MPG_TOUCH_ENABLED", "false")).lower() == "true":
+        modules.append("adafruit_cst8xx")
+    for module in modules:
         candidates = ("lib/{}.mpy".format(module), "lib/{}.py".format(module),
                       "lib/{}/__init__.py".format(module),
                       "lib/{}/__init__.mpy".format(module))

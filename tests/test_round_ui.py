@@ -103,19 +103,19 @@ class RoundRendererTests(unittest.TestCase):
         ui.enter("SYSTEM")
         ui.detail_title = "Diagnostics"
         ui.enter("SYSTEM_INFO")
-        self.assertEqual(len(ui.items()), 17)
+        self.assertEqual(len(ui.items()), 18)
         renderer.render(ui.state)
         first = [line.value for line in renderer.menu]
         self.assertIn("CircuitPython", first[0])
-        for _ in range(16):
+        for _ in range(17):
             ui.handle(ROTATE_CW)
         renderer.render(ui.state)
-        self.assertEqual(ui.focus["SYSTEM_INFO"], 16)
+        self.assertEqual(ui.focus["SYSTEM_INFO"], 17)
         self.assertTrue(any("Last error" in line.value for line in renderer.menu))
         ui.handle(ROTATE_CCW)
         renderer.render(ui.state)
-        self.assertEqual(ui.focus["SYSTEM_INFO"], 15)
-        for _ in range(15):
+        self.assertEqual(ui.focus["SYSTEM_INFO"], 16)
+        for _ in range(16):
             ui.handle(ROTATE_CCW)
         renderer.render(ui.state)
         self.assertEqual([line.value for line in renderer.menu], first)

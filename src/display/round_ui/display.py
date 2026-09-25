@@ -1,5 +1,7 @@
 """GC9A01 display construction and the concrete DisplayIO round scene."""
 
+import math
+
 from . import theme
 from .geometry import radial_points, RoundLayout
 from .renderer import RoundRenderer
@@ -54,6 +56,9 @@ def _line(displayio, terminalio, width, height, x, y, color=theme.TEXT):
 class _RingNode:
     def __init__(self, palette):
         self.palette = palette
+        self.activity_value = 0
+        self.armed = False
+        self.phase = 0
 
     @property
     def color(self):
@@ -61,7 +66,24 @@ class _RingNode:
 
     @color.setter
     def color(self, value):
-        self.palette[1] = value
+        for index in (1, 2, 3):
+            self.palette[index] = value
+
+    def set_activity(self, value, armed):
+        value, armed = int(value), bool(armed)
+        changed = value != self.activity_value or armed != self.armed
+        if not changed:
+            return False
+        self.activity_value, self.armed = value, armed
+        if value:
+            self.phase = (self.phase + (1 if value > 0 else -1)) % 3
+        base = theme.GREEN if armed else theme.MUTED
+        accent = theme.CYAN if value > 0 else theme.YELLOW
+        for index in (1, 2, 3):
+            self.palette[index] = base
+        if value:
+            self.palette[1 + self.phase] = accent
+        return True
 
 
 def displayio_scene(display):
@@ -69,16 +91,19 @@ def displayio_scene(display):
     import displayio
     import terminalio
     root = displayio.Group()
-    bitmap = displayio.Bitmap(240, 240, 2)
-    palette = displayio.Palette(2)
-    palette[0], palette[1] = theme.BACKGROUND, theme.MUTED
+    bitmap = displayio.Bitmap(240, 240, 4)
+    palette = displayio.Palette(4)
+    palette[0] = theme.BACKGROUND
+    palette[1] = palette[2] = palette[3] = theme.MUTED
     center = RoundLayout.CENTER[0]
     for y in range(240):
         for x in range(240):
             radius2 = (x - center) ** 2 + (y - center) ** 2
             if ((RoundLayout.OUTER_RING_RADIUS - 3) ** 2 <= radius2 <=
                     (RoundLayout.OUTER_RING_RADIUS + 3) ** 2):
-                bitmap[x, y] = 1
+                angle = int((math.atan2(y - center, x - center) + math.pi) *
+                            12 / (2 * math.pi))
+                bitmap[x, y] = 1 + angle % 3
     root.append(displayio.TileGrid(bitmap, pixel_shader=palette))
     content = displayio.Group()
     root.append(content)

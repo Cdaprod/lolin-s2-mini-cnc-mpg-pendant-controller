@@ -43,12 +43,18 @@ class RoundRenderer:
         if self.menu_group is not None:
             self.menu_group.hidden = is_home
         changed = self.status_ring.set(state.machine_state)
+        changed = self.status_ring.activity(
+            model["mpg_activity"] if model["jog_armed"] else 0,
+                                            model["jog_armed"]) or changed
         changed = self.title.set(model["title"]) or changed
         coordinates = state.displayed_position()
         selected = state.selected_axis
         changed = self.axis.update(selected, coordinates.get(selected),
-                                   coordinates) or changed
-        changed = self.multiplier.set(state.selected_multiplier) or changed
+                                   coordinates,
+                                   model["axis_transition_direction"]) or changed
+        changed = self.multiplier.set(
+            state.selected_multiplier,
+            model["resolution_transition_direction"]) or changed
         wifi = getattr(state, "wifi_state", "DISABLED") in (
             "CONNECTED", "connected"
         )

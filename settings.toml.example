@@ -107,6 +107,7 @@ MPG_DISPLAY_RESET_PIN=""
 MPG_DISPLAY_BACKLIGHT_PIN=""
 MPG_DISPLAY_TOUCH_SDA_PIN=""
 MPG_DISPLAY_TOUCH_SCL_PIN=""
+MPG_TOUCH_ENABLED=false
 
 # Optional physical SD mount. All four SPI pins are required when enabled.
 MPG_SD_ENABLED="false"

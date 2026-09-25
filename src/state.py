@@ -48,6 +48,7 @@ class PendantState:
         self.controller_enabled = False
         self.input_error = None
         self.display_error = None
+        self.touch_error = None
         self.board_profile = ""
         self.display_profile = ""
         self.selector_backend = "disabled"
@@ -66,6 +67,12 @@ class PendantState:
         self.estop_observed = False
         self.estop_latched = False
         self.deadman_enabled = False
+        self.mpg_activity = 0
+        self.mpg_activity_timestamp = None
+        self.axis_transition_direction = 0
+        self.axis_transition_timestamp = None
+        self.resolution_transition_direction = 0
+        self.resolution_transition_timestamp = None
         self.last_controller_response = None
         # UI context is mirrored here so the safety layer independently gates
         # wheel-generated motion; display navigation is not a safety boundary.
