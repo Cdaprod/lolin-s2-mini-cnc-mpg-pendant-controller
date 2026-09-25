@@ -6,6 +6,9 @@ enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
 ## 2026-09-25 — macOS read-only mount physical validation
 
+- [x] Migrate the immediately preceding manifest's retired root `boot.py`
+  entry through normal dry-run/deploy reconciliation without weakening current
+  managed paths or traversal/absolute-path rejection.
 - [x] Confirm the same connected XIAO changed from media/volume read-only to
   writable after the stuck `diskarbitrationd`/FSKit processes were restarted.
 - [x] Remove the disproven `boot.py` storage-remount workaround and keep
