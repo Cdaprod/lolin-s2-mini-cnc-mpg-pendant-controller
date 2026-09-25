@@ -82,13 +82,19 @@ def displayio_scene(display):
     root.append(displayio.TileGrid(bitmap, pixel_shader=palette))
     content = displayio.Group()
     root.append(content)
-    title = _line(displayio, terminalio, 156, 12, 42, 22, theme.CYAN)
-    axis = _line(displayio, terminalio, 30, 12, 105, 56, theme.CYAN)
-    value = _line(displayio, terminalio, 150, 18, 45, 78)
-    secondary = _line(displayio, terminalio, 190, 10, 25, 110, theme.MUTED)
-    multiplier = _line(displayio, terminalio, 170, 12, 35, 140, theme.CYAN)
-    indicators = _line(displayio, terminalio, 170, 10, 35, 170, theme.GREEN)
-    menu = [_line(displayio, terminalio, 170, 12, 35, 52 + index * 20)
+    rows = RoundLayout.content_rows()
+    def layout_line(name, color=theme.TEXT):
+        x, y, width, height = rows[name]
+        return _line(displayio, terminalio, width, height, x, y, color)
+    title = layout_line("title", theme.CYAN)
+    axis = layout_line("axis", theme.CYAN)
+    value = layout_line("value")
+    secondary = layout_line("secondary", theme.MUTED)
+    multiplier = layout_line("multiplier", theme.CYAN)
+    indicators = layout_line("indicators", theme.GREEN)
+    menu_x, menu_y, menu_width, _ = RoundLayout.CONTENT
+    menu = [_line(displayio, terminalio, menu_width, 12, menu_x,
+                  menu_y + index * RoundLayout.BASELINE)
             for index in range(6)]
     tabs = []
     for (x, y) in radial_points(5, 94):

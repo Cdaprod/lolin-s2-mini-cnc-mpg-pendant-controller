@@ -135,6 +135,11 @@ demand without that timeout. A successful connection stops the AP and enables
 the configured `<hostname>.local` mDNS name. Network failure does not stop the
 local UI, inputs, serial controller, or job runtime.
 
+STA association starts from the cooperative application poll rather than the
+application constructor. CircuitPython's association operation is synchronous,
+so every call supplies `MPG_NETWORK_CONNECT_TIMEOUT`; reconnects are scheduled
+between polls and never use an unbounded compatibility fallback.
+
 The first XIAO pendant defaults to `cdaprod-cnc-pendant.local`. Override
 `MPG_HOSTNAME` with another unique, lowercase name when provisioning additional
 devices on the same network.

@@ -11,7 +11,7 @@ from src.display.ui import UIManager
 from src.gcode.macros import MacroLibrary
 from src.gcode.streamer import GCodeStreamer
 from src.hardware import (build_display, build_indicator, build_inputs,
-                          build_storage, scan_i2c)
+                          build_shared_i2c, build_storage, scan_i2c)
 from src.input.manager import InputManager
 from src.safety.state_machine import SafetyError, SafetyStateMachine
 from src.safety.watchdog import Watchdog
@@ -48,13 +48,17 @@ class PendantApplication:
     def from_config(cls, config, transport=None, display=None,
                     clock=time.monotonic, network_service=None,
                     input_manager=None, input_adapter=None, storage=None,
-                    indicator_output=None, shared_spi=None):
+                    indicator_output=None, shared_spi=None, shared_i2c=None):
         state = PendantState(config.get("base_increment", 0.001))
         state.runtime_version = getattr(sys, "version", "unknown").split(";", 1)[0]
         state.board_profile = config.get("board_profile", "") or "default"
         state.display_profile = config.get("display_profile", "") or "default"
         state.selector_backend = config.get("selector_backend", "disabled")
+        i2c_init_error = None
+        if shared_i2c is None and sys.implementation.name == "circuitpython":
+            shared_i2c, i2c_init_error = build_shared_i2c(config)
         mode = config.get("controller_mode", "disabled")
+        state.controller_enabled = mode != "disabled"
         if transport is None:
             if mode == "uart":
                 transport = UARTTransport.from_pin_names(
@@ -87,7 +91,13 @@ class PendantApplication:
         streamer = GCodeStreamer(state, controller, clock=clock)
         ui = UIManager(state)
         ui.complete_boot()
-        renderer = display or build_display(config)
+        display_error = None
+        try:
+            renderer = display or build_display(config)
+        except Exception as exc:
+            display_error = "display initialization failed: {}".format(
+                type(exc).__name__)
+            renderer = build_display({"display_enabled": False})
         if hasattr(renderer, "bind_ui"):
             renderer.bind_ui(ui)
         if network_service is None:
@@ -103,33 +113,50 @@ class PendantApplication:
             config.get("wifi_password", "")
         )
         if input_manager is None:
-            input_manager = (InputManager(
-                state, input_adapter,
-                config.get("mpg_counts_per_detent", 4),
-                config.get("mpg_direction", 1),
-                config.get("button_debounce", 0.03),
-                config.get("button_long_press", 0.8),
-                config.get("axis_map"),
-            ) if input_adapter is not None else build_inputs(config, state))
+            try:
+                input_manager = (InputManager(
+                    state, input_adapter,
+                    config.get("mpg_counts_per_detent", 4),
+                    config.get("mpg_direction", 1),
+                    config.get("button_debounce", 0.03),
+                    config.get("button_long_press", 0.8),
+                    config.get("axis_map"),
+                ) if input_adapter is not None else build_inputs(
+                    config, state, shared_i2c))
+            except Exception as exc:
+                state.input_error = "input initialization failed: {}".format(
+                    type(exc).__name__)
+                input_manager = build_inputs({}, state)
         indicator_output = indicator_output or build_indicator(config)
         state.storage_state = storage.status
         state.storage_error = storage.error
-        addresses, i2c_error = scan_i2c(config.get("diagnostic_i2c"))
+        addresses, i2c_error = scan_i2c(shared_i2c)
         expected_address = config.get("mcp23017_address", 0x20)
         state.mcp23017_detected = expected_address in addresses
         state.mcp23017_address = expected_address if state.mcp23017_detected else None
-        if i2c_error and not state.storage_error:
-            state.storage_error = i2c_error
+        state.i2c_error = i2c_init_error or i2c_error
+        state.display_error = display_error
+        storage_status = str(state.storage_state).lower()
         state.subsystems = {
-            "display": "OK", "storage": "OK",
-            "sd": ("MOUNTED" if state.storage_state == "available" else
-                   "NOT PRESENT" if state.storage_state in ("missing", "unconfigured")
-                   else "ERROR"),
-            "inputs": "OK" if config.get("inputs_enabled") else "DISABLED",
+            "display": "ERROR" if state.display_error else
+                       "OK" if config.get("display_enabled") or display is not None
+                       else "DISABLED",
+            "storage": "OK" if storage_status == "available" else
+                       "NOT PRESENT" if storage_status in ("missing", "unconfigured")
+                       else "ERROR" if state.storage_error else "DISABLED",
+            "sd": ("NOT PRESENT" if not config.get("sd_enabled") else
+                   "MOUNTED" if storage_status == "available" else
+                   "NOT PRESENT" if storage_status in ("missing", "unconfigured")
+                   else "ERROR" if state.storage_error else "DISABLED"),
+            "i2c": "ERROR" if state.i2c_error else
+                   "OK" if shared_i2c is not None else "DISABLED",
+            "inputs": "ERROR" if state.input_error else
+                      "OK" if config.get("inputs_enabled") else "DISABLED",
             "wifi": network_service.state,
             "controller": ("DISABLED" if mode == "disabled" else "CONNECTING"),
         }
-        for name in ("display", "storage", "sd", "inputs", "wifi", "controller"):
+        for name in ("display", "storage", "sd", "i2c", "inputs", "wifi",
+                     "controller"):
             print("{:<13} {}".format(name, state.subsystems[name]))
         if config.get("round_ui_bootstrap"):
             from src.display.round_ui.bootstrap import apply_mock_state
@@ -272,6 +299,7 @@ class PendantApplication:
         self.state.network_error = info.get("last_error")
         self.state.subsystems["wifi"] = self.state.wifi_state
         self.state.subsystems["controller"] = (
+            "DISABLED" if not self.state.controller_enabled else
             "CONNECTED" if self.state.connection_state == "connected" else
             "OFFLINE" if self.state.connection_state != "connecting" else
             "CONNECTING")

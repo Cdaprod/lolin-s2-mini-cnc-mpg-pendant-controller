@@ -34,7 +34,8 @@ class FakeRadio:
     def stop_scanning_networks(self):
         self.stopped_scan = True
 
-    def connect(self, ssid, password):
+    def connect(self, ssid, password, timeout=None):
+        self.connect_timeout = timeout
         self.connected = True
         self.ipv4_address = "192.0.2.10"
 
@@ -49,8 +50,18 @@ class FakeRadio:
 
 
 class FailingRadio(FakeRadio):
-    def connect(self, ssid, password):
+    def connect(self, ssid, password, timeout=None):
         raise ConnectionError("password must never appear here")
+
+
+class CountingFailingRadio(FailingRadio):
+    def __init__(self):
+        super().__init__()
+        self.attempts = 0
+
+    def connect(self, ssid, password, timeout=None):
+        self.attempts += 1
+        super().connect(ssid, password, timeout)
 
 
 class FailingAPRadio(FakeRadio):
@@ -131,9 +142,21 @@ class NetworkTests(unittest.TestCase):
         radio = FakeRadio()
         service = self.make_service(radio)
         self.assertTrue(service.start("cnc-pendant", "Shop", "secret"))
+        self.assertEqual(service.state, NetworkState.CONNECTING)
+        service.poll()
         self.assertEqual(service.state, NetworkState.CONNECTED)
         self.assertEqual(service.info()["hostname"], "cnc-pendant")
         self.assertIsNone(radio.ap_ssid)
+        self.assertEqual(radio.connect_timeout, service.connect_timeout)
+
+    def test_start_defers_bounded_association_until_poll(self):
+        radio = FakeRadio()
+        service = self.make_service(radio)
+        self.assertTrue(service.start("pendant", "Shop", "secret"))
+        self.assertEqual(service.state, NetworkState.CONNECTING)
+        self.assertFalse(radio.connected)
+        service.poll()
+        self.assertTrue(radio.connected)
 
     def test_settings_credentials_reach_radio_without_password_log(self):
         messages = []
@@ -147,6 +170,7 @@ class NetworkTests(unittest.TestCase):
             config = load_config()
         self.assertTrue(service.start("pendant", config["wifi_ssid"],
                                       config["wifi_password"]))
+        service.poll()
         self.assertNotIn("TopSecret", " ".join(messages) + repr(service.info()))
 
     def test_lost_connection_reconnects_then_falls_back(self):
@@ -155,6 +179,7 @@ class NetworkTests(unittest.TestCase):
         service = self.make_service(radio, clock=lambda: now[0])
         service.reconnect_attempts = 2
         service.start("pendant", "Shop", "secret")
+        service.poll()
         radio.connected = False
         radio.connect = FailingRadio.connect.__get__(radio, FakeRadio)
         service.poll()
@@ -163,10 +188,27 @@ class NetworkTests(unittest.TestCase):
         service.poll()
         self.assertEqual(service.state, NetworkState.AP_SETUP)
 
+    def test_reconnect_attempt_limit_is_exact(self):
+        now = [0]
+        radio = CountingFailingRadio()
+        service = self.make_service(radio, clock=lambda: now[0])
+        service.reconnect_attempts = 3
+        service.ssid, service._password = "Shop", "secret"
+        service.state = NetworkState.CONNECTED
+        for expected in (1, 2):
+            service.poll()
+            self.assertEqual(radio.attempts, expected)
+            self.assertEqual(service.state, NetworkState.RECONNECTING)
+            now[0] += service.reconnect_interval
+        service.poll()
+        self.assertEqual(radio.attempts, 3)
+        self.assertEqual(service.state, NetworkState.AP_SETUP)
+
     def test_lost_connection_can_reconnect(self):
         radio = FakeRadio()
         service = self.make_service(radio)
         service.start("pendant", "Shop", "secret")
+        service.poll()
         radio.connected = False
         service.poll()
         self.assertEqual(service.state, NetworkState.CONNECTED)
@@ -181,7 +223,8 @@ class NetworkTests(unittest.TestCase):
         radio = FailingRadio()
         portal = FakePortal(("New Shop", "new secret"))
         service = self.make_service(radio, portal=portal)
-        self.assertFalse(service.start("cnc-pendant", "Old Shop", "bad"))
+        self.assertTrue(service.start("cnc-pendant", "Old Shop", "bad"))
+        service.poll()
         self.assertEqual(service.state, NetworkState.AP_SETUP)
         radio.connect = FakeRadio.connect.__get__(radio, FailingRadio)
         service.poll()

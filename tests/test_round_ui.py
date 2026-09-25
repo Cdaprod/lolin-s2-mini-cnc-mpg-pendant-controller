@@ -2,7 +2,8 @@ import unittest
 
 from src.display.round_ui.renderer import RoundRenderer
 from src.display.round_ui.bootstrap import apply_mock_state
-from src.display.ui import SELECT, UIManager
+from src.display.round_ui.geometry import RoundLayout
+from src.display.ui import ROTATE_CCW, ROTATE_CW, SELECT, UIManager
 from src.state import PendantState
 
 
@@ -95,6 +96,44 @@ class RoundRendererTests(unittest.TestCase):
         renderer.render(state)
         self.assertFalse(renderer.overlay.group.hidden)
         self.assertEqual(renderer.overlay.title.value, "ALARM")
+
+    def test_long_diagnostics_scroll_both_directions(self):
+        _, ui, _, renderer = self.make_renderer()
+        ui.enter("MAIN_MENU")
+        ui.enter("SYSTEM")
+        ui.detail_title = "Diagnostics"
+        ui.enter("SYSTEM_INFO")
+        self.assertEqual(len(ui.items()), 17)
+        renderer.render(ui.state)
+        first = [line.value for line in renderer.menu]
+        self.assertIn("CircuitPython", first[0])
+        for _ in range(16):
+            ui.handle(ROTATE_CW)
+        renderer.render(ui.state)
+        self.assertEqual(ui.focus["SYSTEM_INFO"], 16)
+        self.assertTrue(any("Last error" in line.value for line in renderer.menu))
+        ui.handle(ROTATE_CCW)
+        renderer.render(ui.state)
+        self.assertEqual(ui.focus["SYSTEM_INFO"], 15)
+        for _ in range(15):
+            ui.handle(ROTATE_CCW)
+        renderer.render(ui.state)
+        self.assertEqual([line.value for line in renderer.menu], first)
+
+    def test_six_row_network_details_need_no_window_shift(self):
+        _, ui, _, renderer = self.make_renderer()
+        ui.enter("MAIN_MENU")
+        ui.enter("NETWORK")
+        ui.enter("NETWORK_INFO")
+        renderer.render(ui.state)
+        self.assertEqual(len(ui.items()), 6)
+        self.assertTrue(renderer.menu[0].value.startswith("› Wi-Fi"))
+        self.assertIn("Reason", renderer.menu[5].value)
+
+    def test_layout_regions_are_inside_round_safe_area(self):
+        for region in RoundLayout.content_rows().values():
+            self.assertTrue(RoundLayout.region_within_safe_circle(region))
+        self.assertTrue(RoundLayout.region_within_safe_circle(RoundLayout.MODAL))
 
 
 if __name__ == "__main__":

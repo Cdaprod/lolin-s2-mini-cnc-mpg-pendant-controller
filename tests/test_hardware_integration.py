@@ -43,11 +43,36 @@ class FakeI2C:
         self.locked = False
 
 
+class FailingI2C(FakeI2C):
+    def scan(self):
+        raise OSError("bus fault")
+
+
 class DiagnosticScanTests(unittest.TestCase):
     def test_scan_is_read_only_and_reports_addresses(self):
         bus = FakeI2C((0x3C, 0x20))
         self.assertEqual(scan_i2c(bus), ((0x20, 0x3C), None))
         self.assertFalse(bus.locked)
+
+    def test_i2c_failure_does_not_pollute_storage_diagnostics(self):
+        with tempfile.TemporaryDirectory() as root:
+            jobs = os.path.join(root, "jobs")
+            macros = os.path.join(root, "macros")
+            os.mkdir(jobs)
+            os.mkdir(macros)
+            app = PendantApplication.from_config(
+                {"controller_mode": "disabled", "jobs_path": jobs,
+                 "macros_path": macros, "mcp23017_address": 0x20},
+                display=ConsoleDisplay(lambda value: None),
+                network_service=MockWiFiService(),
+                shared_i2c=FailingI2C(()),
+            )
+            self.assertEqual(app.state.storage_state, "available")
+            self.assertIsNone(app.state.storage_error)
+            self.assertEqual(app.state.subsystems["storage"], "OK")
+            self.assertEqual(app.state.subsystems["sd"], "NOT PRESENT")
+            self.assertEqual(app.state.subsystems["i2c"], "ERROR")
+            self.assertIn("OSError", app.state.i2c_error)
 
 
 class PhysicalInputTests(unittest.TestCase):

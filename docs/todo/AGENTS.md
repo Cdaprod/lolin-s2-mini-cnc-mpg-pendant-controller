@@ -6,6 +6,14 @@ enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
 ## 2026-09-25 — Physical XIAO stabilization
 
+- [x] Route XIAO D4/D5 diagnostics and verified selectors through one shared
+  I²C bus; keep scan results and errors independent of storage.
+- [x] Defer bounded synchronous STA association to cooperative polling, verify
+  reconnect attempts, and remove constructor-time provisioning scans.
+- [x] Window long diagnostics, derive scene positions from round safe-area
+  metrics, and allow offline navigation while motion remains inhibited.
+- [x] Derive subsystem status from initialization/configuration results and
+  retain independent network, storage, I²C, controller, input, display errors.
 - [x] Reject stale/ordinary CIRCUITPY directories, bound macOS inspection, and
   diagnose the known Disk Arbitration/FSKit `Us` failure without remediation.
 - [x] Expose sanitized deterministic Wi-Fi/AP/reconnect state through the

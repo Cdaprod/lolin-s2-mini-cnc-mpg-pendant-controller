@@ -363,3 +363,8 @@ For an unconnected visual hardware test, also set
 `MPG_ROUND_UI_BOOTSTRAP=true` and leave `MPG_CONTROLLER_MODE="disabled"`.
 This populates representative X/Y/Z/A, multiplier, controller, Wi-Fi, and SD
 state and renders it through the same retained components used by the runtime.
+
+The XIAO profile provides one shared I²C bus on D4/SDA and D5/SCL. Diagnostics
+scan that bus read-only for `0x20`; the same instance reaches the MCP23017
+selector adapter only when inputs and the independent physical-verification
+gate are enabled. Detection alone never enables motion.

@@ -82,7 +82,7 @@ class IndicatorStrip:
 
     def update(self, controller, wifi, storage):
         return self.text.set("CNC:{}  WIFI:{}  SD:{}".format(
-            "●" if controller else "○", "●" if wifi else "○",
+            "ONLINE" if controller else "OFFLINE", "●" if wifi else "○",
             "●" if storage else "○"
         ))
 

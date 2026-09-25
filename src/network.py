@@ -93,6 +93,7 @@ class WiFiService:
         self._manual_ap = False
         self._next_reconnect = 0
         self._reconnect_count = 0
+        self._connect_pending = False
         self._scan_iterator = None
         self._scan_found = {}
         self.scan_results = []
@@ -131,7 +132,8 @@ class WiFiService:
             return False
         self.ssid, self._password = ssid, password
         self._transition(NetworkState.CONNECTING, "SSID {}".format(ssid))
-        return self._connect_saved()
+        self._connect_pending = True
+        return True
 
     def _transition(self, state, detail=None):
         """Publish a sanitized transition; callers must never pass secrets."""
@@ -146,6 +148,11 @@ class WiFiService:
     def poll(self):
         """Service portal requests, loss of STA, reconnect, and AP expiry."""
         now = self.clock()
+        entered_state = self.state
+        if self.state == NetworkState.CONNECTING and self._connect_pending:
+            self._connect_pending = False
+            if not self._connect_saved():
+                self.start_setup_ap()
         if self.state == NetworkState.CONNECTED and not self.connected:
             self._stop_mdns()
             self._reconnect_count = 0
@@ -162,7 +169,7 @@ class WiFiService:
             else:
                 self._transition(NetworkState.RECONNECTING,
                                  "attempt {} failed".format(self._reconnect_count))
-        if self.state == NetworkState.AP_SETUP:
+        if self.state == NetworkState.AP_SETUP and entered_state == NetworkState.AP_SETUP:
             if self._portal:
                 credentials = self._portal.poll()
                 if credentials:
@@ -305,11 +312,9 @@ class WiFiService:
         self.last_error = None
         self._stop_ap()
         try:
-            try:
-                self.radio.connect(ssid, password, timeout=self.connect_timeout)
-            except TypeError:
-                # Host fakes and older CircuitPython builds lack this keyword.
-                self.radio.connect(ssid, password)
+            # CircuitPython's association call is synchronous. Its supported
+            # timeout is always supplied so one cooperative poll is bounded.
+            self.radio.connect(ssid, password, timeout=self.connect_timeout)
         except Exception as exc:
             # Never retain or interpolate the password into errors.
             self.last_error = "Wi-Fi connection failed: {}".format(
@@ -373,28 +378,11 @@ class PortalServer:
 
     @staticmethod
     def _build_form(radio):
-        options = []
-        try:
-            networks = radio.start_scanning_networks()
-            for network in networks:
-                ssid = PortalServer._html_escape(str(network.ssid))
-                if ssid and ssid not in options:
-                    options.append(ssid)
-        except (AttributeError, OSError, RuntimeError):
-            pass
-        finally:
-            try:
-                radio.stop_scanning_networks()
-            except (AttributeError, OSError, RuntimeError):
-                pass
-        choices = "".join("<option value='{}'>{}</option>".format(item, item)
-                          for item in options[:32])
         return ("<html><meta name=viewport content='width=device-width'>"
                 "<h1>Wi-Fi setup</h1><form method=post action=/configure>"
-                "SSID <input name=ssid list=networks required>"
-                "<datalist id=networks>{}</datalist><br>Password "
+                "SSID <input name=ssid required><br>Password "
                 "<input name=password type=password><br>"
-                "<button>Connect</button></form></html>").format(choices)
+                "<button>Connect</button></form></html>")
 
     @staticmethod
     def _html_escape(value):
