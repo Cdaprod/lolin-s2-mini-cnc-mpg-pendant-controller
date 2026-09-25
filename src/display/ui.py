@@ -118,6 +118,7 @@ def build_screens():
         MenuItem("Scan Networks", command="NETWORK_SCAN"),
         _disabled("Saved Networks", "saved-network browser is not implemented"),
         MenuItem("Manual SSID", command="NETWORK_MANUAL_SSID"),
+        MenuItem("Start Setup AP", command="NETWORK_SETUP_AP"),
         MenuItem("Disconnect", command="NETWORK_DISCONNECT"),
         _disabled("Forget Network", "saved-network deletion is not implemented"),
         MenuItem("Network Info", "NETWORK_INFO"),

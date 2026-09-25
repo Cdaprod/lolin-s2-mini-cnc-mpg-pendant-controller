@@ -83,6 +83,15 @@ MPG_UART_TX_PIN=""
 MPG_UART_RX_PIN=""
 ```
 
+At boot the network service first loads `/config/wifi.json`, then uses the
+optional `CIRCUITPY_WIFI_SSID` settings. With no credentials, or after a failed
+STA connection, it starts `Cdaprod-XXXX-Setup` and serves a setup form at
+`http://192.168.4.1/`. The automatic AP expires after
+`MPG_NETWORK_AP_TIMEOUT` seconds; **Network → Start Setup AP** starts it on
+demand without that timeout. A successful connection stops the AP and enables
+the configured `<hostname>.local` mDNS name. Network failure does not stop the
+local UI, inputs, serial controller, or job runtime.
+
 After electrical verification and a reviewed pin allocation, direct GRBL uses:
 
 ```toml
