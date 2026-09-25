@@ -6,6 +6,18 @@ from src.input.manager import InputManager, NullInputAdapter
 from src.storage.sdcard import SDStorage
 
 
+def scan_i2c(i2c):
+    """Return detected 7-bit addresses without writing to any peripheral."""
+    if i2c is None or not i2c.try_lock():
+        return (), "I2C bus busy" if i2c is not None else None
+    try:
+        return tuple(sorted(int(address) for address in i2c.scan())), None
+    except Exception as exc:
+        return (), "I2C scan failed: {}".format(type(exc).__name__)
+    finally:
+        i2c.unlock()
+
+
 def build_inputs(config, state):
     adapter = None
     if config.get("inputs_enabled"):

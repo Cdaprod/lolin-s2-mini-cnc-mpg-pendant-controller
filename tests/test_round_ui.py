@@ -51,7 +51,8 @@ class RoundRendererTests(unittest.TestCase):
         apply_mock_state(state)
         self.assertEqual(state.work_position["X"], 124.520)
         self.assertEqual(state.selected_multiplier, "X10")
-        self.assertEqual(state.wifi_state, "connected")
+        self.assertEqual(state.wifi_state, "DISABLED")
+        self.assertEqual(state.connection_state, "disconnected")
 
     def make_renderer(self):
         state = PendantState()

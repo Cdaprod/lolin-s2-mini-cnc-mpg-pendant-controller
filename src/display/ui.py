@@ -185,7 +185,7 @@ class UIManager:
     def handwheel_mode(self):
         overlay = self.active_overlay()
         if overlay and overlay[0] in (
-                "ESTOP", "ALARM", "DISCONNECTED", "STREAM_ERROR"):
+                "ESTOP", "ALARM", "CONTROLLER OFFLINE", "STREAM_ERROR"):
             return DISABLED
         if self.confirmation:
             return NAVIGATION
@@ -412,7 +412,7 @@ class UIManager:
         if self.state.alarm is not None:
             return ("ALARM", "Controller alarm: " + str(self.state.alarm), 90)
         if self.state.connection_state not in ("connected", "connecting"):
-            return ("DISCONNECTED", "Controller disconnected", 80)
+            return ("CONTROLLER OFFLINE", "Motion unavailable", 80)
         if self.state.sd_job_state in ("error", "alarm"):
             return ("STREAM_ERROR", self.state.error or "Streaming error", 70)
         if self.confirmation:
@@ -449,9 +449,31 @@ class UIManager:
                 ("File", self.state.current_filename or "none"),
                 ("UI", self.current_screen),
                 ("Free heap", self.state.free_heap or "unknown"),
+                ("CircuitPython", self.state.runtime_version),
+                ("Board", self.state.board_profile),
+                ("Display", self.state.display_profile),
+                ("SD", self.state.subsystems.get("sd", "unknown")),
+                ("Wi-Fi", self.state.wifi_state),
+                ("SSID", self.state.wifi_ssid or "none"),
+                ("IP", self.state.wifi_ip or "none"),
+                ("RSSI", self.state.wifi_rssi or "unknown"),
+                ("Hostname", self.state.hostname or "unknown"),
+                ("Controller", self.state.connection_state),
+                ("Selector", self.state.selector_backend),
+                ("MCP23017", "0x{:02X}".format(self.state.mcp23017_address)
+                 if self.state.mcp23017_detected else "not detected"),
+                ("Last error", self.state.network_error or
+                 self.state.error or "none"),
             )
         elif self.current_screen == "NETWORK_INFO":
-            model["details"] = tuple(sorted(self.network_info.items()))
+            model["details"] = (
+                ("Wi-Fi", self.state.wifi_state.replace("_", " ")),
+                ("SSID", self.state.wifi_ssid or "none"),
+                ("IP", self.state.wifi_ip or "none"),
+                ("RSSI", self.state.wifi_rssi or "unknown"),
+                ("Hostname", self.state.hostname or "unknown"),
+                ("Reason", self.state.network_error or "none"),
+            )
         if self.current_screen == "TEXT_ENTRY" and self.text_entry:
             model["text"] = self.text_entry.display_value()
             model["character"] = self.text_entry.selected_character

@@ -3,6 +3,7 @@ import tempfile
 import unittest
 
 from src.app import PendantApplication
+from src.hardware import scan_i2c
 from src.display.console import ConsoleDisplay
 from src.display.indicator import DigitalIndicatorOutput
 from src.display.ui import ROTATE_CW
@@ -24,6 +25,29 @@ class MutableClock:
 
     def advance(self, seconds):
         self.now += seconds
+
+
+class FakeI2C:
+    def __init__(self, addresses):
+        self.addresses = addresses
+        self.locked = False
+
+    def try_lock(self):
+        self.locked = True
+        return True
+
+    def scan(self):
+        return self.addresses
+
+    def unlock(self):
+        self.locked = False
+
+
+class DiagnosticScanTests(unittest.TestCase):
+    def test_scan_is_read_only_and_reports_addresses(self):
+        bus = FakeI2C((0x3C, 0x20))
+        self.assertEqual(scan_i2c(bus), ((0x20, 0x3C), None))
+        self.assertFalse(bus.locked)
 
 
 class PhysicalInputTests(unittest.TestCase):

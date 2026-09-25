@@ -75,7 +75,7 @@ class DisplayIOBackendTests(unittest.TestCase):
         state.connection_state = "disconnected"
         ui.refresh_context()
         renderer.render(state)
-        self.assertIn("disconnected", renderer.overlay.text.lower())
+        self.assertIn("motion unavailable", renderer.overlay.text.lower())
         state.alarm = "2"
         state.set_estop(True)
         ui.refresh_context()

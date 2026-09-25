@@ -66,7 +66,8 @@ class WiFiService:
 
     def __init__(self, radio=None, credential_store=None, clock=time.monotonic,
                  portal_factory=None, mdns_factory=None, ap_timeout=600,
-                 reconnect_interval=10, connect_timeout=15):
+                 reconnect_interval=10, connect_timeout=15,
+                 reconnect_attempts=3, logger=print):
         if radio is None:
             import wifi
             radio = wifi.radio
@@ -78,6 +79,8 @@ class WiFiService:
         self.ap_timeout = float(ap_timeout)
         self.reconnect_interval = float(reconnect_interval)
         self.connect_timeout = float(connect_timeout)
+        self.reconnect_attempts = int(reconnect_attempts)
+        self.logger = logger
         self.last_error = None
         self.state = NetworkState.DISABLED
         self.hostname = None
@@ -89,6 +92,7 @@ class WiFiService:
         self._ap_started = None
         self._manual_ap = False
         self._next_reconnect = 0
+        self._reconnect_count = 0
         self._scan_iterator = None
         self._scan_found = {}
         self.scan_results = []
@@ -126,20 +130,38 @@ class WiFiService:
             self.start_setup_ap()
             return False
         self.ssid, self._password = ssid, password
-        self.state = NetworkState.CONNECTING
+        self._transition(NetworkState.CONNECTING, "SSID {}".format(ssid))
         return self._connect_saved()
+
+    def _transition(self, state, detail=None):
+        """Publish a sanitized transition; callers must never pass secrets."""
+        if state != self.state:
+            message = "wifi {:s} -> {:s}".format(self.state, state)
+            if detail:
+                message += " ({})".format(detail)
+            if self.logger:
+                self.logger(message)
+        self.state = state
 
     def poll(self):
         """Service portal requests, loss of STA, reconnect, and AP expiry."""
         now = self.clock()
         if self.state == NetworkState.CONNECTED and not self.connected:
             self._stop_mdns()
-            self.state = NetworkState.RECONNECTING
+            self._reconnect_count = 0
+            self._transition(NetworkState.RECONNECTING, "connection lost")
             self._next_reconnect = now
         if (self.state == NetworkState.RECONNECTING and
                 now >= self._next_reconnect):
+            self._reconnect_count += 1
             self._next_reconnect = now + self.reconnect_interval
-            self._connect_saved()
+            if self.connect(self.ssid, self._password or "", persist=False):
+                self._reconnect_count = 0
+            elif self._reconnect_count >= self.reconnect_attempts:
+                self.start_setup_ap()
+            else:
+                self._transition(NetworkState.RECONNECTING,
+                                 "attempt {} failed".format(self._reconnect_count))
         if self.state == NetworkState.AP_SETUP:
             if self._portal:
                 credentials = self._portal.poll()
@@ -150,7 +172,7 @@ class WiFiService:
                     not self._manual_ap and self.ap_timeout > 0 and
                     now - self._ap_started >= self.ap_timeout):
                 self._stop_ap()
-                self.state = NetworkState.ERROR
+                self._transition(NetworkState.ERROR)
                 self.last_error = "setup AP timed out"
 
     def start_setup_ap(self, manual=False):
@@ -168,11 +190,11 @@ class WiFiService:
             self._portal = factory(self.radio, self.ap_ssid)
             self._ap_started = self.clock()
             self._manual_ap = bool(manual)
-            self.state = NetworkState.AP_SETUP
+            self._transition(NetworkState.AP_SETUP, "SSID {}".format(self.ap_ssid))
             self.last_error = None
             return True
         except Exception as exc:
-            self.state = NetworkState.ERROR
+            self._transition(NetworkState.ERROR)
             self.last_error = "setup AP failed: {}".format(type(exc).__name__)
             return False
 
@@ -304,7 +326,7 @@ class WiFiService:
                 # connection remains valid; persistence is reported separately.
                 self.last_error = "connected; credential storage is read-only"
         self._stop_ap()
-        self.state = NetworkState.CONNECTED
+        self._transition(NetworkState.CONNECTED, "SSID {}".format(ssid))
         self._start_mdns()
         return True
 
@@ -320,6 +342,7 @@ class WiFiService:
             "hostname": self.hostname or self.radio.hostname,
             "ipv4_address": str(self.radio.ipv4_address)
             if self.radio.ipv4_address else None,
+            "last_error": self.last_error,
         }
         if self.state == NetworkState.AP_SETUP:
             result["ssid"] = self.ap_ssid

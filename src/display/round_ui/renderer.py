@@ -59,6 +59,9 @@ class RoundRenderer:
         tab_index = 1 if is_home else 0
         changed = self.tabs.update(self.HOME_TABS, tab_index) or changed
         items = model.get("items", ())
+        if model.get("details"):
+            items = tuple(("{}: {}".format(key, value), True, "")
+                          for key, value in model["details"])
         for index, component in enumerate(self.menu):
             text = ""
             if index < len(items):

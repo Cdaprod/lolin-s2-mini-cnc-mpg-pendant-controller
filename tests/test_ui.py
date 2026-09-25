@@ -114,7 +114,7 @@ class UIStateMachineTests(unittest.TestCase):
         self.assertEqual(ui.active_overlay()[0], "ALARM")
         state.alarm = None
         ui.refresh_context()
-        self.assertEqual(ui.active_overlay()[0], "DISCONNECTED")
+        self.assertEqual(ui.active_overlay()[0], "CONTROLLER OFFLINE")
         self.assertIsNone(ui.handle(ROTATE_CW))
 
     def test_disabled_entry_cannot_emit_command(self):
