@@ -4,6 +4,21 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-09-25 — Common XIAO ESP32-S3 network bootstrap
+
+- [x] Model Wi-Fi as a cooperative service with disabled, connecting,
+  connected, setup-AP, reconnecting, and error states.
+- [x] Load persisted credentials before settings defaults, fall back to a
+  device-unique SoftAP, and provide an on-demand setup-AP menu action.
+- [x] Serve a local credential form, persist successful credentials, stop the
+  AP after STA connection, expire automatic setup mode, and advertise mDNS.
+- [x] Keep controller, input, storage, and rendering polls independent of
+  network availability and cover bootstrap transitions with host tests.
+- [ ] Validate STA timeout behavior, SoftAP address, HTTP form submission, AP
+  expiry, and `.local` discovery on physical XIAO ESP32-S3 hardware.
+- [ ] Add captive-portal DNS/OS detection only after measuring its heap cost on
+  the target CircuitPython build.
+
 ## 2026-09-23 — XIAO round-display HMI foundation
 
 - [x] Separate board and display profiles while retaining the original

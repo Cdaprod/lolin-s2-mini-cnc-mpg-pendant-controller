@@ -6,11 +6,15 @@
 # MPG_HARDWARE_PROFILE="lolin_s2_mini_v1"
 MPG_HARDWARE_PROFILE=""
 
-CIRCUITPY_WIFI_SSID="cda_Lab"
-CIRCUITPY_WIFI_PASSWORD="CHANGE_ME"
+CIRCUITPY_WIFI_SSID=""
+CIRCUITPY_WIFI_PASSWORD=""
 
 # DHCP/mDNS-friendly hostname. Keep it lowercase and avoid spaces.
 MPG_HOSTNAME="cda-lolin-s2-mpg"
+# Automatic fallback setup AP lifetime in seconds; 0 disables expiry.
+MPG_NETWORK_AP_TIMEOUT="600"
+# Maximum time for an individual station connection attempt.
+MPG_NETWORK_CONNECT_TIMEOUT="15"
 
 # disabled | uart | mock
 MPG_CONTROLLER_MODE="disabled"

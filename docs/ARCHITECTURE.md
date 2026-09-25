@@ -43,7 +43,8 @@ and storage independent while sharing one `PendantState` instance.
 3. Loss of communication must never be treated as a successful stop.
 4. A future jog implementation should use a watchdog/dead-man mechanism.
 5. Machine-state-changing actions should be explicit named actions.
-6. Wi-Fi configuration stays in `settings.toml`, not source code.
+6. Wi-Fi credentials come from the credential store or `settings.toml`, never
+   from source code.
 
 ## Implemented module boundaries
 
@@ -59,6 +60,9 @@ and storage independent while sharing one `PendantState` instance.
   and loads bounded named macros.
 - `src/display/` renders shared state and exposes a logical LED abstraction
   without assuming unverified LED drive voltage/current.
+- `src/network.py` owns the reusable STA/fallback-SoftAP state machine,
+  credential portal, persistence, and mDNS lifecycle. Network failure never
+  blocks construction or polling of the pendant application.
 
 ## HMI event boundary
 
@@ -80,8 +84,9 @@ exercise all policy and protocol logic.
 
 ## On-device cooperative integration
 
-`PendantApplication.poll()` samples the supplementary E-stop and controls
-first, dispatches bounded normalized UI events, services an incremental Wi-Fi
+`PendantApplication.poll()` services the cooperative network state machine,
+then samples the supplementary E-stop and controls, dispatches bounded
+normalized UI events, services an incremental Wi-Fi
 scan, polls GRBL and the streamer, evaluates watchdogs, refreshes UI ownership,
 updates the optional indicator, and finally renders. No input adapter writes
 GRBL and no screen reads GPIO.
