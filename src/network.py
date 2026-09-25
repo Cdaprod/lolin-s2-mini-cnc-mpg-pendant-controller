@@ -335,6 +335,9 @@ class WiFiService:
 class PortalServer:
     """Tiny cooperative HTTP form served only on the isolated setup AP."""
 
+    SUBMITTED = ("Credentials received. The setup network will disappear "
+                 "while the device attempts to connect.")
+
     def __init__(self, radio, ap_ssid):
         import socketpool
         self.ap_ssid = ap_ssid
@@ -385,7 +388,7 @@ class PortalServer:
             client.settimeout(0.1)
             request = client.recv(1024).decode("utf-8")
             credentials = self._parse_credentials(request)
-            body = "Saved; reconnecting." if credentials else self.form
+            body = self.SUBMITTED if credentials else self.form
             response = ("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n"
                         "Connection: close\r\nContent-Length: {}\r\n\r\n{}"
                         .format(len(body), body))

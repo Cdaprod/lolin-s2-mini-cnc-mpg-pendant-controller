@@ -1,7 +1,9 @@
 import os
 import tempfile
 import unittest
+from unittest.mock import patch
 
+from src.config import load_config
 from src.network import (CredentialStore, NetworkState, PortalServer,
                          WiFiService)
 
@@ -89,6 +91,11 @@ class NetworkTests(unittest.TestCase):
         self.assertEqual(service.scan(), [("Lab", -20), ("Shop", -40)])
         self.assertTrue(radio.stopped_scan)
 
+    def test_default_hostname_identifies_cnc_pendant(self):
+        with patch.dict(os.environ, {}, clear=True):
+            self.assertEqual(load_config()["hostname"],
+                             "cdaprod-cnc-pendant")
+
     def test_credentials_round_trip_without_repr_leak(self):
         with tempfile.TemporaryDirectory() as root:
             store = CredentialStore(os.path.join(root, "wifi.json"))
@@ -150,3 +157,6 @@ class NetworkTests(unittest.TestCase):
                    "ssid=Workshop+Net&password=p%40ss")
         self.assertEqual(PortalServer._parse_credentials(request),
                          ("Workshop Net", "p@ss"))
+
+    def test_portal_explains_that_ap_drops_during_connection(self):
+        self.assertIn("setup network will disappear", PortalServer.SUBMITTED)

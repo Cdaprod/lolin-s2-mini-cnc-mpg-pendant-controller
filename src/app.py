@@ -95,7 +95,8 @@ class PendantApplication:
                                sys.implementation.name == "circuitpython" else
                                MockWiFiService())
         network_service.start(
-            config.get("hostname", "xiao-dev"), config.get("wifi_ssid", ""),
+            config.get("hostname", "cdaprod-cnc-pendant"),
+            config.get("wifi_ssid", ""),
             config.get("wifi_password", "")
         )
         if input_manager is None:
