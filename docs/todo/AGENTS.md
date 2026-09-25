@@ -4,14 +4,14 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
-## 2026-09-25 — CircuitPython USB storage ownership
+## 2026-09-25 — macOS read-only mount physical validation
 
-- [x] Add minimal root `boot.py` host-write ownership configuration and manage
-  it through dry-run, manifest hashing, deployment, and verification.
-- [x] Refuse a read-only CIRCUITPY target before any staged file or target
-  mutation without attempting host repair or remounting.
-- [ ] Install `boot.py` manually through the REPL on the currently read-only
-  device, reboot, and verify macOS reports `Media Read-Only: No`.
+- [x] Confirm the same connected XIAO changed from media/volume read-only to
+  writable after the stuck `diskarbitrationd`/FSKit processes were restarted.
+- [x] Remove the disproven `boot.py` storage-remount workaround and keep
+  CircuitPython pre-USB configuration separate from host recovery.
+- [x] Retain deploy preflight refusal before any mutation of a read-only target;
+  the deployer diagnoses but never restarts services or repairs filesystems.
 
 ## 2026-09-25 — Physical MPG and touch HMI integration
 

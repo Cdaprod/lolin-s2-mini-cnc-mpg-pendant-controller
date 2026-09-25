@@ -263,7 +263,7 @@ def _validate_rendered(text):
 
 
 def runtime_files(root=ROOT):
-    paths = [Path("boot.py"), Path("code.py"), Path("patterns.py")]
+    paths = [Path("code.py"), Path("patterns.py")]
     paths.extend(path.relative_to(root) for path in sorted((root / "src").rglob("*.py"))
                  if "__pycache__" not in path.parts)
     lib = root / "lib"
@@ -323,7 +323,7 @@ def managed_path(relative):
     path = Path(relative)
     if path.is_absolute() or ".." in path.parts:
         return False
-    return (relative in ("boot.py", "code.py", "patterns.py") or
+    return (relative in ("code.py", "patterns.py") or
             (path.parts and path.parts[0] in ("src", "lib")))
 
 
