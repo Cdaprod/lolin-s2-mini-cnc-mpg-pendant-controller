@@ -1,7 +1,9 @@
 """GC9A01 display construction and the concrete DisplayIO round scene."""
 
+import math
+
 from . import theme
-from .geometry import radial_points
+from .geometry import radial_points, RoundLayout
 from .renderer import RoundRenderer
 
 _BACKLIGHT_OUTPUT = None
@@ -54,6 +56,9 @@ def _line(displayio, terminalio, width, height, x, y, color=theme.TEXT):
 class _RingNode:
     def __init__(self, palette):
         self.palette = palette
+        self.activity_value = 0
+        self.armed = False
+        self.phase = 0
 
     @property
     def color(self):
@@ -61,7 +66,24 @@ class _RingNode:
 
     @color.setter
     def color(self, value):
-        self.palette[1] = value
+        for index in (1, 2, 3):
+            self.palette[index] = value
+
+    def set_activity(self, value, armed):
+        value, armed = int(value), bool(armed)
+        changed = value != self.activity_value or armed != self.armed
+        if not changed:
+            return False
+        self.activity_value, self.armed = value, armed
+        if value:
+            self.phase = (self.phase + (1 if value > 0 else -1)) % 3
+        base = theme.GREEN if armed else theme.MUTED
+        accent = theme.CYAN if value > 0 else theme.YELLOW
+        for index in (1, 2, 3):
+            self.palette[index] = base
+        if value:
+            self.palette[1 + self.phase] = accent
+        return True
 
 
 def displayio_scene(display):
@@ -69,28 +91,38 @@ def displayio_scene(display):
     import displayio
     import terminalio
     root = displayio.Group()
-    bitmap = displayio.Bitmap(240, 240, 2)
-    palette = displayio.Palette(2)
-    palette[0], palette[1] = theme.BACKGROUND, theme.MUTED
-    center = 120
+    bitmap = displayio.Bitmap(240, 240, 4)
+    palette = displayio.Palette(4)
+    palette[0] = theme.BACKGROUND
+    palette[1] = palette[2] = palette[3] = theme.MUTED
+    center = RoundLayout.CENTER[0]
     for y in range(240):
         for x in range(240):
             radius2 = (x - center) ** 2 + (y - center) ** 2
-            if 108 ** 2 <= radius2 <= 114 ** 2:
-                bitmap[x, y] = 1
+            if ((RoundLayout.OUTER_RING_RADIUS - 3) ** 2 <= radius2 <=
+                    (RoundLayout.OUTER_RING_RADIUS + 3) ** 2):
+                angle = int((math.atan2(y - center, x - center) + math.pi) *
+                            12 / (2 * math.pi))
+                bitmap[x, y] = 1 + angle % 3
     root.append(displayio.TileGrid(bitmap, pixel_shader=palette))
     content = displayio.Group()
     root.append(content)
-    title = _line(displayio, terminalio, 150, 12, 45, 20, theme.CYAN)
-    axis = _line(displayio, terminalio, 30, 12, 108, 58, theme.CYAN)
-    value = _line(displayio, terminalio, 150, 18, 45, 78)
-    secondary = _line(displayio, terminalio, 220, 10, 10, 108, theme.MUTED)
-    multiplier = _line(displayio, terminalio, 180, 12, 30, 144, theme.CYAN)
-    indicators = _line(displayio, terminalio, 190, 10, 25, 174, theme.GREEN)
-    menu = [_line(displayio, terminalio, 160, 12, 40, 55 + index * 20)
+    rows = RoundLayout.content_rows()
+    def layout_line(name, color=theme.TEXT):
+        x, y, width, height = rows[name]
+        return _line(displayio, terminalio, width, height, x, y, color)
+    title = layout_line("title", theme.CYAN)
+    axis = layout_line("axis", theme.CYAN)
+    value = layout_line("value")
+    secondary = layout_line("secondary", theme.MUTED)
+    multiplier = layout_line("multiplier", theme.CYAN)
+    indicators = layout_line("indicators", theme.GREEN)
+    menu_x, menu_y, menu_width, _ = RoundLayout.CONTENT
+    menu = [_line(displayio, terminalio, menu_width, 12, menu_x,
+                  menu_y + index * RoundLayout.BASELINE)
             for index in range(6)]
     tabs = []
-    for (x, y) in radial_points(5, 92):
+    for (x, y) in radial_points(5, 94):
         tabs.append(_line(displayio, terminalio, 55, 10,
                           max(0, x - 25), max(0, y - 5), theme.CYAN))
     for line in [title, axis, value, secondary, multiplier, indicators] + tabs:
@@ -100,14 +132,15 @@ def displayio_scene(display):
     for line in menu:
         menu_group.append(line.node)
     overlay_group = displayio.Group()
-    overlay_bitmap = displayio.Bitmap(200, 70, 1)
+    modal_x, modal_y, modal_width, modal_height = RoundLayout.MODAL
+    overlay_bitmap = displayio.Bitmap(modal_width, modal_height, 1)
     overlay_palette = displayio.Palette(1)
     overlay_palette[0] = theme.PANEL
     overlay_group.append(displayio.TileGrid(
-        overlay_bitmap, pixel_shader=overlay_palette, x=20, y=85
+        overlay_bitmap, pixel_shader=overlay_palette, x=modal_x, y=modal_y
     ))
-    overlay_title = _line(displayio, terminalio, 170, 14, 35, 98, theme.YELLOW)
-    overlay_detail = _line(displayio, terminalio, 170, 14, 35, 122)
+    overlay_title = _line(displayio, terminalio, 160, 14, 40, 96, theme.YELLOW)
+    overlay_detail = _line(displayio, terminalio, 160, 14, 40, 120)
     overlay_group.append(overlay_title.node)
     overlay_group.append(overlay_detail.node)
     root.append(overlay_group)

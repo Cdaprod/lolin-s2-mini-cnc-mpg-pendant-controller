@@ -35,6 +35,7 @@ BOARD_PROFILES = {
         "uart_tx_pin": "TX", "uart_rx_pin": "RX",
         "spi_sck_pin": "D8", "spi_mosi_pin": "D10",
         "spi_miso_pin": "D9",
+        "i2c_sda_pin": "D4", "i2c_scl_pin": "D5",
     },
 }
 

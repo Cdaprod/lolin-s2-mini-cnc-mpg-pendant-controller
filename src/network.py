@@ -66,7 +66,8 @@ class WiFiService:
 
     def __init__(self, radio=None, credential_store=None, clock=time.monotonic,
                  portal_factory=None, mdns_factory=None, ap_timeout=600,
-                 reconnect_interval=10, connect_timeout=15):
+                 reconnect_interval=10, connect_timeout=15,
+                 reconnect_attempts=3, logger=print):
         if radio is None:
             import wifi
             radio = wifi.radio
@@ -78,6 +79,8 @@ class WiFiService:
         self.ap_timeout = float(ap_timeout)
         self.reconnect_interval = float(reconnect_interval)
         self.connect_timeout = float(connect_timeout)
+        self.reconnect_attempts = int(reconnect_attempts)
+        self.logger = logger
         self.last_error = None
         self.state = NetworkState.DISABLED
         self.hostname = None
@@ -89,6 +92,8 @@ class WiFiService:
         self._ap_started = None
         self._manual_ap = False
         self._next_reconnect = 0
+        self._reconnect_count = 0
+        self._connect_pending = False
         self._scan_iterator = None
         self._scan_found = {}
         self.scan_results = []
@@ -126,21 +131,45 @@ class WiFiService:
             self.start_setup_ap()
             return False
         self.ssid, self._password = ssid, password
-        self.state = NetworkState.CONNECTING
-        return self._connect_saved()
+        self._transition(NetworkState.CONNECTING, "SSID {}".format(ssid))
+        self._connect_pending = True
+        return True
+
+    def _transition(self, state, detail=None):
+        """Publish a sanitized transition; callers must never pass secrets."""
+        if state != self.state:
+            message = "wifi {:s} -> {:s}".format(self.state, state)
+            if detail:
+                message += " ({})".format(detail)
+            if self.logger:
+                self.logger(message)
+        self.state = state
 
     def poll(self):
         """Service portal requests, loss of STA, reconnect, and AP expiry."""
         now = self.clock()
+        entered_state = self.state
+        if self.state == NetworkState.CONNECTING and self._connect_pending:
+            self._connect_pending = False
+            if not self._connect_saved():
+                self.start_setup_ap()
         if self.state == NetworkState.CONNECTED and not self.connected:
             self._stop_mdns()
-            self.state = NetworkState.RECONNECTING
+            self._reconnect_count = 0
+            self._transition(NetworkState.RECONNECTING, "connection lost")
             self._next_reconnect = now
         if (self.state == NetworkState.RECONNECTING and
                 now >= self._next_reconnect):
+            self._reconnect_count += 1
             self._next_reconnect = now + self.reconnect_interval
-            self._connect_saved()
-        if self.state == NetworkState.AP_SETUP:
+            if self.connect(self.ssid, self._password or "", persist=False):
+                self._reconnect_count = 0
+            elif self._reconnect_count >= self.reconnect_attempts:
+                self.start_setup_ap()
+            else:
+                self._transition(NetworkState.RECONNECTING,
+                                 "attempt {} failed".format(self._reconnect_count))
+        if self.state == NetworkState.AP_SETUP and entered_state == NetworkState.AP_SETUP:
             if self._portal:
                 credentials = self._portal.poll()
                 if credentials:
@@ -150,7 +179,7 @@ class WiFiService:
                     not self._manual_ap and self.ap_timeout > 0 and
                     now - self._ap_started >= self.ap_timeout):
                 self._stop_ap()
-                self.state = NetworkState.ERROR
+                self._transition(NetworkState.ERROR)
                 self.last_error = "setup AP timed out"
 
     def start_setup_ap(self, manual=False):
@@ -168,11 +197,11 @@ class WiFiService:
             self._portal = factory(self.radio, self.ap_ssid)
             self._ap_started = self.clock()
             self._manual_ap = bool(manual)
-            self.state = NetworkState.AP_SETUP
+            self._transition(NetworkState.AP_SETUP, "SSID {}".format(self.ap_ssid))
             self.last_error = None
             return True
         except Exception as exc:
-            self.state = NetworkState.ERROR
+            self._transition(NetworkState.ERROR)
             self.last_error = "setup AP failed: {}".format(type(exc).__name__)
             return False
 
@@ -283,11 +312,9 @@ class WiFiService:
         self.last_error = None
         self._stop_ap()
         try:
-            try:
-                self.radio.connect(ssid, password, timeout=self.connect_timeout)
-            except TypeError:
-                # Host fakes and older CircuitPython builds lack this keyword.
-                self.radio.connect(ssid, password)
+            # CircuitPython's association call is synchronous. Its supported
+            # timeout is always supplied so one cooperative poll is bounded.
+            self.radio.connect(ssid, password, timeout=self.connect_timeout)
         except Exception as exc:
             # Never retain or interpolate the password into errors.
             self.last_error = "Wi-Fi connection failed: {}".format(
@@ -304,7 +331,7 @@ class WiFiService:
                 # connection remains valid; persistence is reported separately.
                 self.last_error = "connected; credential storage is read-only"
         self._stop_ap()
-        self.state = NetworkState.CONNECTED
+        self._transition(NetworkState.CONNECTED, "SSID {}".format(ssid))
         self._start_mdns()
         return True
 
@@ -320,6 +347,7 @@ class WiFiService:
             "hostname": self.hostname or self.radio.hostname,
             "ipv4_address": str(self.radio.ipv4_address)
             if self.radio.ipv4_address else None,
+            "last_error": self.last_error,
         }
         if self.state == NetworkState.AP_SETUP:
             result["ssid"] = self.ap_ssid
@@ -350,28 +378,11 @@ class PortalServer:
 
     @staticmethod
     def _build_form(radio):
-        options = []
-        try:
-            networks = radio.start_scanning_networks()
-            for network in networks:
-                ssid = PortalServer._html_escape(str(network.ssid))
-                if ssid and ssid not in options:
-                    options.append(ssid)
-        except (AttributeError, OSError, RuntimeError):
-            pass
-        finally:
-            try:
-                radio.stop_scanning_networks()
-            except (AttributeError, OSError, RuntimeError):
-                pass
-        choices = "".join("<option value='{}'>{}</option>".format(item, item)
-                          for item in options[:32])
         return ("<html><meta name=viewport content='width=device-width'>"
                 "<h1>Wi-Fi setup</h1><form method=post action=/configure>"
-                "SSID <input name=ssid list=networks required>"
-                "<datalist id=networks>{}</datalist><br>Password "
+                "SSID <input name=ssid required><br>Password "
                 "<input name=password type=password><br>"
-                "<button>Connect</button></form></html>").format(choices)
+                "<button>Connect</button></form></html>")
 
     @staticmethod
     def _html_escape(value):

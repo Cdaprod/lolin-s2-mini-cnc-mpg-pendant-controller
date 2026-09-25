@@ -4,6 +4,52 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-09-25 — macOS read-only mount physical validation
+
+- [x] Migrate the immediately preceding manifest's retired root `boot.py`
+  entry through normal dry-run/deploy reconciliation without weakening current
+  managed paths or traversal/absolute-path rejection.
+- [x] Confirm the same connected XIAO changed from media/volume read-only to
+  writable after the stuck `diskarbitrationd`/FSKit processes were restarted.
+- [x] Remove the disproven `boot.py` storage-remount workaround and keep
+  CircuitPython pre-USB configuration separate from host recovery.
+- [x] Retain deploy preflight refusal before any mutation of a read-only target;
+  the deployer diagnoses but never restarts services or repairs filesystems.
+
+## 2026-09-25 — Physical MPG and touch HMI integration
+
+- [x] Expose authoritative axis, resolution, Jog Hold, relative MPG activity,
+  and latched E-stop semantics through the existing state/view model.
+- [x] Add lightweight retained radial activity and discrete selector feedback
+  without treating the relative MPG as an absolute-position wheel.
+- [x] Route CST8XX touch on shared I²C through normalized UI events and the
+  existing UIManager/semantic-command/safety path.
+- [x] Preserve all secondary menus and long-list windowing behind large touch
+  targets while keeping physical selectors authoritative for jogging.
+- [ ] Validate touch orientation/calibration, selector direction, Jog Hold
+  accent, MPG animation rate, and E-stop presentation on physical hardware.
+
+## 2026-09-25 — Physical XIAO stabilization
+
+- [x] Route XIAO D4/D5 diagnostics and verified selectors through one shared
+  I²C bus; keep scan results and errors independent of storage.
+- [x] Defer bounded synchronous STA association to cooperative polling, verify
+  reconnect attempts, and remove constructor-time provisioning scans.
+- [x] Window long diagnostics, derive scene positions from round safe-area
+  metrics, and allow offline navigation while motion remains inhibited.
+- [x] Derive subsystem status from initialization/configuration results and
+  retain independent network, storage, I²C, controller, input, display errors.
+- [x] Reject stale/ordinary CIRCUITPY directories, bound macOS inspection, and
+  diagnose the known Disk Arbitration/FSKit `Us` failure without remediation.
+- [x] Expose sanitized deterministic Wi-Fi/AP/reconnect state through the
+  shared runtime state, serial transitions, and round Network/Diagnostics UI.
+- [x] Separate controller-offline labeling from Wi-Fi state and centralize the
+  240×240 circular safe-area metrics used by the retained renderer.
+- [x] Preserve disabled controller behavior even when round UI sample data is
+  requested; sample rendering no longer fabricates network/storage health.
+- [ ] Physically validate STA, AP fallback/HTTP, display safe area, SD status,
+  and a non-destructive MCP23017 address scan on CircuitPython 10.3.1.
+
 ## 2026-09-25 — CircuitPython deployment reconciliation
 
 - [x] Reconcile tracked defaults, optional repo-local settings, and active

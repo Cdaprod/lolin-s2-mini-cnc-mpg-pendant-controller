@@ -351,6 +351,7 @@ with the 1.28-inch 240×240 GC9A01 round display, add the following to
 MPG_BOARD_PROFILE="xiao_esp32s3"
 MPG_DISPLAY_PROFILE="seeed_round_240"
 MPG_DISPLAY_ENABLED=true
+MPG_TOUCH_ENABLED=true
 ```
 
 Copy `code.py`, `src/`, and the GC9A01 dependency bundle library
@@ -363,3 +364,8 @@ For an unconnected visual hardware test, also set
 `MPG_ROUND_UI_BOOTSTRAP=true` and leave `MPG_CONTROLLER_MODE="disabled"`.
 This populates representative X/Y/Z/A, multiplier, controller, Wi-Fi, and SD
 state and renders it through the same retained components used by the runtime.
+
+The XIAO profile provides one shared I²C bus on D4/SDA and D5/SCL. Diagnostics
+scan that bus read-only for `0x20`; the same instance reaches the MCP23017
+selector adapter only when inputs and the independent physical-verification
+gate are enabled. Detection alone never enables motion.

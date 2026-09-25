@@ -7,6 +7,8 @@ import re
 import subprocess
 import tempfile
 import unittest
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from tools import deploy
 
@@ -122,14 +124,38 @@ class ReconciliationTests(unittest.TestCase):
             (root / "lib/adafruit_gc9a01a.mpy").write_bytes(b"driver")
             self.assertEqual(deploy.dependency_problems(settings, root=root), [])
 
+    def test_enabled_touch_requires_cst8xx_dependency(self):
+        settings = {"MPG_DISPLAY_PROFILE": '""',
+                    "MPG_TOUCH_ENABLED": "true"}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.assertIn("adafruit_cst8xx",
+                          deploy.dependency_problems(settings, root=root)[0])
+            (root / "lib").mkdir()
+            (root / "lib/adafruit_cst8xx.mpy").write_bytes(b"driver")
+            self.assertEqual(deploy.dependency_problems(settings, root=root), [])
+
+    def test_boot_workaround_is_not_managed_runtime(self):
+        self.assertNotIn("boot.py", deploy.runtime_files())
+        self.assertFalse(deploy.managed_path("boot.py"))
+        self.assertTrue(deploy.historical_managed_path("boot.py"))
 
 class DeploymentCLITests(unittest.TestCase):
     def run_cli(self, target, *arguments):
-        environment = dict(os.environ, CIRCUITPY=str(target))
-        return subprocess.run(
-            ["bash", "deploy.sh"] + list(arguments), cwd=deploy.ROOT,
-            env=environment, text=True, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, check=False)
+        stdout, stderr = io.StringIO(), io.StringIO()
+        with patch.dict(os.environ, {"CIRCUITPY": str(target)}), \
+                patch.object(deploy, "mounted_filesystems",
+                             return_value={os.path.realpath(str(target))}), \
+                contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+            code = deploy.main(list(arguments))
+        return SimpleNamespace(returncode=code, stdout=stdout.getvalue(),
+                               stderr=stderr.getvalue())
+
+    @staticmethod
+    def mark_circuitpython(target):
+        (Path(target) / "boot_out.txt").write_text(
+            "Adafruit CircuitPython 10.3.1\nSeeed XIAO ESP32S3\n",
+            encoding="utf-8")
 
     def test_missing_circuitpy_fails_safely(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -141,6 +167,7 @@ class DeploymentCLITests(unittest.TestCase):
     def test_dry_run_makes_no_changes_and_redacts_secrets(self):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
+            self.mark_circuitpython(target)
             settings = target / "settings.toml"
             settings.write_text('CIRCUITPY_WIFI_PASSWORD="TopSecret"\n',
                                 encoding="utf-8")
@@ -155,9 +182,7 @@ class DeploymentCLITests(unittest.TestCase):
     def test_deploy_is_idempotent_writes_backup_manifest_and_verifies(self):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
-            (target / "boot_out.txt").write_text(
-                "Adafruit CircuitPython 10.3.1\nSeeed XIAO ESP32S3\n",
-                encoding="utf-8")
+            self.mark_circuitpython(target)
             (target / "settings.toml").write_text(
                 'CIRCUITPY_WIFI_SSID="Shop"\n'
                 'CIRCUITPY_WIFI_PASSWORD="secret"\n'
@@ -176,9 +201,57 @@ class DeploymentCLITests(unittest.TestCase):
             verified = self.run_cli(target, "--verify")
             self.assertEqual(verified.returncode, 0, verified.stderr)
 
+    def test_read_only_preflight_refuses_before_any_write(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.mark_circuitpython(target)
+            settings = target / "settings.toml"
+            settings.write_text('MPG_BOARD_PROFILE="xiao_esp32s3"\n',
+                                encoding="utf-8")
+            before = {path.name: path.read_bytes() for path in target.iterdir()}
+            with patch.object(deploy, "target_is_writable", return_value=False):
+                result = self.run_cli(target)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("mounted read-only", result.stderr)
+            self.assertEqual(
+                {path.name: path.read_bytes() for path in target.iterdir()}, before)
+            self.assertFalse(any(target.rglob("*.tmp")))
+
+    def test_previous_boot_manifest_is_safely_reconciled(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.mark_circuitpython(target)
+            (target / "settings.toml").write_text(
+                'MPG_BOARD_PROFILE="xiao_esp32s3"\n'
+                'MPG_DISPLAY_PROFILE=""\n', encoding="utf-8")
+            (target / "boot.py").write_text("import storage\n", encoding="utf-8")
+            (target / deploy.MANIFEST_NAME).write_text(json.dumps({
+                "format": 1,
+                "managed_files": ["boot.py", "code.py", "patterns.py"],
+            }), encoding="utf-8")
+
+            dry_run = self.run_cli(target, "--dry-run")
+            self.assertEqual(dry_run.returncode, 0, dry_run.stderr)
+            self.assertIn("runtime:  remove-managed boot.py", dry_run.stdout)
+            self.assertTrue((target / "boot.py").exists())
+
+            old_verify = self.run_cli(target, "--verify")
+            self.assertNotEqual(old_verify.returncode, 0)
+            self.assertNotIn("unsafe managed path", old_verify.stderr)
+
+            applied = self.run_cli(target)
+            self.assertEqual(applied.returncode, 0, applied.stderr)
+            self.assertFalse((target / "boot.py").exists())
+            manifest = json.loads(
+                (target / deploy.MANIFEST_NAME).read_text(encoding="utf-8"))
+            self.assertNotIn("boot.py", manifest["managed_files"])
+            verified = self.run_cli(target, "--verify")
+            self.assertEqual(verified.returncode, 0, verified.stderr)
+
     def test_verify_detects_missing_runtime_file_and_dependency(self):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
+            self.mark_circuitpython(target)
             (target / "settings.toml").write_text(
                 'MPG_HARDWARE_PROFILE=""\nMPG_BOARD_PROFILE="xiao_esp32s3"\n'
                 'MPG_DISPLAY_PROFILE="seeed_round_240"\n', encoding="utf-8")
@@ -191,14 +264,58 @@ class DeploymentCLITests(unittest.TestCase):
             self.assertIn("missing dependency", result.stderr)
 
     def test_manifest_cannot_remove_paths_outside_managed_runtime(self):
-        with tempfile.TemporaryDirectory() as directory:
-            target = Path(directory)
-            (target / deploy.MANIFEST_NAME).write_text(json.dumps({
-                "managed_files": ["../settings.toml"]
-            }), encoding="utf-8")
-            result = self.run_cli(target, "--verify")
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn("unsafe managed path", result.stderr)
+        unsafe_values = ("../settings.toml", "/etc/passwd", 7, None,
+                         "other-root.py", "src/../settings.toml")
+        for unsafe in unsafe_values:
+            with self.subTest(unsafe=unsafe), tempfile.TemporaryDirectory() as directory:
+                target = Path(directory)
+                self.mark_circuitpython(target)
+                (target / deploy.MANIFEST_NAME).write_text(json.dumps({
+                    "managed_files": [unsafe]
+                }), encoding="utf-8")
+                result = self.run_cli(target, "--verify")
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("unsafe managed path", result.stderr)
+
+
+class TargetValidationTests(unittest.TestCase):
+    def volume(self, boot=True):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        target = Path(temporary.name)
+        if boot:
+            (target / "boot_out.txt").write_text(
+                "Adafruit CircuitPython 10.3.1\n", encoding="utf-8")
+        return target
+
+    def test_genuine_mount_requires_circuitpython_identity(self):
+        target = self.volume()
+        self.assertEqual(deploy.validate_target(target, "Linux", {target}), target)
+        with self.assertRaisesRegex(deploy.DeployError, "boot_out.txt missing"):
+            missing_boot = self.volume(boot=False)
+            deploy.validate_target(missing_boot, "Linux", {missing_boot})
+
+    def test_ordinary_and_stale_directories_are_refused(self):
+        target = self.volume()
+        with self.assertRaisesRegex(deploy.DeployError, "ordinary or stale"):
+            deploy.validate_target(target, "Linux", set())
+        missing = target / "missing"
+        with self.assertRaisesRegex(deploy.DeployError, "drive not found"):
+            deploy.validate_target(missing, "Linux", set())
+
+    def test_diskutil_timeout_is_bounded_and_not_confirmation(self):
+        with patch.object(deploy, "_run_inspection", return_value=None):
+            self.assertIsNone(deploy.diskutil_confirms_mount("/Volumes/CIRCUITPY"))
+
+    def test_macos_stuck_state_prints_recovery_but_normal_does_not(self):
+        with patch.object(deploy, "diskarbitrationd_state", return_value="Us"):
+            message = deploy.mount_diagnostic("Darwin")
+            self.assertIn(deploy.MACOS_RECOVERY_COMMAND, message)
+        with patch.object(deploy, "diskarbitrationd_state", return_value="Ss"):
+            self.assertIsNone(deploy.mount_diagnostic("Darwin"))
+        with patch.object(deploy, "diskarbitrationd_state") as state:
+            self.assertIsNone(deploy.mount_diagnostic("Linux"))
+            state.assert_not_called()
 
 
 if __name__ == "__main__":

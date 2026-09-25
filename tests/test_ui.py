@@ -7,7 +7,7 @@ from src.display.console import ConsoleDisplay
 from src.display.text_entry import TextEntry
 from src.display.ui import (
     BACK, CANCEL, FN, LONG_SELECT, MOTION, NAVIGATION, ROTATE_CCW, ROTATE_CW,
-    SELECT, TEXT_ENTRY, UIManager,
+    SELECT, TEXT_ENTRY, TouchEvent, UIManager,
 )
 from src.network import MockWiFiService
 from src.state import PendantState
@@ -104,18 +104,20 @@ class UIStateMachineTests(unittest.TestCase):
         state.connection_state = "disconnected"
         state.set_estop(True)
         ui.refresh_context()
-        self.assertEqual(ui.active_overlay()[0], "ESTOP")
+        self.assertEqual(ui.active_overlay()[0], "E-STOP")
         self.assertIsNone(ui.handle(ROTATE_CW))
         state.set_estop(False)
         ui.refresh_context()
-        self.assertEqual(ui.active_overlay()[0], "ESTOP")
+        self.assertEqual(ui.active_overlay()[0], "E-STOP")
         state.clear_estop_latch()
         ui.refresh_context()
         self.assertEqual(ui.active_overlay()[0], "ALARM")
         state.alarm = None
         ui.refresh_context()
-        self.assertEqual(ui.active_overlay()[0], "DISCONNECTED")
+        self.assertIsNone(ui.active_overlay())
         self.assertIsNone(ui.handle(ROTATE_CW))
+        self.assertIsNone(ui.handle(SELECT))
+        self.assertEqual(ui.current_screen, "MAIN_MENU")
 
     def test_disabled_entry_cannot_emit_command(self):
         _, ui = ready_ui()
@@ -123,6 +125,27 @@ class UIStateMachineTests(unittest.TestCase):
         ui.enter("SETTINGS")
         self.assertIsNone(ui.handle(SELECT))
         self.assertIn("not implemented", ui.toast)
+
+    def test_touch_uses_existing_home_and_menu_navigation(self):
+        _, ui = ready_ui()
+        self.assertIsNone(ui.handle(TouchEvent("tap", 120, 120)))
+        self.assertEqual(ui.current_screen, "MAIN_MENU")
+        self.assertIsNone(ui.handle(TouchEvent("tap", 120, 60)))
+        self.assertEqual(ui.current_screen, "MACHINE")
+        self.assertIsNone(ui.handle(TouchEvent("tap", 20, 205)))
+        self.assertEqual(ui.current_screen, "MAIN_MENU")
+        self.assertIsNone(ui.handle(TouchEvent("tap", 200, 205)))
+        self.assertEqual(ui.current_screen, "HOME")
+
+    def test_touch_acknowledgement_cannot_bypass_confirmation_or_safety(self):
+        state = PendantState()
+        ui = UIManager(state)
+        ui.complete_boot()
+        ui.handle(TouchEvent("tap", 120, 120))
+        ui.handle(TouchEvent("tap", 120, 60))
+        self.assertIsNone(ui.handle(TouchEvent("tap", 120, 60)))
+        self.assertIsNotNone(ui.confirmation)
+        self.assertEqual(state.connection_state, "disconnected")
 
 
 class UIIntegrationTests(unittest.TestCase):

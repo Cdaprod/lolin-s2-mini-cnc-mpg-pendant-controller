@@ -43,12 +43,18 @@ class RoundRenderer:
         if self.menu_group is not None:
             self.menu_group.hidden = is_home
         changed = self.status_ring.set(state.machine_state)
+        changed = self.status_ring.activity(
+            model["mpg_activity"] if model["jog_armed"] else 0,
+                                            model["jog_armed"]) or changed
         changed = self.title.set(model["title"]) or changed
         coordinates = state.displayed_position()
         selected = state.selected_axis
         changed = self.axis.update(selected, coordinates.get(selected),
-                                   coordinates) or changed
-        changed = self.multiplier.set(state.selected_multiplier) or changed
+                                   coordinates,
+                                   model["axis_transition_direction"]) or changed
+        changed = self.multiplier.set(
+            state.selected_multiplier,
+            model["resolution_transition_direction"]) or changed
         wifi = getattr(state, "wifi_state", "DISABLED") in (
             "CONNECTED", "connected"
         )
@@ -59,11 +65,19 @@ class RoundRenderer:
         tab_index = 1 if is_home else 0
         changed = self.tabs.update(self.HOME_TABS, tab_index) or changed
         items = model.get("items", ())
+        if model.get("details"):
+            items = tuple(("{}: {}".format(key, value), True, "")
+                          for key, value in model["details"])
+        selected = min(model.get("selected", 0), max(0, len(items) - 1))
+        window_start = max(0, min(selected - len(self.menu) + 1,
+                                  len(items) - len(self.menu)))
+        visible_items = items[window_start:window_start + len(self.menu)]
         for index, component in enumerate(self.menu):
             text = ""
-            if index < len(items):
-                marker = "› " if index == model.get("selected") else "  "
-                text = marker + items[index][0]
+            if index < len(visible_items):
+                absolute = window_start + index
+                marker = "› " if absolute == selected else "  "
+                text = marker + visible_items[index][0]
             changed = component.set(text) or changed
         changed = self.overlay.update(model.get("overlay")) or changed
         if not changed:

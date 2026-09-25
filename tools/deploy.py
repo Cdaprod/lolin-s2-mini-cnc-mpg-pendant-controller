@@ -14,6 +14,7 @@ import re
 import shutil
 import subprocess
 import sys
+import platform
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,10 +27,115 @@ PROFILE_DEPENDENCIES = {
 }
 SECRET_MARKERS = ("PASSWORD", "SECRET", "TOKEN", "KEY")
 WIFI_CREDENTIALS = {"CIRCUITPY_WIFI_SSID", "CIRCUITPY_WIFI_PASSWORD"}
+RETIRED_MANAGED_PATHS = frozenset(("boot.py",))
+DISKUTIL_TIMEOUT = 3
+MACOS_RECOVERY_COMMAND = (
+    "sudo killall -9 com.apple.fskit.msdos fskit_helper fskitd "
+    "fskit_agent diskarbitrationd DiskArbitrationAgent"
+)
 
 
 class DeployError(RuntimeError):
     """A validation or deployment error safe to show to an operator."""
+
+
+def _run_inspection(command, timeout=DISKUTIL_TIMEOUT):
+    """Run a read-only host inspection command with a hard time bound."""
+    try:
+        return subprocess.run(command, text=True, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE, timeout=timeout,
+                              check=False)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+
+
+def mounted_filesystems(system=None):
+    """Return normalized mount points without traversing the target path."""
+    system = system or platform.system()
+    command = ("mount",) if system == "Darwin" else ("findmnt", "-rn", "-o", "TARGET")
+    result = _run_inspection(command)
+    if result is None or result.returncode:
+        return set()
+    if system != "Darwin":
+        return {os.path.realpath(line.strip()) for line in result.stdout.splitlines()
+                if line.strip()}
+    mounts = set()
+    for line in result.stdout.splitlines():
+        # macOS mount output: "device on /mount point (flags)".
+        marker = " on "
+        suffix = " ("
+        if marker in line and suffix in line:
+            mounts.add(os.path.realpath(line.split(marker, 1)[1].rsplit(suffix, 1)[0]))
+    return mounts
+
+
+def diskutil_confirms_mount(target, timeout=DISKUTIL_TIMEOUT):
+    """Confirm a macOS target via diskutil without allowing it to hang."""
+    result = _run_inspection(("diskutil", "info", "-plist", str(target)), timeout)
+    if result is None:
+        return None
+    if result.returncode:
+        return False
+    return b"<true/>" in result.stdout.encode("utf-8") and "MountPoint" in result.stdout
+
+
+def diskarbitrationd_state():
+    """Return the macOS process state, or None when it cannot be inspected."""
+    result = _run_inspection(("ps", "-axo", "stat=,comm="))
+    if result is None or result.returncode:
+        return None
+    for line in result.stdout.splitlines():
+        fields = line.strip().split(None, 1)
+        if len(fields) == 2 and fields[1].endswith("diskarbitrationd"):
+            return fields[0]
+    return None
+
+
+def mount_diagnostic(system=None):
+    system = system or platform.system()
+    if system == "Darwin" and diskarbitrationd_state() == "Us":
+        return ("macOS Disk Arbitration/FSKit appears wedged "
+                "(diskarbitrationd state Us). Review, then run:\n  " +
+                MACOS_RECOVERY_COMMAND)
+    return None
+
+
+def validate_target(target, system=None, mounts=None):
+    """Refuse anything except a mounted CircuitPython filesystem."""
+    target = Path(target)
+    system = system or platform.system()
+    try:
+        exists = target.exists()
+    except OSError as exc:
+        raise DeployError("CIRCUITPY target is inaccessible: {}".format(target)) from exc
+    if not exists:
+        message = "CIRCUITPY drive not found: {}".format(target)
+        diagnostic = mount_diagnostic(system)
+        raise DeployError(message + ("\n" + diagnostic if diagnostic else ""))
+    mount_set = mounted_filesystems(system) if mounts is None else {
+        os.path.realpath(str(item)) for item in mounts
+    }
+    mounted = os.path.realpath(str(target)) in mount_set
+    if system == "Darwin":
+        diskutil = diskutil_confirms_mount(target)
+        mounted = mounted and diskutil is not False
+    if not mounted:
+        message = ("refusing ordinary or stale directory; CIRCUITPY is not an "
+                   "actual mounted filesystem: {}".format(target))
+        diagnostic = mount_diagnostic(system)
+        raise DeployError(message + ("\n" + diagnostic if diagnostic else ""))
+    if not target.is_dir():
+        raise DeployError("CIRCUITPY mount is not a directory: {}".format(target))
+    boot = target / "boot_out.txt"
+    if not boot.is_file():
+        raise DeployError("boot_out.txt missing; target is not verified as CircuitPython")
+    try:
+        header = boot.read_text(encoding="utf-8", errors="replace")[:256]
+    except OSError as exc:
+        raise DeployError("boot_out.txt is inaccessible on CIRCUITPY") from exc
+    if "CircuitPython" not in header:
+        raise DeployError("boot_out.txt does not identify a CircuitPython target")
+    return target
 
 
 def parse_settings(path, required=False):
@@ -180,7 +286,10 @@ def file_hash(path):
 def dependency_problems(settings, root=ROOT, target=None):
     profile = literal_value(settings.get("MPG_DISPLAY_PROFILE", '""'))
     problems = []
-    for module in PROFILE_DEPENDENCIES.get(profile, ()):
+    modules = list(PROFILE_DEPENDENCIES.get(profile, ()))
+    if literal_value(settings.get("MPG_TOUCH_ENABLED", "false")).lower() == "true":
+        modules.append("adafruit_cst8xx")
+    for module in modules:
         candidates = ("lib/{}.mpy".format(module), "lib/{}.py".format(module),
                       "lib/{}/__init__.py".format(module),
                       "lib/{}/__init__.mpy".format(module))
@@ -206,17 +315,34 @@ def read_manifest(target):
         return {}
     managed = data.get("managed_files", [])
     if not isinstance(managed, list) or not all(
-            isinstance(item, str) and managed_path(item) for item in managed):
+            isinstance(item, str) and historical_managed_path(item)
+            for item in managed):
         raise DeployError("deployment manifest contains an unsafe managed path")
     return data
 
 
 def managed_path(relative):
+    """Return whether a path may be written into a new deployment manifest."""
     path = Path(relative)
     if path.is_absolute() or ".." in path.parts:
         return False
     return (relative in ("code.py", "patterns.py") or
             (path.parts and path.parts[0] in ("src", "lib")))
+
+
+def historical_managed_path(relative):
+    """Accept current paths plus narrowly retired paths safe to reconcile."""
+    return relative in RETIRED_MANAGED_PATHS or managed_path(relative)
+
+
+def target_is_writable(target):
+    """Return whether the mounted target permits host-side deployment writes."""
+    try:
+        flags = os.statvfs(str(target)).f_flag
+    except OSError:
+        return False
+    readonly_flag = getattr(os, "ST_RDONLY", 1)
+    return not bool(flags & readonly_flag) and os.access(str(target), os.W_OK)
 
 
 def git_value(*args):
@@ -245,7 +371,7 @@ def inspect_boot(target, settings):
 
 
 def verify(target, root=ROOT):
-    target = Path(target)
+    target = validate_target(target)
     manifest = read_manifest(target)
     if not manifest:
         raise DeployError("deployment manifest not found")
@@ -289,8 +415,11 @@ def atomic_write(path, content, backup=False):
 
 def deploy(args):
     target = Path(os.environ.get("CIRCUITPY", "/Volumes/CIRCUITPY"))
-    if not target.is_dir():
-        raise DeployError("CIRCUITPY drive not found: {}".format(target))
+    validate_target(target)
+    if not args.dry_run and not target_is_writable(target):
+        raise DeployError(
+            "CIRCUITPY is mounted read-only; deployment cannot write to the target"
+        )
     template = ROOT / "settings.toml.example"
     local = ROOT / "settings.toml"
     device = target / "settings.toml"
@@ -372,8 +501,6 @@ def main(argv=None):
     try:
         target = Path(os.environ.get("CIRCUITPY", "/Volumes/CIRCUITPY"))
         if args.verify:
-            if not target.is_dir():
-                raise DeployError("CIRCUITPY drive not found: {}".format(target))
             verify(target)
         else:
             deploy(args)

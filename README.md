@@ -88,6 +88,47 @@ stages replacements, records Git/profile/managed-file metadata, and removes
 only stale files listed by its prior manifest. Run `./deploy.sh --help` for all
 options.
 
+Before a real deployment the tool checks host write access and aborts before
+staging any file when the mounted target is read-only; it never attempts a
+remount, host-service restart, or filesystem repair.
+
+Manifest reconciliation accepts the narrowly retired historical `boot.py`
+entry so a target written by the immediately preceding deployer can migrate
+safely. A dry run reports it as `remove-managed`; an applied deployment removes
+that formerly managed file and writes a new manifest containing only the
+current runtime. Absolute, traversing, malformed, and unrelated root paths
+remain invalid.
+
+Deployment refuses a path that is not present in the host mount table and
+requires a readable CircuitPython `boot_out.txt`; a stale directory named
+`/Volumes/CIRCUITPY` is never a valid target. On macOS every `diskutil`
+inspection has a bounded timeout. If the drive is absent and
+`diskarbitrationd` is in the known stuck `Us` state, the tool prints this
+operator-reviewed recovery command but never executes it:
+
+```bash
+sudo killall -9 com.apple.fskit.msdos fskit_helper fskitd fskit_agent diskarbitrationd DiskArbitrationAgent
+```
+
+Physical validation showed that restarting the stuck macOS FSKit/Disk
+Arbitration processes changed the same connected XIAO from media/volume
+read-only to writable without any CircuitPython storage change. There is no
+repository `boot.py` storage workaround; recovery remains an explicit host
+operator action after confirming the documented `Us` process state.
+
+Do not remove the stale path, format the filesystem, or run the command unless
+the process state has been confirmed. After recovery, unplug/replug the XIAO,
+confirm `mount | grep CIRCUITPY`, then deploy with:
+
+```bash
+CIRCUITPY=/Volumes/CIRCUITPY ./deploy.sh
+```
+
+To observe first boot, connect USB, identify the CDC port with
+`ls /dev/cu.usbmodem*`, then run `screen /dev/cu.usbmodemXXXX 115200` (exit with
+Ctrl-A, then `k`, then `y`). The structured boot lines report display, storage,
+SD, inputs, Wi-Fi, and controller independently.
+
 ## Configuration
 
 `settings.toml.example` is the tracked schema/default inventory. The optional
@@ -110,6 +151,11 @@ STA connection, it starts `Cdaprod-XXXX-Setup` and serves a setup form at
 demand without that timeout. A successful connection stops the AP and enables
 the configured `<hostname>.local` mDNS name. Network failure does not stop the
 local UI, inputs, serial controller, or job runtime.
+
+STA association starts from the cooperative application poll rather than the
+application constructor. CircuitPython's association operation is synchronous,
+so every call supplies `MPG_NETWORK_CONNECT_TIMEOUT`; reconnects are scheduled
+between polls and never use an unbounded compatibility fallback.
 
 The first XIAO pendant defaults to `cdaprod-cnc-pendant.local`. Override
 `MPG_HOSTNAME` with another unique, lowercase name when provisioning additional

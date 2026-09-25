@@ -75,12 +75,12 @@ class DisplayIOBackendTests(unittest.TestCase):
         state.connection_state = "disconnected"
         ui.refresh_context()
         renderer.render(state)
-        self.assertIn("disconnected", renderer.overlay.text.lower())
+        self.assertEqual(renderer.overlay.text, "")
         state.alarm = "2"
         state.set_estop(True)
         ui.refresh_context()
         renderer.render(state)
-        self.assertIn("E-STOP", renderer.overlay.text)
+        self.assertIn("MOTION INHIBITED", renderer.overlay.text)
 
 
 if __name__ == "__main__":
