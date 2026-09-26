@@ -3,7 +3,7 @@
 import math
 
 from . import theme
-from .geometry import radial_points, RoundLayout
+from .geometry import RoundLayout
 from .renderer import RoundRenderer
 
 _BACKLIGHT_OUTPUT = None
@@ -46,9 +46,11 @@ def build_gc9a01(config):
     return display
 
 
-def _line(displayio, terminalio, width, height, x, y, color=theme.TEXT):
+def _line(displayio, terminalio, width, height, x, y, color=theme.TEXT,
+          centered=False):
     from src.display.displayio_backend import _DisplayIOTextLine
-    line = _DisplayIOTextLine(width, height, terminalio.FONT, displayio, color)
+    line = _DisplayIOTextLine(width, height, terminalio.FONT, displayio, color,
+                              centered)
     line.node.x, line.node.y = x, y
     return line
 
@@ -110,22 +112,23 @@ def displayio_scene(display):
     rows = RoundLayout.content_rows()
     def layout_line(name, color=theme.TEXT):
         x, y, width, height = rows[name]
-        return _line(displayio, terminalio, width, height, x, y, color)
+        return _line(displayio, terminalio, width, height, x, y, color, True)
     title = layout_line("title", theme.CYAN)
     axis = layout_line("axis", theme.CYAN)
     value = layout_line("value")
     secondary = layout_line("secondary", theme.MUTED)
+    activity = layout_line("activity", theme.YELLOW)
     multiplier = layout_line("multiplier", theme.CYAN)
     indicators = layout_line("indicators", theme.GREEN)
     menu_x, menu_y, menu_width, _ = RoundLayout.CONTENT
     menu = [_line(displayio, terminalio, menu_width, 12, menu_x,
                   menu_y + index * RoundLayout.BASELINE)
             for index in range(6)]
-    tabs = []
-    for (x, y) in radial_points(5, 94):
-        tabs.append(_line(displayio, terminalio, 55, 10,
-                          max(0, x - 25), max(0, y - 5), theme.CYAN))
-    for line in [title, axis, value, secondary, multiplier, indicators] + tabs:
+    hint_x, hint_y, hint_width, hint_height = rows["menu_hint"]
+    tabs = [_line(displayio, terminalio, hint_width, hint_height,
+                  hint_x, hint_y, theme.CYAN, True)]
+    for line in [title, axis, value, secondary, activity, multiplier,
+                 indicators] + tabs:
         content.append(line.node)
     menu_group = displayio.Group()
     root.append(menu_group)
@@ -146,6 +149,7 @@ def displayio_scene(display):
     root.append(overlay_group)
     return {"root": root, "ring": _RingNode(palette), "title": title,
             "axis": axis, "value": value, "secondary": secondary,
+            "activity": activity,
             "multiplier": multiplier, "indicators": indicators, "tabs": tabs,
             "menu": menu, "home_group": content, "menu_group": menu_group,
             "overlay_group": overlay_group,

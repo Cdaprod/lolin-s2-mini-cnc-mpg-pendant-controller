@@ -13,8 +13,8 @@ class RoundLayout:
     MARGIN = 8
     BASELINE = 18
     HEADER = (45, 34, 150, 22)
-    CONTENT = (25, 52, 190, 108)
-    FOOTER = (35, 166, 170, 28)
+    CONTENT = (25, 52, 190, 112)
+    FOOTER = (35, 166, 170, 40)
     MODAL = (28, 82, 184, 72)
 
     @classmethod
@@ -32,11 +32,13 @@ class RoundLayout:
         footer_y = cls.FOOTER[1] + 4
         return {
             "title": cls.centered_region(header_y, 12, cls.HEADER[2]),
-            "axis": cls.centered_region(content_y, 12, 30),
-            "value": cls.centered_region(content_y + cls.BASELINE + 4, 18, 150),
-            "secondary": cls.centered_region(content_y + 3 * cls.BASELINE, 10, 190),
-            "multiplier": cls.centered_region(content_y + 5 * cls.BASELINE, 12, 170),
+            "axis": cls.centered_region(content_y, 12, 42),
+            "value": cls.centered_region(content_y + 18, 14, 150),
+            "secondary": cls.centered_region(content_y + 38, 10, 180),
+            "activity": cls.centered_region(content_y + 57, 10, 150),
+            "multiplier": cls.centered_region(content_y + 76, 12, 170),
             "indicators": cls.centered_region(footer_y, 10, cls.FOOTER[2]),
+            "menu_hint": cls.centered_region(footer_y + 19, 10, 90),
         }
 
     @classmethod

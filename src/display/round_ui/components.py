@@ -66,7 +66,7 @@ class RadialTabBar:
         self.selected = selected
         for index, line in enumerate(self.lines):
             label = labels[index] if index < len(labels) else ""
-            value = ("•" if index == selected else " ") + label
+            value = ("> " if index == selected else "  ") + label
             changed = line.set_text(value) or changed
         return changed
 
@@ -83,14 +83,33 @@ class JogMultiplier:
         return self.text.set("  ".join(labels) + marker)
 
 
+class JogActivity:
+    """Render Jog Hold and relative wheel motion without implying position."""
+
+    def __init__(self, line):
+        self.text = TextComponent(line)
+
+    def update(self, hold, activity):
+        activity = int(activity)
+        if activity > 0:
+            motion = "CW " + ">" * min(3, activity)
+        elif activity < 0:
+            motion = "CCW " + "<" * min(3, -activity)
+        else:
+            motion = "---"
+        return self.text.set("HOLD:{}  MPG:{}".format(
+            "ON" if hold else "OFF", motion
+        ))
+
+
 class IndicatorStrip:
     def __init__(self, line):
         self.text = TextComponent(line)
 
     def update(self, controller, wifi, storage):
         return self.text.set("CNC:{}  WIFI:{}  SD:{}".format(
-            "ONLINE" if controller else "OFFLINE", "●" if wifi else "○",
-            "●" if storage else "○"
+            "ON" if controller else "OFF", "ON" if wifi else "--",
+            "OK" if storage else "--"
         ))
 
 
