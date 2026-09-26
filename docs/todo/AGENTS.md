@@ -6,6 +6,10 @@ enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
 ## 2026-09-26 — Round HOME visual hierarchy
 
+- [x] Replace the text-dashboard composition with a production instrument
+  face: large axis/DRO hierarchy, scaled retained type, directional activity
+  arcs, physical-control feedback, exceptional-state modal, and highlighted
+  circular-menu language without changing UIManager or safety semantics.
 - [x] Replace circumference-clipped radial text with one safe-area menu hint
   and restructure HOME around axis/DRO, increment, Jog Hold, signed relative
   MPG activity, controller availability, and compact connectivity state.

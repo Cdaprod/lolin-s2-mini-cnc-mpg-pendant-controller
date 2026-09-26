@@ -487,7 +487,8 @@ class UIManager:
             return BACK if event.x < 120 else HOME
         if event.y < 45:
             return BACK
-        row = (event.y - 52) // 18
+        # These bands match the retained round menu's 22px row rhythm.
+        row = (event.y - 58) // 22
         if not 0 <= row < 6:
             return None
         items = self.items()
