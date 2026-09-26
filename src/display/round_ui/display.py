@@ -192,6 +192,8 @@ def displayio_scene(display):
     menu_group.append(menu_footer.node)
 
     overlay_group = displayio.Group()
+    # Keep the opaque modal from covering HOME before the first renderer poll.
+    overlay_group.hidden = True
     modal_bitmap = displayio.Bitmap(190, 94, 1)
     modal_palette = displayio.Palette(1)
     modal_palette[0] = 0x26090D

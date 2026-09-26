@@ -6,6 +6,9 @@ enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
 ## 2026-09-26 — Round HOME visual hierarchy
 
+- [x] Hide the opaque exceptional-state modal before the first frame and
+  distinguish an uninitialized overlay cache from the valid no-overlay state;
+  cover initial hidden and `None → overlay → None` transitions on the host.
 - [x] Spatially associate subdued upper selector rails and lower signed MPG
   arcs with the pendant's physical axis, increment, and handwheel controls;
   wake only the manipulated region while preserving the central DRO hierarchy.

@@ -113,7 +113,9 @@ class RoundRendererTests(unittest.TestCase):
 
     def test_existing_ui_navigation_and_overlay_drive_round_components(self):
         state, ui, _, renderer = self.make_renderer()
+        self.assertTrue(renderer.overlay.group.hidden)
         renderer.render(state)
+        self.assertTrue(renderer.overlay.group.hidden)
         ui.handle(SELECT)
         renderer.render(state)
         self.assertEqual(ui.current_screen, "MAIN_MENU")
@@ -124,6 +126,12 @@ class RoundRendererTests(unittest.TestCase):
         renderer.render(state)
         self.assertFalse(renderer.overlay.group.hidden)
         self.assertEqual(renderer.overlay.title.value, "ALARM")
+        state.alarm = None
+        ui.refresh_context()
+        renderer.render(state)
+        self.assertTrue(renderer.overlay.group.hidden)
+        self.assertEqual(renderer.overlay.title.value, "")
+        self.assertEqual(renderer.overlay.detail.value, "")
 
     def test_exceptional_and_selector_states_are_immediate(self):
         state, ui, _, renderer = self.make_renderer()
