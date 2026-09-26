@@ -134,6 +134,10 @@ class UIStateMachineTests(unittest.TestCase):
         self.assertEqual(ui.current_screen, "MACHINE")
         self.assertIsNone(ui.handle(TouchEvent("tap", 20, 205)))
         self.assertEqual(ui.current_screen, "MAIN_MENU")
+        self.assertIsNone(ui.handle(TouchEvent("tap", 120, 82)))
+        self.assertEqual(ui.current_screen, "JOBS")
+        self.assertIsNone(ui.handle(TouchEvent("tap", 20, 205)))
+        self.assertEqual(ui.current_screen, "MAIN_MENU")
         self.assertIsNone(ui.handle(TouchEvent("tap", 200, 205)))
         self.assertEqual(ui.current_screen, "HOME")
 
