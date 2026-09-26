@@ -4,6 +4,14 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-09-26 — Round HOME visual hierarchy
+
+- [x] Replace circumference-clipped radial text with one safe-area menu hint
+  and restructure HOME around axis/DRO, increment, Jog Hold, signed relative
+  MPG activity, controller availability, and compact connectivity state.
+- [ ] Validate the revised HOME hierarchy, contrast, text centering, and
+  circumference clearance on the physical 240×240 GC9A01 display.
+
 ## 2026-09-25 — macOS read-only mount physical validation
 
 - [x] Migrate the immediately preceding manifest's retired root `boot.py`
