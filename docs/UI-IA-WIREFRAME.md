@@ -12,6 +12,25 @@ explicitly declares `MOTION`, which is normally only `HOME / JOG-DRO`. The
 safety/action layer independently checks this ownership; changing a drawing or
 display implementation cannot bypass the interlock.
 
+## Production round-display presentation
+
+The 240×240 renderer presents HOME as an instrument face rather than a menu or
+status dashboard. Axis and controller-reported DRO dominate the optical center;
+coordinate context and physical increment sit beneath them. Quiet upper-left
+and upper-right rails associate authoritative axis and increment state with the
+physical selectors above the display. A selector change wakes its rail and
+shows direction briefly, then the region recedes. Lower-left and lower-right
+arcs associate signed relative MPG activity with the handwheel below the
+display; they never represent absolute wheel position. Jog Hold readiness or
+inhibition is stated below the increment, while network and storage remain
+quiet, compact peripheral indicators.
+
+Secondary screens use a consistent title, six-row window, retained selection
+band, and position footer. Safety overlays sit above both scenes and use a
+high-contrast modal treatment. The scene uses one indexed full-screen bitmap,
+one palette-only animated ring, fixed text bitmaps, and retained groups; normal
+state changes do not rebuild the scene or rewrite the background bitmap.
+
 ## Product navigation grammar
 
 The physical controls have consistent contextual meaning:

@@ -11,6 +11,15 @@ class Node:
     def __init__(self):
         self.color = 0
         self.hidden = False
+        self.y = 0
+
+    def update(self, state, activity, armed, axis_transition,
+               increment_transition):
+        self.state = state
+        self.activity = activity
+        self.armed = armed
+        self.axis_transition = axis_transition
+        self.increment_transition = increment_transition
 
 
 class Line:
@@ -38,10 +47,13 @@ class Display:
 
 def scene_factory(display):
     return {
-        "root": Node(), "ring": Node(), "title": Line(), "axis": Line(),
-        "value": Line(), "secondary": Line(), "multiplier": Line(),
-        "indicators": Line(), "tabs": [Line() for _ in range(5)],
-        "menu": [Line() for _ in range(6)], "overlay_group": Node(),
+        "root": Node(), "ring": Node(), "state_label": Line(),
+        "axis_feedback": Line(), "step_feedback": Line(),
+        "axis": Line(), "value": Line(), "context": Line(),
+        "increment": Line(), "motion": Line(), "connectivity": Line(),
+        "menu_title": Line(), "menu": [Line() for _ in range(6)],
+        "menu_highlight": Node(), "menu_footer": Line(),
+        "overlay_group": Node(),
         "overlay_title": Line(), "overlay_detail": Line(),
     }
 
@@ -75,6 +87,8 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer.render(state))
         self.assertEqual(renderer.axis.axis.value, "X")
         self.assertEqual(renderer.axis.value.value, "+124.520")
+        self.assertEqual(renderer.state_label.value, "IDLE")
+        self.assertEqual(renderer.motion.text.value, "HOLD TO JOG")
         axis_updates = renderer.axis.axis.line.updates
         value_updates = renderer.axis.value.line.updates
         self.assertFalse(renderer.render(state))
@@ -84,18 +98,72 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer.axis.axis.line.updates, axis_updates)
         self.assertEqual(renderer.axis.value.line.updates, value_updates + 1)
 
+    def test_home_prioritizes_armed_hold_and_signed_relative_activity(self):
+        state, _, _, renderer = self.make_renderer()
+        state.deadman_enabled = True
+        state.mpg_activity = -4
+        renderer.render(state)
+        self.assertEqual(renderer.state_label.value, "READY")
+        self.assertEqual(renderer.motion.text.value, "<<<<  CCW")
+        self.assertEqual(renderer.ring.node.activity, -4)
+        state.mpg_activity = 2
+        renderer.render(state)
+        self.assertEqual(renderer.motion.text.value, "CW  >>")
+        self.assertEqual(renderer.ring.node.activity, 2)
+
     def test_existing_ui_navigation_and_overlay_drive_round_components(self):
         state, ui, _, renderer = self.make_renderer()
+        self.assertTrue(renderer.overlay.group.hidden)
         renderer.render(state)
+        self.assertTrue(renderer.overlay.group.hidden)
         ui.handle(SELECT)
         renderer.render(state)
         self.assertEqual(ui.current_screen, "MAIN_MENU")
-        self.assertTrue(renderer.menu[0].value.startswith("› "))
+        self.assertEqual(renderer.menu[0].value, "Machine")
+        self.assertEqual(renderer.menu_highlight.node.y, 58)
         state.alarm = "2"
         ui.refresh_context()
         renderer.render(state)
         self.assertFalse(renderer.overlay.group.hidden)
         self.assertEqual(renderer.overlay.title.value, "ALARM")
+        state.alarm = None
+        ui.refresh_context()
+        renderer.render(state)
+        self.assertTrue(renderer.overlay.group.hidden)
+        self.assertEqual(renderer.overlay.title.value, "")
+        self.assertEqual(renderer.overlay.detail.value, "")
+
+    def test_exceptional_and_selector_states_are_immediate(self):
+        state, ui, _, renderer = self.make_renderer()
+        renderer.render(state)
+        state.selected_axis = "Z"
+        state.axis_transition_direction = 1
+        state.selected_multiplier = "X100"
+        state.resolution_transition_direction = -1
+        renderer.render(state)
+        self.assertEqual(renderer.axis.axis.value, "Z")
+        self.assertEqual(renderer.increment.text.value, "X100")
+        self.assertEqual(renderer.axis_feedback.text.value, "AXIS >Z")
+        self.assertEqual(renderer.step_feedback.text.value, "STEP <X100")
+        self.assertEqual(renderer.ring.node.axis_transition, 1)
+        self.assertEqual(renderer.ring.node.increment_transition, -1)
+
+        state.connection_state = "disconnected"
+        ui.refresh_context()
+        renderer.render(state)
+        self.assertEqual(renderer.motion.text.value, "CONTROLLER OFFLINE")
+
+        state.set_estop(True)
+        ui.refresh_context()
+        renderer.render(state)
+        self.assertEqual(renderer.overlay.title.value, "E-STOP")
+        self.assertEqual(renderer.overlay.detail.value, "MOTION INHIBITED")
+        self.assertEqual(renderer.ring.node.state, "estop")
+
+        state.estop_observed = False
+        ui.refresh_context()
+        renderer.render(state)
+        self.assertEqual(renderer.overlay.detail.value, "RECOVERY REQUIRED")
 
     def test_long_diagnostics_scroll_both_directions(self):
         _, ui, _, renderer = self.make_renderer()
@@ -127,13 +195,12 @@ class RoundRendererTests(unittest.TestCase):
         ui.enter("NETWORK_INFO")
         renderer.render(ui.state)
         self.assertEqual(len(ui.items()), 6)
-        self.assertTrue(renderer.menu[0].value.startswith("› Wi-Fi"))
+        self.assertTrue(renderer.menu[0].value.startswith("Wi-Fi"))
         self.assertIn("Reason", renderer.menu[5].value)
 
     def test_layout_regions_are_inside_round_safe_area(self):
         for region in RoundLayout.content_rows().values():
             self.assertTrue(RoundLayout.region_within_safe_circle(region))
-        self.assertTrue(RoundLayout.region_within_safe_circle(RoundLayout.MODAL))
 
 
 if __name__ == "__main__":

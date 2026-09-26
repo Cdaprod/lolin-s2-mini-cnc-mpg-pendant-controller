@@ -1,6 +1,8 @@
-"""Stateful retained components used by the round renderer."""
+"""Retained, allocation-conscious components for the round instrument UI."""
 
 from . import theme
+
+_UNSET = object()
 
 
 class TextComponent:
@@ -17,81 +19,109 @@ class TextComponent:
         return self.line.set_text(value)
 
 
-class StatusRing:
+class InstrumentRing:
+    """Drive spatial selector regions and relative handwheel activity arcs."""
+
     def __init__(self, node):
         self.node = node
-        self.state = None
+        self.signature = None
 
-    def set(self, state):
-        state = str(state).lower()
-        if state == self.state:
+    def update(self, machine_state, activity, armed, axis_transition=0,
+               increment_transition=0):
+        signature = (str(machine_state).lower(), int(activity), bool(armed),
+                     int(axis_transition), int(increment_transition))
+        if signature == self.signature:
             return False
-        self.state = state
-        self.node.color = theme.MACHINE_COLORS.get(state, theme.MUTED)
+        self.signature = signature
+        if hasattr(self.node, "update"):
+            self.node.update(*signature)
+        else:
+            self.node.color = theme.MACHINE_COLORS.get(signature[0], theme.MUTED)
         return True
-
-    def activity(self, value, armed):
-        if hasattr(self.node, "set_activity"):
-            return self.node.set_activity(value, armed)
-        return False
 
 
 class AxisReadout:
-    def __init__(self, axis_line, value_line, secondary_line):
+    def __init__(self, axis_line, value_line, context_line):
         self.axis = TextComponent(axis_line)
         self.value = TextComponent(value_line)
-        self.secondary = TextComponent(secondary_line)
+        self.context = TextComponent(context_line)
 
-    def update(self, axis, value, coordinates, transition=0):
-        marker = "›" if transition > 0 else "‹" if transition < 0 else ""
-        changed = self.axis.set(marker + (axis or "OFF"))
+    def update(self, axis, value, coordinate_mode, units):
+        changed = self.axis.set(axis or "OFF")
         shown = "---" if value is None else "{:+.3f}".format(value)
         changed = self.value.set(shown) or changed
-        values = []
-        for name in ("X", "Y", "Z", "A"):
-            coordinate = coordinates.get(name)
-            values.append("{}:{}".format(
-                name, "---" if coordinate is None else "{:.2f}".format(coordinate)
-            ))
-        return self.secondary.set("  ".join(values)) or changed
+        return self.context.set("{}  {}".format(
+            str(coordinate_mode).upper(), units
+        )) or changed
 
 
-class RadialTabBar:
-    def __init__(self, lines):
-        self.lines = lines
-        self.selected = None
-
-    def update(self, labels, selected):
-        changed = selected != self.selected
-        self.selected = selected
-        for index, line in enumerate(self.lines):
-            label = labels[index] if index < len(labels) else ""
-            value = ("•" if index == selected else " ") + label
-            changed = line.set_text(value) or changed
-        return changed
-
-
-class JogMultiplier:
+class IncrementBadge:
     def __init__(self, line):
         self.text = TextComponent(line)
 
-    def set(self, selected, transition=0):
-        labels = []
-        for value in ("X1", "X10", "X100"):
-            labels.append("[{}]".format(value) if value == selected else value)
-        marker = " ›" if transition > 0 else " ‹" if transition < 0 else ""
-        return self.text.set("  ".join(labels) + marker)
+    def update(self, selected):
+        return self.text.set(selected)
 
 
-class IndicatorStrip:
+class SelectorFeedback:
+    """Label a physical selector in its spatially associated screen region."""
+
+    def __init__(self, line, label):
+        self.text = TextComponent(line)
+        self.label = label
+
+    def update(self, selected, transition=0):
+        cue = ">" if transition > 0 else "<" if transition < 0 else ""
+        return self.text.set("{} {}{}".format(self.label, cue, selected))
+
+
+class MotionPrompt:
+    """Describe the physical Jog Hold and signed relative MPG feedback."""
+
     def __init__(self, line):
         self.text = TextComponent(line)
 
-    def update(self, controller, wifi, storage):
-        return self.text.set("CNC:{}  WIFI:{}  SD:{}".format(
-            "ONLINE" if controller else "OFFLINE", "●" if wifi else "○",
-            "●" if storage else "○"
+    def update(self, hold, armed, activity, controller):
+        activity = int(activity)
+        if not controller:
+            value = "CONTROLLER OFFLINE"
+        elif not hold:
+            value = "HOLD TO JOG"
+        elif not armed:
+            value = "MOTION INHIBITED"
+        elif activity > 0:
+            value = "CW  " + ">" * min(4, activity)
+        elif activity < 0:
+            value = "<" * min(4, -activity) + "  CCW"
+        else:
+            value = "JOG READY"
+        return self.text.set(value)
+
+
+class ConnectivityGlyphs:
+    """Compact secondary status; healthy services recede behind machining data."""
+
+    def __init__(self, line):
+        self.text = TextComponent(line)
+
+    def update(self, wifi, storage):
+        return self.text.set("NET{}  SD{}  MENU".format(
+            "+" if wifi else "-", "+" if storage else "-"
         ))
+
+
+class MenuHighlight:
+    def __init__(self, node):
+        self.node = node
+        self.row = None
+
+    def set(self, row, visible=True):
+        row = int(row)
+        changed = row != self.row or self.node.hidden == bool(visible)
+        self.row = row
+        self.node.hidden = not visible
+        self.node.y = 58 + row * 22
+        return changed
 
 
 class Overlay:
@@ -99,7 +129,11 @@ class Overlay:
         self.group = group
         self.title = TextComponent(title_line)
         self.detail = TextComponent(detail_line)
-        self.signature = None
+        # DisplayIO groups default visible. Establish the safe no-overlay
+        # invariant before the first frame and do not let the signature cache
+        # mistake "not rendered yet" for the legitimate None state.
+        self.group.hidden = True
+        self.signature = _UNSET
 
     def update(self, overlay):
         signature = tuple(overlay) if overlay else None

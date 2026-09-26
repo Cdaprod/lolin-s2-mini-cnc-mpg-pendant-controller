@@ -1,9 +1,8 @@
-"""GC9A01 display construction and the concrete DisplayIO round scene."""
+"""GC9A01 construction and the production retained round-instrument scene."""
 
 import math
 
 from . import theme
-from .geometry import radial_points, RoundLayout
 from .renderer import RoundRenderer
 
 _BACKLIGHT_OUTPUT = None
@@ -46,110 +45,181 @@ def build_gc9a01(config):
     return display
 
 
-def _line(displayio, terminalio, width, height, x, y, color=theme.TEXT):
+def _line(displayio, terminalio, width, height, x, y, color=theme.TEXT,
+          centered=False, scale=1):
     from src.display.displayio_backend import _DisplayIOTextLine
-    line = _DisplayIOTextLine(width, height, terminalio.FONT, displayio, color)
-    line.node.x, line.node.y = x, y
+    source_width = max(1, width // scale)
+    source_height = max(1, height // scale)
+    line = _DisplayIOTextLine(source_width, source_height, terminalio.FONT,
+                              displayio, color, centered)
+    if scale == 1:
+        line.node.x, line.node.y = x, y
+    else:
+        group = displayio.Group(scale=scale, x=x, y=y)
+        group.append(line.node)
+        line.node = group
     return line
 
 
-class _RingNode:
+class _InstrumentRingNode:
+    """Palette-driven ring: no per-frame bitmap writes or object allocation."""
+
     def __init__(self, palette):
         self.palette = palette
-        self.activity_value = 0
-        self.armed = False
-        self.phase = 0
+        self.color = theme.MUTED
+        self.signature = None
+
+    def update(self, state, activity, armed, axis_transition,
+               increment_transition):
+        self.signature = (state, activity, armed, axis_transition,
+                          increment_transition)
+        exceptional = state in ("alarm", "estop")
+        base = theme.RED if exceptional else (theme.CYAN if armed else 0x24343A)
+        self.color = base
+        self.palette[1] = base
+        self.palette[2] = theme.CYAN if axis_transition else 0x31545B
+        self.palette[3] = theme.YELLOW if increment_transition else 0x544B2A
+        self.palette[4] = (theme.RED if exceptional else
+                           (theme.CYAN if activity > 0 else 0x18343A))
+        self.palette[5] = (theme.RED if exceptional else
+                           (theme.YELLOW if activity < 0 else 0x352F1B))
+
+
+class _HighlightNode:
+    def __init__(self, node):
+        self.node = node
 
     @property
-    def color(self):
-        return self.palette[1]
+    def hidden(self):
+        return self.node.hidden
 
-    @color.setter
-    def color(self, value):
-        for index in (1, 2, 3):
-            self.palette[index] = value
+    @hidden.setter
+    def hidden(self, value):
+        self.node.hidden = value
 
-    def set_activity(self, value, armed):
-        value, armed = int(value), bool(armed)
-        changed = value != self.activity_value or armed != self.armed
-        if not changed:
-            return False
-        self.activity_value, self.armed = value, armed
-        if value:
-            self.phase = (self.phase + (1 if value > 0 else -1)) % 3
-        base = theme.GREEN if armed else theme.MUTED
-        accent = theme.CYAN if value > 0 else theme.YELLOW
-        for index in (1, 2, 3):
-            self.palette[index] = base
-        if value:
-            self.palette[1 + self.phase] = accent
-        return True
+    @property
+    def y(self):
+        return self.node.y
+
+    @y.setter
+    def y(self, value):
+        self.node.y = value
+
+
+def _instrument_bitmap(displayio):
+    """Build one indexed backdrop with directional arcs and subtle dial ticks."""
+    bitmap = displayio.Bitmap(240, 240, 6)
+    palette = displayio.Palette(6)
+    palette[0] = theme.BACKGROUND
+    palette[1] = 0x24343A
+    palette[2] = 0x31545B
+    palette[3] = 0x544B2A
+    palette[4] = 0x18343A
+    palette[5] = 0x352F1B
+    for y in range(240):
+        dy = y - 120
+        for x in range(240):
+            dx = x - 120
+            radius2 = dx * dx + dy * dy
+            angle = math.atan2(dy, dx)
+            if 106 * 106 <= radius2 <= 111 * 111:
+                bitmap[x, y] = 1
+            elif 97 * 97 <= radius2 <= 102 * 102:
+                if -2.72 <= angle <= -1.77:
+                    bitmap[x, y] = 2
+                elif -1.37 <= angle <= -0.42:
+                    bitmap[x, y] = 3
+                elif 0.48 <= angle <= 1.42:
+                    bitmap[x, y] = 4
+                elif 1.72 <= angle <= 2.66:
+                    bitmap[x, y] = 5
+    return bitmap, palette
 
 
 def displayio_scene(display):
-    """Create the persistent scene once; renderer updates its properties."""
+    """Create a bounded retained scene optimized for a 240px circular panel."""
     import displayio
     import terminalio
+
     root = displayio.Group()
-    bitmap = displayio.Bitmap(240, 240, 4)
-    palette = displayio.Palette(4)
-    palette[0] = theme.BACKGROUND
-    palette[1] = palette[2] = palette[3] = theme.MUTED
-    center = RoundLayout.CENTER[0]
-    for y in range(240):
-        for x in range(240):
-            radius2 = (x - center) ** 2 + (y - center) ** 2
-            if ((RoundLayout.OUTER_RING_RADIUS - 3) ** 2 <= radius2 <=
-                    (RoundLayout.OUTER_RING_RADIUS + 3) ** 2):
-                angle = int((math.atan2(y - center, x - center) + math.pi) *
-                            12 / (2 * math.pi))
-                bitmap[x, y] = 1 + angle % 3
+    bitmap, palette = _instrument_bitmap(displayio)
     root.append(displayio.TileGrid(bitmap, pixel_shader=palette))
-    content = displayio.Group()
-    root.append(content)
-    rows = RoundLayout.content_rows()
-    def layout_line(name, color=theme.TEXT):
-        x, y, width, height = rows[name]
-        return _line(displayio, terminalio, width, height, x, y, color)
-    title = layout_line("title", theme.CYAN)
-    axis = layout_line("axis", theme.CYAN)
-    value = layout_line("value")
-    secondary = layout_line("secondary", theme.MUTED)
-    multiplier = layout_line("multiplier", theme.CYAN)
-    indicators = layout_line("indicators", theme.GREEN)
-    menu_x, menu_y, menu_width, _ = RoundLayout.CONTENT
-    menu = [_line(displayio, terminalio, menu_width, 12, menu_x,
-                  menu_y + index * RoundLayout.BASELINE)
-            for index in range(6)]
-    tabs = []
-    for (x, y) in radial_points(5, 94):
-        tabs.append(_line(displayio, terminalio, 55, 10,
-                          max(0, x - 25), max(0, y - 5), theme.CYAN))
-    for line in [title, axis, value, secondary, multiplier, indicators] + tabs:
-        content.append(line.node)
+
+    home = displayio.Group()
+    root.append(home)
+    axis_feedback = _line(displayio, terminalio, 68, 10, 46, 48,
+                          theme.CYAN, True)
+    step_feedback = _line(displayio, terminalio, 68, 10, 126, 48,
+                          theme.YELLOW, True)
+    state_label = _line(displayio, terminalio, 96, 12, 72, 29,
+                        theme.GREEN, True)
+    axis = _line(displayio, terminalio, 72, 30, 84, 59,
+                 theme.CYAN, True, 3)
+    value = _line(displayio, terminalio, 174, 30, 33, 89,
+                  theme.TEXT, True, 3)
+    context = _line(displayio, terminalio, 100, 10, 70, 121,
+                    theme.MUTED, True)
+    increment = _line(displayio, terminalio, 88, 20, 76, 137,
+                      theme.YELLOW, True, 2)
+    motion = _line(displayio, terminalio, 152, 12, 44, 168,
+                   theme.CYAN, True)
+    connectivity = _line(displayio, terminalio, 106, 10, 67, 194,
+                         theme.MUTED, True)
+    for line in (state_label, axis_feedback, step_feedback, axis, value,
+                 context, increment, motion, connectivity):
+        home.append(line.node)
+
     menu_group = displayio.Group()
     root.append(menu_group)
-    for line in menu:
+    menu_title = _line(displayio, terminalio, 150, 20, 45, 30,
+                       theme.CYAN, True, 2)
+    menu_group.append(menu_title.node)
+    highlight_bitmap = displayio.Bitmap(180, 18, 1)
+    highlight_palette = displayio.Palette(1)
+    highlight_palette[0] = 0x15333A
+    highlight_grid = displayio.TileGrid(highlight_bitmap,
+                                        pixel_shader=highlight_palette,
+                                        x=30, y=58)
+    menu_group.append(highlight_grid)
+    menu = []
+    for index in range(6):
+        line = _line(displayio, terminalio, 164, 12, 38, 63 + index * 22,
+                     theme.TEXT)
+        menu.append(line)
         menu_group.append(line.node)
+    menu_footer = _line(displayio, terminalio, 110, 10, 65, 202,
+                        theme.MUTED, True)
+    menu_group.append(menu_footer.node)
+
     overlay_group = displayio.Group()
-    modal_x, modal_y, modal_width, modal_height = RoundLayout.MODAL
-    overlay_bitmap = displayio.Bitmap(modal_width, modal_height, 1)
-    overlay_palette = displayio.Palette(1)
-    overlay_palette[0] = theme.PANEL
+    # Keep the opaque modal from covering HOME before the first renderer poll.
+    overlay_group.hidden = True
+    modal_bitmap = displayio.Bitmap(190, 94, 1)
+    modal_palette = displayio.Palette(1)
+    modal_palette[0] = 0x26090D
     overlay_group.append(displayio.TileGrid(
-        overlay_bitmap, pixel_shader=overlay_palette, x=modal_x, y=modal_y
+        modal_bitmap, pixel_shader=modal_palette, x=25, y=73
     ))
-    overlay_title = _line(displayio, terminalio, 160, 14, 40, 96, theme.YELLOW)
-    overlay_detail = _line(displayio, terminalio, 160, 14, 40, 120)
+    overlay_title = _line(displayio, terminalio, 160, 28, 40, 89,
+                          theme.RED, True, 2)
+    overlay_detail = _line(displayio, terminalio, 166, 14, 37, 128,
+                           theme.TEXT, True)
     overlay_group.append(overlay_title.node)
     overlay_group.append(overlay_detail.node)
     root.append(overlay_group)
-    return {"root": root, "ring": _RingNode(palette), "title": title,
-            "axis": axis, "value": value, "secondary": secondary,
-            "multiplier": multiplier, "indicators": indicators, "tabs": tabs,
-            "menu": menu, "home_group": content, "menu_group": menu_group,
-            "overlay_group": overlay_group,
-            "overlay_title": overlay_title, "overlay_detail": overlay_detail}
+
+    return {
+        "root": root, "ring": _InstrumentRingNode(palette),
+        "home_group": home, "state_label": state_label,
+        "axis_feedback": axis_feedback, "step_feedback": step_feedback,
+        "axis": axis,
+        "value": value, "context": context, "increment": increment,
+        "motion": motion, "connectivity": connectivity,
+        "menu_group": menu_group, "menu_title": menu_title, "menu": menu,
+        "menu_highlight": _HighlightNode(highlight_grid),
+        "menu_footer": menu_footer, "overlay_group": overlay_group,
+        "overlay_title": overlay_title, "overlay_detail": overlay_detail,
+    }
 
 
 def from_config(config):
