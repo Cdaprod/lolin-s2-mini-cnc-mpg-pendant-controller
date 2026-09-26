@@ -2,6 +2,8 @@
 
 from . import theme
 
+_UNSET = object()
+
 
 class TextComponent:
     def __init__(self, line, prefix=""):
@@ -127,7 +129,11 @@ class Overlay:
         self.group = group
         self.title = TextComponent(title_line)
         self.detail = TextComponent(detail_line)
-        self.signature = None
+        # DisplayIO groups default visible. Establish the safe no-overlay
+        # invariant before the first frame and do not let the signature cache
+        # mistake "not rendered yet" for the legitimate None state.
+        self.group.hidden = True
+        self.signature = _UNSET
 
     def update(self, overlay):
         signature = tuple(overlay) if overlay else None
