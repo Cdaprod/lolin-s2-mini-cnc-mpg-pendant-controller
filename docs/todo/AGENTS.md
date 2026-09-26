@@ -6,6 +6,9 @@ enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
 ## 2026-09-26 — Round HOME visual hierarchy
 
+- [x] Spatially associate subdued upper selector rails and lower signed MPG
+  arcs with the pendant's physical axis, increment, and handwheel controls;
+  wake only the manipulated region while preserving the central DRO hierarchy.
 - [x] Replace the text-dashboard composition with a production instrument
   face: large axis/DRO hierarchy, scaled retained type, directional activity
   arcs, physical-control feedback, exceptional-state modal, and highlighted
