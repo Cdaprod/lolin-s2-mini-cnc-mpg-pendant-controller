@@ -4,10 +4,12 @@
 class _DisplayIOTextLine:
     """Fixed bitmap text line using built-in terminalio glyphs only."""
 
-    def __init__(self, width, height, font, displayio, color=0xFFFFFF):
+    def __init__(self, width, height, font, displayio, color=0xFFFFFF,
+                 centered=False):
         self.width = width
         self.height = height
         self.font = font
+        self.centered = bool(centered)
         self.bitmap = displayio.Bitmap(width, height, 2)
         palette = displayio.Palette(2)
         palette[0] = 0x000000
@@ -22,7 +24,13 @@ class _DisplayIOTextLine:
             return False
         self.text = text
         self.bitmap.fill(0)
-        cursor = 0
+        text_width = 0
+        if self.centered:
+            for character in text:
+                glyph = self.font.get_glyph(ord(character))
+                if glyph is not None:
+                    text_width += max(1, glyph.shift_x)
+        cursor = max(0, (self.width - text_width) // 2)
         for character in text:
             glyph = self.font.get_glyph(ord(character))
             if glyph is None:

@@ -1,13 +1,14 @@
 """Map the authoritative UIManager view model onto retained round components."""
 
-from .components import (AxisReadout, IndicatorStrip, JogMultiplier, Overlay,
-                         RadialTabBar, StatusRing, TextComponent)
+from .components import (AxisReadout, IndicatorStrip, JogActivity,
+                         JogMultiplier, Overlay, RadialTabBar, StatusRing,
+                         TextComponent)
 
 
 class RoundRenderer:
     """Rich renderer that mutates a persistent scene supplied by a factory."""
 
-    HOME_TABS = ("STATUS", "JOG", "JOBS", "WIFI", "SETTINGS")
+    HOME_TABS = ("TAP: MENU",)
 
     def __init__(self, display, scene_factory):
         self.display = display
@@ -24,6 +25,7 @@ class RoundRenderer:
                                 scene["secondary"])
         self.tabs = RadialTabBar(scene["tabs"])
         self.multiplier = JogMultiplier(scene["multiplier"])
+        self.activity = JogActivity(scene["activity"])
         self.indicators = IndicatorStrip(scene["indicators"])
         self.menu = [TextComponent(line) for line in scene["menu"]]
         self.overlay = Overlay(scene["overlay_group"], scene["overlay_title"],
@@ -46,7 +48,12 @@ class RoundRenderer:
         changed = self.status_ring.activity(
             model["mpg_activity"] if model["jog_armed"] else 0,
                                             model["jog_armed"]) or changed
-        changed = self.title.set(model["title"]) or changed
+        if is_home:
+            readiness = "JOG ARMED" if model["jog_armed"] else "MOTION OFF"
+            title = "{} / {}".format(state.machine_state.upper(), readiness)
+        else:
+            title = model["title"]
+        changed = self.title.set(title) or changed
         coordinates = state.displayed_position()
         selected = state.selected_axis
         changed = self.axis.update(selected, coordinates.get(selected),
@@ -55,6 +62,9 @@ class RoundRenderer:
         changed = self.multiplier.set(
             state.selected_multiplier,
             model["resolution_transition_direction"]) or changed
+        changed = self.activity.update(
+            model["jog_hold"], model["mpg_activity"]
+        ) or changed
         wifi = getattr(state, "wifi_state", "DISABLED") in (
             "CONNECTED", "connected"
         )
@@ -62,8 +72,7 @@ class RoundRenderer:
             state.connection_state == "connected", wifi,
             state.storage_state == "available"
         ) or changed
-        tab_index = 1 if is_home else 0
-        changed = self.tabs.update(self.HOME_TABS, tab_index) or changed
+        changed = self.tabs.update(self.HOME_TABS, 0) or changed
         items = model.get("items", ())
         if model.get("details"):
             items = tuple(("{}: {}".format(key, value), True, "")

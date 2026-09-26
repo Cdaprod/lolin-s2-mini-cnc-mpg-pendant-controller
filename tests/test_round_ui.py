@@ -40,7 +40,7 @@ def scene_factory(display):
     return {
         "root": Node(), "ring": Node(), "title": Line(), "axis": Line(),
         "value": Line(), "secondary": Line(), "multiplier": Line(),
-        "indicators": Line(), "tabs": [Line() for _ in range(5)],
+        "activity": Line(), "indicators": Line(), "tabs": [Line()],
         "menu": [Line() for _ in range(6)], "overlay_group": Node(),
         "overlay_title": Line(), "overlay_detail": Line(),
     }
@@ -75,6 +75,9 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer.render(state))
         self.assertEqual(renderer.axis.axis.value, "X")
         self.assertEqual(renderer.axis.value.value, "+124.520")
+        self.assertEqual(renderer.title.value, "IDLE / MOTION OFF")
+        self.assertEqual(renderer.activity.text.value, "HOLD:OFF  MPG:---")
+        self.assertEqual(renderer.tabs.lines[0].text, "> TAP: MENU")
         axis_updates = renderer.axis.axis.line.updates
         value_updates = renderer.axis.value.line.updates
         self.assertFalse(renderer.render(state))
@@ -83,6 +86,17 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer.render(state))
         self.assertEqual(renderer.axis.axis.line.updates, axis_updates)
         self.assertEqual(renderer.axis.value.line.updates, value_updates + 1)
+
+    def test_home_prioritizes_armed_hold_and_signed_relative_activity(self):
+        state, _, _, renderer = self.make_renderer()
+        state.deadman_enabled = True
+        state.mpg_activity = -4
+        renderer.render(state)
+        self.assertEqual(renderer.title.value, "IDLE / JOG ARMED")
+        self.assertEqual(renderer.activity.text.value, "HOLD:ON  MPG:CCW <<<")
+        state.mpg_activity = 2
+        renderer.render(state)
+        self.assertEqual(renderer.activity.text.value, "HOLD:ON  MPG:CW >>")
 
     def test_existing_ui_navigation_and_overlay_drive_round_components(self):
         state, ui, _, renderer = self.make_renderer()
