@@ -2,7 +2,7 @@
 
 from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
-                         TextComponent)
+                         SelectorFeedback, TextComponent)
 
 
 class RoundRenderer:
@@ -19,6 +19,8 @@ class RoundRenderer:
         self.menu_group = scene.get("menu_group")
         self.ring = InstrumentRing(scene["ring"])
         self.state_label = TextComponent(scene["state_label"])
+        self.axis_feedback = SelectorFeedback(scene["axis_feedback"], "AXIS")
+        self.step_feedback = SelectorFeedback(scene["step_feedback"], "STEP")
         self.axis = AxisReadout(scene["axis"], scene["value"], scene["context"])
         self.increment = IncrementBadge(scene["increment"])
         self.motion = MotionPrompt(scene["motion"])
@@ -48,19 +50,25 @@ class RoundRenderer:
             state.machine_state,
             model["mpg_activity"] if model["jog_armed"] else 0,
             model["jog_armed"],
+            model["axis_transition_direction"],
+            model["resolution_transition_direction"],
         )
+        changed = self.axis_feedback.update(
+            model["axis_selector"], model["axis_transition_direction"]
+        ) or changed
+        changed = self.step_feedback.update(
+            model["resolution_selector"],
+            model["resolution_transition_direction"],
+        ) or changed
         state_text = "READY" if model["jog_armed"] else state.machine_state.upper()
         changed = self.state_label.set(state_text) or changed
         coordinates = state.displayed_position()
         selected_axis = state.selected_axis
         changed = self.axis.update(
             selected_axis, coordinates.get(selected_axis), state.coordinate_mode,
-            "mm", model["axis_transition_direction"],
+            "mm",
         ) or changed
-        changed = self.increment.update(
-            state.selected_multiplier,
-            model["resolution_transition_direction"],
-        ) or changed
+        changed = self.increment.update(state.selected_multiplier) or changed
         controller = state.connection_state == "connected"
         changed = self.motion.update(
             model["jog_hold"], model["jog_armed"], model["mpg_activity"],

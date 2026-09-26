@@ -13,10 +13,13 @@ class Node:
         self.hidden = False
         self.y = 0
 
-    def update(self, state, activity, armed):
+    def update(self, state, activity, armed, axis_transition,
+               increment_transition):
         self.state = state
         self.activity = activity
         self.armed = armed
+        self.axis_transition = axis_transition
+        self.increment_transition = increment_transition
 
 
 class Line:
@@ -45,6 +48,7 @@ class Display:
 def scene_factory(display):
     return {
         "root": Node(), "ring": Node(), "state_label": Line(),
+        "axis_feedback": Line(), "step_feedback": Line(),
         "axis": Line(), "value": Line(), "context": Line(),
         "increment": Line(), "motion": Line(), "connectivity": Line(),
         "menu_title": Line(), "menu": [Line() for _ in range(6)],
@@ -129,8 +133,12 @@ class RoundRendererTests(unittest.TestCase):
         state.selected_multiplier = "X100"
         state.resolution_transition_direction = -1
         renderer.render(state)
-        self.assertEqual(renderer.axis.axis.value, ">Z")
-        self.assertEqual(renderer.increment.text.value, "<X100")
+        self.assertEqual(renderer.axis.axis.value, "Z")
+        self.assertEqual(renderer.increment.text.value, "X100")
+        self.assertEqual(renderer.axis_feedback.text.value, "AXIS >Z")
+        self.assertEqual(renderer.step_feedback.text.value, "STEP <X100")
+        self.assertEqual(renderer.ring.node.axis_transition, 1)
+        self.assertEqual(renderer.ring.node.increment_transition, -1)
 
         state.connection_state = "disconnected"
         ui.refresh_context()

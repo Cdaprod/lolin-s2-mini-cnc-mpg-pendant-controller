@@ -18,14 +18,16 @@ class TextComponent:
 
 
 class InstrumentRing:
-    """Drive the state ring and its directional, relative MPG arcs."""
+    """Drive spatial selector regions and relative handwheel activity arcs."""
 
     def __init__(self, node):
         self.node = node
         self.signature = None
 
-    def update(self, machine_state, activity, armed):
-        signature = (str(machine_state).lower(), int(activity), bool(armed))
+    def update(self, machine_state, activity, armed, axis_transition=0,
+               increment_transition=0):
+        signature = (str(machine_state).lower(), int(activity), bool(armed),
+                     int(axis_transition), int(increment_transition))
         if signature == self.signature:
             return False
         self.signature = signature
@@ -42,9 +44,8 @@ class AxisReadout:
         self.value = TextComponent(value_line)
         self.context = TextComponent(context_line)
 
-    def update(self, axis, value, coordinate_mode, units, transition=0):
-        marker = ">" if transition > 0 else "<" if transition < 0 else ""
-        changed = self.axis.set("{}{}".format(marker, axis or "OFF"))
+    def update(self, axis, value, coordinate_mode, units):
+        changed = self.axis.set(axis or "OFF")
         shown = "---" if value is None else "{:+.3f}".format(value)
         changed = self.value.set(shown) or changed
         return self.context.set("{}  {}".format(
@@ -56,9 +57,20 @@ class IncrementBadge:
     def __init__(self, line):
         self.text = TextComponent(line)
 
+    def update(self, selected):
+        return self.text.set(selected)
+
+
+class SelectorFeedback:
+    """Label a physical selector in its spatially associated screen region."""
+
+    def __init__(self, line, label):
+        self.text = TextComponent(line)
+        self.label = label
+
     def update(self, selected, transition=0):
-        marker = ">" if transition > 0 else "<" if transition < 0 else ""
-        return self.text.set("{}{}".format(marker, selected))
+        cue = ">" if transition > 0 else "<" if transition < 0 else ""
+        return self.text.set("{} {}{}".format(self.label, cue, selected))
 
 
 class MotionPrompt:

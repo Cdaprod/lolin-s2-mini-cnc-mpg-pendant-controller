@@ -17,9 +17,11 @@ class RoundLayout:
         """Critical HOME regions, ordered by glance hierarchy."""
         return {
             "state": (72, 29, 96, 12),
-            "axis": (84, 48, 72, 30),
-            "dro": (33, 83, 174, 30),
-            "context": (70, 118, 100, 10),
+            "axis_feedback": (46, 48, 68, 10),
+            "step_feedback": (126, 48, 68, 10),
+            "axis": (84, 59, 72, 30),
+            "dro": (33, 89, 174, 30),
+            "context": (70, 121, 100, 10),
             "increment": (76, 137, 88, 20),
             "motion": (44, 168, 152, 12),
             "connectivity": (67, 194, 106, 10),

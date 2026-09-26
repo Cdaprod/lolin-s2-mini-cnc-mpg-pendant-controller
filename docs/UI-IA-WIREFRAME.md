@@ -16,11 +16,14 @@ display implementation cannot bypass the interlock.
 
 The 240×240 renderer presents HOME as an instrument face rather than a menu or
 status dashboard. Axis and controller-reported DRO dominate the optical center;
-coordinate context and physical increment sit beneath them. The perimeter is a
-machine-state ring whose right and left arcs brighten for clockwise and
-counter-clockwise relative MPG activity. It never represents absolute wheel
-position. Jog Hold readiness or inhibition is stated below the increment, while
-network and storage remain quiet, compact peripheral indicators.
+coordinate context and physical increment sit beneath them. Quiet upper-left
+and upper-right rails associate authoritative axis and increment state with the
+physical selectors above the display. A selector change wakes its rail and
+shows direction briefly, then the region recedes. Lower-left and lower-right
+arcs associate signed relative MPG activity with the handwheel below the
+display; they never represent absolute wheel position. Jog Hold readiness or
+inhibition is stated below the increment, while network and storage remain
+quiet, compact peripheral indicators.
 
 Secondary screens use a consistent title, six-row window, retained selection
 band, and position footer. Safety overlays sit above both scenes and use a

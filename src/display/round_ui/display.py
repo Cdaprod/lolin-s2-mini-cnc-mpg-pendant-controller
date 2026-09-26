@@ -69,16 +69,20 @@ class _InstrumentRingNode:
         self.color = theme.MUTED
         self.signature = None
 
-    def update(self, state, activity, armed):
-        self.signature = (state, activity, armed)
+    def update(self, state, activity, armed, axis_transition,
+               increment_transition):
+        self.signature = (state, activity, armed, axis_transition,
+                          increment_transition)
         exceptional = state in ("alarm", "estop")
         base = theme.RED if exceptional else (theme.CYAN if armed else 0x24343A)
         self.color = base
         self.palette[1] = base
-        self.palette[2] = (theme.RED if exceptional else
-                           (theme.CYAN if activity > 0 else base))
-        self.palette[3] = (theme.RED if exceptional else
-                           (theme.YELLOW if activity < 0 else base))
+        self.palette[2] = theme.CYAN if axis_transition else 0x31545B
+        self.palette[3] = theme.YELLOW if increment_transition else 0x544B2A
+        self.palette[4] = (theme.RED if exceptional else
+                           (theme.CYAN if activity > 0 else 0x18343A))
+        self.palette[5] = (theme.RED if exceptional else
+                           (theme.YELLOW if activity < 0 else 0x352F1B))
 
 
 class _HighlightNode:
@@ -104,31 +108,31 @@ class _HighlightNode:
 
 def _instrument_bitmap(displayio):
     """Build one indexed backdrop with directional arcs and subtle dial ticks."""
-    bitmap = displayio.Bitmap(240, 240, 4)
-    palette = displayio.Palette(4)
+    bitmap = displayio.Bitmap(240, 240, 6)
+    palette = displayio.Palette(6)
     palette[0] = theme.BACKGROUND
     palette[1] = 0x24343A
-    palette[2] = theme.CYAN
-    palette[3] = theme.YELLOW
+    palette[2] = 0x31545B
+    palette[3] = 0x544B2A
+    palette[4] = 0x18343A
+    palette[5] = 0x352F1B
     for y in range(240):
         dy = y - 120
         for x in range(240):
             dx = x - 120
             radius2 = dx * dx + dy * dy
+            angle = math.atan2(dy, dx)
             if 106 * 106 <= radius2 <= 111 * 111:
-                angle = math.atan2(dy, dx)
-                if -1.35 <= angle <= 1.35:
+                bitmap[x, y] = 1
+            elif 97 * 97 <= radius2 <= 102 * 102:
+                if -2.72 <= angle <= -1.77:
                     bitmap[x, y] = 2
-                elif angle >= 1.79 or angle <= -1.79:
+                elif -1.37 <= angle <= -0.42:
                     bitmap[x, y] = 3
-                else:
-                    bitmap[x, y] = 1
-            elif 95 * 95 <= radius2 <= 97 * 97:
-                # A sparse inner scale visually joins the screen to the MPG dial.
-                sector = int((math.atan2(dy, dx) + math.pi) * 24 /
-                             (2 * math.pi))
-                if sector % 2 == 0:
-                    bitmap[x, y] = 1
+                elif 0.48 <= angle <= 1.42:
+                    bitmap[x, y] = 4
+                elif 1.72 <= angle <= 2.66:
+                    bitmap[x, y] = 5
     return bitmap, palette
 
 
@@ -143,13 +147,17 @@ def displayio_scene(display):
 
     home = displayio.Group()
     root.append(home)
+    axis_feedback = _line(displayio, terminalio, 68, 10, 46, 48,
+                          theme.CYAN, True)
+    step_feedback = _line(displayio, terminalio, 68, 10, 126, 48,
+                          theme.YELLOW, True)
     state_label = _line(displayio, terminalio, 96, 12, 72, 29,
                         theme.GREEN, True)
-    axis = _line(displayio, terminalio, 72, 30, 84, 48,
+    axis = _line(displayio, terminalio, 72, 30, 84, 59,
                  theme.CYAN, True, 3)
-    value = _line(displayio, terminalio, 174, 30, 33, 83,
+    value = _line(displayio, terminalio, 174, 30, 33, 89,
                   theme.TEXT, True, 3)
-    context = _line(displayio, terminalio, 100, 10, 70, 118,
+    context = _line(displayio, terminalio, 100, 10, 70, 121,
                     theme.MUTED, True)
     increment = _line(displayio, terminalio, 88, 20, 76, 137,
                       theme.YELLOW, True, 2)
@@ -157,8 +165,8 @@ def displayio_scene(display):
                    theme.CYAN, True)
     connectivity = _line(displayio, terminalio, 106, 10, 67, 194,
                          theme.MUTED, True)
-    for line in (state_label, axis, value, context, increment, motion,
-                 connectivity):
+    for line in (state_label, axis_feedback, step_feedback, axis, value,
+                 context, increment, motion, connectivity):
         home.append(line.node)
 
     menu_group = displayio.Group()
@@ -200,7 +208,9 @@ def displayio_scene(display):
 
     return {
         "root": root, "ring": _InstrumentRingNode(palette),
-        "home_group": home, "state_label": state_label, "axis": axis,
+        "home_group": home, "state_label": state_label,
+        "axis_feedback": axis_feedback, "step_feedback": step_feedback,
+        "axis": axis,
         "value": value, "context": context, "increment": increment,
         "motion": motion, "connectivity": connectivity,
         "menu_group": menu_group, "menu_title": menu_title, "menu": menu,
