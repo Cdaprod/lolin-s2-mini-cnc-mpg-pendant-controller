@@ -65,15 +65,42 @@ class CircuitPythonInputAdapter:
 
 
 def _input_pin(board, digitalio, name, pull_up=True):
-    pin = digitalio.DigitalInOut(getattr(board, name))
+    pin = digitalio.DigitalInOut(resolve_native_pin(board, name))
     pin.direction = digitalio.Direction.INPUT
     pin.pull = digitalio.Pull.UP if pull_up else digitalio.Pull.DOWN
     return pin
 
 
+def resolve_native_pin(board, name):
+    """Resolve a configured MCU pin and reject MCP virtual namespaces."""
+    from .mcp23017 import parse_virtual_pin
+    value = str(name or "")
+    if value.upper().startswith(("GPA", "GPB")):
+        # Parse first so malformed MCP-looking names get a useful error.
+        parse_virtual_pin(value)
+        raise ValueError("MCP23017 virtual pin is not a native board pin: " + value)
+    if not value or not hasattr(board, value):
+        raise ValueError("native board pin is unavailable: " + value)
+    return getattr(board, value)
+
+
+def _configured_slow_pins(config):
+    groups = (config.get("axis_pins", {}), config.get("multiplier_pins", {}),
+              config.get("button_pins", {}))
+    values = [pin for group in groups for pin in group.values() if pin]
+    values.extend(pin for pin in (config.get("estop_observe_pin"),
+                                  config.get("deadman_pin")) if pin)
+    return values
+
+
 def from_config(config, shared_i2c=None):
     """Build configured inputs or return `None`; never supplies default pins."""
     if not config.get("inputs_enabled"):
+        return None
+    if (config.get("selector_backend") == "mcp23017" and
+            not config.get("selector_interface_verified")):
+        # Do not partially start the native encoder while the coherent pendant
+        # input interface is still explicitly unverified.
         return None
     required = (config.get("mpg_a_pin"), config.get("mpg_b_pin"))
     if not all(required):
@@ -88,7 +115,8 @@ def from_config(config, shared_i2c=None):
     if config.get("mpg_use_rotaryio", True):
         import rotaryio
         encoder = rotaryio.IncrementalEncoder(
-            getattr(board, required[0]), getattr(board, required[1]), divisor=1
+            resolve_native_pin(board, required[0]),
+            resolve_native_pin(board, required[1]), divisor=1
         )
     else:
         pins = {
@@ -107,13 +135,34 @@ def from_config(config, shared_i2c=None):
         if shared_i2c is None:
             raise ValueError("MCP23017 selector backend requires shared I2C bus")
         i2c = shared_i2c
+        configured_pins = _configured_slow_pins(config)
+        from .mcp23017 import parse_virtual_pin
+        virtual = [pin for pin in configured_pins
+                   if str(pin).upper().startswith(("GPA", "GPB"))]
+        bits = [parse_virtual_pin(pin) for pin in virtual]
+        if len(bits) != len(set(bits)):
+            raise ValueError("duplicate MCP23017 virtual pin allocation")
+        pullup_mask = sum(1 << bit for bit in bits)
         bank = MCP23017InputBank(
-            i2c, config.get("mcp23017_address", 0x20), 0x01FF
+            i2c, config.get("mcp23017_address", 0x20), pullup_mask
         )
-        axes = dict((name, bank.pin(bit)) for name, bit in
-                    config.get("mcp23017_axis_bits", {}).items())
-        multipliers = dict((name, bank.pin(bit)) for name, bit in
-                           config.get("mcp23017_multiplier_bits", {}).items())
+        def slow_pin(pin, active_low=True):
+            if str(pin).upper().startswith(("GPA", "GPB")):
+                return bank.resolve(pin)
+            return _input_pin(board, digitalio, pin, active_low)
+
+        axes = dict((name, slow_pin(pin, selector_active_low)) for name, pin in
+                    config.get("axis_pins", {}).items() if pin)
+        multipliers = dict((name, slow_pin(pin, selector_active_low)) for name, pin in
+                           config.get("multiplier_pins", {}).items() if pin)
+        buttons = dict((name, slow_pin(pin, button_active_low)) for name, pin in
+                       config.get("button_pins", {}).items() if pin)
+        estop = (slow_pin(config["estop_observe_pin"],
+                          config.get("estop_active_low", True))
+                 if config.get("estop_observe_pin") else None)
+        deadman = (slow_pin(config["deadman_pin"],
+                            config.get("deadman_active_low", True))
+                   if config.get("deadman_pin") else None)
         selector_refresh = bank.refresh
         resources.append(bank)
     else:
@@ -123,17 +172,17 @@ def from_config(config, shared_i2c=None):
             (name, _input_pin(board, digitalio, pin, selector_active_low))
             for name, pin in config.get("multiplier_pins", {}).items() if pin
         )
-    buttons = dict((name, _input_pin(board, digitalio, pin, button_active_low))
-                   for name, pin in config.get("button_pins", {}).items() if pin)
-    estop = None
-    if config.get("estop_observe_pin"):
-        estop = _input_pin(board, digitalio,
-                           config["estop_observe_pin"],
-                           config.get("estop_active_low", True))
-    deadman = None
-    if config.get("deadman_pin"):
-        deadman = _input_pin(board, digitalio, config["deadman_pin"],
-                             config.get("deadman_active_low", True))
+        buttons = dict((name, _input_pin(board, digitalio, pin, button_active_low))
+                       for name, pin in config.get("button_pins", {}).items() if pin)
+        estop = None
+        if config.get("estop_observe_pin"):
+            estop = _input_pin(board, digitalio,
+                               config["estop_observe_pin"],
+                               config.get("estop_active_low", True))
+        deadman = None
+        if config.get("deadman_pin"):
+            deadman = _input_pin(board, digitalio, config["deadman_pin"],
+                                 config.get("deadman_active_low", True))
     return CircuitPythonInputAdapter(
         pins, axes, multipliers, buttons, estop, mpg_active_low,
         selector_active_low, button_active_low,

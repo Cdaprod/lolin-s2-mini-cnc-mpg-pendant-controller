@@ -4,6 +4,17 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-10-02 — Current XIAO harness architecture
+
+- [x] Make the XIAO ESP32-S3/Round Display settings template canonical, with
+  native GPIO42/GPIO41 encoder inputs and the complete GPA0–GPB6 harness map.
+- [x] Resolve MCP23017 virtual pins through a shared-I2C polling backend with
+  pull-ups, active-low semantics, address/pin validation, and safe gates.
+- [x] Preserve the unassigned LED and GRBL UART and label the prior LOLIN
+  hardware material as legacy rather than allowing its pins into this build.
+- [ ] Electrically commission the encoder interface and every switch/common,
+  then establish direction and counts per detent before enabling inputs.
+
 ## 2026-09-26 — Round HOME visual hierarchy
 
 - [x] Hide the opaque exceptional-state modal before the first frame and

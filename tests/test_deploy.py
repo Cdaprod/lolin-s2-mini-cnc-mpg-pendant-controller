@@ -116,7 +116,8 @@ class ReconciliationTests(unittest.TestCase):
         self.assertEqual(defaults["MPG_HARDWARE_PROFILE"], '""')
 
     def test_round_display_dependency_inventory_is_enforced(self):
-        settings = {"MPG_DISPLAY_PROFILE": '"seeed_round_240"'}
+        settings = {"MPG_DISPLAY_PROFILE": '"seeed_round_240"',
+                    "MPG_DISPLAY_ENABLED": '"true"'}
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             self.assertTrue(deploy.dependency_problems(settings, root=root))
@@ -254,7 +255,8 @@ class DeploymentCLITests(unittest.TestCase):
             self.mark_circuitpython(target)
             (target / "settings.toml").write_text(
                 'MPG_HARDWARE_PROFILE=""\nMPG_BOARD_PROFILE="xiao_esp32s3"\n'
-                'MPG_DISPLAY_PROFILE="seeed_round_240"\n', encoding="utf-8")
+                'MPG_DISPLAY_PROFILE="seeed_round_240"\n'
+                'MPG_DISPLAY_ENABLED="true"\n', encoding="utf-8")
             (target / deploy.MANIFEST_NAME).write_text(json.dumps({
                 "managed_files": ["code.py"]
             }), encoding="utf-8")

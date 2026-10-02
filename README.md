@@ -188,7 +188,9 @@ MPG_DISPLAY_PROFILE="seeed_round_240"
 MPG_DISPLAY_ENABLED="true"
 ```
 
-Other XIAO devices can leave `MPG_DISPLAY_PROFILE=""`. The legacy LOLIN S2
+The repository template selects these current profiles while keeping display,
+storage, and physical inputs safely disabled. Other XIAO devices can leave
+`MPG_DISPLAY_PROFILE=""`. The legacy LOLIN S2
 Mini/MCP23017 allocation remains supported without becoming a default:
 
 ```toml
