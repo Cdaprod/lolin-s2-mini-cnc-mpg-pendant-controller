@@ -1,4 +1,8 @@
-# Hardware definition
+# Legacy LOLIN S2 Mini hardware definition
+
+> **Legacy reference only.** The active XIAO ESP32-S3/Round Display/MCP23017
+> wiring source of truth is [MASTER-HARNESS-TABLE.md](MASTER-HARNESS-TABLE.md).
+> GPIO assignments in this document must not be applied to the current build.
 
 ## Status
 
