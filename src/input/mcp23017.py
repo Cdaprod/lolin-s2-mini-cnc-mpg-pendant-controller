@@ -7,6 +7,22 @@ GPPUB = 0x0D
 GPIOA = 0x12
 
 
+def parse_virtual_pin(name):
+    """Return the MCP23017 bit for a canonical GPA0..GPB7 name."""
+    value = str(name or "").upper()
+    if len(value) != 4 or value[:3] not in ("GPA", "GPB") or value[3] not in "01234567":
+        raise ValueError("invalid MCP23017 virtual pin: {}".format(name))
+    return int(value[3]) + (8 if value[2] == "B" else 0)
+
+
+def virtual_pin_name(bit):
+    """Return the canonical virtual name for an MCP23017 bit."""
+    bit = int(bit)
+    if not 0 <= bit <= 15:
+        raise ValueError("MCP23017 bit must be 0..15")
+    return "GP{}{}".format("A" if bit < 8 else "B", bit % 8)
+
+
 class MCP23017Pin:
     def __init__(self, bank, bit):
         self.bank = bank
@@ -48,6 +64,10 @@ class MCP23017InputBank:
         if not 0 <= int(bit) <= 15:
             raise ValueError("MCP23017 bit must be 0..15")
         return MCP23017Pin(self, bit)
+
+    def resolve(self, name):
+        """Resolve a virtual pin without consulting CircuitPython ``board``."""
+        return self.pin(parse_virtual_pin(name))
 
     def refresh(self):
         if not self.i2c.try_lock():

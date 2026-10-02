@@ -3,6 +3,7 @@
 import os
 
 from src.hardware_profiles import apply_hardware_profile
+from src.input.mcp23017 import parse_virtual_pin
 
 
 def _get(name, default=""):
@@ -34,6 +35,39 @@ def _get_bool(name, default=False):
 
 def _pin_map(prefix, names):
     return dict((name, _get(prefix + name, "")) for name in names)
+
+
+def _get_mcp_address():
+    value = _get("MPG_MCP23017_ADDRESS", "32")
+    try:
+        address = int(value, 0)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("MPG_MCP23017_ADDRESS must be an integer") from exc
+    if not 0x20 <= address <= 0x27:
+        raise ValueError("MPG_MCP23017_ADDRESS must be between 32 and 39")
+    return address
+
+
+def validate_input_config(config):
+    """Validate native and expander namespaces before hardware is imported."""
+    native = (config.get("mpg_a_pin"), config.get("mpg_b_pin"))
+    if any(str(pin or "").upper().startswith(("GPA", "GPB")) for pin in native):
+        raise ValueError("MPG encoder pins must be native MCU pins")
+    if native[0] and native[0] == native[1]:
+        raise ValueError("MPG encoder A and B cannot share a pin")
+    if config.get("selector_backend") == "mcp23017":
+        groups = (config.get("axis_pins", {}),
+                  config.get("multiplier_pins", {}),
+                  config.get("button_pins", {}))
+        pins = [pin for group in groups for pin in group.values() if pin]
+        pins.extend(pin for pin in (config.get("estop_observe_pin"),
+                                    config.get("deadman_pin")) if pin)
+        virtual = [pin for pin in pins
+                   if str(pin).upper().startswith(("GPA", "GPB"))]
+        bits = [parse_virtual_pin(pin) for pin in virtual]
+        if len(bits) != len(set(bits)):
+            raise ValueError("duplicate MCP23017 virtual pin allocation")
+    return config
 
 
 def load_config():
@@ -110,7 +144,7 @@ def load_config():
         ),
         "i2c_sda_pin": _get("MPG_I2C_SDA_PIN", ""),
         "i2c_scl_pin": _get("MPG_I2C_SCL_PIN", ""),
-        "mcp23017_address": _get_int("MPG_MCP23017_ADDRESS", 0x20),
+        "mcp23017_address": _get_mcp_address(),
         "mcp23017_axis_bits": {
             "X": 0, "Y": 1, "Z": 2, "4": 3, "5": 4, "6": 5,
         },
@@ -131,4 +165,4 @@ def load_config():
     configured = apply_hardware_profile(config)
     if not configured.get("selector_backend"):
         configured["selector_backend"] = "direct"
-    return configured
+    return validate_input_config(configured)

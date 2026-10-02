@@ -30,12 +30,22 @@ BOARD_PROFILES = {
         "display_reset_pin": "IO14",
     },
     XIAO_ESP32S3: {
-        # Logical XIAO headers keep this profile useful across CircuitPython
-        # board revisions; an attached peripheral supplies its own wiring.
-        "uart_tx_pin": "TX", "uart_rx_pin": "RX",
+        # Current pendant allocation. GPIO41/42 are underside MTDI/MTMS pads;
+        # no GRBL UART is allocated for this USB-C-native build.
+        "mpg_a_pin": "GPIO42", "mpg_b_pin": "GPIO41",
+        "axis_pins": {"X": "GPA0", "Y": "GPA1", "Z": "GPA2",
+                      "4": "GPA3", "5": "GPA4", "6": "GPA5"},
+        "multiplier_pins": {"X1": "GPA6", "X10": "GPA7",
+                            "X100": "GPB0"},
+        "button_pins": {"SELECT": "GPB2", "BACK": "GPB3",
+                        "FN": "GPB4", "CANCEL": "GPB5"},
+        "estop_observe_pin": "GPB1", "deadman_pin": "GPB6",
+        "selector_backend": "mcp23017", "mcp23017_address": 0x20,
         "spi_sck_pin": "D8", "spi_mosi_pin": "D10",
         "spi_miso_pin": "D9",
         "i2c_sda_pin": "D4", "i2c_scl_pin": "D5",
+        "sd_sck_pin": "D8", "sd_mosi_pin": "D10",
+        "sd_miso_pin": "D9", "sd_cs_pin": "D2",
     },
 }
 
