@@ -8,8 +8,9 @@ machine state and coordinates, common machine functions, USB integration, and
 a separate direct machine interface. Later releases may stream G-code from
 removable storage without a computer.
 
-The LOLIN S2 Mini remains the reference controller until the measured GPIO,
-memory, and peripheral budget proves that it cannot meet these requirements.
+The current reference controller is the Seeed Studio XIAO ESP32-S3 with the
+Round Display and MCP23017 expansion described in `MASTER-HARNESS-TABLE.md`.
+The earlier LOLIN S2 Mini design is retained only as a legacy profile.
 
 ## Scope and terminology
 

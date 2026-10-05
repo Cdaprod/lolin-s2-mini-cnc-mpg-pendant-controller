@@ -122,11 +122,12 @@ semantic wheel events. A polling decoder remains available for host simulation
 and verified interfaces where `rotaryio` is intentionally disabled.
 
 `src/hardware_profiles.py` fills otherwise blank assignments without enabling
-hardware. The LOLIN S2 Mini profile places the MPG and E-stop observation on
-native conditioned GPIO, UI buttons on local GPIO, GRBL on UART1 pins, LCD/SD
-on shared SPI, and selector contacts on an MCP23017 using predefined I2C pins.
-The minimal MCP23017 driver caches one 16-bit read per application poll, so UI
-lookups do not cause repeated I2C transactions.
+hardware. The current XIAO ESP32-S3 profile keeps conditioned MPG A/B on native
+GPIO42/GPIO41 and routes every slow harness contact through an MCP23017 on the
+Round Display's shared D4/D5 I2C bus. Virtual `GPAx`/`GPBx` names are resolved
+by that backend, never through CircuitPython `board`. The driver configures
+per-input pull-ups and caches one 16-bit read per application poll. The legacy
+LOLIN S2 Mini profile remains opt-in and isolated from the current allocation.
 
 The DisplayIO backend accepts the already initialized display object and keeps
 fixed header, body, footer, and overlay objects. It updates changed text only
