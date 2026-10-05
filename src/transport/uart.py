@@ -41,6 +41,12 @@ class UARTTransport(Transport):
                 return line
         return None
 
+    def read(self, count=64):
+        waiting = self.uart.in_waiting
+        if not waiting:
+            return None
+        return self.uart.read(min(waiting, int(count)))
+
     def close(self):
         self._connected = False
         self.uart.deinit()

@@ -37,6 +37,8 @@ class PendantState:
         self.message = None
         self.pin_state = set()
         self.transport = "disabled"
+        self.link_state = "DISCONNECTED"
+        self.link_diagnostics = None
         self.wifi_state = "DISABLED"
         self.wifi_ssid = None
         self.wifi_ip = None
