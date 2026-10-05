@@ -34,6 +34,21 @@ class MockTransport(Transport):
             return None
         return self.incoming.pop(0)
 
+    def read(self, count=64):
+        if not self.incoming:
+            return None
+        chunk = self.incoming[0]
+        result = bytes(chunk[:count])
+        remainder = chunk[count:]
+        if remainder:
+            self.incoming[0] = remainder
+        else:
+            self.incoming.pop(0)
+        return result
+
+    def inject_bytes(self, data):
+        self.incoming.append(bytes(data))
+
     def inject(self, line):
         if isinstance(line, str):
             line = line.encode("ascii")
