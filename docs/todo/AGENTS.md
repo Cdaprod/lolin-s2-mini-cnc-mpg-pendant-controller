@@ -4,6 +4,37 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-10-05 — Universal CNC host bridge foundation
+
+- [x] Add a Protocol v1 host endpoint with normalized MachineState and a
+  controller-neutral adapter boundary owned by the CNC computer.
+- [x] Add gated mock and GRBL/grblHAL adapters, upstream controller-reported
+  telemetry, receiver-owned jog cancellation, documentation, and host tests.
+- [ ] Validate USB CDC discovery/reconnect and the GRBL adapter against a
+  non-moving bench endpoint before selecting or enabling any physical port.
+- [ ] Add Mach and LinuxCNC adapters only against documented application APIs;
+  do not emulate parity where those hosts expose different capabilities.
+
+## 2026-10-05 — Session-safe motion protocol hardening
+
+- [x] Remove cross-device timestamps and scope command/ACK identity to a
+  two-nonce, explicitly negotiated session generation.
+- [x] Replace motion packet age checks with receiver-local START/RENEW/STOP
+  intent leases, expiration callbacks, and reboot/replay fault coverage.
+- [x] Specify private endpoint clocks, reboot behavior, session replacement,
+  parser bounds, companion boundary, and independent E-stop authority.
+
+## 2026-10-05 — Reliable controller transport
+
+- [x] Add bounded framing, CRC-16, packet classes, streaming resynchronization,
+  ACK/NAK, timeout retry, duplicate suppression, rollover, and diagnostics.
+- [x] Add heartbeat link health, retry-exhaustion fail-safe callbacks, shared
+  state publication, and expiring MOTION delivery over an abstract byte stream.
+- [x] Document the companion-endpoint boundary and fault-test corruption,
+  garbage, truncation, duplication, missing ACK, stale motion, and recovery.
+- [ ] Validate continuous-jog renewal cadence and lease expiry on the eventual
+  companion/controller endpoint before motion use; clocks remain independent.
+
 ## 2026-10-02 — Current XIAO harness architecture
 
 - [x] Make the XIAO ESP32-S3/Round Display settings template canonical, with
