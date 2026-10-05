@@ -1,14 +1,37 @@
 import os
+import sys
+import types
 import unittest
 from unittest.mock import patch
 
 from src.config import load_config
 from src.hardware_profiles import (LOLIN_S2_MINI_V1, SEEED_ROUND_240,
                                    XIAO_ESP32S3, apply_hardware_profile)
-from src.input.mcp23017 import MCP23017InputBank
+from src.input.circuitpython import from_config, resolve_native_pin
+from src.input.mcp23017 import (MCP23017InputBank, parse_virtual_pin,
+                                virtual_pin_name)
 
 
 class HardwareProfileTests(unittest.TestCase):
+    def test_current_environment_defaults_and_invalid_address(self):
+        with patch.dict(os.environ, {
+            "MPG_BOARD_PROFILE": XIAO_ESP32S3,
+            "MPG_DISPLAY_PROFILE": SEEED_ROUND_240,
+            "MPG_MCP23017_ADDRESS": "32",
+        }, clear=True):
+            config = load_config()
+        self.assertEqual((config["mpg_a_pin"], config["mpg_b_pin"]),
+                         ("GPIO42", "GPIO41"))
+        self.assertEqual(config["mcp23017_address"], 0x20)
+        self.assertEqual(config["sd_cs_pin"], "D2")
+        self.assertFalse(config["inputs_enabled"])
+        self.assertFalse(config["selector_interface_verified"])
+        for address in ("not-an-address", "31", "40"):
+            with self.subTest(address=address), patch.dict(os.environ, {
+                    "MPG_MCP23017_ADDRESS": address}, clear=True):
+                with self.assertRaises(ValueError):
+                    load_config()
+
     def test_reference_profile_fills_proposed_pins_without_enabling_hardware(self):
         with patch.dict(os.environ, {
             "MPG_HARDWARE_PROFILE": LOLIN_S2_MINI_V1,
@@ -55,7 +78,13 @@ class HardwareProfileTests(unittest.TestCase):
             "display_profile": SEEED_ROUND_240,
             "display_enabled": True,
         })
-        self.assertEqual(config["uart_tx_pin"], "TX")
+        self.assertNotIn("uart_tx_pin", config)
+        self.assertEqual(config["mpg_a_pin"], "GPIO42")
+        self.assertEqual(config["mpg_b_pin"], "GPIO41")
+        self.assertEqual(config["axis_pins"]["X"], "GPA0")
+        self.assertEqual(config["multiplier_pins"]["X100"], "GPB0")
+        self.assertEqual(config["estop_observe_pin"], "GPB1")
+        self.assertEqual(config["button_pins"]["SELECT"], "GPB2")
         self.assertEqual(config["display_driver"], "gc9a01")
         self.assertEqual(config["display_renderer"], "round")
         self.assertEqual(config["display_width"], 240)
@@ -99,6 +128,23 @@ class FakeI2C:
 
 
 class MCP23017Tests(unittest.TestCase):
+    def test_all_virtual_names_round_trip_and_invalid_names_fail(self):
+        names = ["GP{}{}".format(bank, bit)
+                 for bank in ("A", "B") for bit in range(8)]
+        self.assertEqual([virtual_pin_name(parse_virtual_pin(name))
+                          for name in names], names)
+        for invalid in ("", "GPA8", "GPC0", "GPIO42", "GPA00"):
+            with self.assertRaises(ValueError):
+                parse_virtual_pin(invalid)
+
+    def test_address_range_is_enforced(self):
+        for address in (0x20, 0x27):
+            self.assertEqual(MCP23017InputBank(FakeI2C(), address).address,
+                             address)
+        for address in (0x1F, 0x28):
+            with self.assertRaises(ValueError):
+                MCP23017InputBank(FakeI2C(), address)
+
     def test_input_bank_configures_pullups_and_caches_one_snapshot(self):
         i2c = FakeI2C()
         bank = MCP23017InputBank(i2c, 0x20, 0x01FF)
@@ -116,6 +162,82 @@ class MCP23017Tests(unittest.TestCase):
         self.assertFalse(bank.refresh())
         self.assertEqual(bank.value, 0xFFFF)
         self.assertEqual(bank.read_errors, 1)
+
+
+class CurrentPendantInputTests(unittest.TestCase):
+    def setUp(self):
+        self.board = types.ModuleType("board")
+        self.board.GPIO42 = object()
+        self.board.GPIO41 = object()
+        self.digitalio = types.ModuleType("digitalio")
+        self.digitalio.Direction = types.SimpleNamespace(INPUT="input")
+        self.digitalio.Pull = types.SimpleNamespace(UP="up", DOWN="down")
+        self.digitalio.DigitalInOut = lambda pin: types.SimpleNamespace(
+            pin=pin, direction=None, pull=None, value=True)
+        self.rotaryio = types.ModuleType("rotaryio")
+        self.rotaryio.IncrementalEncoder = lambda a, b, divisor=1: \
+            types.SimpleNamespace(a=a, b=b, divisor=divisor, position=0)
+        self.modules = patch.dict(sys.modules, {
+            "board": self.board, "digitalio": self.digitalio,
+            "rotaryio": self.rotaryio,
+        })
+        self.modules.start()
+
+    def tearDown(self):
+        self.modules.stop()
+
+    def config(self, verified=True):
+        return {
+            "inputs_enabled": True, "selector_backend": "mcp23017",
+            "selector_interface_verified": verified,
+            "mpg_a_pin": "GPIO42", "mpg_b_pin": "GPIO41",
+            "mpg_use_rotaryio": True, "mcp23017_address": 32,
+            "i2c_sda_pin": "D4", "i2c_scl_pin": "D5",
+            "axis_pins": {"X": "GPA0", "Y": "GPA1", "Z": "GPA2",
+                          "4": "GPA3", "5": "GPA4", "6": "GPA5"},
+            "multiplier_pins": {"X1": "GPA6", "X10": "GPA7",
+                                "X100": "GPB0"},
+            "estop_observe_pin": "GPB1",
+            "button_pins": {"SELECT": "GPB2", "BACK": "GPB3",
+                            "FN": "GPB4", "CANCEL": "GPB5"},
+            "deadman_pin": "GPB6", "selector_active_low": True,
+            "button_active_low": True, "estop_active_low": True,
+            "deadman_active_low": True,
+        }
+
+    def test_native_resolution_does_not_accept_virtual_pins(self):
+        self.assertIs(resolve_native_pin(self.board, "GPIO42"),
+                      self.board.GPIO42)
+        self.assertIs(resolve_native_pin(self.board, "GPIO41"),
+                      self.board.GPIO41)
+        with self.assertRaises(ValueError):
+            resolve_native_pin(self.board, "GPA0")
+        with self.assertRaises(ValueError):
+            resolve_native_pin(self.board, "GPIO99")
+
+    def test_disabled_and_unverified_inputs_do_not_touch_hardware(self):
+        config = self.config(False)
+        self.assertIsNone(from_config(config, FakeI2C()))
+        config["inputs_enabled"] = False
+        config["selector_interface_verified"] = True
+        self.assertIsNone(from_config(config, FakeI2C()))
+
+    def test_shared_mcp_backend_reads_all_current_active_low_controls(self):
+        i2c = FakeI2C()
+        adapter = from_config(self.config(), i2c)
+        self.assertIs(adapter.resources[0].i2c, i2c)
+        self.assertEqual(i2c.writes[0], (0x20, b"\x00\xff\xff"))
+        self.assertEqual(i2c.writes[1], (0x20, b"\x0c\xff\x7f"))
+        # Active-low GPA0 X, GPB0 x100, GPB1 remote stop, GPB2 SELECT.
+        i2c.gpio = (0xFE, 0xF8)
+        sample = adapter.read()
+        self.assertEqual(sample.axes, ("X",))
+        self.assertEqual(sample.multipliers, ("X100",))
+        self.assertTrue(sample.estop)
+        self.assertTrue(sample.buttons["SELECT"])
+        self.assertFalse(sample.deadman)
+        self.assertEqual((adapter.encoder.a, adapter.encoder.b),
+                         (self.board.GPIO42, self.board.GPIO41))
 
 
 if __name__ == "__main__":

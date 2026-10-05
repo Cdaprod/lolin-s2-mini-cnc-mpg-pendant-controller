@@ -8,7 +8,7 @@ from src.app import PendantApplication
 
 def main():
     print()
-    print("[boot] LOLIN S2 Mini CNC MPG Pendant")
+    print("[boot] XIAO ESP32-S3 CNC MPG Pendant")
 
     config = load_config()
 
