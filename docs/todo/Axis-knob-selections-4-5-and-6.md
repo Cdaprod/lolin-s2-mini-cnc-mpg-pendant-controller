@@ -482,4 +482,435 @@ I especially like **4 = Files, 5 = Configuration, 6 = Test & Demo** for this bui
 
 And the **Test & Demo mode is more than eye candy**: it can become the commissioning screen for the whole 25-wire harness. When you turn the wheel or flip X/Y/Z/x1/x10/x100, you get immediate visual proof of what the firmware thinks happened *without moving the CNC*. That will be particularly useful when we physically bring up the MCP23017 and encoder receiver. 
 
+Yes. **That part can absolutely be coded now**, and I think your idea of making 4/5/6 configurable mappings is the right architecture.
+
+The key is to separate **physical selector position** from **what that position means**. The MCP backend already knows that positions 4/5/6 are `GPA3/GPA4/GPA5`. Above that, settings can decide whether those positions mean actual A/B/C axes or UI modes.
+
+For your current 3-axis machine, I’d move toward something like:
+
+```toml
+# Axis-selector semantic mapping.
+#
+# Supported motion mappings:
+#   X, Y, Z, A, B, C
+#
+# Supported UI mappings:
+#   files, config, demo
+#
+# Current 3-axis pendant:
+MPG_AXIS_MAP_X=“X”
+MPG_AXIS_MAP_Y=“Y”
+MPG_AXIS_MAP_Z=“Z”
+
+MPG_AXIS_MAP_4=“files”
+MPG_AXIS_MAP_5=“config”
+MPG_AXIS_MAP_6=“demo”
+```
+
+Then the architecture becomes:
+
+```text
+                 PHYSICAL SELECTOR
+                        │
+           ┌────────────┼────────────┐
+           │            │            │
+          X/Y/Z        4/5/6       future
+           │            │
+           ▼            ▼
+       settings.toml semantic mapping
+           │            │
+           ▼            ▼
+       AXIS_X/Y/Z    FILES/CONFIG/DEMO
+           │            │
+           ▼            ▼
+      Motion Context     UI Context
+           │            │
+      wheel = JOG     wheel = NAVIGATE
+```
+
+That lets Codex build all three screens **before the physical harness is commissioned**.
+
+### 4 — Files / Jobs
+
+This can be real functionality now, not a mock.
+
+Codex already has:
+
+```toml
+MPG_JOBS_PATH=“/jobs”
+MPG_MACROS_PATH=“/macros”
+
+MPG_SD_ENABLED=“false”
+MPG_SD_MOUNT_PATH=“/sd”
+```
+
+It can build a filesystem model/UI that works against either CIRCUITPY storage during development/tests or `/sd` when SD is enabled.
+
+The round screen could show something like:
+
+```text
+       ┌───────────────┐
+     /      JOBS         \
+    |                     |
+    |  > facing.nc        |
+    |    pocket.nc        |
+    |    drill.nc         |
+    |    contour.nc       |
+    |                     |
+    |   3.8 KB   GCODE    |
+     \   SELECT: OPEN    /
+       └───────────────┘
+```
+
+The wheel scrolls, SELECT enters/opens, BACK returns. Actual **Run Job** should remain unavailable when there’s no valid controller connection.
+
+### 5 — Configuration
+
+Also completely codeable now.
+
+In fact, this is a great fit for the existing `settings.toml` architecture. Codex can build a UI/model around categories such as:
+
+```text
+             CONFIG
+               │
+     ┌─────────┼─────────┐
+     ▼         ▼         ▼
+   Network   Pendant    System
+     │         │         │
+    WiFi    Direction   Version
+    AP       Counts     Profile
+  Hostname   Display    Hardware
+```
+
+Some settings can be editable; electrical-verification settings should **not** simply become user toggles that imply hardware has been physically validated.
+
+### 6 — Test & Demo
+
+And this is probably the most useful one to implement before the wiring is finished.
+
+Codex can build the isometric machine renderer now and feed it from the existing **mock/input semantic state**.
+
+For example:
+
+```text
+             Z
+             │
+           [■]  ← spindle
+          ╱ │
+         ╱  │
+        ╱   ↓
+      ┌──────────┐
+     ╱          ╱│
+    ┌──────────┐ │
+    │    BED   │╱
+    └──────────┘
+
+       X  +0.014
+       x10  CW ↻
+```
+
+Later the exact same renderer gets real encoder events instead of mock events.
+
+That’s architecturally clean:
+
+```text
+REAL MCP/ENCODER ───┐
+                    │
+MOCK INPUT ─────────┼──> Semantic Input State
+                    │             │
+TEST EVENTS ────────┘             │
+                                  ▼
+                           Test/Demo Renderer
+```
+
+So Codex doesn’t need the LM393 working to implement it.
+
+### The important safety behavior
+
+I’d make one rule non-negotiable:
+
+**Entering `files`, `config`, or `demo` changes the wheel’s context before the next encoder event is processed.**
+
+In other words:
+
+```text
+X selected
+wheel +1
+    ↓
+JOG X +1
+
+
+4 selected → FILES
+wheel +1
+    ↓
+SCROLL DOWN
+    ✕ no GRBL jog
+
+
+5 selected → CONFIG
+wheel +1
+    ↓
+NEXT ITEM / CHANGE VALUE
+    ✕ no GRBL jog
+
+
+6 selected → DEMO
+wheel +1
+    ↓
+MOVE VIRTUAL SPINDLE
+    ✕ no GRBL jog
+```
+
+That makes the mechanical selector itself a **mode switch**, which is a really nice use of the existing hardware.
+
+And importantly, it remains portable. If you later put this firmware on a real six-axis machine:
+
+```toml
+MPG_AXIS_MAP_4=“A”
+MPG_AXIS_MAP_5=“B”
+MPG_AXIS_MAP_6=“C”
+```
+
+No MCP wiring changes. No input-driver changes. The semantic router simply produces axis contexts instead of UI contexts.
+
+So yes—I would actually send Codex back in now. **Have it implement the semantic selector router plus the Files, Configuration, and Test/Demo models/screens using mock/keyboard/test inputs**, while leaving the electrical verification gates untouched. That work is independent of whether we’ve physically commissioned the 25-wire harness yet.
+
+Yeah so I agree and I’m thinking that…
+
+Operational(x,y,z),Explorer,Config,Preview are pages that animate in with the turn dial, and each has its own secondary menu for things like…. In operational view -> secondary menu holds icons for things like home, zero, etc… in Explorer view -> things we’d do with files and programs… in config view -> things we do based on system and configurations…. preview view -> things we want here
+
+Yes. I think you’ve landed on a much cleaner **top-level interaction model** than treating everything as a traditional menu tree.
+
+The physical **6-position selector becomes the page selector**, while touch + MPG wheel operate *inside* whichever page is active:
+
+```text
+PHYSICAL SELECTOR
+
+ X ─┐
+ Y ─┼──► OPERATIONAL
+ Z ─┘       selected axis changes
+            but page stays Operational
+
+ 4 ─────► EXPLORER
+
+ 5 ─────► CONFIG
+
+ 6 ─────► PREVIEW
+```
+
+When the knob moves, we don’t merely change a little label. The **entire page transitions/animates into its new context**. That makes the physical knob feel directly connected to the display.
+
+## Then every page gets the same basic grammar
+
+I’d establish a consistent structure:
+
+```text
+       ┌─────────────────┐
+      /    PAGE STATUS    \
+     /                     \
+    |                       |
+    |     PRIMARY VIEW      |
+    |                       |
+    |                       |
+     \   ◉  ◉  ◉  ◉  ◉   /
+      \____ SECONDARY ____/
+             ACTIONS
+```
+
+The center belongs to the **current task**.
+
+The outer/lower region gives you **contextual secondary actions**. Tap an action directly. We can also decide whether swiping/turning exposes additional actions rather than cramming everything onto one screen.
+
+That gives us four very different pages without teaching the user four different interfaces.
+
+### Operational — X/Y/Z
+
+This is your machine-control instrument.
+
+The center should be overwhelmingly about:
+
+```text
+       X
+   +125.400
+      mm
+
+      ×10
+
+   JOG READY
+```
+
+Switch physical selector X → Y and the same page smoothly transitions from X to Y rather than navigating anywhere.
+
+Its secondary menu contains **machine operations**:
+
+```text
+Home   Zero   Zero XYZ   Probe
+Safe Z   Park   Unlock   More…
+```
+
+Potential touch behavior becomes particularly useful: tap the DRO/axis area for coordinate details, tap ×10 for multiplier information/options, tap status for controller status, tap one of the bottom action icons for its action.
+
+Dangerous operations still get confirmations/interlocks.
+
+—
+
+### Explorer — position 4
+
+This becomes more than “Jobs.”
+
+It’s your **storage/program workspace**:
+
+```text
+            EXPLORER
+
+         /jobs
+         
+      bracket.nc
+    > facing.nc
+      pocket.nc
+
+       3.8 KB
+```
+
+Secondary actions change completely:
+
+```text
+Open   Run   Details   Macros
+Refresh   SD   Recent   More…
+```
+
+And the physical MPG becomes incredibly natural here:
+
+**turn wheel = scroll files**
+
+while touch lets you tap a file directly, swipe the list, tap folders, etc.
+
+Selecting a program could transform the center into a job-details view rather than throwing you through another traditional menu hierarchy.
+
+—
+
+### Config — position 5
+
+This becomes your pendant/system control center.
+
+The center can use large touch-friendly configuration categories:
+
+```text
+          CONFIG
+
+        [ NETWORK ]
+
+     MPG        DISPLAY
+
+   CONTROLS      STORAGE
+
+        SYSTEM
+```
+
+Secondary actions could be things like:
+
+```text
+Wi-Fi   Hardware   Diagnostics
+Restart   About   Setup AP
+```
+
+Once inside something like MPG configuration, the handwheel naturally becomes `VALUE_EDIT`.
+
+That’s already compatible with the architecture Codex has established.
+
+—
+
+### Preview — position 6
+
+This is where I think we should **avoid calling it Demo eventually**.
+
+“Preview” is much more useful because it can grow into a genuine CNC visualization/inspection environment rather than a novelty screen.
+
+Initially:
+
+```text
+             Z
+             │
+          ┌──┴──┐
+          │ TOOL│
+          └──┬──┘
+             ↓
+
+        ╱──────────╱
+       ╱          ╱
+      └──────────┘
+          TABLE
+
+ X +12.4   Y +8.2   Z -3.0
+```
+
+It can initially visualize **pendant input** without moving the actual CNC.
+
+But later Preview can encompass considerably more:
+
+```text
+Input visualization
+Machine position
+Tool position
+Program/toolpath preview
+Job bounds
+Work origin
+Probe position
+Limits
+Travel envelope
+Jog simulation
+Program progress
+```
+
+Its secondary menu might therefore be:
+
+```text
+View   Toolpath   Inputs   Bounds
+Origin   Reset View   Diagnostics
+```
+
+That’s much more future-proof than “Test/Demo.”
+
+## And this solves another problem
+
+We don’t actually need to eliminate the existing Main Menu.
+
+It becomes a **secondary/fallback navigation mechanism**, rather than the primary way you operate the pendant.
+
+So we’d have:
+
+```text
+             PHYSICAL SELECTOR
+                    │
+      ┌─────────────┼──────────────┐
+      ▼             ▼              ▼
+ OPERATIONAL     EXPLORER       CONFIG       PREVIEW
+   X/Y/Z            4              5             6
+      │             │              │             │
+      └─────────────┴──────┬───────┴─────────────┘
+                           │
+                         TOUCH
+                           │
+                  contextual actions
+                           │
+                    secondary views
+```
+
+And **SELECT/menu** can still expose the complete IA when something doesn’t warrant permanent screen real estate.
+
+That means we get three levels of access:
+
+**Selector = context/page → Touch/MPG = interact → Secondary menu = actions/tools.**
+
+That’s a much more appliance-like HMI.
+
+And before Claude draws it, I think we should formalize exactly this model and then go through the repository feature-by-feature and assign **every existing feature to Operational, Explorer, Config, Preview, global overlay, or secondary/deep menu**. That’s the inventory that will tell Claude what actually has to exist visually.
+
+
+
+
+
+
+
+
 
