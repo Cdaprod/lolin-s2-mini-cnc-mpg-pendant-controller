@@ -198,7 +198,7 @@ class PendantApplication:
 
     def handle_ui_event(self, event):
         """Route a normalized UI event and execute only its semantic result."""
-        if self.ui.current_screen in ("JOBS", "JOB_BROWSER"):
+        if self.ui.current_screen in ("JOBS", "JOB_BROWSER", "EXPLORER"):
             self.ui.set_dynamic_items("jobs", self.storage.list_jobs())
             self.state.storage_state = self.storage.status
             self.state.storage_error = self.storage.error
@@ -289,6 +289,14 @@ class PendantApplication:
         if sample.selector_changed:
             self._record_selector_transition(
                 "axis", sample.selector_direction, started)
+            # Every physical selector transition revokes the previous motion
+            # owner before any wheel event from this sample is dispatched.
+            queued_jog = any(item[1] == "jog" for item in self.controller.queue)
+            self.controller.discard_queued("jog")
+            if self.transport.connected and (self.state.jog_active or queued_jog):
+                self.controller.cancel_jog()
+            self.state.jog_active = False
+            self.ui.apply_selector_context()
         if sample.multiplier_changed:
             self._record_selector_transition(
                 "resolution", sample.multiplier_direction, started)
@@ -298,8 +306,7 @@ class PendantApplication:
                 setattr(self.state, kind + "_transition_direction", 0)
         if sample.estop_changed:
             self.observe_estop(sample.estop)
-        if ((sample.deadman_changed and not self.state.deadman_enabled) or
-                (sample.selector_changed and self.state.selected_axis is None)):
+        if sample.deadman_changed and not self.state.deadman_enabled:
             queued_jog = any(item[1] == "jog" for item in self.controller.queue)
             if self.transport.connected and (self.state.jog_active or queued_jog):
                 self.controller.cancel_jog()
