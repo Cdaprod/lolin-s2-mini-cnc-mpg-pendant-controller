@@ -4,6 +4,17 @@ Prepend new work under the applicable heading. Mark an item complete only when
 its implementation, tests, and documentation are committed together. Do not
 enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 
+## 2026-10-09 — Semantic selector and four-page HMI
+
+- [x] Separate physical selector position from motion axis/page semantics and
+  map the three-axis profile to Operational, Explorer, Configuration, Preview.
+- [x] Revoke queued/active jogging before every selector transition and route
+  page wheel activity to navigation or safe simulation rather than CNC motion.
+- [x] Reuse jobs, configuration, diagnostics, round-menu rendering, multiplier,
+  and remote-stop state in selector-owned top-level pages with pipeline tests.
+- [ ] Implement shared circular-path geometry and Preview rendering as a
+  simulation-only milestone before adding any controller-backed path jogging.
+
 ## 2026-10-05 — Universal CNC host bridge foundation
 
 - [x] Add a Protocol v1 host endpoint with normalized MachineState and a
