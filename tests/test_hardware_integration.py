@@ -82,7 +82,9 @@ class PhysicalInputTests(unittest.TestCase):
         manager = InputManager(state, adapter, counts_per_detent=4)
         adapter.set(axes=("4",), multipliers=("X100",))
         manager.poll(0)
-        self.assertEqual(state.selected_axis, "A")
+        self.assertIsNone(state.selected_axis)
+        self.assertEqual(state.selector_function, "FILES")
+        self.assertEqual(state.active_page, "EXPLORER")
         self.assertAlmostEqual(state.jog_increment, 0.1)
         events = []
         for now, pins in enumerate(((0, 0), (0, 1), (1, 1), (1, 0), (0, 0))):
@@ -97,11 +99,17 @@ class PhysicalInputTests(unittest.TestCase):
         state = PendantState()
         adapter = SyntheticInputAdapter()
         manager = InputManager(state, adapter)
-        for physical, logical in (("X", "X"), ("Y", "Y"), ("Z", "Z"),
-                                  ("4", "A"), ("5", "B"), ("6", "C")):
+        expected = (("X", "X", "OPERATIONAL"),
+                    ("Y", "Y", "OPERATIONAL"),
+                    ("Z", "Z", "OPERATIONAL"),
+                    ("4", None, "EXPLORER"),
+                    ("5", None, "CONFIGURATION"),
+                    ("6", None, "PREVIEW"))
+        for physical, logical, page in expected:
             adapter.set(axes=(physical,), multipliers=("X1",))
             manager.poll(1)
             self.assertEqual(state.selected_axis, logical)
+            self.assertEqual(state.active_page, page)
         for label, increment in (("X1", 0.001), ("X10", 0.01),
                                  ("X100", 0.1)):
             adapter.set(axes=("X",), multipliers=(label,))
@@ -230,6 +238,71 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertFalse(model["jog_armed"])
             self.assertFalse(model["motion_available"])
             self.assertEqual(len(app.transport.writes), writes)
+
+    def test_page_selectors_revoke_motion_before_contextual_wheel(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, _ = self.make_app(root)
+            app.controller.queue_jog("X", 0.01, 500)
+            app.state.jog_active = True
+            before = sum(b"$J=" in data for data in app.transport.writes)
+            adapter.set(axes=("4",), multipliers=("X10",), deadman=True,
+                        mpg_delta=4)
+            app.poll()
+            self.assertEqual(app.ui.current_screen, "EXPLORER")
+            self.assertEqual(app.state.active_page, "EXPLORER")
+            self.assertIsNone(app.state.selected_axis)
+            self.assertFalse(app.state.jog_active)
+            self.assertFalse(any(kind == "jog" for _, kind in app.controller.queue))
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), before)
+
+    def test_files_config_and_preview_wheels_are_non_motion(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, _ = self.make_app(root)
+            for name in ("a.nc", "b.nc"):
+                with open(os.path.join(root, "jobs", name), "w") as output:
+                    output.write("G0 X0\n")
+            baseline = sum(b"$J=" in data for data in app.transport.writes)
+
+            adapter.set(axes=("4",), multipliers=("X1",), deadman=True,
+                        mpg_delta=4)
+            app.poll()
+            self.assertEqual(app.ui.current_screen, "EXPLORER")
+            self.assertEqual(app.ui.selected_item().value, "b.nc")
+
+            adapter.set(axes=("5",), multipliers=("X1",), deadman=True,
+                        mpg_delta=4)
+            app.poll()
+            self.assertEqual(app.ui.current_screen, "CONFIGURATION")
+            self.assertEqual(app.ui.focus["CONFIGURATION"], 1)
+
+            adapter.set(axes=("6",), multipliers=("X100",), deadman=True,
+                        mpg_delta=-4)
+            app.poll()
+            self.assertEqual(app.ui.current_screen, "PREVIEW")
+            self.assertEqual(app.state.preview_wheel_steps, -1)
+            self.assertAlmostEqual(app.state.preview_position["X"], -0.1)
+            adapter.set(mpg_delta=0, estop=True)
+            app.poll()
+            details = dict(app.ui.view_model()["details"])
+            self.assertEqual(details["Multiplier"], "X100")
+            self.assertEqual(details["Remote stop"], "ACTIVE")
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline)
+
+    def test_returning_to_xyz_restores_motion_only_after_safe_transition(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, _ = self.make_app(root)
+            adapter.set(axes=("4",), multipliers=("X1",), deadman=True,
+                        mpg_delta=4)
+            app.poll()
+            self.assertEqual(app.ui.current_screen, "EXPLORER")
+            adapter.set(axes=("Y",), multipliers=("X1",), deadman=True,
+                        mpg_delta=0)
+            app.poll()
+            self.assertEqual(app.ui.current_screen, "HOME")
+            self.assertEqual(app.state.selected_axis, "Y")
+            self.assertTrue(app.ui.view_model()["motion_available"])
 
     def test_estop_view_model_requires_explicit_recovery(self):
         with tempfile.TemporaryDirectory() as root:

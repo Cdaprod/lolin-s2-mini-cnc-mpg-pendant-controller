@@ -106,9 +106,10 @@ def load_config():
         "mpg_counts_per_detent": _get_int("MPG_COUNTS_PER_DETENT", 4),
         "mpg_direction": _get_int("MPG_DIRECTION", 1),
         "axis_map": dict((name, _get("MPG_AXIS_MAP_" + name, logical))
-                         for name, logical in (("X", "X"), ("Y", "Y"),
-                                               ("Z", "Z"), ("4", "A"),
-                                               ("5", "B"), ("6", "C"))),
+                         for name, logical in (
+                             ("X", "AXIS_X"), ("Y", "AXIS_Y"),
+                             ("Z", "AXIS_Z"), ("4", "FILES"),
+                             ("5", "CONFIG"), ("6", "PREVIEW"))),
         "axis_pins": _pin_map("MPG_PIN_AXIS_", ("X", "Y", "Z", "4", "5", "6")),
         "multiplier_pins": _pin_map("MPG_PIN_MULTIPLIER_", ("X1", "X10", "X100")),
         "button_pins": _pin_map("MPG_PIN_BUTTON_", (

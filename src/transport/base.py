@@ -14,6 +14,10 @@ class Transport:
     def readline(self):
         raise NotImplementedError
 
+    def read(self, count=64):
+        """Return up to ``count`` raw bytes, or ``None`` when none are ready."""
+        raise NotImplementedError
+
     def poll(self):
         return None
 
