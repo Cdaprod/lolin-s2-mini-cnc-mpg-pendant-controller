@@ -19,6 +19,7 @@ class HostBridge:
         self.session = ReliableSession(
             transport, self._dispatch, clock, role="responder",
             session_id=session_id, on_motion_stop=self.adapter.stop_jog,
+            on_motion_renew=self.adapter.renew_jog,
             **options)
 
     @property
