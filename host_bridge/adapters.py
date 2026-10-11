@@ -112,7 +112,8 @@ class GrblAdapter(ControllerAdapter):
         return True
 
     def renew_jog(self):
-        if self._active_jog is None or not self.motion_enabled:
+        if (self._active_jog is None or not self.motion_enabled or
+                not self.transport.connected):
             return False
         # Send only on an authenticated, in-order, valid lease renewal.
         # At most one short segment per renewal, never a queued stream.
@@ -121,7 +122,8 @@ class GrblAdapter(ControllerAdapter):
     def stop_jog(self):
         self._active_jog = None
         self._last_jog_at = None
-        self.transport.write(b"\x85")
+        if self.transport.connected:
+            self.transport.write(b"\x85")
         return True
 
     def command(self, name):
