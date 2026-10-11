@@ -145,9 +145,12 @@ purchased unit. Signal names in this table are also the names used by firmware.
 | White/Black | `LED-` | Pendant indicator LED negative |
 | Shield | `Shield` | Cable shield |
 
-The switch inputs share `COM`. The firmware models axis positions `OFF`, `X`,
-`Y`, `Z`, `4`, `5`, and `6`, with default logical mapping `4` → A, `5` → B,
-and `6` → C. It models multiplier contacts as the ratios x1, x10, and x100.
+The switch inputs share `COM`. The firmware reports physical positions `OFF`,
+`X`, `Y`, `Z`, `4`, `5`, and `6` independently from their semantic mapping.
+The current three-axis profile maps X/Y/Z to motion and 4/5/6 to File Explorer,
+Configuration, and safe Preview respectively. A future six-axis profile can
+map those same contacts to A/B/C without rewiring. Multiplier contacts retain
+the ratios x1, x10, and x100.
 `A-` and `B-` terminate in future verified receiver/interface circuitry; the
 application quadrature decoder consumes normalized A/B logic and therefore
 does not depend on the eventual receiver choice.

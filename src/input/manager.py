@@ -116,7 +116,7 @@ class InputManager:
         deadman_changed = (self.last_deadman is None or
                            sample.deadman != self.last_deadman)
         self.last_deadman = sample.deadman
-        previous_axis = self.state.selected_axis
+        previous_physical_axis = self.state.selected_physical_axis
         previous_multiplier = self.state.selected_multiplier
         self._update_selectors(sample)
         if getattr(self.adapter, "configured", True):
@@ -150,15 +150,16 @@ class InputManager:
                 self._emit(BUTTON_EVENTS[name][1])
         events = self.events
         self.events = []
-        axis_order = (None, "X", "Y", "Z", "A", "B", "C")
+        axis_order = ("OFF", "X", "Y", "Z", "4", "5", "6")
         multiplier_order = ("X1", "X10", "X100")
         axis_direction = self._direction(
-            axis_order, previous_axis, self.state.selected_axis)
+            axis_order, previous_physical_axis,
+            self.state.selected_physical_axis)
         multiplier_direction = self._direction(
             multiplier_order, previous_multiplier, self.state.selected_multiplier)
         return InputPollResult(
             events, sample.estop, estop_changed, deadman_changed,
-            previous_axis != self.state.selected_axis,
+            previous_physical_axis != self.state.selected_physical_axis,
             previous_multiplier != self.state.selected_multiplier, activity,
             axis_direction, multiplier_direction
         )

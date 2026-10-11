@@ -261,19 +261,22 @@ WIRE             SIGNAL       MCP23017
 Yellow           X            GPA0
 Yellow/Black     Y            GPA1
 Brown            Z            GPA2
-Brown/Black      4 / A        GPA3
-Pink             5 / B        GPA4
-Pink/Black       6 / C        GPA5
+Brown/Black      4            GPA3
+Pink             5            GPA4
+Pink/Black       6            GPA5
 
 
 Firmware axis mapping:
 
-X -> X
-Y -> Y
-Z -> Z
-4 -> A
-5 -> B
-6 -> C
+X -> AXIS_X / Operational
+Y -> AXIS_Y / Operational
+Z -> AXIS_Z / Operational
+4 -> FILES / Explorer
+5 -> CONFIG / Configuration
+6 -> PREVIEW / safe Test & Demo
+
+The semantic map is configurable; a verified six-axis profile may map the same
+GPA3/GPA4/GPA5 contacts to AXIS_A/AXIS_B/AXIS_C without changing wiring.
 
 
 ===============================================================================
