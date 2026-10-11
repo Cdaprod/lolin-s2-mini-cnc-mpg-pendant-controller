@@ -201,7 +201,8 @@ class ReliableSession:
                  link_lost_timeout_ms=LINK_LOST_TIMEOUT_MS,
                  motion_lease_ms=MOTION_LEASE_MS,
                  motion_renew_interval_ms=MOTION_RENEW_INTERVAL_MS,
-                 on_link_lost=None, on_motion_stop=None, state=None):
+                 on_link_lost=None, on_motion_stop=None, state=None,
+                 on_motion_renew=None):
         if role not in ("initiator", "responder"):
             raise ValueError("role must be initiator or responder")
         self.transport, self.handler, self.clock = transport, handler, clock
@@ -218,6 +219,7 @@ class ReliableSession:
         self.motion_lease_ms = int(motion_lease_ms)
         self.motion_renew_interval_ms = int(motion_renew_interval_ms)
         self.on_link_lost, self.on_motion_stop = on_link_lost, on_motion_stop
+        self.on_motion_renew = on_motion_renew
         self.state = state
         self.parser, self.diagnostics = FrameParser(), Diagnostics()
         self.next_sequence, self.outstanding = 0, None
@@ -433,6 +435,10 @@ class ReliableSession:
                         now >= self.motion_lease_deadline):
                     self.diagnostics.rejected_renewals += 1
                     return False
+                if self.on_motion_renew is not None:
+                    if self.on_motion_renew() is False:
+                        self._stop_motion()
+                        return False
                 self.motion_lease_deadline = now + self.motion_lease_ms
                 self.diagnostics.lease_renewals += 1
                 return True
