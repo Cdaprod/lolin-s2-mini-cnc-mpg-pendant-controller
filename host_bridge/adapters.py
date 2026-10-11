@@ -92,7 +92,7 @@ class GrblAdapter(ControllerAdapter):
                        feed * self._jog_segment_max_ms / 60000.0)
         if distance <= 0:
             return False
-        line = "$J=G91 G21 {}{:.4f} F{:.3f}\\n".format(
+        line = "$J=G91 G21 {}{:.4f} F{:.3f}\n".format(
             axis, direction * distance, feed)
         self.transport.write(line.encode("ascii"))
         self._last_jog_at = time.monotonic()
@@ -121,7 +121,7 @@ class GrblAdapter(ControllerAdapter):
     def stop_jog(self):
         self._active_jog = None
         self._last_jog_at = None
-        self.transport.write(b"\\x85")
+        self.transport.write(b"\x85")
         return True
 
     def command(self, name):
