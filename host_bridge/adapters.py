@@ -21,6 +21,9 @@ class ControllerAdapter:
     def start_jog(self, axis, direction, feed):
         raise NotImplementedError
 
+    def renew_jog(self):
+        return True
+
     def stop_jog(self):
         raise NotImplementedError
 
@@ -76,22 +79,49 @@ class GrblAdapter(ControllerAdapter):
         self._status_poll_interval = 0.2
         self._work_offset = None
         self._machine_fresh = False
+        self._active_jog = None
+        self._last_jog_at = None
+        self._jog_segment_mm = 0.5
+        self._jog_segment_max_ms = 180
 
-    def start_jog(self, axis, direction, feed):
-        if not self.motion_enabled:
+    def _send_segment(self):
+        if self._active_jog is None or not self.motion_enabled:
             return False
-        if axis not in AXES or direction not in (-1, 1) or not math.isfinite(feed) or feed <= 0:
+        axis, direction, feed = self._active_jog
+        distance = min(self._jog_segment_mm,
+                       feed * self._jog_segment_max_ms / 60000.0)
+        if distance <= 0:
             return False
-        # A short incremental command is bounded again by the host lease, whose
-        # expiry always emits GRBL jog cancel. No hardware is enabled by default.
-        distance = 0.1 * direction
-        line = "$J=G91 G21 {}{:.4f} F{:.3f}\n".format(
-            axis, distance, float(feed))
+        line = "$J=G91 G21 {}{:.4f} F{:.3f}\\n".format(
+            axis, direction * distance, feed)
         self.transport.write(line.encode("ascii"))
+        self._last_jog_at = time.monotonic()
         return True
 
+    def start_jog(self, axis, direction, feed):
+        if (not self.motion_enabled or not self.transport.connected or
+                axis not in AXES or direction not in (-1, 1) or
+                not math.isfinite(feed) or feed <= 0):
+            return False
+        if self._active_jog is not None:
+            return False
+        self._active_jog = (axis, direction, float(feed))
+        if not self._send_segment():
+            self._active_jog = None
+            return False
+        return True
+
+    def renew_jog(self):
+        if self._active_jog is None or not self.motion_enabled:
+            return False
+        # Send only on an authenticated, in-order, valid lease renewal.
+        # At most one short segment per renewal, never a queued stream.
+        return self._send_segment()
+
     def stop_jog(self):
-        self.transport.write(b"\x85")
+        self._active_jog = None
+        self._last_jog_at = None
+        self.transport.write(b"\\x85")
         return True
 
     def command(self, name):
