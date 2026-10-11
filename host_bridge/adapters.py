@@ -1,5 +1,8 @@
 """Universal controller adapter contract plus mock and GRBL backends."""
 
+import math
+import time
+
 from .model import AXES, MachineState
 
 
@@ -69,11 +72,14 @@ class GrblAdapter(ControllerAdapter):
         super().__init__(motion_enabled)
         self.transport = transport
         self._buffer = bytearray()
+        self._last_status_poll = None
+        self._status_poll_interval = 0.2
+        self._work_offset = None
 
     def start_jog(self, axis, direction, feed):
         if not self.motion_enabled:
             return False
-        if axis not in AXES or direction not in (-1, 1) or feed <= 0:
+        if axis not in AXES or direction not in (-1, 1) or not math.isfinite(feed) or feed <= 0:
             return False
         # A short incremental command is bounded again by the host lease, whose
         # expiry always emits GRBL jog cancel. No hardware is enabled by default.
@@ -88,6 +94,9 @@ class GrblAdapter(ControllerAdapter):
         return True
 
     def command(self, name):
+        # HOME and RESUME can initiate motion even without an active jog.
+        if name in ("HOME", "RESUME") and not self.motion_enabled:
+            return False
         if name in self._REALTIME:
             self.transport.write(self._REALTIME[name])
             return True
@@ -97,6 +106,12 @@ class GrblAdapter(ControllerAdapter):
         return False
 
     def poll(self):
+        now = time.monotonic()
+        if (self.transport.connected and
+                (self._last_status_poll is None or
+                 now - self._last_status_poll >= self._status_poll_interval)):
+            self.transport.write(b"?")
+            self._last_status_poll = now
         while True:
             line = self.transport.readline()
             if not line:
@@ -118,6 +133,16 @@ class GrblAdapter(ControllerAdapter):
                 self._coordinates(self.state.machine_position, field[5:])
             elif field.startswith("WPos:"):
                 self._coordinates(self.state.work_position, field[5:])
+            elif field.startswith("WCO:"):
+                offsets = dict((axis, None) for axis in AXES)
+                self._coordinates(offsets, field[4:])
+                self._work_offset = offsets
+        if self._work_offset is not None:
+            for axis in AXES:
+                machine = self.state.machine_position[axis]
+                offset = self._work_offset[axis]
+                if machine is not None and offset is not None:
+                    self.state.work_position[axis] = machine - offset
             elif field.startswith("FS:"):
                 values = field[3:].split(",")
                 self.state.feed_rate = float(values[0])
