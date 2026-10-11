@@ -154,7 +154,7 @@ def test_grbl_motion_commands_are_gated_but_hold_and_cancel_remain_available():
     assert adapter.command("HOLD")
     assert transport.writes[-1] == b"!"
     assert adapter.stop_jog()
-    assert transport.writes[-1] == b"\\x85"
+    assert transport.writes[-1] == b"\x85"
 
 
 def test_grbl_poll_requests_status_and_derives_work_coordinates():
@@ -198,7 +198,7 @@ def test_valid_renewal_emits_bounded_grbl_segment_and_stop_cancels():
     assert bridge.session.diagnostics.lease_renewals == 1
     assert pendant.send_motion_stop()
     exchange(pt, ht, pendant, bridge)
-    assert controller.writes[-1] == b"\\x85"
+    assert controller.writes[-1] == b"\x85"
     assert not bridge.session.motion_active
     before = len([w for w in controller.writes if w.startswith(b"$J=")])
     bridge.poll()
@@ -218,7 +218,7 @@ def test_expired_lease_cancels_grbl_and_never_queues_more_jogs():
     assert len([w for w in controller.writes if w.startswith(b"$J=")]) == 1
     clock.advance(31)
     bridge.poll()
-    assert controller.writes[-1] == b"\\x85"
+    assert controller.writes[-1] == b"\x85"
     assert not bridge.session.motion_active
     assert not grbl.renew_jog()
     assert len([w for w in controller.writes if w.startswith(b"$J=")]) == 1
