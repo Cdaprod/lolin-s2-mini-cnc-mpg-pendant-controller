@@ -142,3 +142,83 @@ def test_grbl_adapter_emits_controller_specific_cancel_on_lease_stop():
     assert transport.writes[-1].startswith(b"$J=G91")
     adapter.stop_jog()
     assert transport.writes[-1] == b"\x85"
+
+
+def test_grbl_motion_commands_are_gated_but_hold_and_cancel_remain_available():
+    transport = MockGRBLTransport()
+    adapter = GrblAdapter(transport)
+    before = transport.writes[:]
+    assert adapter.command("HOME") is False
+    assert adapter.command("RESUME") is False
+    assert transport.writes == before
+    assert adapter.command("HOLD")
+    assert transport.writes[-1] == b"!"
+    assert adapter.stop_jog()
+    assert transport.writes[-1] == b"\x85"
+
+
+def test_grbl_poll_requests_status_and_derives_work_coordinates():
+    transport = MockGRBLTransport(
+        "<Idle|MPos:10,20,30|WCO:1,2,3|FS:120,300>")
+    adapter = GrblAdapter(transport)
+    state = adapter.poll()
+    assert b"?" in transport.writes
+    assert state.work_position["X"] == 9.0
+    assert state.work_position["Y"] == 18.0
+    assert state.work_position["Z"] == 27.0
+    assert state.feed_rate == 120.0
+    assert state.spindle_speed == 300.0
+    prior = transport.writes.count(b"?")
+    adapter.poll()
+    assert transport.writes.count(b"?") == prior
+
+
+def test_grbl_rejects_nonfinite_jog_feed():
+    transport = MockGRBLTransport()
+    adapter = GrblAdapter(transport, motion_enabled=True)
+    assert not adapter.start_jog("X", 1, float("nan"))
+    assert not adapter.start_jog("X", 1, float("inf"))
+
+
+def test_valid_renewal_emits_bounded_grbl_segment_and_stop_cancels():
+    clock, pt, ht, pendant, bridge, _ = connected_bridge(motion_enabled=True)
+    controller = MockGRBLTransport()
+    grbl = GrblAdapter(controller, motion_enabled=True)
+    bridge.adapter = grbl
+    bridge.session.on_motion_stop = grbl.stop_jog
+    bridge.session.on_motion_renew = grbl.renew_jog
+    assert pendant.send_motion_start(b"JOG|X|1|500")
+    exchange(pt, ht, pendant, bridge)
+    commands = [w for w in controller.writes if w.startswith(b"$J=")]
+    assert len(commands) == 1
+    assert b"X0.5000" in commands[0]
+    assert pendant.send_motion_renew()
+    exchange(pt, ht, pendant, bridge)
+    assert len([w for w in controller.writes if w.startswith(b"$J=")]) == 2
+    assert bridge.session.diagnostics.lease_renewals == 1
+    assert pendant.send_motion_stop()
+    exchange(pt, ht, pendant, bridge)
+    assert controller.writes[-1] == b"\x85"
+    assert not bridge.session.motion_active
+    before = len([w for w in controller.writes if w.startswith(b"$J=")])
+    bridge.poll()
+    assert len([w for w in controller.writes if w.startswith(b"$J=")]) == before
+
+
+def test_expired_lease_cancels_grbl_and_never_queues_more_jogs():
+    clock, pt, ht, pendant, bridge, _ = connected_bridge(motion_enabled=True)
+    controller = MockGRBLTransport()
+    grbl = GrblAdapter(controller, motion_enabled=True)
+    bridge.adapter = grbl
+    bridge.session.on_motion_stop = grbl.stop_jog
+    bridge.session.on_motion_renew = grbl.renew_jog
+    bridge.session.motion_lease_ms = 30
+    assert pendant.send_motion_start(b"JOG|Y|-1|120")
+    exchange(pt, ht, pendant, bridge)
+    assert len([w for w in controller.writes if w.startswith(b"$J=")]) == 1
+    clock.advance(31)
+    bridge.poll()
+    assert controller.writes[-1] == b"\x85"
+    assert not bridge.session.motion_active
+    assert not grbl.renew_jog()
+    assert len([w for w in controller.writes if w.startswith(b"$J=")]) == 1
