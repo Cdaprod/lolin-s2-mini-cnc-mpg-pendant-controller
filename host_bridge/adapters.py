@@ -129,28 +129,30 @@ class GrblAdapter(ControllerAdapter):
             return
         parts = line[1:-1].split("|")
         self.state.mode = parts[0].lower()
-        self._machine_fresh = False
+        explicit_work = False
+        fresh_machine = False
         for field in parts[1:]:
             if field.startswith("MPos:"):
                 self._coordinates(self.state.machine_position, field[5:])
-                self._machine_fresh = True
+                fresh_machine = True
             elif field.startswith("WPos:"):
                 self._coordinates(self.state.work_position, field[5:])
+                explicit_work = True
             elif field.startswith("WCO:"):
                 offsets = dict((axis, None) for axis in AXES)
                 self._coordinates(offsets, field[4:])
                 self._work_offset = offsets
-        if self._machine_fresh and self._work_offset is not None:
-            for axis in AXES:
-                machine = self.state.machine_position[axis]
-                offset = self._work_offset[axis]
-                if machine is not None and offset is not None:
-                    self.state.work_position[axis] = machine - offset
             elif field.startswith("FS:"):
                 values = field[3:].split(",")
                 self.state.feed_rate = float(values[0])
                 if len(values) > 1:
                     self.state.spindle_speed = float(values[1])
+        if fresh_machine and self._work_offset is not None and not explicit_work:
+            for axis in AXES:
+                machine = self.state.machine_position[axis]
+                offset = self._work_offset[axis]
+                if machine is not None and offset is not None:
+                    self.state.work_position[axis] = machine - offset
 
     @staticmethod
     def _coordinates(target, raw):
