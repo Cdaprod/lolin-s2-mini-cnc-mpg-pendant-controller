@@ -1,8 +1,12 @@
 """Axis and multiplier selector models using manufacturer signal names."""
 
 DEFAULT_AXIS_MAP = {
-    "X": "X", "Y": "Y", "Z": "Z",
-    "4": "A", "5": "B", "6": "C",
+    "X": "AXIS_X", "Y": "AXIS_Y", "Z": "AXIS_Z",
+    "4": "FILES", "5": "CONFIG", "6": "PREVIEW",
+}
+MOTION_AXES = ("X", "Y", "Z", "A", "B", "C")
+PAGE_FOR_FUNCTION = {
+    "FILES": "EXPLORER", "CONFIG": "CONFIGURATION", "PREVIEW": "PREVIEW",
 }
 MULTIPLIERS = {"X1": 1, "X10": 10, "X100": 100}
 
@@ -23,12 +27,25 @@ class SelectorModel:
         if name == "OFF":
             self.state.selected_physical_axis = "OFF"
             self.state.selected_axis = None
-            return None
+            self.state.selector_function = "OFF"
+            return "OFF"
         if name not in self.axis_map:
             raise SelectorError("invalid physical axis: " + name)
         self.state.selected_physical_axis = name
-        self.state.selected_axis = self.axis_map[name]
-        return self.state.selected_axis
+        function = str(self.axis_map[name]).upper()
+        # Raw axis names remain accepted for existing/future six-axis profiles.
+        if function in MOTION_AXES:
+            function = "AXIS_" + function
+        if function.startswith("AXIS_") and function[5:] in MOTION_AXES:
+            self.state.selected_axis = function[5:]
+            self.state.active_page = "OPERATIONAL"
+        elif function in PAGE_FOR_FUNCTION:
+            self.state.selected_axis = None
+            self.state.active_page = PAGE_FOR_FUNCTION[function]
+        else:
+            raise SelectorError("invalid selector function: " + function)
+        self.state.selector_function = function
+        return function
 
     def select_multiplier(self, label):
         name = str(label).upper()
