@@ -178,3 +178,47 @@ def test_grbl_rejects_nonfinite_jog_feed():
     adapter = GrblAdapter(transport, motion_enabled=True)
     assert not adapter.start_jog("X", 1, float("nan"))
     assert not adapter.start_jog("X", 1, float("inf"))
+
+
+def test_valid_renewal_emits_bounded_grbl_segment_and_stop_cancels():
+    clock, pt, ht, pendant, bridge, _ = connected_bridge(motion_enabled=True)
+    controller = MockGRBLTransport()
+    grbl = GrblAdapter(controller, motion_enabled=True)
+    bridge.adapter = grbl
+    bridge.session.on_motion_stop = grbl.stop_jog
+    bridge.session.on_motion_renew = grbl.renew_jog
+    assert pendant.send_motion_start(b"JOG|X|1|500")
+    exchange(pt, ht, pendant, bridge)
+    commands = [w for w in controller.writes if w.startswith(b"$J=")]
+    assert len(commands) == 1
+    assert b"X0.5000" in commands[0]
+    assert pendant.send_motion_renew()
+    exchange(pt, ht, pendant, bridge)
+    assert len([w for w in controller.writes if w.startswith(b"$J=")]) == 2
+    assert bridge.session.diagnostics.lease_renewals == 1
+    assert pendant.send_motion_stop()
+    exchange(pt, ht, pendant, bridge)
+    assert controller.writes[-1] == b"\\x85"
+    assert not bridge.session.motion_active
+    before = len([w for w in controller.writes if w.startswith(b"$J=")])
+    bridge.poll()
+    assert len([w for w in controller.writes if w.startswith(b"$J=")]) == before
+
+
+def test_expired_lease_cancels_grbl_and_never_queues_more_jogs():
+    clock, pt, ht, pendant, bridge, _ = connected_bridge(motion_enabled=True)
+    controller = MockGRBLTransport()
+    grbl = GrblAdapter(controller, motion_enabled=True)
+    bridge.adapter = grbl
+    bridge.session.on_motion_stop = grbl.stop_jog
+    bridge.session.on_motion_renew = grbl.renew_jog
+    bridge.session.motion_lease_ms = 30
+    assert pendant.send_motion_start(b"JOG|Y|-1|120")
+    exchange(pt, ht, pendant, bridge)
+    assert len([w for w in controller.writes if w.startswith(b"$J=")]) == 1
+    clock.advance(31)
+    bridge.poll()
+    assert controller.writes[-1] == b"\\x85"
+    assert not bridge.session.motion_active
+    assert not grbl.renew_jog()
+    assert len([w for w in controller.writes if w.startswith(b"$J=")]) == 1
