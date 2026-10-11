@@ -75,6 +75,7 @@ class GrblAdapter(ControllerAdapter):
         self._last_status_poll = None
         self._status_poll_interval = 0.2
         self._work_offset = None
+        self._machine_fresh = False
 
     def start_jog(self, axis, direction, feed):
         if not self.motion_enabled:
@@ -128,16 +129,18 @@ class GrblAdapter(ControllerAdapter):
             return
         parts = line[1:-1].split("|")
         self.state.mode = parts[0].lower()
+        self._machine_fresh = False
         for field in parts[1:]:
             if field.startswith("MPos:"):
                 self._coordinates(self.state.machine_position, field[5:])
+                self._machine_fresh = True
             elif field.startswith("WPos:"):
                 self._coordinates(self.state.work_position, field[5:])
             elif field.startswith("WCO:"):
                 offsets = dict((axis, None) for axis in AXES)
                 self._coordinates(offsets, field[4:])
                 self._work_offset = offsets
-        if self._work_offset is not None:
+        if self._machine_fresh and self._work_offset is not None:
             for axis in AXES:
                 machine = self.state.machine_position[axis]
                 offset = self._work_offset[axis]
