@@ -287,7 +287,11 @@ class ReliableSession:
     def poll(self):
         now = self._now()
         self._check_motion_lease(now)
-        while True:
+        # Bound receive work so a continuously readable transport cannot
+        # starve lease expiry, retransmissions or the caller's event loop.
+        for _ in range(16):
+            now = self._now()
+            self._check_motion_lease(now)
             chunk = self.transport.read(64)
             if not chunk:
                 break
@@ -301,7 +305,10 @@ class ReliableSession:
                 if self._matches_active(source, peer):
                     self._reply(NAK, sequence)
             for packet in packets:
+                now = self._now()
+                self._check_motion_lease(now)
                 self._receive(packet, now)
+        now = self._now()
         self._check_motion_lease(now)
         if self.outstanding and now - self.outstanding[2] >= self.ack_timeout_ms:
             self.diagnostics.ack_timeouts += 1
