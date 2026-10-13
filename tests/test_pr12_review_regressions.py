@@ -146,7 +146,7 @@ def test_renewal_arriving_after_deadline_during_read_is_rejected():
     session.motion_active = True
     session.motion_intent_sequence = 5
     session.motion_lease_deadline = 1010
-    renewal = Packet(DATA, 6, b"\\x00\\x05", MOTION,
+    renewal = Packet(DATA, 6, b"\x00\x05", MOTION,
                      flags=RELIABLE | MOTION_RENEW,
                      session_id=200, peer_session_id=100)
     transport.inject_bytes(encode(renewal))
