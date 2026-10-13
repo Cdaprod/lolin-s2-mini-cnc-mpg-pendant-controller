@@ -83,6 +83,7 @@ def load_config():
             "MPG_NETWORK_CONNECT_TIMEOUT", 15
         ),
         "controller_mode": _get("MPG_CONTROLLER_MODE", "disabled").lower(),
+        "bridge_motion_enabled": _get_bool("MPG_BRIDGE_MOTION_ENABLED", False),
         "controller_host": _get("MPG_CONTROLLER_HOST", ""),
         "controller_port": _get_int("MPG_CONTROLLER_PORT", 8080),
         "uart_tx_pin": _get("MPG_UART_TX_PIN", ""),
