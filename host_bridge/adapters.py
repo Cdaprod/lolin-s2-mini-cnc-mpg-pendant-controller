@@ -125,7 +125,8 @@ class GrblAdapter(ControllerAdapter):
                 axis not in AXES or direction not in (-1, 1) or
                 not math.isfinite(feed) or feed <= 0 or
                 not self.state.telemetry_fresh or
-                self.state.mode not in ("idle", "jog")):
+                self.state.mode not in ("idle", "jog") or
+                self._cancel_pending):
             return False
         if self._active_jog is not None:
             return False
