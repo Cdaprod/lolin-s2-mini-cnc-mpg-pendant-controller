@@ -18,8 +18,11 @@ MPG_NETWORK_AP_TIMEOUT="600"
 # Maximum time for an individual station connection attempt.
 MPG_NETWORK_CONNECT_TIMEOUT="15"
 
-# disabled | uart | mock
+# disabled | uart (direct GRBL) | mock | bridge (Protocol v1 over UART)
 MPG_CONTROLLER_MODE="disabled"
+# Bridge jog is bounded continuous movement, not exact per-detent stepping.
+# Keep disabled until host safety and real hardware are verified.
+MPG_BRIDGE_MOTION_ENABLED="false"
 
 # Leave blank while mode=disabled.
 MPG_CONTROLLER_HOST=""
