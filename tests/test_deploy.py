@@ -88,6 +88,9 @@ class ReconciliationTests(unittest.TestCase):
                    'MPG_PIN_A="GPIO42"\nMPG_PIN_B="GPIO41"\n'
                    'MPG_TOUCH_ENABLED=false\n'
                    'CIRCUITPY_WIFI_PASSWORD="secret"\n')
+        (root / "template.toml").write_text(
+            (deploy.ROOT / "settings.toml.example").read_text(encoding="utf-8"),
+            encoding="utf-8")
         values, _, actions = self.reconcile(root)
         assert values["MPG_PIN_A"] == '"GPIO39"'
         assert values["MPG_PIN_B"] == '"GPIO40"'
