@@ -6,7 +6,8 @@ from src.app import PendantApplication
 from src.controller.bridge import BridgeController
 from src.display.console import ConsoleDisplay
 from src.transport.mock import MockTransport
-from src.transport.protocol import ReliableSession, SOF
+from src.transport.protocol import (ReliableSession, SOF, Packet, encode,
+                                    DATA, MOTION, MOTION_RENEW, RELIABLE)
 
 
 class Clock:
@@ -124,3 +125,32 @@ def test_status_payload_remains_ascii_and_field_bounded():
     assert len(fields) == 13
     assert "\ufffd" not in fields[1]
     assert "\ufffd" not in fields[11]
+
+
+def test_renewal_arriving_after_deadline_during_read_is_rejected():
+    clock = Clock()
+
+    class DelayedRenewal(MockTransport):
+        def read(self, count=64):
+            clock.advance(11)
+            return super().read(count)
+
+    transport = DelayedRenewal()
+    stops = []
+    session = ReliableSession(
+        transport, lambda packet: True, clock, role="responder",
+        session_id=100, on_motion_stop=lambda: stops.append("stop"))
+    session.established = True
+    session.remote_session = 200
+    session.last_receive_ms = 1000
+    session.motion_active = True
+    session.motion_intent_sequence = 5
+    session.motion_lease_deadline = 1010
+    renewal = Packet(DATA, 6, b"\\x00\\x05", MOTION,
+                     flags=RELIABLE | MOTION_RENEW,
+                     session_id=200, peer_session_id=100)
+    transport.inject_bytes(encode(renewal))
+    session.poll()
+    assert stops == ["stop"]
+    assert not session.motion_active
+    assert session.diagnostics.rejected_renewals == 1
