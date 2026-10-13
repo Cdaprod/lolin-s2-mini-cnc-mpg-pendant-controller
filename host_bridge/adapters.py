@@ -88,7 +88,8 @@ class GrblAdapter(ControllerAdapter):
         self._active_jog = None
         self._last_jog_at = None
         self._pending_jog = False
-        self._cancel_sent = False
+        self._cancel_sent = True
+        self._cancel_pending = False
         self._jog_segment_mm = 0.5
         self._jog_segment_max_ms = 180
         self._jog_ack_timeout = 0.3
@@ -115,6 +116,7 @@ class GrblAdapter(ControllerAdapter):
             return False
         self._pending_jog = True
         self._cancel_sent = False
+        self._cancel_pending = True
         self._last_jog_at = self.clock()
         return True
 
@@ -157,7 +159,7 @@ class GrblAdapter(ControllerAdapter):
         self._active_jog = None
         self._last_jog_at = None
         self._pending_jog = False
-        if not self._cancel_sent and self.transport.connected:
+        if self._cancel_pending and not self._cancel_sent and self.transport.connected:
             try:
                 written = self.transport.write(b"\x85")
             except (OSError, RuntimeError):
@@ -165,7 +167,8 @@ class GrblAdapter(ControllerAdapter):
             if written is not None and written != 1:
                 return False
             self._cancel_sent = True
-        return self._cancel_sent
+            self._cancel_pending = False
+        return not self._cancel_pending
 
     def command(self, name):
         # HOME and RESUME can initiate motion even without an active jog.
@@ -199,7 +202,7 @@ class GrblAdapter(ControllerAdapter):
             return self.state
         # A failed realtime cancellation must be retried after the serial
         # transport becomes writable, even with no remaining jog intent.
-        if not self._cancel_sent:
+        if self._cancel_pending and not self._cancel_sent:
             self.stop_jog()
         if (self.transport.connected and
                 (self._last_status_poll is None or
