@@ -154,17 +154,18 @@ class GrblAdapter(ControllerAdapter):
         return self._send_segment()
 
     def stop_jog(self):
-        should_cancel = not self._cancel_sent
         self._active_jog = None
         self._last_jog_at = None
         self._pending_jog = False
-        if should_cancel and not self._cancel_sent and self.transport.connected:
+        if not self._cancel_sent and self.transport.connected:
             try:
-                self.transport.write(b"\x85")
+                written = self.transport.write(b"\x85")
             except (OSError, RuntimeError):
-                pass
+                return False
+            if written is not None and written != 1:
+                return False
             self._cancel_sent = True
-        return True
+        return self._cancel_sent
 
     def command(self, name):
         # HOME and RESUME can initiate motion even without an active jog.
@@ -196,6 +197,10 @@ class GrblAdapter(ControllerAdapter):
             self.state.mode = "disconnected"
             self._last_status_poll = None
             return self.state
+        # A failed realtime cancellation must be retried after the serial
+        # transport becomes writable, even with no remaining jog intent.
+        if not self._cancel_sent:
+            self.stop_jog()
         if (self.transport.connected and
                 (self._last_status_poll is None or
                  now - self._last_status_poll >= self._status_poll_interval)):
@@ -243,10 +248,16 @@ class GrblAdapter(ControllerAdapter):
         for field in parts[1:]:
             if field.startswith("MPos:"):
                 machine = self._coordinates(field[5:])
+                if machine is None:
+                    return
             elif field.startswith("WPos:"):
                 work = self._coordinates(field[5:])
+                if work is None:
+                    return
             elif field.startswith("WCO:"):
                 offset = self._coordinates(field[4:])
+                if offset is None:
+                    return
             elif field.startswith("FS:"):
                 try:
                     values = field[3:].split(",")
