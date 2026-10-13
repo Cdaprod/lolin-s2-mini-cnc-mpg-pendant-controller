@@ -197,8 +197,10 @@ def reconcile(template_path, local_path, device_path, apply_local=False,
     all_keys = order + [key for key in device_order if key not in template]
     # Migrate only known incorrect XIAO defaults; do not overwrite custom
     # device values, board-specific mappings, or credentials.
-    xiao = literal_value(device.get("MPG_BOARD_PROFILE",
-                               template.get("MPG_BOARD_PROFILE", '""'))) == "xiao_esp32s3"
+    selected_board = (device.get("MPG_BOARD_PROFILE") or
+                      local.get("MPG_BOARD_PROFILE") or
+                      template.get("MPG_BOARD_PROFILE", '""'))
+    xiao = literal_value(selected_board) == "xiao_esp32s3"
     outdated = {"MPG_PIN_A": ('"GPIO42"', '"GPIO39"'),
                 "MPG_PIN_B": ('"GPIO41"', '"GPIO40"'),
                 "MPG_TOUCH_ENABLED": ("false", "true")}
