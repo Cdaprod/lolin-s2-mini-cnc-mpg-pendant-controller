@@ -184,6 +184,11 @@ class DeploymentCLITests(unittest.TestCase):
         (Path(target) / "boot_out.txt").write_text(
             "Adafruit CircuitPython 10.3.1\nSeeed XIAO ESP32S3\n",
             encoding="utf-8")
+        # The Seeed profile now enables touch by default, so a deployment
+        # fixture must include the CST8xx dependency on its simulated drive.
+        lib = Path(target) / "lib"
+        lib.mkdir(exist_ok=True)
+        (lib / "adafruit_cst8xx.mpy").write_bytes(b"test-driver")
 
     def test_missing_circuitpy_fails_safely(self):
         with tempfile.TemporaryDirectory() as directory:
