@@ -90,6 +90,8 @@ class GrblAdapter(ControllerAdapter):
         self._pending_jog = False
         self._cancel_sent = True
         self._cancel_pending = False
+        self._cancel_needs_idle = False
+        self._cancel_sent_at = None
         self._jog_segment_mm = 0.5
         self._jog_segment_max_ms = 180
         self._jog_ack_timeout = 0.3
@@ -126,7 +128,7 @@ class GrblAdapter(ControllerAdapter):
                 not math.isfinite(feed) or feed <= 0 or
                 not self.state.telemetry_fresh or
                 self.state.mode not in ("idle", "jog") or
-                self._cancel_pending):
+                self._cancel_pending or self._cancel_needs_idle):
             return False
         if self._active_jog is not None:
             return False
@@ -169,6 +171,8 @@ class GrblAdapter(ControllerAdapter):
                 return False
             self._cancel_sent = True
             self._cancel_pending = False
+            self._cancel_needs_idle = True
+            self._cancel_sent_at = self.clock()
         return not self._cancel_pending
 
     def command(self, name):
@@ -290,6 +294,10 @@ class GrblAdapter(ControllerAdapter):
             self.state.spindle_speed = spindle
         self.state.alarm = None if mode != "alarm" else self.state.alarm
         self._last_status_at = self.clock() if now is None else now
+        if (mode == "idle" and self._cancel_needs_idle and
+                self._cancel_sent_at is not None and
+                self._last_status_at >= self._cancel_sent_at):
+            self._cancel_needs_idle = False
         if mode not in ("idle", "jog"):
             if self._active_jog is not None or self._pending_jog:
                 self.stop_jog()
