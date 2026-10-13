@@ -6,6 +6,7 @@ import time
 
 from src.controller.actions import ActionDispatcher
 from src.controller.grbl import GRBLController
+from src.controller.bridge import BridgeController
 from src.display.base import Indicator
 from src.display.ui import UIManager
 from src.gcode.macros import MacroLibrary
@@ -62,7 +63,7 @@ class PendantApplication:
         mode = config.get("controller_mode", "disabled")
         state.controller_enabled = mode != "disabled"
         if transport is None:
-            if mode == "uart":
+            if mode in ("uart", "bridge"):
                 transport = UARTTransport.from_pin_names(
                     config.get("uart_tx_pin"), config.get("uart_rx_pin"),
                     config.get("uart_baudrate", 115200)
@@ -73,10 +74,15 @@ class PendantApplication:
                 transport = MockTransport(connected=False)
             else:
                 raise ValueError("unsupported controller mode: " + mode)
-        controller = GRBLController(
-            state, transport, clock=clock,
-            status_interval=config.get("status_interval", 0.2)
-        )
+        if mode == "bridge":
+            controller = BridgeController(
+                state, transport, clock,
+                motion_enabled=config.get("bridge_motion_enabled", False))
+        else:
+            controller = GRBLController(
+                state, transport, clock=clock,
+                status_interval=config.get("status_interval", 0.2)
+            )
         safety = SafetyStateMachine(state)
         watchdog = Watchdog(state)
         actions = ActionDispatcher(
