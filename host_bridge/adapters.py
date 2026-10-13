@@ -296,7 +296,7 @@ class GrblAdapter(ControllerAdapter):
         self._last_status_at = self.clock() if now is None else now
         if (mode == "idle" and self._cancel_needs_idle and
                 self._cancel_sent_at is not None and
-                self._last_status_at >= self._cancel_sent_at):
+                self._last_status_at > self._cancel_sent_at):
             self._cancel_needs_idle = False
         if mode not in ("idle", "jog"):
             if self._active_jog is not None or self._pending_jog:
