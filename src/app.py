@@ -227,6 +227,8 @@ class PendantApplication:
                 return True
             return self.actions.dispatch(command.value)
         if name == "JOB_START":
+            if isinstance(self.controller, BridgeController):
+                raise SafetyError("bridge file streaming is not implemented")
             job = self.storage.select_job(command.value)
             self.streamer.start(job, self.clock())
             self.ui.enter("ACTIVE_JOB")
@@ -241,6 +243,8 @@ class PendantApplication:
             self.streamer.cancel()
             return True
         if name == "MACRO_RUN":
+            if isinstance(self.controller, BridgeController):
+                raise SafetyError("bridge macros are not implemented")
             self.macros.queue(command.value, self.controller, self.safety)
             return True
         if name == "NETWORK_SCAN":
