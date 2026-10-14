@@ -6,6 +6,7 @@ import time
 
 from src.controller.actions import ActionDispatcher
 from src.controller.grbl import GRBLController
+from src.controller.bridge import BridgeController
 from src.display.base import Indicator
 from src.display.ui import UIManager
 from src.gcode.macros import MacroLibrary
@@ -62,7 +63,7 @@ class PendantApplication:
         mode = config.get("controller_mode", "disabled")
         state.controller_enabled = mode != "disabled"
         if transport is None:
-            if mode == "uart":
+            if mode in ("uart", "bridge"):
                 transport = UARTTransport.from_pin_names(
                     config.get("uart_tx_pin"), config.get("uart_rx_pin"),
                     config.get("uart_baudrate", 115200)
@@ -73,10 +74,15 @@ class PendantApplication:
                 transport = MockTransport(connected=False)
             else:
                 raise ValueError("unsupported controller mode: " + mode)
-        controller = GRBLController(
-            state, transport, clock=clock,
-            status_interval=config.get("status_interval", 0.2)
-        )
+        if mode == "bridge":
+            controller = BridgeController(
+                state, transport, clock,
+                motion_enabled=config.get("bridge_motion_enabled", False))
+        else:
+            controller = GRBLController(
+                state, transport, clock=clock,
+                status_interval=config.get("status_interval", 0.2)
+            )
         safety = SafetyStateMachine(state)
         watchdog = Watchdog(state)
         actions = ActionDispatcher(
@@ -198,7 +204,7 @@ class PendantApplication:
 
     def handle_ui_event(self, event):
         """Route a normalized UI event and execute only its semantic result."""
-        if self.ui.current_screen in ("JOBS", "JOB_BROWSER"):
+        if self.ui.current_screen in ("JOBS", "JOB_BROWSER", "EXPLORER"):
             self.ui.set_dynamic_items("jobs", self.storage.list_jobs())
             self.state.storage_state = self.storage.status
             self.state.storage_error = self.storage.error
@@ -221,6 +227,8 @@ class PendantApplication:
                 return True
             return self.actions.dispatch(command.value)
         if name == "JOB_START":
+            if isinstance(self.controller, BridgeController):
+                raise SafetyError("bridge file streaming is not implemented")
             job = self.storage.select_job(command.value)
             self.streamer.start(job, self.clock())
             self.ui.enter("ACTIVE_JOB")
@@ -235,6 +243,8 @@ class PendantApplication:
             self.streamer.cancel()
             return True
         if name == "MACRO_RUN":
+            if isinstance(self.controller, BridgeController):
+                raise SafetyError("bridge macros are not implemented")
             self.macros.queue(command.value, self.controller, self.safety)
             return True
         if name == "NETWORK_SCAN":
@@ -289,6 +299,14 @@ class PendantApplication:
         if sample.selector_changed:
             self._record_selector_transition(
                 "axis", sample.selector_direction, started)
+            # Every physical selector transition revokes the previous motion
+            # owner before any wheel event from this sample is dispatched.
+            queued_jog = any(item[1] == "jog" for item in self.controller.queue)
+            self.controller.discard_queued("jog")
+            if self.transport.connected and (self.state.jog_active or queued_jog):
+                self.controller.cancel_jog()
+            self.state.jog_active = False
+            self.ui.apply_selector_context()
         if sample.multiplier_changed:
             self._record_selector_transition(
                 "resolution", sample.multiplier_direction, started)
@@ -298,8 +316,7 @@ class PendantApplication:
                 setattr(self.state, kind + "_transition_direction", 0)
         if sample.estop_changed:
             self.observe_estop(sample.estop)
-        if ((sample.deadman_changed and not self.state.deadman_enabled) or
-                (sample.selector_changed and self.state.selected_axis is None)):
+        if sample.deadman_changed and not self.state.deadman_enabled:
             queued_jog = any(item[1] == "jog" for item in self.controller.queue)
             if self.transport.connected and (self.state.jog_active or queued_jog):
                 self.controller.cancel_jog()

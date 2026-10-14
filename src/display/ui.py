@@ -70,7 +70,21 @@ def build_screens():
     """Build the documented IA; unavailable backends are visibly disabled."""
     screens = {}
     screens["BOOT"] = Screen("BOOT", "BOOT — Connecting…", None, DISABLED)
-    screens["HOME"] = Screen("HOME", "JOG / DRO", None, MOTION)
+    screens["HOME"] = Screen("HOME", "OPERATIONAL", None, MOTION)
+    screens["EXPLORER"] = Screen(
+        "EXPLORER", "FILE EXPLORER", None, NAVIGATION, dynamic="jobs"
+    )
+    screens["CONFIGURATION"] = Screen(
+        "CONFIGURATION", "CONFIGURATION", None, NAVIGATION, items=[
+            MenuItem("Network", "NETWORK"),
+            MenuItem("Controller", "CONTROLLER"),
+            MenuItem("Pendant Settings", "SETTINGS"),
+            MenuItem("Hardware / System", "SYSTEM"),
+        ]
+    )
+    screens["PREVIEW"] = Screen(
+        "PREVIEW", "TEST & DEMO", None, VALUE_EDIT
+    )
     screens["MAIN_MENU"] = Screen("MAIN_MENU", "MAIN MENU", "HOME", items=[
         MenuItem("Machine", "MACHINE"), MenuItem("Jobs", "JOBS"),
         MenuItem("Macros", "MACROS"), MenuItem("Controller", "CONTROLLER"),
@@ -233,7 +247,23 @@ class UIManager:
     def home(self):
         self.confirmation = None
         self.text_entry = None
-        self.stack = ["HOME"]
+        self.stack = [self._selector_screen()]
+        self._changed()
+
+    def _selector_screen(self):
+        return {
+            "EXPLORER": "EXPLORER",
+            "CONFIGURATION": "CONFIGURATION",
+            "PREVIEW": "PREVIEW",
+        }.get(self.state.active_page, "HOME")
+
+    def apply_selector_context(self):
+        """Make the physical selector authoritative for top-level context."""
+        target = self._selector_screen()
+        self.confirmation = None
+        self.text_entry = None
+        self.text_purpose = None
+        self.stack = [target]
         self._changed()
 
     def back(self):
@@ -316,6 +346,17 @@ class UIManager:
                 ("Hostname", self.state.hostname or "unknown"),
                 ("Reason", self.state.network_error or "none"),
             )
+        if self.current_screen == "PREVIEW":
+            return (
+                ("Mode", "SAFE SIMULATION"),
+                ("Wheel steps", self.state.preview_wheel_steps),
+                ("Increment", "{:.4f}".format(self.state.jog_increment)),
+                ("Simulated X", "{:+.4f}".format(
+                    self.state.preview_position["X"])),
+                ("Multiplier", self.state.selected_multiplier),
+                ("Remote stop", "ACTIVE" if self.state.estop_observed else
+                 "LATCHED" if self.state.estop_latched else "CLEAR"),
+            )
         return ()
 
     def selected_item(self):
@@ -331,6 +372,14 @@ class UIManager:
             return UICommand("JOG", 1 if delta > 0 else -1)
         if mode == TEXT_ENTRY and self.text_entry:
             self.text_entry.rotate(1 if delta > 0 else -1)
+            self._changed()
+            return None
+        if self.current_screen == "PREVIEW":
+            direction = 1 if delta > 0 else -1
+            self.state.preview_wheel_steps += direction
+            self.state.preview_position["X"] += (
+                direction * self.state.jog_increment
+            )
             self._changed()
             return None
         if mode in (NAVIGATION, VALUE_EDIT):
@@ -363,7 +412,7 @@ class UIManager:
                 self.toast = item.reason or "Unavailable"
                 self._changed()
             return None
-        if self.current_screen == "JOB_BROWSER":
+        if self.current_screen in ("JOB_BROWSER", "EXPLORER"):
             self.selected_job = item.value
             self.enter("JOB_DETAILS")
             return None
@@ -548,6 +597,9 @@ class UIManager:
                             "RECOVERY_REQUIRED" if self.state.estop_latched else
                             "CLEAR"),
             "motion_available": motion_available,
+            "active_page": self.state.active_page,
+            "selector_function": self.state.selector_function,
+            "physical_selector": self.state.selected_physical_axis,
         }
         if self.current_screen == "CONTROLLER_INFO":
             model["title"] = self.detail_title or model["title"]
@@ -557,6 +609,8 @@ class UIManager:
             model["details"] = self.details()
         elif self.current_screen == "NETWORK_INFO":
             model["details"] = self.details()
+        elif self.current_screen == "PREVIEW":
+            model["details"] = self.details()
         if self.current_screen == "TEXT_ENTRY" and self.text_entry:
             model["text"] = self.text_entry.display_value()
             model["character"] = self.text_entry.selected_character
@@ -564,7 +618,7 @@ class UIManager:
             model["masked"] = self.text_entry.masked
         if self.current_screen == "JOB_DETAILS":
             model["filename"] = self.selected_job
-        if self.current_screen in ("JOBS", "JOB_BROWSER"):
+        if self.current_screen in ("JOBS", "JOB_BROWSER", "EXPLORER"):
             model["storage_state"] = self.state.storage_state
             model["storage_error"] = self.state.storage_error
         if self.current_screen == "MACRO_DETAILS":

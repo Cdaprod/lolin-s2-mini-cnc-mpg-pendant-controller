@@ -120,6 +120,13 @@ pre-handshake, or post-expiration renewal cannot extend or recreate a lease.
 After expiration, only a new `MOTION_START` with a new sequence represents
 fresh operator intent.
 
+The receiver extends the lease only after its motion-renewal callback accepts
+the renewal. A callback rejection or exception revokes motion and returns NAK;
+it cannot extend the deadline. Duplicate renewals are filtered before this
+callback. This lets a controller adapter enforce its own bounded command
+admission (including acknowledgement and alarm state) inside the protocol
+lease rather than treating every valid packet as unlimited planner capacity.
+
 `MOTION_STOP` payload also begins with the intent ID. A valid STOP invokes the
 semantic handler and terminates motion immediately. Successful STOP delivery is
 not required for bounded stopping: if STOP is lost, the sender stops renewing

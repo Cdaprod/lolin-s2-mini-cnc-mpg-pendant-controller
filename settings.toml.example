@@ -18,8 +18,11 @@ MPG_NETWORK_AP_TIMEOUT="600"
 # Maximum time for an individual station connection attempt.
 MPG_NETWORK_CONNECT_TIMEOUT="15"
 
-# disabled | uart | mock
+# disabled | uart (direct GRBL) | mock | bridge (Protocol v1 over UART)
 MPG_CONTROLLER_MODE="disabled"
+# Bridge jog is bounded continuous movement, not exact per-detent stepping.
+# Keep disabled until host safety and real hardware are verified.
+MPG_BRIDGE_MOTION_ENABLED="false"
 
 # Leave blank while mode=disabled.
 MPG_CONTROLLER_HOST=""
@@ -47,16 +50,16 @@ MPG_ENCODER_ACTIVE_LOW="false"
 MPG_USE_ROTARYIO="true"
 MPG_SELECTOR_ACTIVE_LOW="true"
 MPG_BUTTON_ACTIVE_LOW="true"
-MPG_PIN_A="GPIO42"
-MPG_PIN_B="GPIO41"
+MPG_PIN_A="GPIO39"
+MPG_PIN_B="GPIO40"
 MPG_COUNTS_PER_DETENT="4"
 MPG_DIRECTION="1"
-MPG_AXIS_MAP_X="X"
-MPG_AXIS_MAP_Y="Y"
-MPG_AXIS_MAP_Z="Z"
-MPG_AXIS_MAP_4="A"
-MPG_AXIS_MAP_5="B"
-MPG_AXIS_MAP_6="C"
+MPG_AXIS_MAP_X="AXIS_X"
+MPG_AXIS_MAP_Y="AXIS_Y"
+MPG_AXIS_MAP_Z="AXIS_Z"
+MPG_AXIS_MAP_4="FILES"
+MPG_AXIS_MAP_5="CONFIG"
+MPG_AXIS_MAP_6="PREVIEW"
 MPG_PIN_AXIS_X="GPA0"
 MPG_PIN_AXIS_Y="GPA1"
 MPG_PIN_AXIS_Z="GPA2"
@@ -112,7 +115,7 @@ MPG_DISPLAY_RESET_PIN=""
 MPG_DISPLAY_BACKLIGHT_PIN="D6"
 MPG_DISPLAY_TOUCH_SDA_PIN="D4"
 MPG_DISPLAY_TOUCH_SCL_PIN="D5"
-MPG_TOUCH_ENABLED=false
+MPG_TOUCH_ENABLED=true
 
 # Optional physical SD mount. All four SPI pins are required when enabled.
 MPG_SD_ENABLED="false"
