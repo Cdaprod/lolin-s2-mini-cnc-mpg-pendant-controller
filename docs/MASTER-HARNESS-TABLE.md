@@ -135,8 +135,8 @@ Red              VCC          Encoder supply — VOLTAGE NOT YET VERIFIED
 
 LM393 OUTPUT SIDE:
 
-LM393 pin 1      Encoder A     XIAO GPIO42 / MTMS
-LM393 pin 7      Encoder B     XIAO GPIO41 / MTDI
+LM393 pin 1      Encoder A     XIAO GPIO39 / MTCK
+LM393 pin 7      Encoder B     XIAO GPIO40 / MTDO
 LM393 pin 4      Ground        Common logic GND
 LM393 pin 8      VCC           SUPPLY NOT YET VERIFIED
 
@@ -149,7 +149,7 @@ XIAO 3V3
    |
    +-————— LM393 pin 1
    |
-   +-————— XIAO GPIO42 / MTMS
+   +-————— XIAO GPIO39 / MTCK
 
 
 XIAO 3V3
@@ -158,7 +158,7 @@ XIAO 3V3
    |
    +-————— LM393 pin 7
    |
-   +-————— XIAO GPIO41 / MTDI
+   +-————— XIAO GPIO40 / MTDO
 
 
 IMPORTANT:
@@ -179,14 +179,14 @@ ENCODER GPIO ASSIGNMENT
 
 SIGNAL           XIAO ESP32-S3
 -——————————————————————————
-MPG A            GPIO42 / MTMS
-MPG B            GPIO41 / MTDI
+MPG A            GPIO39 / MTCK
+MPG B            GPIO40 / MTDO
 
 
-GPIO42 and GPIO41 are underside XIAO pads.
+GPIO39 and GPIO40 are underside XIAO pads.
 
-GPIO42 = MTMS
-GPIO41 = MTDI
+GPIO39 = MTCK
+GPIO40 = MTDO
 
 They are deliberately being repurposed as normal GPIO for the MPG.
 
@@ -213,10 +213,10 @@ The following electrical characteristics are NOT yet considered verified:
 7. Actual counts-per-detent behavior.
 
 Do not treat the encoder interface as electrically commissioned merely
-because GPIO41/GPIO42 have been allocated.
+because GPIO40/GPIO39 have been allocated.
 
 A purpose-built differential receiver may eventually replace the LM393
-prototype without changing the GPIO41/GPIO42 assignment.
+prototype without changing the GPIO40/GPIO39 assignment.
 
 
 ===============================================================================
@@ -437,8 +437,8 @@ D8               GPIO7             SPI SCK
 D9               GPIO8             SPI MISO
 D10              GPIO9             SPI MOSI
 
-MTMS             GPIO42            MPG encoder A
-MTDI             GPIO41            MPG encoder B
+MTCK             GPIO39            MPG encoder A
+MTDO             GPIO40            MPG encoder B
 
 
 ===============================================================================
@@ -634,8 +634,8 @@ GPIO7      / D8       Shared SPI SCK
 GPIO8      / D9       Shared SPI MISO
 GPIO9      / D10      Shared SPI MOSI
 
-GPIO42     / MTMS     MPG encoder A after LM393
-GPIO41     / MTDI     MPG encoder B after LM393
+GPIO39     / MTCK     MPG encoder A after LM393
+GPIO40     / MTDO     MPG encoder B after LM393
 
 
 ===============================================================================
@@ -665,8 +665,8 @@ GPB7      Reserved expansion
 FIRMWARE PIN MAP
 ===============================================================================
 
-MPG_PIN_A                  GPIO42
-MPG_PIN_B                  GPIO41
+MPG_PIN_A                  GPIO39
+MPG_PIN_B                  GPIO40
 
 MPG_PIN_AXIS_X             GPA0
 MPG_PIN_AXIS_Y             GPA1
@@ -708,8 +708,8 @@ VERIFICATION STATUS
 
 LOGICAL ALLOCATION COMPLETE:
 
-[ALLOCATED] MPG A -> GPIO42
-[ALLOCATED] MPG B -> GPIO41
+[ALLOCATED] MPG A -> GPIO39
+[ALLOCATED] MPG B -> GPIO40
 
 [ALLOCATED] Axis X -> GPA0
 [ALLOCATED] Axis Y -> GPA1
