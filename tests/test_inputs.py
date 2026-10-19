@@ -38,10 +38,21 @@ class SelectorTests(unittest.TestCase):
         self.state = PendantState()
         self.selectors = SelectorModel(self.state)
 
-    def test_axis_four_five_six_map_to_abc(self):
-        self.assertEqual(self.selectors.select_axis("4"), "A")
-        self.assertEqual(self.selectors.select_axis("5"), "B")
-        self.assertEqual(self.selectors.select_axis("6"), "C")
+    def test_axis_four_five_six_map_to_safe_pages(self):
+        self.assertEqual(self.selectors.select_axis("4"), "FILES")
+        self.assertEqual(self.state.active_page, "EXPLORER")
+        self.assertIsNone(self.state.selected_axis)
+        self.assertEqual(self.selectors.select_axis("5"), "CONFIG")
+        self.assertEqual(self.state.active_page, "CONFIGURATION")
+        self.assertEqual(self.selectors.select_axis("6"), "PREVIEW")
+        self.assertEqual(self.state.active_page, "PREVIEW")
+
+    def test_six_axis_profile_can_restore_abc_without_rewiring(self):
+        selectors = SelectorModel(
+            self.state, {"4": "AXIS_A", "5": "AXIS_B", "6": "AXIS_C"})
+        for physical, logical in (("4", "A"), ("5", "B"), ("6", "C")):
+            self.assertEqual(selectors.select_axis(physical), "AXIS_" + logical)
+            self.assertEqual(self.state.selected_axis, logical)
 
     def test_multiplier_uses_ratio(self):
         self.assertAlmostEqual(self.selectors.select_multiplier("X1"), 0.001)
