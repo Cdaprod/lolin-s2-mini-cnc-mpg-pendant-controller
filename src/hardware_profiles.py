@@ -30,9 +30,10 @@ BOARD_PROFILES = {
         "display_reset_pin": "IO14",
     },
     XIAO_ESP32S3: {
-        # Current pendant allocation. GPIO41/42 are underside MTDI/MTMS pads;
-        # no GRBL UART is allocated for this USB-C-native build.
-        "mpg_a_pin": "GPIO42", "mpg_b_pin": "GPIO41",
+        # Encoder leads soldered to underside MTCK/MTDO pads.
+        # MTCK=GPIO39 (A), MTDO=GPIO40 (B). Condition 5 V signals first.
+        # No GRBL UART is allocated for this USB-C-native build.
+        "mpg_a_pin": "GPIO39", "mpg_b_pin": "GPIO40",
         "axis_pins": {"X": "GPA0", "Y": "GPA1", "Z": "GPA2",
                       "4": "GPA3", "5": "GPA4", "6": "GPA5"},
         "multiplier_pins": {"X1": "GPA6", "X10": "GPA7",

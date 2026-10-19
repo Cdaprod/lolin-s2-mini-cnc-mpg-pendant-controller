@@ -185,7 +185,8 @@ class Diagnostics:
                      "session_establishments", "session_resets",
                      "rejected_old_session", "rejected_stale_ack",
                      "lease_renewals", "lease_expirations",
-                     "rejected_renewals", "link_loss_events"):
+                     "rejected_renewals", "link_loss_events",
+                     "motion_callback_failures"):
             setattr(self, name, 0)
         self.last_valid_packet_ms = None
         self.heartbeat_age_ms = None
@@ -201,7 +202,8 @@ class ReliableSession:
                  link_lost_timeout_ms=LINK_LOST_TIMEOUT_MS,
                  motion_lease_ms=MOTION_LEASE_MS,
                  motion_renew_interval_ms=MOTION_RENEW_INTERVAL_MS,
-                 on_link_lost=None, on_motion_stop=None, state=None):
+                 on_link_lost=None, on_motion_stop=None, state=None,
+                 on_motion_renew=None):
         if role not in ("initiator", "responder"):
             raise ValueError("role must be initiator or responder")
         self.transport, self.handler, self.clock = transport, handler, clock
@@ -218,6 +220,7 @@ class ReliableSession:
         self.motion_lease_ms = int(motion_lease_ms)
         self.motion_renew_interval_ms = int(motion_renew_interval_ms)
         self.on_link_lost, self.on_motion_stop = on_link_lost, on_motion_stop
+        self.on_motion_renew = on_motion_renew
         self.state = state
         self.parser, self.diagnostics = FrameParser(), Diagnostics()
         self.next_sequence, self.outstanding = 0, None
@@ -284,7 +287,11 @@ class ReliableSession:
     def poll(self):
         now = self._now()
         self._check_motion_lease(now)
-        while True:
+        # Bound receive work so a continuously readable transport cannot
+        # starve lease expiry, retransmissions or the caller's event loop.
+        for _ in range(16):
+            now = self._now()
+            self._check_motion_lease(now)
             chunk = self.transport.read(64)
             if not chunk:
                 break
@@ -298,7 +305,10 @@ class ReliableSession:
                 if self._matches_active(source, peer):
                     self._reply(NAK, sequence)
             for packet in packets:
+                now = self._now()
+                self._check_motion_lease(now)
                 self._receive(packet, now)
+        now = self._now()
         self._check_motion_lease(now)
         if self.outstanding and now - self.outstanding[2] >= self.ack_timeout_ms:
             self.diagnostics.ack_timeouts += 1
@@ -413,7 +423,11 @@ class ReliableSession:
             return False
         action = packet.flags & MOTION_FLAGS
         if action == MOTION_START:
-            accepted = self.handler(packet)
+            try:
+                accepted = self.handler(packet)
+            except Exception:
+                self.diagnostics.motion_callback_failures += 1
+                return False
             if accepted is False:
                 return False
             self.motion_active = True
@@ -433,14 +447,25 @@ class ReliableSession:
                         now >= self.motion_lease_deadline):
                     self.diagnostics.rejected_renewals += 1
                     return False
+                if self.on_motion_renew is not None:
+                    try:
+                        renewed = self.on_motion_renew()
+                    except Exception:
+                        self.diagnostics.motion_callback_failures += 1
+                        renewed = False
+                    if renewed is False:
+                        self._stop_motion()
+                        return False
                 self.motion_lease_deadline = now + self.motion_lease_ms
                 self.diagnostics.lease_renewals += 1
                 return True
-            accepted = self.handler(packet)
-            if accepted is False:
-                return False
+            try:
+                accepted = self.handler(packet)
+            except Exception:
+                self.diagnostics.motion_callback_failures += 1
+                accepted = False
             self._stop_motion()
-            return True
+            return accepted is not False
         self.diagnostics.rejected_renewals += 1
         return False
 
@@ -456,7 +481,14 @@ class ReliableSession:
         self.motion_intent_sequence = None
         self.motion_lease_deadline = None
         if was_active and self.on_motion_stop:
-            self.on_motion_stop()
+            try:
+                self.on_motion_stop()
+            except Exception:
+                self.diagnostics.motion_callback_failures += 1
+
+    def abort_motion(self):
+        """Revoke receiver-local motion authority after an adapter failure."""
+        self._stop_motion()
 
     def _is_new(self, sequence):
         delta = (sequence - self.last_accepted_sequence) & 0xFFFF

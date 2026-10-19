@@ -79,9 +79,17 @@ def resolve_native_pin(board, name):
         # Parse first so malformed MCP-looking names get a useful error.
         parse_virtual_pin(value)
         raise ValueError("MCP23017 virtual pin is not a native board pin: " + value)
-    if not value or not hasattr(board, value):
+    if not value:
         raise ValueError("native board pin is unavailable: " + value)
-    return getattr(board, value)
+    if hasattr(board, value):
+        return getattr(board, value)
+    # XIAO underside JTAG pads may not be exported by board.py.
+    if value.upper().startswith("GPIO") and value[4:].isdigit():
+        import microcontroller
+        pin = getattr(microcontroller.pin, value.upper(), None)
+        if pin is not None:
+            return pin
+    raise ValueError("native board pin is unavailable: " + value)
 
 
 def _configured_slow_pins(config):

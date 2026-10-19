@@ -19,6 +19,7 @@ class HostBridge:
         self.session = ReliableSession(
             transport, self._dispatch, clock, role="responder",
             session_id=session_id, on_motion_stop=self.adapter.stop_jog,
+            on_motion_renew=self.adapter.renew_jog,
             **options)
 
     @property
@@ -26,8 +27,15 @@ class HostBridge:
         return self.adapter.state
 
     def poll(self):
+        # Consume controller ACK/alarm/disconnect state before admitting any
+        # pendant renewal that could enqueue the next bounded segment.
+        try:
+            state = self.adapter.poll()
+        except Exception:
+            self.session.abort_motion()
+            self.adapter.state.connected = False
+            raise
         self.session.poll()
-        state = self.adapter.poll()
         now = int(self.clock() * 1000)
         if (self.session.established and self.session.outstanding is None and
                 (self.last_status_ms is None or

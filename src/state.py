@@ -18,6 +18,8 @@ class PendantState:
         self.machine_state = "disconnected"
         self.selected_physical_axis = "OFF"
         self.selected_axis = None
+        self.selector_function = "OFF"
+        self.active_page = "OPERATIONAL"
         self.selected_multiplier = "X1"
         self.base_increment = float(base_increment)
         self.jog_increment = self.base_increment
@@ -71,6 +73,8 @@ class PendantState:
         self.deadman_enabled = False
         self.mpg_activity = 0
         self.mpg_activity_timestamp = None
+        self.preview_wheel_steps = 0
+        self.preview_position = {"X": 0.0, "Y": 0.0, "Z": 0.0}
         self.axis_transition_direction = 0
         self.axis_transition_timestamp = None
         self.resolution_transition_direction = 0

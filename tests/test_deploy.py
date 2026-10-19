@@ -4,7 +4,6 @@ import json
 import os
 from pathlib import Path
 import re
-import subprocess
 import tempfile
 import unittest
 from types import SimpleNamespace
@@ -18,6 +17,9 @@ MPG_HARDWARE_PROFILE=""
 MPG_BOARD_PROFILE=""
 MPG_DISPLAY_PROFILE=""
 MPG_DISPLAY_ENABLED="false"
+MPG_PIN_A="GPIO39"
+MPG_PIN_B="GPIO40"
+MPG_TOUCH_ENABLED=true
 CIRCUITPY_WIFI_SSID=""
 CIRCUITPY_WIFI_PASSWORD=""
 MPG_HOSTNAME="cdaprod-cnc-pendant"
@@ -81,6 +83,31 @@ class ReconciliationTests(unittest.TestCase):
         root = self.fixture(local='MPG_BOARD_PROFILE="xiao_esp32s3"\n')
         values, _, _ = self.reconcile(root)
         self.assertEqual(values["MPG_BOARD_PROFILE"], '"xiao_esp32s3"')
+
+
+    def test_xiao_old_defaults_migrate_without_losing_wifi(self):
+        root = self.fixture(
+            device='MPG_BOARD_PROFILE="xiao_esp32s3"\n'
+                   'MPG_PIN_A="GPIO42"\nMPG_PIN_B="GPIO41"\n'
+                   'MPG_TOUCH_ENABLED=false\n'
+                   'CIRCUITPY_WIFI_PASSWORD="secret"\n')
+        (root / "template.toml").write_text(
+            (deploy.ROOT / "settings.toml.example").read_text(encoding="utf-8"),
+            encoding="utf-8")
+        values, _, actions = self.reconcile(root)
+        assert values["MPG_PIN_A"] == '"GPIO39"'
+        assert values["MPG_PIN_B"] == '"GPIO40"'
+        assert values["MPG_TOUCH_ENABLED"] == "true"
+        assert values["CIRCUITPY_WIFI_PASSWORD"] == '"secret"'
+        assert ("migrate-default", "MPG_PIN_A") in actions
+
+    def test_custom_device_encoder_pins_are_not_overwritten(self):
+        root = self.fixture(
+            device='MPG_BOARD_PROFILE="xiao_esp32s3"\n'
+                   'MPG_PIN_A="GPIO12"\nMPG_PIN_B="GPIO13"\n')
+        values, _, _ = self.reconcile(root)
+        assert values["MPG_PIN_A"] == '"GPIO12"'
+        assert values["MPG_PIN_B"] == '"GPIO13"'
 
     def test_secret_sync_requires_separate_authorization(self):
         root = self.fixture(local='CIRCUITPY_WIFI_PASSWORD="new"\n',
@@ -157,6 +184,11 @@ class DeploymentCLITests(unittest.TestCase):
         (Path(target) / "boot_out.txt").write_text(
             "Adafruit CircuitPython 10.3.1\nSeeed XIAO ESP32S3\n",
             encoding="utf-8")
+        # The Seeed profile now enables touch by default, so a deployment
+        # fixture must include the CST8xx dependency on its simulated drive.
+        lib = Path(target) / "lib"
+        lib.mkdir(exist_ok=True)
+        (lib / "adafruit_cst8xx.mpy").write_bytes(b"test-driver")
 
     def test_missing_circuitpy_fails_safely(self):
         with tempfile.TemporaryDirectory() as directory:
