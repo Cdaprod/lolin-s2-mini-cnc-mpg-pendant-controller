@@ -85,3 +85,30 @@ This PR remains a feasibility gate. It must not advertise operational USB host
 connectivity, auto-enable jogging, or infer physical E-stop capability from
 software. An actual CH34x host implementation requires verified native USB
 host transfers; exposing `usb_cdc` (device-side CDC) is insufficient.
+
+## Read-only transport implementation (PR13)
+
+`src/transport/usb_host.py` implements `USBHostStatusTransport`, a bounded,
+poll-driven GRBL status-only link. Its injected backend must provide
+`connected`, `read(count)`, `write(data)`, and `close()`. The backend is
+**not supplied** in this PR: this is not CH34x enumeration or a USB driver.
+
+Construction requires three explicit, independently verified gates:
+`electrically_verified`, `host_verified`, and `ch34x_verified`.
+These booleans are software guardrails, **not evidence** of hardware safety.
+Do not set them to true without hardware validation. The only outgoing byte
+is the GRBL status request `?`. Caller-initiated `write()` always raises
+`PermissionError`. Buffer overflow, USB read/write errors, loss of connection,
+and status timeouts close the transport and discard pending input. Reconnection
+requires a newly constructed transport and fresh operator authorization.
+
+**Do not pass this transport to the existing `GRBLController`**: that
+controller supports general commands, whereas this transport is intentionally
+status-only. A future integration must use a dedicated read-only status
+consumer and must not enable motion based on this transport's `connected`
+property alone.
+
+Run the new regression tests with
+`python -m unittest discover -s tests -p 'test_usb_host_status.py' -v`.
+The tests use an injected fake backend; passing tests do not establish
+CircuitPython host availability or CH34x interoperability.
