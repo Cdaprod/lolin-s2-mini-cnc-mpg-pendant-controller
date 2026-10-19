@@ -45,3 +45,43 @@ A future `USBHostSerialTransport` must implement the same transport API as `UART
 ## Next deliverable
 
 Implement a host-driver proof-of-concept that enumerates 1A86:7523 and performs a read-only GRBL `?` status query on an isolated bench setup. Do not enable jogging until disconnect and stop behavior are hardware-tested.
+
+
+## Verification matrix and release gate
+
+A successful module import is **not** proof of host controller support. The
+probe explicitly emits `host_verified=False`, `ch34x_verified=False`,
+`vbus_verified=False`, and `motion_enabled=False` until independent
+hardware testing establishes those facts. These are deliberately conservative
+diagnostic constants, not configuration toggles.
+
+| Gate | Required evidence | Current status |
+| --- | --- | --- |
+| CircuitPython build | Actual board ID, firmware version and probe output | Pending physical test |
+| Host controller | Host transfers on the intended USB peripheral and pins | Unverified |
+| Power | CC, switched/current-limited 5 V VBUS, reverse-feed and battery paths checked against schematic and measured | Unverified |
+| Enumeration | VID:PID, interface, endpoint types and descriptors observed on hardware | Unverified |
+| CH34x | Vendor-specific initialization and baud setup validated with actual silicon | Unverified |
+| Read-only GRBL | Bounded `?` request and response with timeout, no motion commands | Not implemented |
+| Recovery | Unplug, replug, reset, stalled transfers and brownout tested | Not implemented |
+
+### Safe bench sequence
+
+1. Run `pytest -q tests/test_usb_capability_probe.py` on a development computer.
+2. Copy the probe to the board and execute it in the CircuitPython REPL.
+3. Capture board, firmware, and output; **do not** connect pendant host VBUS
+   to the controller based on probe output alone.
+4. Confirm the exact XIAO/Round Display wiring and USB-C breakout schematic.
+   In particular, establish CC termination and power-path direction before
+   connecting any powered USB-B controller.
+5. Only after electrical approval, implement isolated host enumeration and
+   CH34x initialization, followed by a read-only GRBL status request.
+6. Treat missing status, disconnect, reset and all transport exceptions as
+   disconnected; require fresh user input before any future motion enablement.
+
+### Scope boundary
+
+This PR remains a feasibility gate. It must not advertise operational USB host
+connectivity, auto-enable jogging, or infer physical E-stop capability from
+software. An actual CH34x host implementation requires verified native USB
+host transfers; exposing `usb_cdc` (device-side CDC) is insufficient.
