@@ -36,9 +36,16 @@ jobs:
       - name: Validate source and ERC
         run: |
           python _hardware_source/hardware/scripts/validate_sources.py
-          kicad-cli sch erc _hardware_source/hardware/kicad/CNC_MPG_Pendant_Master.kicad_sch -o erc.txt
-          cat erc.txt
-          # A passing CLI exit status is mandatory; no waived electrical errors.
+          kicad-cli sch erc --exit-code-violations _hardware_source/hardware/kicad/CNC_MPG_Pendant_Master.kicad_sch -o erc.txt
+          # Violations return a nonzero exit status and block export and PR creation.
+      - name: Upload ERC report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hardware-erc-report
+          path: erc.txt
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Export schematic
         run: |
           mkdir -p _export/svg docs/hardware
