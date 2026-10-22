@@ -15,4 +15,11 @@ __pycache__/
 
 # KiCad local history
 hardware/kicad/.history/
-hardware/kicad/.history/
+
+# KiCad transient state
+*.kicad_prl
+*.lck
+
+# FreeCAD transient state
+*.FCBak
+*.FCStd1
