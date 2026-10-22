@@ -1,0 +1,64 @@
+name: Publish verified hardware previews
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out publication baseline
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check out canonical hardware
+        uses: actions/checkout@v4
+        with:
+          ref: hardware-integration
+          path: _hardware_source
+          persist-credentials: false
+      - name: Install KiCad CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y kicad
+          kicad-cli version
+      - name: Validate source and ERC
+        run: |
+          python _hardware_source/hardware/scripts/validate_sources.py
+          kicad-cli sch erc _hardware_source/hardware/kicad/CNC_MPG_Pendant_Master.kicad_sch -o erc.txt
+          cat erc.txt
+          # A passing CLI exit status is mandatory; no waived electrical errors.
+      - name: Export schematic
+        run: |
+          mkdir -p _export/svg docs/hardware
+          kicad-cli sch export svg _hardware_source/hardware/kicad/CNC_MPG_Pendant_Master.kicad_sch -o _export/svg/
+          kicad-cli sch export pdf _hardware_source/hardware/kicad/CNC_MPG_Pendant_Master.kicad_sch -o docs/hardware/pendant-schematic.pdf
+          python - <<'PY'
+          from pathlib import Path
+          pages=list(Path('_export/svg').glob('*.svg'))
+          if len(pages)!=1:
+              raise SystemExit(f'Expected one SVG schematic page, got {len(pages)}; inspect multipage output before publishing')
+          Path('docs/hardware/pendant-schematic.svg').write_bytes(pages[0].read_bytes())
+          PY
+      - name: Record provenance
+        run: |
+          SHA=$(git -C _hardware_source rev-parse HEAD)
+          printf '# Hardware preview provenance\n\n- Engineering source commit: `%s`\n- KiCad PDF/SVG: exported from the above source after successful KiCad ERC.\n- Assembly PNG: existing provisional asset; not freshly rendered from FreeCAD.\n- Native CAD remains on the hardware branch.\n' "$SHA" > docs/hardware/SOURCE.md
+      - name: Remove temporary source checkout
+        run: rm -rf _hardware_source _export erc.txt
+      - name: Create reviewed publication PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: automation/hardware-previews
+          base: main
+          title: "docs: refresh verified KiCad previews"
+          body: "Automated KiCad exports after successful ERC. Review images, electrical assumptions and provenance before merging. FreeCAD preview remains provisional."
+          commit-message: "docs: regenerate KiCad previews from validated hardware commit"
+          add-paths: |
+            docs/hardware/pendant-schematic.svg
+            docs/hardware/pendant-schematic.pdf
+            docs/hardware/SOURCE.md
