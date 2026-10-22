@@ -25,6 +25,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y kicad
           kicad-cli version
+          # The source schematic was saved by KiCad 10. Reject older runners.
+          python - <<'PY'
+          import re, subprocess
+          version=subprocess.check_output(['kicad-cli','version'],text=True).strip()
+          match=re.match(r'(\\d+)',version)
+          if not match or int(match.group(1)) < 10:
+              raise SystemExit(f'KiCad >=10 required for this schematic; runner has {version}. Install a compatible runner before exporting.')
+          PY
       - name: Validate source and ERC
         run: |
           python _hardware_source/hardware/scripts/validate_sources.py
