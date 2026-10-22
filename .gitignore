@@ -12,3 +12,6 @@ __pycache__/
 # Editor
 .vscode/
 .idea/
+
+# KiCad local history
+hardware/kicad/.history/
