@@ -28,6 +28,14 @@ Physical GPIO assignments remain intentionally unset until the documented
 electrical measurements and interface design are complete. Firmware can be
 developed and simulated without connecting unknown-voltage pendant signals.
 
+## Hardware engineering and preview
+
+![CNC MPG pendant assembly preview](docs/hardware/pendant-assembly.png)
+
+The native FreeCAD and KiCad engineering sources are maintained together on the [hardware-integration branch](https://github.com/Cdaprod/lolin-s2-mini-cnc-mpg-pendant-controller/tree/hardware-integration). The [assembly image provenance](docs/hardware/SOURCE.md) identifies the source artifact and its verification limits. This image is a provisional preview and is **not** a verified rendering of the newest model revision.
+
+The current schematic is a logical harness draft with provisional physical pin numbers. Additional SVG/PDF schematic previews will be published only after electrical review and reproducible export; the diagram must not be interpreted as a ready-to-solder wiring specification.
+
 ## Documentation
 
 - [`docs/PRODUCT-SPEC.md`](docs/PRODUCT-SPEC.md) — product and safety contract
