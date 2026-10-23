@@ -51,7 +51,15 @@ class USBHostStatusTransport:
         raise PermissionError("read-only feasibility transport")
 
     def read(self, count=64):
-        return None
+        """Drain validated status lines only; never expose arbitrary GRBL output."""
+        if count <= 0:
+            raise ValueError("count must be positive")
+        if not self._lines:
+            return None
+        line = self._lines[0]
+        if len(line) > count:
+            return None
+        return self._lines.pop(0)
 
     def readline(self):
         return self._lines.pop(0) if self._lines else None
