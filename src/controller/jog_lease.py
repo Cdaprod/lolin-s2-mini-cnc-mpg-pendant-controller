@@ -22,8 +22,8 @@ class JogLease:
               deadman=False, controller_idle=False):
         if (not deadman or not controller_idle or
                 not isinstance(owner, bytes) or len(owner) != 6 or
-                not 0 < int(session) <= 0xffffffff or
-                not 0 <= int(sequence) <= 65535):
+                not isinstance(session, int) or not 0 < session <= 0xffffffff or
+                not isinstance(sequence, int) or not 0 <= sequence <= 65535):
             return False
         if self.active and self.now() >= self.deadline:
             self.revoke()
