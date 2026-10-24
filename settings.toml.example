@@ -132,3 +132,5 @@ MPG_INDICATOR_ENABLED="false"
 MPG_INDICATOR_ELECTRICALLY_VERIFIED="false"
 MPG_INDICATOR_PIN=""
 MPG_INDICATOR_ACTIVE_HIGH="true"
+
+# MPG_CONTROLLER_MODE="c3_espnow" # Wireless transport; receiver must be commissioned
