@@ -261,8 +261,8 @@ class PendantApplication:
             self.streamer.cancel()
             return True
         if name == "MACRO_RUN":
-            if isinstance(self.controller, BridgeController):
-                raise SafetyError("bridge macros are not implemented")
+            if isinstance(self.controller, (BridgeController, C3WirelessController, C3StatusController)):
+                raise SafetyError("wireless macros are not implemented")
             self.macros.queue(command.value, self.controller, self.safety)
             return True
         if name == "NETWORK_SCAN":
@@ -336,7 +336,7 @@ class PendantApplication:
             self.observe_estop(sample.estop)
         if sample.deadman_changed and not self.state.deadman_enabled:
             queued_jog = any(item[1] == "jog" for item in self.controller.queue)
-            if self.transport.connected and (self.state.jog_active or queued_jog):
+            if (self.transport.connected or isinstance(self.controller, C3WirelessController)) and (self.state.jog_active or queued_jog):
                 self.controller.cancel_jog()
         for event in sample.events:
             try:
@@ -361,7 +361,7 @@ class PendantApplication:
                         len(self.network_service.scan_results)
                     )
         self.controller.poll(started)
-        if not isinstance(self.controller, C3StatusController):
+        if not isinstance(self.controller, (C3StatusController, C3WirelessController)):
             self.streamer.poll(started)
         events = self.watchdog.poll(started)
         if "jog_timeout" in events and (self.transport.connected or isinstance(self.controller, C3WirelessController)):
