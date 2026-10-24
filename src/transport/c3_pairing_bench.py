@@ -35,6 +35,7 @@ class C3PairingBench:
         self.paired = False
         self.good = 0
         self.bad = 0
+        self.events = []
 
     def start(self):
         if not self.radio.enabled:
@@ -47,6 +48,21 @@ class C3PairingBench:
         packet = proto.encode(kind, self.session, self.sequence, payload)
         self.sequence = (self.sequence + 1) & 65535
         self.esp.send(packet, peer=mac)
+
+    def send_mpg_jog(self, axis, microns, feed, deadman):
+        if not self.paired or self.peer is None:
+            return None
+        seq = self.sequence
+        packet = proto.encode_mpg_jog(self.session, seq, axis, microns, feed, deadman)
+        self.sequence = (self.sequence + 1) & 65535
+        self.esp.send(packet, peer=self.peer)
+        return seq
+
+    def send_mpg_stop(self):
+        if not self.paired or self.peer is None:
+            return False
+        self._send(self.peer, proto.MPG_STOP)
+        return True
 
     def poll(self):
         current = self.now()
@@ -80,6 +96,15 @@ class C3PairingBench:
                     self.good += 1
                     if kind == proto.HEARTBEAT:
                         self._send(self.peer, proto.HEARTBEAT_ACK)
+                elif (self.paired and sender == self.peer and
+                      session == self.session and kind in
+                      (proto.MPG_JOG_ACK, proto.MPG_STOP_ACK, proto.UART_RESPONSE)):
+                    if kind in (proto.MPG_JOG_ACK, proto.MPG_STOP_ACK) and len(payload) != 1:
+                        raise ValueError("invalid MPG result")
+                    if len(self.events) >= 16:
+                        self.events.pop(0)
+                    self.events.append((kind, seq, payload))
+                    self.good += 1
                 else:
                     self.bad += 1
             except (ValueError, TypeError):
