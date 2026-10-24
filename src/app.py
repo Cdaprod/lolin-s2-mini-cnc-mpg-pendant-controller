@@ -7,6 +7,7 @@ import time
 from src.controller.actions import ActionDispatcher
 from src.controller.grbl import GRBLController
 from src.controller.bridge import BridgeController
+from src.controller.c3_status import C3StatusController
 from src.display.base import Indicator
 from src.display.ui import UIManager
 from src.gcode.macros import MacroLibrary
@@ -63,7 +64,9 @@ class PendantApplication:
         mode = config.get("controller_mode", "disabled")
         state.controller_enabled = mode != "disabled"
         if transport is None:
-            if mode in ("uart", "bridge"):
+            if mode == "c3_espnow_bench":
+                transport = MockTransport(connected=False)
+            elif mode in ("uart", "bridge"):
                 transport = UARTTransport.from_pin_names(
                     config.get("uart_tx_pin"), config.get("uart_rx_pin"),
                     config.get("uart_baudrate", 115200)
@@ -74,7 +77,11 @@ class PendantApplication:
                 transport = MockTransport(connected=False)
             else:
                 raise ValueError("unsupported controller mode: " + mode)
-        if mode == "bridge":
+        if mode == "c3_espnow_bench":
+            if sys.implementation.name != "circuitpython":
+                raise RuntimeError("ESP-NOW hardware mode requires CircuitPython")
+            controller = C3StatusController(state)
+        elif mode == "bridge":
             controller = BridgeController(
                 state, transport, clock,
                 motion_enabled=config.get("bridge_motion_enabled", False))
@@ -227,7 +234,7 @@ class PendantApplication:
                 return True
             return self.actions.dispatch(command.value)
         if name == "JOB_START":
-            if isinstance(self.controller, BridgeController):
+            if isinstance(self.controller, (BridgeController, C3StatusController)):
                 raise SafetyError("bridge file streaming is not implemented")
             job = self.storage.select_job(command.value)
             self.streamer.start(job, self.clock())
