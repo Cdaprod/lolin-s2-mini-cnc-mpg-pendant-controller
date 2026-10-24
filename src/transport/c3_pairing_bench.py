@@ -46,9 +46,11 @@ class C3PairingBench:
         self.esp.add_peer(BROADCAST)
 
     def _send(self, mac, kind, payload=b""):
-        packet = proto.encode(kind, self.session, self.sequence, payload)
+        sequence = self.sequence
+        packet = proto.encode(kind, self.session, sequence, payload)
         self.sequence = (self.sequence + 1) & 65535
         self.esp.send(packet, peer=mac)
+        return sequence
 
     def send_mpg_jog(self, axis, microns, feed, deadman):
         if not self.paired or self.peer is None:
@@ -61,9 +63,8 @@ class C3PairingBench:
 
     def send_mpg_stop(self):
         if not self.paired or self.peer is None:
-            return False
-        self._send(self.peer, proto.MPG_STOP)
-        return True
+            return None
+        return self._send(self.peer, proto.MPG_STOP)
 
     def poll(self):
         current = self.now()
