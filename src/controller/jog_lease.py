@@ -39,7 +39,7 @@ class JogLease:
             command = build_jog(axis, distance, feed)
         except (ValueError, TypeError):
             return False
-        if not self.emit(command):
+        if self.emit(command) is not True:
             return False
         self.owner, self.session = owner, session
         self.last_sequence = sequence
