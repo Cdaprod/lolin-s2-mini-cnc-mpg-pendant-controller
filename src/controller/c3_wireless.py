@@ -20,6 +20,7 @@ class C3WirelessController:
         self.observers = []
         self._partial = bytearray()
         self._last_status = None
+        self._status_peer = None
         self._pending_seq = None
         self._pending_at = None
         self._stop_pending = False
@@ -47,10 +48,16 @@ class C3WirelessController:
             return False
         if axis not in ("X", "Y", "Z") or not isinstance(distance, (float, int)):
             return False
-        microns = round(float(distance) * 1000)
+        try:
+            microns = round(float(distance) * 1000)
+        except (ValueError, OverflowError, TypeError):
+            return False
         if not isinstance(feed, (float, int)):
             return False
-        feed_int = round(float(feed))
+        try:
+            feed_int = round(float(feed))
+        except (ValueError, OverflowError, TypeError):
+            return False
         if not (0 < abs(microns) <= 1000 and 0 < feed_int <= 1000):
             return False
         try:
@@ -89,6 +96,7 @@ class C3WirelessController:
                     if line.startswith(b"<") and line.endswith(b">"):
                         if self.parser.parse_line(line, self.clock()) == "status":
                             self._last_status = self.clock()
+                            self._status_peer = self.transport.peer
                 continue
             if len(self._partial) >= 127:
                 self._partial = bytearray()
@@ -120,7 +128,8 @@ class C3WirelessController:
                     self._stop_pending = False
         fresh = (self._last_status is not None and
                  current - self._last_status <= 0.5)
-        online = bool(fresh and self.transport.paired)
+        online = bool(fresh and self.transport.paired and
+                      self._status_peer == self.transport.peer)
         self.state.connection_state = "connected" if online else "disconnected"
         self.state.link_state = ("GRBL_FRESH" if online else
                                  "PAIRED_NO_GRBL" if self.transport.paired
