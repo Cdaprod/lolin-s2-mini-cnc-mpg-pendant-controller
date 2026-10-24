@@ -41,7 +41,6 @@ class C3PairingBench:
     def start(self):
         if not self.radio.enabled:
             raise RuntimeError("Wi-Fi disabled")
-        self.esp.active = True
         # CircuitPython ESPNow.add_peer accepts a six-byte MAC.
         self.esp.add_peer(BROADCAST)
 
@@ -132,4 +131,4 @@ class C3PairingBench:
         }
 
     def close(self):
-        self.esp.active = False
+        pass
