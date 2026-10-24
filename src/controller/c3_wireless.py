@@ -24,6 +24,9 @@ class C3WirelessController:
         self._pending_seq = None
         self._pending_at = None
         self._stop_pending = False
+        self._stop_seq = None
+        self._stop_at = None
+        self._stop_attempts = 0
         state.transport = "c3-espnow"
         state.connection_state = "disconnected"
         state.machine_state = "disconnected"
@@ -44,7 +47,8 @@ class C3WirelessController:
                 self.state.connection_state != "connected" or
                 self.state.machine_state not in ("idle", "jog") or
                 not self.state.deadman_enabled or self.state.estop_observed or
-                self.state.estop_latched or self._pending_seq is not None):
+                self.state.estop_latched or self._pending_seq is not None or
+                self._stop_pending):
             return False
         if axis not in ("X", "Y", "Z") or not isinstance(distance, (float, int)):
             return False
@@ -76,10 +80,22 @@ class C3WirelessController:
         self._pending_at = None
         self.state.jog_active = False
         self._stop_pending = True
+        self._stop_attempts = 0
+        return self._send_stop()
+
+    def _send_stop(self):
+        if not self.transport.paired:
+            return False
         try:
-            return self.transport.send_mpg_stop()
+            seq = self.transport.send_mpg_stop()
         except (OSError, RuntimeError):
             return False
+        if seq is None:
+            return False
+        self._stop_seq = seq
+        self._stop_at = self.clock()
+        self._stop_attempts += 1
+        return True
 
     def realtime(self, name):
         if name in ("jog_cancel", "hold"):
@@ -134,6 +150,13 @@ class C3WirelessController:
         self.state.link_state = ("GRBL_FRESH" if online else
                                  "PAIRED_NO_GRBL" if self.transport.paired
                                  else "DISCONNECTED")
+        if self._stop_pending and self._stop_at is not None and (
+                current - self._stop_at >= 0.08):
+            if self._stop_attempts < 4:
+                self._send_stop()
+            else:
+                self._stop_pending = False
+                self.state.error = "C3 STOP acknowledgment missing"
         if self._pending_seq is not None and (
                 self._pending_at is None or current - self._pending_at > 0.2):
             self.cancel_jog()
