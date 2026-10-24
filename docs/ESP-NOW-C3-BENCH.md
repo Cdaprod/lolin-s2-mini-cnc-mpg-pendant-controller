@@ -84,3 +84,9 @@ Current limitations: `C3PairingBench` uses the candidate CircuitPython ESP-NOW `
 ## Wireless MPG jog command format
 
 `src/controller/jog_command.py` now implements a strict, bounded per-detent GRBL 1.1 jog command builder. Validates X/Y/Z/A/B/C, finite numeric distance within ±1 mm (excluding zero), positive feed up to 1000 mm/min, and emits `$J=G91 G21 X... F...` with a newline. This is a *formatting and input validation primitive*, not proof of wireless movement. Wire it to the app only after the ESP32-C3 has verified sender authorization, receiver-side motion lease, stale-command rejection, cancellation on all loss paths, and controller-status freshness. Do not insert it directly into the upstream unrestricted `UART_COMMAND` handler to circumvent these gates.
+
+## Receiver-side jog lease implementation (portable reference)
+
+`src/controller/jog_lease.py` now provides an injectable receiver-side motion admission state machine with strict bounded command formatting, exclusive six-byte MAC/session ownership, monotonic half-range uint16 sequence advancement, deadman and idle-state requirements, 250 ms lease expiry and a mandatory cancellation callback when an active lease expires/revokes. Unit tests cover replay, competing owners, denied deadman, timeout, and sequence wraparound. The callback is invoked on the *receiver side*; a pendant-only watchdog cannot satisfy this requirement.
+
+**Deployment boundary:** This reference code runs as Python tests; it is **not installed in the ESP-IDF C3 firmware**. Port admission/expiry logic into the C3 event loop with the real GRBL UART cancel path, and test with its actual hardware and a fail-safe independent stop chain. Never claim wireless jogging is operational because this module exists.
