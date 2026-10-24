@@ -15,6 +15,10 @@ HEARTBEAT_ACK = 0x04
 UART_COMMAND = 0x20
 UART_ACK = 0x21
 UART_RESPONSE = 0x22
+MPG_JOG = 0x30
+MPG_JOG_ACK = 0x31
+MPG_STOP = 0x32
+MPG_STOP_ACK = 0x33
 ERROR = 0x7F
 
 DEVICE_BRIDGE = 1
@@ -73,3 +77,24 @@ def validate_pair_ack(raw, expected_session, expected_mac=None):
     if expected_mac is not None and payload[2:8] != bytes(expected_mac):
         raise ValueError("PAIR_ACK peer mismatch")
     return payload[2:8], payload[8]
+
+
+def encode_mpg_jog(session, sequence, axis, distance_microns, feed_mm_min,
+                   deadman):
+    """Explicit bounded MPG request. The C3 currently rejects it by design."""
+    if axis not in ("X", "Y", "Z"):
+        raise ValueError("invalid MPG axis")
+    if not isinstance(distance_microns, int) or not (-1000 <= distance_microns <= 1000) or distance_microns == 0:
+        raise ValueError("invalid MPG microns")
+    if not isinstance(feed_mm_min, int) or not (1 <= feed_mm_min <= 1000):
+        raise ValueError("invalid MPG feed")
+    if type(deadman) is not bool:
+        raise ValueError("deadman must be boolean")
+    payload = (bytes((ord(axis), int(deadman))) +
+               int(distance_microns).to_bytes(4, "little", signed=True) +
+               int(feed_mm_min).to_bytes(2, "little"))
+    return encode(MPG_JOG, session, sequence, payload)
+
+
+def encode_mpg_stop(session, sequence):
+    return encode(MPG_STOP, session, sequence)
