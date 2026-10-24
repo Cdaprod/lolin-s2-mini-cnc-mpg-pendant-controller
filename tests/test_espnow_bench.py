@@ -9,7 +9,7 @@ class FakeRadio:
 
 
 class FakePacket:
-    def __init__(self, msg=b"hello", mac=b"\\x01\\x02\\x03\\x04\\x05\\x06"):
+    def __init__(self, msg=b"hello", mac=bytes((1, 2, 3, 4, 5, 6))):
         self.msg = msg
         self.mac = mac
 
