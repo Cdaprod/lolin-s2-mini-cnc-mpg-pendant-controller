@@ -11,6 +11,7 @@ BROADCAST = bytes((255, 255, 255, 255, 255, 255))
 
 
 class C3PairingBench:
+    name = "c3-espnow"
     def __init__(self, radio=None, now=None, esp=None, session=None):
         if radio is None:
             import wifi
