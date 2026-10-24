@@ -326,6 +326,10 @@ class PendantApplication:
             self.state.jog_active = False
             self.ui.apply_selector_context()
         if sample.multiplier_changed:
+            # Resolution changes also revoke the previous handwheel command.
+            # Never interpret wheel deltas across a multiplier transition.
+            if isinstance(self.controller, C3WirelessController):
+                self.controller.cancel_jog()
             self._record_selector_transition(
                 "resolution", sample.multiplier_direction, started)
         for kind in ("axis", "resolution"):
