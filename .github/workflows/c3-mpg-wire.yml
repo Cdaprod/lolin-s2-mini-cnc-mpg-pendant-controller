@@ -1,0 +1,12 @@
+name: C3 MPG wire vectors
+on:
+  push:
+    branches: [feature/espnow-c3-circuitpython-bench]
+  pull_request:
+jobs:
+  mpg-wire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test ESP-NOW codec and MPG packet vectors
+        run: python -m unittest tests.test_c3_espnow_protocol tests.test_c3_mpg_wire
