@@ -71,5 +71,12 @@ Consequently, merely framing `$J=...` or realtime commands inside a vendor UART_
 - [ ] Confirm the actual board's CircuitPython build supports the ESP-NOW class, peer API and Wi-Fi co-existence.
 - [ ] Confirm an actual XIAO S3 MAC-address PAIR_ACK and heartbeat exchanged with the C3 firmware you flashed.
 - [ ] Implement and validate a **safe C3 firmware extension** for a limited CNC command protocol with a receiver-side watchdog and stop callback; requires updating/flashing your local ESP-IDF C3 project.
-- [ ] Route status messages to the existing pendant display/UI while keeping stale state disconnected.
+- [x] Add optional `MPG_CONTROLLER_MODE="c3_espnow_bench"` composition-root integration. Radio pairing appears as `PAIRED_NO_CONTROLLER`; machine connection remains disconnected and all control actions are denied.
+- [ ] Implement real GRBL status forwarding to the existing pendant display/UI while keeping stale state disconnected.
 - [ ] Integrate motion only after mechanical clearance, controller UART voltage, and deadman / link-loss verification.
+
+## App integration and configuration
+
+To run the radio-only path on a CircuitPython board, set `MPG_CONTROLLER_MODE="c3_espnow_bench"` and keep `MPG_BRIDGE_MOTION_ENABLED="false"`. Associate the pendant Wi-Fi interface with the same WLAN/channel as the C3 and leave its CNC wiring disconnected. This composes a `C3StatusController` instead of the existing GRBL or Protocol-v1 bridge controller, and exposes radio pairing via `state.link_state` while the machine is **always DISCONNECTED**. It does not claim real controller feedback and cannot jog, stream jobs, or issue realtime commands.
+
+Current limitations: `C3PairingBench` uses the candidate CircuitPython ESP-NOW `send`/peer API, which must be tested on the installed board build. A peer that is paired at the radio level is not authenticated for machine control. GRBL status data still requires a safe C3 read-only telemetry path and explicit source arbitration.
