@@ -140,8 +140,10 @@ class C3WirelessController:
                         self.state.error = "C3 rejected jog"
                         self.state.jog_active = False
             elif kind == proto.MPG_STOP_ACK:
-                if payload == b"\x01":
+                if seq == self._stop_seq and payload == b"\x01":
                     self._stop_pending = False
+                    self._stop_seq = None
+                    self._stop_at = None
         fresh = (self._last_status is not None and
                  current - self._last_status <= 0.5)
         online = bool(fresh and self.transport.paired and
@@ -155,7 +157,7 @@ class C3WirelessController:
             if self._stop_attempts < 4:
                 self._send_stop()
             else:
-                self._stop_pending = False
+                # Do not silently rearm motion after a lost STOP ACK.
                 self.state.error = "C3 STOP acknowledgment missing"
         if self._pending_seq is not None and (
                 self._pending_at is None or current - self._pending_at > 0.2):
