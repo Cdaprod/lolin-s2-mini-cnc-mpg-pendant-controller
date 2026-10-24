@@ -65,7 +65,8 @@ class C3PairingBench:
                         packet.msg, self.session, self.local_mac)
                     if peer_mac != self.local_mac:
                         raise ValueError("pair ACK contains wrong local MAC")
-                    self.esp.add_peer(sender)
+                    if sender != BROADCAST:
+                        self.esp.add_peer(sender)
                     self.peer = sender
                     self.paired = True
                     self.last_rx = current
