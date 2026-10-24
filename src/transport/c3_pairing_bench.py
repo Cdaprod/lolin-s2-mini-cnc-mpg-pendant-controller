@@ -41,8 +41,8 @@ class C3PairingBench:
     def start(self):
         if not self.radio.enabled:
             raise RuntimeError("Wi-Fi disabled")
-        # CircuitPython ESPNow.add_peer accepts a six-byte MAC.
-        self.esp.add_peer(BROADCAST)
+        import espnow
+        self.esp.peers.append(espnow.Peer(mac=BROADCAST))
 
     def _send(self, mac, kind, payload=b""):
         sequence = self.sequence
@@ -84,7 +84,8 @@ class C3PairingBench:
                         raise ValueError("pair ACK contains wrong local MAC")
                     if sender == BROADCAST or sender == self.local_mac:
                         raise ValueError("invalid bridge MAC")
-                    self.esp.add_peer(sender)
+                    import espnow
+                    self.esp.peers.append(espnow.Peer(mac=sender))
                     self.peer = sender
                     self.paired = True
                     self.last_rx = current
@@ -131,4 +132,4 @@ class C3PairingBench:
         }
 
     def close(self):
-        pass
+        self.esp.deinit()
