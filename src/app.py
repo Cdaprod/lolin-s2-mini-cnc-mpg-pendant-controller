@@ -241,12 +241,18 @@ class PendantApplication:
             self.ui.enter("ACTIVE_JOB")
             return True
         if name == "JOB_HOLD":
+            if isinstance(self.controller, C3StatusController):
+                raise SafetyError("C3 bench mode cannot control jobs")
             self.streamer.pause()
             return True
         if name == "JOB_RESUME":
+            if isinstance(self.controller, C3StatusController):
+                raise SafetyError("C3 bench mode cannot control jobs")
             self.streamer.resume()
             return True
         if name == "JOB_CANCEL":
+            if isinstance(self.controller, C3StatusController):
+                raise SafetyError("C3 bench mode cannot control jobs")
             self.streamer.cancel()
             return True
         if name == "MACRO_RUN":
@@ -350,7 +356,8 @@ class PendantApplication:
                         len(self.network_service.scan_results)
                     )
         self.controller.poll(started)
-        self.streamer.poll(started)
+        if not isinstance(self.controller, C3StatusController):
+            self.streamer.poll(started)
         events = self.watchdog.poll(started)
         if "jog_timeout" in events and self.transport.connected:
             self.controller.cancel_jog()
