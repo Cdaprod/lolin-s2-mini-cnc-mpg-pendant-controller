@@ -44,4 +44,5 @@ def mount_from_config(config, spi=None):
         os.listdir(jobs_path)
         return SDMount(spi, card, mount_path), "available", None
     except Exception as exc:
+        # SD is optional: a mount failure must never stop display/UI boot.
         return None, "mount_error", type(exc).__name__
