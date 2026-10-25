@@ -279,5 +279,35 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer.menu_highlight.row, 2)
         self.assertIn("I2C", renderer.menu[0].value)
 
+
+    def test_physical_pages_use_ordered_themes(self):
+        self.assertEqual(theme.for_page("HOME"), theme.THEMES["industrial"])
+        self.assertEqual(theme.for_page("EXPLORER"), theme.THEMES["amber"])
+        self.assertEqual(theme.for_page("CONFIGURATION"), theme.THEMES["ice"])
+        self.assertEqual(theme.for_page("PREVIEW"), theme.THEMES["spectrum"])
+
+    def test_theme_changes_only_when_physical_page_changes(self):
+        state, ui, display, renderer = self.make_renderer()
+        renderer.render(state)
+        self.assertEqual(renderer.active_theme, "industrial")
+        ui.enter("MAIN_MENU")
+        renderer.render(state)
+        self.assertEqual(renderer.active_theme, "industrial")
+        state.active_page = "EXPLORER"
+        ui.apply_selector_context()
+        renderer.render(state)
+        self.assertEqual(renderer.active_theme, "amber")
+        ui.enter("MAIN_MENU")
+        renderer.render(state)
+        self.assertEqual(renderer.active_theme, "amber")
+        state.active_page = "CONFIGURATION"
+        ui.apply_selector_context()
+        renderer.render(state)
+        self.assertEqual(renderer.active_theme, "ice")
+        state.active_page = "PREVIEW"
+        ui.apply_selector_context()
+        renderer.render(state)
+        self.assertEqual(renderer.active_theme, "spectrum")
+
 if __name__ == "__main__":
     unittest.main()
