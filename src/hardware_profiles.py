@@ -62,6 +62,7 @@ DISPLAY_PROFILES = {
         "display_cs_pin": "D1", "display_dc_pin": "D3",
         "display_reset_pin": "", "display_backlight_pin": "D6",
         "display_touch_sda_pin": "D4", "display_touch_scl_pin": "D5",
+        "touch_driver": "chsc6x", "touch_irq_pin": "D7",
     },
 }
 
