@@ -101,6 +101,33 @@ class ReconciliationTests(unittest.TestCase):
         assert values["CIRCUITPY_WIFI_PASSWORD"] == '"secret"'
         assert ("migrate-default", "MPG_PIN_A") in actions
 
+    def test_old_device_mirror_true_is_safely_reset_without_losing_wifi(self):
+        root = self.fixture(
+            device='MPG_BOARD_PROFILE="xiao_esp32s3"\n'
+                   'MPG_MIRROR_ENABLED="true"\n'
+                   'CIRCUITPY_WIFI_SSID="Lab"\n'
+                   'CIRCUITPY_WIFI_PASSWORD="private"\n')
+        (root / "template.toml").write_text(
+            (deploy.ROOT / "settings.toml.example").read_text(encoding="utf-8"),
+            encoding="utf-8")
+        values, _, actions = self.reconcile(root)
+        self.assertEqual(values["MPG_MIRROR_ENABLED"], '"false"')
+        self.assertIn(("sync-default", "MPG_MIRROR_ENABLED"), actions)
+        self.assertEqual(values["CIRCUITPY_WIFI_SSID"], '"Lab"')
+        self.assertEqual(values["CIRCUITPY_WIFI_PASSWORD"], '"private"')
+        (root / "local.toml").write_text(
+            'MPG_MIRROR_ENABLED="true"\n', encoding="utf-8")
+        explicit, _, _ = self.reconcile(root, apply=True)
+        self.assertEqual(explicit["MPG_MIRROR_ENABLED"], '"true"')
+
+    def test_chsc6x_does_not_require_cst8xx_dependency(self):
+        settings = {"MPG_DISPLAY_PROFILE": '""',
+                    "MPG_TOUCH_ENABLED": "true",
+                    "MPG_TOUCH_DRIVER": '"chsc6x"'}
+        with tempfile.TemporaryDirectory() as directory:
+            self.assertEqual(
+                deploy.dependency_problems(settings, root=Path(directory)), [])
+
     def test_sd_remains_disabled_until_explicitly_enabled(self):
         root = self.fixture(
             local='',
