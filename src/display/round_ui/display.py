@@ -171,14 +171,42 @@ def displayio_scene(display, colors=None):
                  context, increment, motion, connectivity):
         home.append(line.node)
 
+    # Retained, transient page indicators on the top edge of the circle.
+    # The current page is white; all other dots are muted grey.
+    nav_group = displayio.Group()
+    nav_group.hidden = True
+    root.append(nav_group)
+    nav_dots = []
+    for i in range(7):
+        dot = displayio.Bitmap(7, 7, 2)
+        dot_palette = displayio.Palette(2)
+        dot_palette[0] = colors["muted"]
+        dot_palette[1] = colors["text"]
+        for dy in range(7):
+            for dx in range(7):
+                if (dx - 3) ** 2 + (dy - 3) ** 2 <= 9:
+                    dot[dx, dy] = 1
+        node = displayio.TileGrid(dot, pixel_shader=dot_palette)
+        node.hidden = True
+        nav_group.append(node)
+        nav_dots.append((node, dot_palette))
+
     menu_group = displayio.Group()
     root.append(menu_group)
     menu_title = _line(displayio, terminalio, 150, 20, 45, 30,
                        colors["accent"], True, 2)
     menu_group.append(menu_title.node)
-    highlight_bitmap = displayio.Bitmap(180, 18, 1)
-    highlight_palette = displayio.Palette(1)
-    highlight_palette[0] = colors["highlight"]
+    # High-contrast outline replaces the previous muddy solid highlight.
+    highlight_bitmap = displayio.Bitmap(180, 18, 2)
+    highlight_palette = displayio.Palette(2)
+    highlight_palette[0] = colors["panel"]
+    highlight_palette[1] = colors["accent"]
+    for x in range(180):
+        highlight_bitmap[x, 0] = 1
+        highlight_bitmap[x, 17] = 1
+    for y in range(18):
+        highlight_bitmap[0, y] = 1
+        highlight_bitmap[179, y] = 1
     highlight_grid = displayio.TileGrid(highlight_bitmap,
                                         pixel_shader=highlight_palette,
                                         x=30, y=58)
@@ -189,6 +217,15 @@ def displayio_scene(display, colors=None):
                      colors["text"])
         menu.append(line)
         menu_group.append(line.node)
+    # Subtle separators make adjacent main-menu entries recognizable.
+    separator_bitmap = displayio.Bitmap(170, 1, 1)
+    separator_palette = displayio.Palette(1)
+    separator_palette[0] = colors["panel"]
+    for index in range(5):
+        menu_group.append(displayio.TileGrid(
+            separator_bitmap, pixel_shader=separator_palette,
+            x=35, y=79 + index * 22
+        ))
     menu_footer = _line(displayio, terminalio, 110, 10, 65, 202,
                         colors["muted"], True)
     menu_group.append(menu_footer.node)
@@ -232,7 +269,8 @@ def displayio_scene(display, colors=None):
 
     return {
         "root": root, "ring": _InstrumentRingNode(palette, colors),
-        "touch_halo": halo_node,
+        "touch_halo": halo_node, "nav_group": nav_group,
+        "nav_dots": nav_dots,
         "home_group": home, "state_label": state_label,
         "axis_feedback": axis_feedback, "step_feedback": step_feedback,
         "axis": axis,
