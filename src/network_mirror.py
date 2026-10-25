@@ -12,13 +12,13 @@ h2{font-weight:600}#dial{position:relative;margin:20px auto;width:240px;height:2
 #title{position:absolute;top:29px;width:100%;font-weight:bold}#status{position:absolute;top:53px;width:100%;font-size:12px}#items{position:absolute;top:77px;left:28px;right:28px;text-align:left;font-size:12px}
 .item{padding:5px 7px;border-bottom:1px solid #31404a;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .sel{outline:1px solid #00d9ec;background:#15333a}
-#footer{position:absolute;bottom:17px;width:100%;font-size:11px}
+#footer{position:absolute;bottom:17px;width:100%;font-size:11px}#readout{position:absolute;top:94px;left:0;right:0;font-size:28px;font-weight:700;color:#00d9ec}#readout small{font-size:12px;color:#b3bdc3}
 #warning{color:#ffbd4a}button{font:inherit;padding:9px;margin:4px}small{display:block;color:#b3bdc3}
 </style><h2>CDAPROD · Pendant</h2><small id=link>Connecting…</small>
-<div id=dial><div id=title></div><div id=status></div><div id=items></div><div id=footer>BACK · HOME</div></div>
+<div id=dial><div id=title></div><div id=status></div><div id=readout></div><div id=items></div><div id=footer>BACK · HOME</div></div>
 <div id=warning>View only</div><div><button id=back>Back</button><button id=home>Home</button></div>
 <script>
-const dial=document.querySelector('#dial'),title=document.querySelector('#title'),status=document.querySelector('#status'),items=document.querySelector('#items'),link=document.querySelector('#link'),warning=document.querySelector('#warning');
+const dial=document.querySelector('#dial'),title=document.querySelector('#title'),status=document.querySelector('#status'),readout=document.querySelector('#readout'),items=document.querySelector('#items'),link=document.querySelector('#link'),warning=document.querySelector('#warning');
 let page='';let key='';let authorized=false;
 function message(s){warning.textContent=s}
 function send(kind,x,y){if(!authorized)return;fetch('/api/touch',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind,x,y})}).then(r=>{if(!r.ok)message('Input rejected ('+r.status+')')}).catch(()=>message('Connection lost'))}
@@ -27,7 +27,7 @@ document.querySelector('#home').onclick=()=>send('tap',200,210);
 dial.onclick=e=>{const r=dial.getBoundingClientRect(),x=Math.floor((e.clientX-r.left)*240/r.width),y=Math.floor((e.clientY-r.top)*240/r.height);send('tap',Math.max(0,Math.min(239,x)),Math.max(0,Math.min(239,y)))};
 function draw(v){const m=v.ui||{},s=v.status||{};authorized=!!v.remote_navigation;
 const themes={HOME:['#030708','#00d9ec'],EXPLORER:['#090704','#ffb62b'],CONFIGURATION:['#01080f','#43e8ff'],PREVIEW:['#03050b','#00d8ff']};
-const t=themes[m.active_page]||themes.HOME;dial.style.background=t[0];dial.style.borderColor=t[1];title.textContent=m.title||m.screen||'Pendant';status.textContent=(m.wireless_status||s.connection||'offline')+' · '+(m.grbl_status||'')+' · '+(m.axis_selector||'OFF');items.replaceChildren();
+const t=themes[m.active_page]||themes.HOME;dial.style.background=t[0];dial.style.borderColor=t[1];title.textContent=m.title||m.screen||'Pendant';status.textContent=(m.wireless_status||s.connection||'offline')+' · '+(m.grbl_status||'')+' · '+(m.axis_selector||'OFF');items.replaceChildren();readout.hidden=m.screen!=='HOME';readout.textContent=readout.hidden?'':((m.axis_selector||'OFF')+' · '+(m.resolution_selector||''));items.hidden=!readout.hidden;
 (m.items||[]).slice(0,7).forEach((item,i)=>{const el=document.createElement('div');el.className='item'+(i===m.selected?' sel':'');el.style.borderColor=i===m.selected?t[1]:'#31404a';el.textContent=item[0];items.appendChild(el)});
 const overlay=m.overlay;if(overlay){message(String(overlay[0])+': '+String(overlay[1]||''))}else{message(authorized?'Remote menu navigation enabled (no CNC commands)':'View only · remote input disabled')}
 link.textContent='Connected · '+(m.screen||'')+' · '+(s.connection||'');}
