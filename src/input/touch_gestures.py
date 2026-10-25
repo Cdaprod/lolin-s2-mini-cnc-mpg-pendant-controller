@@ -37,7 +37,9 @@ class TouchGestures:
             self.last = (x, y)
             # Highlight the hovered menu row while the finger remains down.
             row = (y - 58) // 22 if 58 <= y < 190 else None
-            if row is not None and row != self.last_preview:
+            if (row is not None and row != self.last_preview and
+                    abs(y - self.start[1]) < self.swipe_distance and
+                    abs(x - self.start[0]) < self.swipe_distance):
                 self.last_preview = row
                 return (("drag", x, y),)
             return ()
