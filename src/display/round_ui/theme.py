@@ -27,6 +27,21 @@ THEMES = {
     },
 }
 
+# The physical page selector is authoritative. The four page colors are
+# navigational identity only; warnings and alarms keep safety semantics.
+PAGE_THEMES = {
+    "HOME": "industrial",
+    "OPERATIONAL": "industrial",
+    "EXPLORER": "amber",
+    "CONFIGURATION": "ice",
+    "PREVIEW": "spectrum",
+}
+
+
+def for_page(page):
+    """Resolve a physical top-level page to its visual palette."""
+    return select(PAGE_THEMES.get(str(page or "HOME").upper(), "industrial"))
+
 
 def select(name):
     """Return immutable-by-convention palette mapping, falling back safely."""
