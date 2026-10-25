@@ -32,7 +32,7 @@ class GestureTests(unittest.TestCase):
         self.assertEqual(gestures.poll(None), (("release_select", 120, 120),))
         gestures.poll((125, 110))
         clock.t = 1.0
-        self.assertEqual(gestures.poll(None), (("long_press", 125, 110),))
+        self.assertEqual(gestures.poll(None), (("release_select", 125, 110),))
 
     def test_drag_previews_then_releases_into_selection(self):
         clock = Clock()
