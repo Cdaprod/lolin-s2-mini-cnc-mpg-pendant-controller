@@ -77,10 +77,10 @@ class _InstrumentRingNode:
         exceptional = state in ("alarm", "estop")
         accent = self.colors["accent"]
         danger = self.colors["danger"]
-        base = danger if exceptional else (accent if armed else self.colors["panel"])
+        base = danger if exceptional else self.colors["panel"]
         self.color = base
         self.palette[1] = base
-        self.palette[2] = accent if axis_transition else self.colors["highlight"]
+        self.palette[2] = accent if axis_transition else self.colors["panel"]
         self.palette[3] = self.colors["warning"] if increment_transition else self.colors["panel"]
         self.palette[4] = danger if exceptional else (accent if activity > 0 else self.colors["panel"])
         self.palette[5] = danger if exceptional else (self.colors["warning"] if activity < 0 else self.colors["panel"])
@@ -198,16 +198,17 @@ def displayio_scene(display, colors=None):
                        colors["accent"], True, 2)
     menu_group.append(menu_title.node)
     # High-contrast outline replaces the previous muddy solid highlight.
-    highlight_bitmap = displayio.Bitmap(180, 18, 2)
-    highlight_palette = displayio.Palette(2)
+    highlight_bitmap = displayio.Bitmap(180, 18, 3)
+    highlight_palette = displayio.Palette(3)
     highlight_palette[0] = colors["panel"]
-    highlight_palette[1] = colors["accent"]
+    highlight_palette[1] = colors.get("focus_border", colors["muted"])
+    highlight_palette[2] = colors["accent"]
     for x in range(180):
         highlight_bitmap[x, 0] = 1
         highlight_bitmap[x, 17] = 1
     for y in range(18):
         for x in range(4):
-            highlight_bitmap[x, y] = 1
+            highlight_bitmap[x, y] = 2
         highlight_bitmap[179, y] = 1
     highlight_grid = displayio.TileGrid(highlight_bitmap,
                                         pixel_shader=highlight_palette,
@@ -279,6 +280,7 @@ def displayio_scene(display, colors=None):
         "value": value, "context": context, "increment": increment,
         "motion": motion, "connectivity": connectivity,
         "menu_group": menu_group, "menu_title": menu_title, "menu": menu,
+        "menu_colors": (colors["text"], colors["muted"]),
         "menu_highlight": _HighlightNode(highlight_grid),
         "menu_footer": menu_footer, "overlay_group": overlay_group,
         "overlay_title": overlay_title, "overlay_detail": overlay_detail,
