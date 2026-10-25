@@ -275,7 +275,7 @@ CircuitPython's built-in Web API remains on port 80 (`/fs/`, `/code/`,
 `/cp/serial/`). A separate cooperative HTTP server can show the current
 pendant UI state at `http://<pendant-LAN-IP>:8080/pendant/`.
 
-The mirror is **off by default**. To turn on viewing, set in your local
+The example configuration enables the read-only mirror on trusted LANs. To control viewing, set in your local
 `settings.toml`:
 
 ```toml
@@ -312,3 +312,20 @@ Without both, the old scaled terminal font is retained. This is a fallback,
 not an included new font file or guaranteed antialiased rendering.
 The normal UI only redraws on state or navigation changes; an idle offline
 screen is intentionally stable, not evidence that its loop is stopped.
+
+### Round Display microSD commissioning
+
+The Seeed round display's two KE switches are for battery voltage sensing
+(D0) and backlight (D6), not SD or touch enable. The firmware now constructs
+the shared SPI bus, initializes GC9A01 **first**, and mounts the optional
+FAT32 microSD **second**. The GC9A01/SD share D8 SCK and D10 MOSI; SD MISO
+uses D9, SD CS D2, and display CS D1 according to the current board profile.
+Verify these pins against your display revision before enabling SD.
+
+To test with an inserted FAT32 microSD, configure
+`MPG_SD_ENABLED=true`. Leave this **false** until physical verification.
+A successful mount creates `/sd/jobs`, `/sd/macros`, `/sd/config`,
+`/sd/fonts`, and `/sd/logs`; an unreadable jobs directory fails mounting.
+Program code, boot-critical libraries and `settings.toml` must remain on
+internal CIRCUITPY flash. Do not copy them to SD. The host CI does not
+validate the physical bus or FAT32 card.
