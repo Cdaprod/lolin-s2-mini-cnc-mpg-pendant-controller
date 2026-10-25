@@ -606,6 +606,11 @@ class UIManager:
                             "CLEAR"),
             "motion_available": motion_available,
             "active_page": self.state.active_page,
+            # Physical top-level selector order, never a UI permission grant.
+            # Leftmost dot is Operational; rightmost dot is Preview.
+            "page_index": {"EXPLORER": 1, "CONFIGURATION": 2,
+                           "PREVIEW": 3}.get(self.state.active_page, 0),
+            "page_count": 4,
             "selector_function": self.state.selector_function,
             "physical_selector": self.state.selected_physical_axis,
         }
