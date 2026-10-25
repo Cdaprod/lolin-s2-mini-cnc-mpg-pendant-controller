@@ -296,3 +296,19 @@ commissioned on real hardware before production use.
 
 Deploy with `CIRCUITPY=/Volumes/CIRCUITPY ./deploy.sh --apply-local-settings`.
 Existing device settings do not inherit template changes automatically.
+
+### Round-display commissioning (touch and text)
+
+Touch remains independent of the physical axis selector. A tap in the center
+of HOME should open the main menu. At startup, inspect the serial subsystem
+lines for `touch OK`, `touch ERROR`, or `touch DISABLED`; a new `touch diagnostic:`
+line reports the initialization error category. Runtime I2C poll failures are
+reported under System Info after three consecutive errors. Touch is not
+assumed healthy merely because the SPI display works. Motion stays gated.
+
+For improved large-label font rendering, the round renderer optionally uses
+`/fonts/DejaVuSans-14.bdf` with `adafruit_bitmap_font` installed in `/lib`.
+Without both, the old scaled terminal font is retained. This is a fallback,
+not an included new font file or guaranteed antialiased rendering.
+The normal UI only redraws on state or navigation changes; an idle offline
+screen is intentionally stable, not evidence that its loop is stopped.
