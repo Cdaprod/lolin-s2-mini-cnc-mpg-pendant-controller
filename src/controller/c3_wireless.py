@@ -31,6 +31,7 @@ class C3WirelessController:
         state.connection_state = "disconnected"
         state.machine_state = "disconnected"
         state.controller_enabled = True
+        state.link_state = "PAIRING"
         self.transport.start()
 
     def add_observer(self, callback):
@@ -125,7 +126,7 @@ class C3WirelessController:
             self.transport.poll()
         except (OSError, RuntimeError, ValueError):
             self.state.connection_state = "disconnected"
-            self.state.link_state = "DISCONNECTED"
+            self.state.link_state = "LINK_LOST" if self.transport.paired else "PAIRING"
             self.cancel_jog()
             return
         while self.transport.events:
@@ -153,7 +154,9 @@ class C3WirelessController:
         self.state.connection_state = "connected" if online else "disconnected"
         self.state.link_state = ("GRBL_FRESH" if online else
                                  "PAIRED_NO_GRBL" if self.transport.paired
-                                 else "DISCONNECTED")
+                                 else "LINK_LOST" if self.transport.last_rx is None
+                                 and self._status_peer is not None
+                                 else "PAIRING")
         if self._stop_pending and self._stop_at is not None and (
                 current - self._stop_at >= 0.08):
             if self._stop_attempts < 4:
