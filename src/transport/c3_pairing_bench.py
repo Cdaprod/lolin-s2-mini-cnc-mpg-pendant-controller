@@ -40,6 +40,8 @@ class C3PairingBench:
         self.bad = 0
         self.events = []
         self.rx_frames = 0
+        self.tx_pair_requests = 0
+        self.tx_heartbeats = 0
         self.rx_pair_acks = 0
         self.last_rx_error = None
         self.last_pair_ack_sender = None
@@ -64,6 +66,10 @@ class C3PairingBench:
         if target is None or bytes(target.mac) != mac:
             raise RuntimeError("ESP-NOW peer not registered")
         self.esp.send(packet, peer=target)
+        if kind == proto.PAIR:
+            self.tx_pair_requests += 1
+        elif kind == proto.HEARTBEAT:
+            self.tx_heartbeats += 1
         return sequence
 
     def send_mpg_jog(self, axis, microns, feed, deadman):
@@ -150,8 +156,9 @@ class C3PairingBench:
                 print("[espnow] RX rejected:", self.last_rx_error)
         if self._last_diag is None or current - self._last_diag >= 10:
             self._last_diag = current
-            print("[espnow] paired=%s rx=%d pair_acks=%d good=%d bad=%d last_error=%s" % (
-                self.paired, self.rx_frames, self.rx_pair_acks, self.good, self.bad, self.last_rx_error))
+            print("[espnow] paired=%s pair_tx=%d heartbeat_tx=%d rx=%d pair_acks=%d good=%d bad=%d last_error=%s" % (
+                self.paired, self.tx_pair_requests, self.tx_heartbeats,
+                self.rx_frames, self.rx_pair_acks, self.good, self.bad, self.last_rx_error))
         if not self.paired and (
                 self.last_pair is None or current - self.last_pair >= 3):
             self.last_pair = current
@@ -169,6 +176,8 @@ class C3PairingBench:
                           if self.peer else None,
             "valid_packets": self.good,
             "rx_frames": self.rx_frames,
+            "tx_pair_requests": self.tx_pair_requests,
+            "tx_heartbeats": self.tx_heartbeats,
             "rx_pair_acks": self.rx_pair_acks,
             "pair_ack_session_mismatch": self.pair_ack_session_mismatch,
             "last_pair_ack_sender": self.last_pair_ack_sender,
