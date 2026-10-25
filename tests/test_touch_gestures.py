@@ -64,6 +64,25 @@ class GestureTests(unittest.TestCase):
         self.assertEqual(touch.event_count, 1)
         self.assertEqual(touch.sample_count, 1)
 
+    def test_touch_poll_failure_is_recorded_and_recovery_clears_error(self):
+        clock = Clock()
+        class FailingSource:
+            broken = True
+            def point(self):
+                if self.broken:
+                    raise OSError("I2C unavailable")
+                return None
+        source = FailingSource()
+        touch = TouchInput(source, clock)
+        for _ in range(3):
+            self.assertEqual(touch.poll(), ())
+        self.assertEqual(touch.consecutive_errors, 3)
+        self.assertEqual(touch.last_error, "OSError")
+        source.broken = False
+        self.assertEqual(touch.poll(), ())
+        self.assertEqual(touch.consecutive_errors, 0)
+        self.assertIsNone(touch.last_error)
+
     def test_touch_never_recovers_estop(self):
         state = PendantState()
         ui = UIManager(state)
