@@ -29,6 +29,8 @@ class C3PairingBench:
         if len(self.local_mac) != 6:
             raise ValueError("invalid Wi-Fi MAC")
         self.peer = None
+        self.broadcast_peer = None
+        self.unicast_peer = None
         self.last_rx = None
         self.last_pair = None
         self.last_heartbeat = None
@@ -42,13 +44,17 @@ class C3PairingBench:
         if not self.radio.enabled:
             raise RuntimeError("Wi-Fi disabled")
         import espnow
-        self.esp.peers.append(espnow.Peer(mac=BROADCAST))
+        self.broadcast_peer = espnow.Peer(mac=BROADCAST)
+        self.esp.peers.append(self.broadcast_peer)
 
     def _send(self, mac, kind, payload=b""):
         sequence = self.sequence
         packet = proto.encode(kind, self.session, sequence, payload)
         self.sequence = (self.sequence + 1) & 65535
-        self.esp.send(packet, peer=mac)
+        target = self.broadcast_peer if mac == BROADCAST else self.unicast_peer
+        if target is None or bytes(target.mac) != mac:
+            raise RuntimeError("ESP-NOW peer not registered")
+        self.esp.send(packet, peer=target)
         return sequence
 
     def send_mpg_jog(self, axis, microns, feed, deadman):
@@ -57,7 +63,9 @@ class C3PairingBench:
         seq = self.sequence
         packet = proto.encode_mpg_jog(self.session, seq, axis, microns, feed, deadman)
         self.sequence = (self.sequence + 1) & 65535
-        self.esp.send(packet, peer=self.peer)
+        if self.unicast_peer is None or bytes(self.unicast_peer.mac) != self.peer:
+            raise RuntimeError("ESP-NOW peer not registered")
+        self.esp.send(packet, peer=self.unicast_peer)
         return seq
 
     def send_mpg_stop(self):
@@ -70,6 +78,7 @@ class C3PairingBench:
         if self.last_rx is not None and current - self.last_rx > 5:
             self.paired = False
             self.peer = None
+            self.unicast_peer = None
         for _ in range(4):
             packet = self.esp.read()
             if packet is None:
@@ -85,7 +94,10 @@ class C3PairingBench:
                     if sender == BROADCAST or sender == self.local_mac:
                         raise ValueError("invalid bridge MAC")
                     import espnow
-                    self.esp.peers.append(espnow.Peer(mac=sender))
+                    if self.unicast_peer is None or bytes(self.unicast_peer.mac) != sender:
+                        candidate = espnow.Peer(mac=sender)
+                        self.esp.peers.append(candidate)
+                        self.unicast_peer = candidate
                     self.peer = sender
                     self.paired = True
                     self.last_rx = current
