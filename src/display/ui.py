@@ -528,8 +528,16 @@ class UIManager:
 
     def _touch_event(self, event):
         """Map large round-screen targets to the existing normalized grammar."""
+        # Horizontal swipes navigate only; they never dispatch machine motion.
+        if event.kind in ("swipe_left", "swipe_right"):
+            return BACK if event.kind == "swipe_right" else HOME
         if event.kind == "long_press":
+            # Touch must not acknowledge an E-stop recovery.
+            if self.state.estop_latched:
+                return None
             return LONG_SELECT
+        if event.kind != "tap":
+            return None
         if self.current_screen == "HOME":
             return SELECT
         if event.y >= 190:
