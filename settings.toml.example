@@ -117,6 +117,8 @@ MPG_DISPLAY_RESET_PIN=""
 MPG_DISPLAY_BACKLIGHT_PIN="D6"
 MPG_DISPLAY_TOUCH_SDA_PIN="D4"
 MPG_DISPLAY_TOUCH_SCL_PIN="D5"
+MPG_UI_THEME="industrial" # industrial | ice | amber | spectrum
+MPG_UI_ANIMATIONS="true"
 MPG_TOUCH_ENABLED=true
 # Touch orientation is independent of LCD rotation; calibrate with the test.
 MPG_TOUCH_ROTATION="0" # accepted: 0, 90, 180, 270
