@@ -493,6 +493,20 @@ class UIManager:
 
     def handle(self, event):
         if isinstance(event, TouchEvent):
+            # Touch navigation must not execute motion, machine or network commands.
+            if event.kind in ("tap", "release_select") and (
+                    self.current_screen != "HOME" and 58 <= event.y < 190):
+                target = self._touch_row_index(event.y)
+                items = self.items()
+                if target is not None and target < len(items):
+                    item = items[target]
+                    if (item.command is not None or
+                            self.current_screen in
+                            ("EXPLORER", "JOB_BROWSER", "MACRO_BROWSER",
+                             "WIFI_SCAN", "ACTIVE_JOB", "TEXT_ENTRY")):
+                        self.focus[self.current_screen] = target
+                        self._changed()
+                        return None
             event = self._touch_event(event)
             if event is None:
                 return None
