@@ -107,13 +107,7 @@ class RoundRenderer:
                 x = 67 + (106 * i) // max(1, count - 1)
                 y = 120 - int(math.sqrt(max(0, 108 * 108 - (x - 120) ** 2)))
                 node.x, node.y = x - 3, y - 3
-                palette[0] = 0x667176
-                palette[1] = 0xFFFFFF
-                # Bitmap pixel 1 is an optional bright selection core.
-                # Change the background palette index for the whole dot,
-                # preserving each dot's small circular silhouette.
-                palette[0] = 0xFFFFFF if i == current else 0x667176
-                palette[1] = palette[0]
+                palette[1] = 0xFFFFFF if i == current else 0x667176
         self.nav_group.hidden = False
         self._nav_visible = True
         self._nav_until = time.monotonic() + 1.6
