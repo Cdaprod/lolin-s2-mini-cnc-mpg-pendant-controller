@@ -168,6 +168,8 @@ def load_config():
         "mirror_navigation": _get_bool("MPG_MIRROR_NAVIGATION", False),
         "mirror_port": _get_int("MPG_MIRROR_PORT", 8080),
         "touch_enabled": _get_bool("MPG_TOUCH_ENABLED"),
+        "touch_driver": _get("MPG_TOUCH_DRIVER", "chsc6x").lower(),
+        "touch_irq_pin": _get("MPG_TOUCH_IRQ_PIN", "D7"),
         "touch_rotation": _get_int("MPG_TOUCH_ROTATION", 0),
         "touch_invert_x": _get_bool("MPG_TOUCH_INVERT_X", False),
         "touch_invert_y": _get_bool("MPG_TOUCH_INVERT_Y", False),
