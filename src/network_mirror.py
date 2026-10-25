@@ -79,8 +79,8 @@ class PendantMirror:
         if not (0 <= x < 240 and 0 <= y < 240):
             return False
         ui = self.app.ui
-        if (ui.current_screen in ("HOME", "TEXT_ENTRY", "ACTIVE_JOB") or
-                ui.confirmation or ui.state.estop_latched or
+        if (ui.current_screen in ("HOME", "TEXT_ENTRY", "ACTIVE_JOB", "BOOT") or
+                ui.confirmation or ui.active_overlay() is not None or ui.state.estop_latched or
                 ui.state.estop_observed or ui.state.alarm is not None):
             return False
         from src.display.ui import TouchEvent
