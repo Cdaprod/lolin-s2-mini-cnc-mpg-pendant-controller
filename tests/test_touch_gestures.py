@@ -29,7 +29,7 @@ class GestureTests(unittest.TestCase):
         gestures = TouchGestures(clock)
         self.assertEqual(gestures.poll((120, 120)), ())
         clock.t = .10
-        self.assertEqual(gestures.poll(None), (("tap", 120, 120),))
+        self.assertEqual(gestures.poll(None), (("release_select", 120, 120),))
         gestures.poll((125, 110))
         clock.t = 1.0
         self.assertEqual(gestures.poll(None), (("long_press", 125, 110),))
@@ -37,7 +37,8 @@ class GestureTests(unittest.TestCase):
     def test_drag_previews_then_releases_into_selection(self):
         clock = Clock()
         gestures = TouchGestures(clock)
-        self.assertEqual(gestures.poll((90, 65)), (("drag", 90, 65),))
+        self.assertEqual(gestures.poll((90, 65)), ())
+        self.assertEqual(gestures.poll((90, 66)), (("drag", 90, 66),))
         self.assertEqual(gestures.poll((90, 87)), (("drag", 90, 87),))
         self.assertEqual(gestures.poll(None), (("release_select", 90, 87),))
 
@@ -86,7 +87,7 @@ class GestureTests(unittest.TestCase):
         self.assertEqual(gestures.poll(None), ())
         gestures.poll((120, 120))
         gestures.poll((140, 136))
-        self.assertEqual(gestures.poll(None), ())
+        self.assertEqual(gestures.poll(None), (("release_select", 140, 136),))
         self.assertEqual(gestures.poll((-5, 20)), ())
 
     def test_touch_transform_and_counting(self):
