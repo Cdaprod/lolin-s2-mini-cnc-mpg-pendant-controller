@@ -528,10 +528,27 @@ class UIManager:
         return None
 
     def _touch_event(self, event):
-        """Map large round-screen targets to the existing normalized grammar."""
-        # Horizontal swipes navigate only; they never dispatch machine motion.
+        """Map gestures onto menu navigation, never direct CNC actions."""
         if event.kind in ("swipe_left", "swipe_right"):
+            if len(self.stack) == 1 and self.current_screen in (
+                    "HOME", "EXPLORER", "CONFIGURATION", "PREVIEW"):
+                pages = ("OPERATIONAL", "EXPLORER", "CONFIGURATION", "PREVIEW")
+                index = pages.index(self.state.active_page) if (
+                    self.state.active_page in pages) else 0
+                delta = 1 if event.kind == "swipe_left" else -1
+                self.state.active_page = pages[(index + delta) % len(pages)]
+                self.apply_selector_context()
+                return None
             return BACK if event.kind == "swipe_right" else HOME
+        if event.kind in ("drag", "release_select"):
+            if self.current_screen == "HOME" or self.confirmation:
+                return None
+            target = self._touch_row_index(event.y)
+            if target is None:
+                return None
+            self.focus[self.current_screen] = target
+            self._changed()
+            return SELECT if event.kind == "release_select" else None
         if event.kind == "long_press":
             # Touch must not acknowledge an E-stop recovery.
             if self.state.estop_latched:
@@ -545,21 +562,24 @@ class UIManager:
             return BACK if event.x < 120 else HOME
         if event.y < 45:
             return BACK
-        # These bands match the retained round menu's 22px row rhythm.
-        row = (event.y - 58) // 22
+        target = self._touch_row_index(event.y)
+        if target is None:
+            return None
+        self.focus[self.current_screen] = target
+        self._changed()
+        return SELECT
+
+    def _touch_row_index(self, y):
+        """Visible row -> item index, accounting for scrolled menus."""
+        row = (int(y) - 58) // 22
         if not 0 <= row < 6:
             return None
         items = self.items()
         if not items:
             return None
         selected = min(self.focus.get(self.current_screen, 0), len(items) - 1)
-        start = menu_window_start(selected, len(items), 6)
-        target = start + row
-        if target >= len(items):
-            return None
-        self.focus[self.current_screen] = target
-        self._changed()
-        return SELECT
+        target = menu_window_start(selected, len(items), 6) + row
+        return target if target < len(items) else None
 
     def active_overlay(self):
         if self.state.estop_observed:
