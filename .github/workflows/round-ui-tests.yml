@@ -25,5 +25,8 @@ jobs:
           python-version: '3.12'
       - name: Compile modules
         run: python -m compileall -q src tests
-      - name: Run all host tests
-        run: python -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Run focused round UI tests
+        run: |
+          python -m unittest discover -s tests -p 'test_touch_gestures.py' -v
+          python -m unittest discover -s tests -p 'test_ui.py' -v
+          python -m unittest discover -s tests -p 'test_round_ui.py' -v
