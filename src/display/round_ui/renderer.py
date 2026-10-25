@@ -180,7 +180,14 @@ class RoundRenderer:
             model["resolution_selector"],
             model["resolution_transition_direction"],
         ) or changed
-        state_text = "READY" if model["jog_armed"] else state.machine_state.upper()
+        link = getattr(state, "link_state", "DISCONNECTED")
+        wireless = getattr(state, "transport", "") == "c3-espnow"
+        state_text = ({"GRBL_FRESH": "ESP-NOW LINKED",
+                       "PAIRED_NO_GRBL": "ESP-NOW LINKED",
+                       "PAIRING": "ESP-NOW PAIRING",
+                       "LINK_LOST": "ESP-NOW LOST"}.get(link, "ESP-NOW WAITING")
+                      if wireless else
+                      ("READY" if model["jog_armed"] else state.machine_state.upper()))
         changed = self.state_label.set(state_text) or changed
         coordinates = state.displayed_position()
         selected_axis = state.selected_axis
@@ -192,7 +199,7 @@ class RoundRenderer:
         controller = state.connection_state == "connected"
         changed = self.motion.update(
             model["jog_hold"], model["jog_armed"], model["mpg_activity"],
-            controller,
+            controller, link if wireless else None,
         ) or changed
         wifi = getattr(state, "wifi_state", "DISABLED") in (
             "CONNECTED", "connected"
