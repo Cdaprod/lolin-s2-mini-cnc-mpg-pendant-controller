@@ -43,6 +43,7 @@ class RoundRenderer:
         self.connectivity = ConnectivityGlyphs(scene["connectivity"])
         self.menu_title = TextComponent(scene["menu_title"])
         self.menu = [TextComponent(line) for line in scene["menu"]]
+        self.menu_colors = scene.get("menu_colors", (None, None))
         self.menu_highlight = MenuHighlight(scene["menu_highlight"])
         self.menu_footer = TextComponent(scene["menu_footer"])
         self.overlay = Overlay(scene["overlay_group"], scene["overlay_title"],
@@ -181,6 +182,10 @@ class RoundRenderer:
                 if not visible_items[index][1]:
                     text += "  -"
             changed = component.set(text) or changed
+            row_color = self.menu_colors[0]
+            if index < len(visible_items) and not visible_items[index][1]:
+                row_color = self.menu_colors[1]
+            changed = component.set_color(row_color) or changed
         changed = self.menu_highlight.set(
             selected - window_start, bool(visible_items)
         ) or changed
