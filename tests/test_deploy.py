@@ -101,6 +101,24 @@ class ReconciliationTests(unittest.TestCase):
         assert values["CIRCUITPY_WIFI_PASSWORD"] == '"secret"'
         assert ("migrate-default", "MPG_PIN_A") in actions
 
+    def test_xiao_sd_setting_migrates_only_known_disabled_default(self):
+        root = self.fixture(
+            local='',
+            device='MPG_BOARD_PROFILE="xiao_esp32s3"\n'
+                   'MPG_SD_ENABLED="false"\n'
+                   'CIRCUITPY_WIFI_PASSWORD="private"\n')
+        (root / "template.toml").write_text(
+            (deploy.ROOT / "settings.toml.example").read_text(encoding="utf-8"),
+            encoding="utf-8")
+        values, _, actions = self.reconcile(root)
+        self.assertEqual(values["MPG_SD_ENABLED"], '"true"')
+        self.assertIn(("migrate-default", "MPG_SD_ENABLED"), actions)
+        self.assertEqual(values["CIRCUITPY_WIFI_PASSWORD"], '"private"')
+        (root / "local.toml").write_text('MPG_SD_ENABLED="false"\n',
+                                         encoding="utf-8")
+        values, _, _ = self.reconcile(root, apply=True)
+        self.assertEqual(values["MPG_SD_ENABLED"], '"false"')
+
     def test_custom_device_encoder_pins_are_not_overwritten(self):
         root = self.fixture(
             device='MPG_BOARD_PROFILE="xiao_esp32s3"\n'
