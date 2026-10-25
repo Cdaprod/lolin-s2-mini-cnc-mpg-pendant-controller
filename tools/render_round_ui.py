@@ -80,4 +80,18 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
                        fill=c["text"] if enabled else c["muted"])
             d.text((120, 211), "BACK  ·  HOME", anchor="mm", font=small, fill=c["muted"])
         im.save(OUT / f"{skin}-{name.lower()}.png")
-print(f"Generated {len(names)*4} navigation-aware round UI design previews in {OUT}")
+# Readable contact sheets accompany every CI artifact for visual regression review.
+for skin in ("industrial", "ice", "amber", "spectrum"):
+    sheet = Image.new("RGB", (1120, 1160), "#15191D")
+    draw = ImageDraw.Draw(sheet)
+    heading = ImageFont.truetype(
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 18)
+    for index, name in enumerate(names):
+        x = index % 4 * 280 + 20
+        y = index // 4 * 290 + 16
+        panel = Image.open(OUT / f"{skin}-{name.lower()}.png")
+        sheet.paste(panel, (x, y))
+        draw.text((x, y + 245), name.replace("_", " "),
+                  font=heading, fill="#E5E7EB")
+    sheet.save(OUT / f"{skin}-contact-sheet.png")
+print(f"Generated {len(names)*4} previews + 4 contact sheets in {OUT}")
