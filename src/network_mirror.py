@@ -82,10 +82,12 @@ class PendantMirror:
             return False
         ui = self.app.ui
         if (ui.current_screen in ("HOME", "TEXT_ENTRY", "ACTIVE_JOB", "BOOT") or
-                ui.confirmation or ui.active_overlay() is not None or ui.state.estop_latched or
+                ui.confirmation or ui.state.estop_latched or
                 ui.state.estop_observed or ui.state.alarm is not None):
             return False
         from src.display.ui import TouchEvent
+        if ui.active_overlay() is not None:
+            return False
         # Limit browser input to BACK/HOME and static submenu entry only.
         # Never call app.handle_ui_event or UIManager._select on action items.
         if y >= 190:
