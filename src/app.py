@@ -113,11 +113,8 @@ class PendantApplication:
                 sys.implementation.name == "circuitpython"):
             from src.hardware import build_shared_spi
             shared_spi = build_shared_spi(config)
-        sd_mount = None
-        if storage is None:
-            storage, sd_mount = build_storage(config, shared_spi)
-        macros = MacroLibrary(storage.macros_path)
-        streamer = GCodeStreamer(state, controller, clock=clock)
+        # Initialize the round GC9A01 before mounting the SPI SD card.
+        # A card/mount failure must never prevent critical display startup.
         ui = UIManager(state)
         ui.complete_boot()
         display_error = None
@@ -128,6 +125,11 @@ class PendantApplication:
             display_error = "display initialization failed: {}".format(
                 type(exc).__name__)
             renderer = build_display({"display_enabled": False})
+        sd_mount = None
+        if storage is None:
+            storage, sd_mount = build_storage(config, shared_spi)
+        macros = MacroLibrary(storage.macros_path)
+        streamer = GCodeStreamer(state, controller, clock=clock)
         if hasattr(renderer, "bind_ui"):
             renderer.bind_ui(ui)
         if network_service is None:
