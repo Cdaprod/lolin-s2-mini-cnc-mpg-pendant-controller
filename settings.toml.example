@@ -19,7 +19,9 @@ MPG_NETWORK_AP_TIMEOUT="600"
 MPG_NETWORK_CONNECT_TIMEOUT="15"
 
 # disabled | uart (direct GRBL) | mock | bridge (Protocol v1 over UART)
+# c3_espnow_bench (radio pairing diagnostics; NO CNC commands)
 MPG_CONTROLLER_MODE="disabled"
+# Setting c3_espnow_bench only verifies radio pairing. It never enables jogging.
 # Bridge jog is bounded continuous movement, not exact per-detent stepping.
 # Keep disabled until host safety and real hardware are verified.
 MPG_BRIDGE_MOTION_ENABLED="false"
@@ -130,3 +132,5 @@ MPG_INDICATOR_ENABLED="false"
 MPG_INDICATOR_ELECTRICALLY_VERIFIED="false"
 MPG_INDICATOR_PIN=""
 MPG_INDICATOR_ACTIVE_HIGH="true"
+
+# MPG_CONTROLLER_MODE="c3_espnow" # Wireless transport; receiver must be commissioned
