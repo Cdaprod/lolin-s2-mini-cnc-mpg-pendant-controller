@@ -3,6 +3,8 @@
 import math
 import time
 
+from ..navigation import menu_window_start
+
 from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
                          SelectorFeedback, TextComponent)
@@ -169,8 +171,7 @@ class RoundRenderer:
             items = tuple(("{}: {}".format(key, value), True, "")
                           for key, value in model["details"])
         selected = min(model.get("selected", 0), max(0, len(items) - 1))
-        window_start = max(0, min(selected - len(self.menu) + 1,
-                                  len(items) - len(self.menu)))
+        window_start = menu_window_start(selected, len(items), len(self.menu))
         visible_items = items[window_start:window_start + len(self.menu)]
         changed = self.menu_title.set(model["title"]) or changed
         for index, component in enumerate(self.menu):
