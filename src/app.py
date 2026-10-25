@@ -161,7 +161,11 @@ class PendantApplication:
                     type(exc).__name__)
         if touch_manager is None and touch_source is not None:
             from src.input.touch import TouchInput
-            touch_manager = TouchInput(touch_source, clock=clock)
+            touch_manager = TouchInput(
+                touch_source, clock=clock,
+                rotation=config.get("touch_rotation", 0),
+                invert_x=config.get("touch_invert_x", False),
+                invert_y=config.get("touch_invert_y", False))
         state.storage_state = storage.status
         state.storage_error = storage.error
         addresses, i2c_error = scan_i2c(shared_i2c)
