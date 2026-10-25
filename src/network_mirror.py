@@ -32,7 +32,7 @@ const t=themes[m.active_page]||themes.HOME;dial.style.background=t[0];dial.style
 const overlay=m.overlay;if(overlay){message(String(overlay[0])+': '+String(overlay[1]||''))}else{message(authorized?'Remote menu navigation enabled (no CNC commands)':'View only · remote input disabled')}
 link.textContent='Connected · '+(m.screen||'')+' · '+(s.connection||'');}
 async function poll(){try{const r=await fetch('/api/state',{cache:'no-store'});if(!r.ok)throw Error();draw(await r.json())}catch(e){authorized=false;link.textContent='Disconnected';message('Disconnected · controls disabled')}}
-setInterval(poll,700);poll();
+async function loop(){await poll();setTimeout(loop,1200)}loop();
 </script></html>"""
 
 
@@ -127,10 +127,12 @@ class PendantMirror:
                   "Connection: close\r\nContent-Length: {}\r\n\r\n"
                   .format(code, mime, len(encoded))).encode("utf-8")
         for payload in (header, encoded):
+            # A bounded per-client socket timeout prevents a stalled browser
+            # from blocking the pendant's cooperative control loop forever.
             while payload:
                 sent = client.send(payload)
-                if not sent:
-                    break
+                if sent is None or sent <= 0:
+                    raise OSError("mirror socket did not progress")
                 payload = payload[sent:]
 
     def poll(self):
