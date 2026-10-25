@@ -18,6 +18,11 @@ class TextComponent:
         self.value = value
         return self.line.set_text(value)
 
+    def set_color(self, color):
+        if color is not None and hasattr(self.line, "set_color"):
+            return self.line.set_color(color)
+        return False
+
 
 class InstrumentRing:
     """Drive spatial selector regions and relative handwheel activity arcs."""
