@@ -50,7 +50,19 @@ def _line(displayio, terminalio, width, height, x, y, color=theme.TEXT,
     from src.display.displayio_backend import _DisplayIOTextLine
     source_width = max(1, width // scale)
     source_height = max(1, height // scale)
-    line = _DisplayIOTextLine(source_width, source_height, terminalio.FONT,
+    # Prefer a native-size bitmap font for enlarged text; scaling terminalio
+    # pixels creates harsh 2x/3x square edges. Optional file, safe fallback.
+    font = terminalio.FONT
+    if scale > 1:
+        try:
+            from adafruit_bitmap_font import bitmap_font
+            font = bitmap_font.load_font("/fonts/DejaVuSans-14.bdf")
+            scale = 1
+            source_width = width
+            source_height = height
+        except (ImportError, OSError, ValueError):
+            pass
+    line = _DisplayIOTextLine(source_width, source_height, font,
                               displayio, color, centered)
     if scale == 1:
         line.node.x, line.node.y = x, y
