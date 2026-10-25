@@ -55,7 +55,7 @@ def build_shared_spi(config):
         return busio.SPI(getattr(board, config["display_sck_pin"]),
                          MOSI=getattr(board, config["display_mosi_pin"]),
                          MISO=getattr(board, config["sd_miso_pin"]))
-    except (ImportError, AttributeError, ValueError, RuntimeError, KeyError):
+    except (ImportError, AttributeError, ValueError, RuntimeError, KeyError, OSError):
         return None
 
 
