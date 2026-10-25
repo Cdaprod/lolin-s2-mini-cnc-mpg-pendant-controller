@@ -48,7 +48,7 @@ class _DisplayIOTextLine:
             if cursor + glyph.width > self.width:
                 break
             source = glyph.bitmap
-            columns = max(1, source.width // glyph.width)
+            columns = max(1, source.width // max(1, glyph.width))
             source_x = (glyph.tile_index % columns) * glyph.width
             source_y = (glyph.tile_index // columns) * glyph.height
             for y in range(min(glyph.height, self.height)):
