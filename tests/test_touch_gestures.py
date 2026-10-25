@@ -2,7 +2,7 @@
 
 import unittest
 from src.input.touch_gestures import TouchGestures
-from src.input.touch import TouchInput
+from src.input.touch import TouchInput, CHSC6XTouchSource
 from src.display.ui import TouchEvent, UIManager
 from src.state import PendantState
 
@@ -82,6 +82,38 @@ class GestureTests(unittest.TestCase):
         self.assertEqual(touch.poll(), ())
         self.assertEqual(touch.consecutive_errors, 0)
         self.assertIsNone(touch.last_error)
+
+    def test_chsc6x_irq_and_five_byte_packet(self):
+        class I2C:
+            locked = False
+            reads = 0
+            data = bytes((1, 0, 101, 0, 193))
+            def try_lock(self):
+                if self.locked:
+                    return False
+                self.locked = True
+                return True
+            def readfrom_into(self, address, buffer):
+                self.reads += 1
+                self.address = address
+                buffer[:] = self.data
+            def unlock(self):
+                self.locked = False
+        class IRQ:
+            value = True
+        bus, irq = I2C(), IRQ()
+        touch = CHSC6XTouchSource(bus, irq)
+        self.assertIsNone(touch.point())
+        self.assertEqual(bus.reads, 0)
+        irq.value = False
+        self.assertEqual(touch.point(), (101, 193))
+        self.assertEqual(bus.address, 0x2E)
+        bus.data = bytes((0, 0, 101, 0, 193))
+        self.assertIsNone(touch.point())
+        bus.data = bytes((1, 0, 250, 0, 100))
+        self.assertIsNone(touch.point())
+        bus.locked = True
+        self.assertIsNone(touch.point())
 
     def test_touch_never_recovers_estop(self):
         state = PendantState()
