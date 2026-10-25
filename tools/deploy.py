@@ -207,7 +207,8 @@ def reconcile(template_path, local_path, device_path, apply_local=False,
     # Migrate legacy disabled transport/mirror defaults on the XIAO only.
     # Local overrides take precedence; other device settings remain intact.
     enable_defaults = {"MPG_CONTROLLER_MODE": ('"disabled"', '"c3_espnow"'),
-                       "MPG_MIRROR_ENABLED": ('"false"', '"true"')}
+                       "MPG_MIRROR_ENABLED": ('"false"', '"true"'),
+                       "MPG_SD_ENABLED": ('"false"', '"true"')}
     for key in all_keys:
         if key in device:
             value, action = device[key], "preserve"
