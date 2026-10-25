@@ -148,7 +148,9 @@ class UIStateMachineTests(unittest.TestCase):
         ui.handle(TouchEvent("tap", 120, 120))
         ui.handle(TouchEvent("tap", 120, 60))
         self.assertIsNone(ui.handle(TouchEvent("tap", 120, 60)))
-        self.assertIsNotNone(ui.confirmation)
+        # Direct touch cannot initiate a CNC action or its confirmation.
+        self.assertIsNone(ui.confirmation)
+        self.assertEqual(ui.current_screen, "MACHINE")
         self.assertEqual(state.connection_state, "disconnected")
 
 
