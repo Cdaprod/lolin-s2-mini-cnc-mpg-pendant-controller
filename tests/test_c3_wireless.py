@@ -11,15 +11,22 @@ class Radio:
     enabled = True
 
 
+class Peer:
+    def __init__(self, mac):
+        self.mac = mac
+
+
 class Esp:
     def __init__(self):
         self.active = False
         self.sent = []
         self.peers = []
-    def add_peer(self, peer):
+    def register_peer(self, mac):
+        peer = Peer(mac)
         self.peers.append(peer)
+        return peer
     def send(self, packet, peer):
-        self.sent.append((packet, peer))
+        self.sent.append((packet, peer.mac if peer else None))
     def read(self):
         return None
 
@@ -34,6 +41,7 @@ class WirelessTests(unittest.TestCase):
             session=123)
         self.ctrl.transport.paired = True
         self.ctrl.transport.peer = bytes.fromhex("010203040506")
+        self.ctrl.transport.unicast_peer = self.esp.register_peer(self.ctrl.transport.peer)
         self.ctrl.transport.last_rx = 100.0
 
     def status(self, line):
