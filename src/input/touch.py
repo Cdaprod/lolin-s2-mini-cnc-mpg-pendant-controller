@@ -1,4 +1,4 @@
-"""CST8XX touch input. User-interface only, never machine motion."""
+"""Touch input adapters. User-interface only, never machine motion."""
 
 from src.display.ui import ROTATE_CCW, ROTATE_CW, TouchEvent
 from src.input.touch_gestures import TouchGestures
@@ -86,3 +86,46 @@ def build_cst8xx(i2c):
     """Create a touch source; the shared I2C bus also hosts MCP23017."""
     import adafruit_cst8xx
     return CST8XXTouchSource(adafruit_cst8xx.CST8XX(i2c))
+
+
+class CHSC6XTouchSource:
+    """Seeed Round Display CHSC6X at I2C 0x2e, IRQ D7 active-low.
+
+    Seeed's reference firmware reads five bytes directly; byte 0 is a
+    pressed marker (1), while bytes 2 and 4 contain 8-bit X/Y positions.
+    All transactions share the existing I2C object with the MCP23017.
+    """
+
+    ADDRESS = 0x2E
+
+    def __init__(self, i2c, irq=None):
+        self.i2c = i2c
+        self.irq = irq
+        self.buffer = bytearray(5)
+
+    def point(self):
+        if self.irq is not None and self.irq.value:
+            return None
+        if not self.i2c.try_lock():
+            # No new touch sample while other shared-I2C clients are busy.
+            return None
+        try:
+            self.i2c.readfrom_into(self.ADDRESS, self.buffer)
+        finally:
+            self.i2c.unlock()
+        if self.buffer[0] != 1:
+            return None
+        x, y = self.buffer[2], self.buffer[4]
+        return (x, y) if x < 240 and y < 240 else None
+
+
+def build_chsc6x(i2c, irq_pin="D7"):
+    """Create CHSC6X reader for the Seeed XIAO round display."""
+    irq = None
+    if irq_pin:
+        import board
+        import digitalio
+        irq = digitalio.DigitalInOut(getattr(board, irq_pin))
+        irq.direction = digitalio.Direction.INPUT
+        irq.pull = digitalio.Pull.UP
+    return CHSC6XTouchSource(i2c, irq)
