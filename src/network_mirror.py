@@ -108,10 +108,13 @@ class PendantMirror:
         # No actions, jobs, network mutations, macros, or confirmations.
         from src.display.ui import build_screens
         screens = build_screens()
-        if getattr(item, "action", None) not in screens:
+        if (not item.target or item.command is not None or
+                item.target not in screens or
+                item.target in ("ACTIVE_JOB", "TEXT_ENTRY", "JOB_DETAILS",
+                                "MACRO_DETAILS", "WIFI_SCAN")):
             return False
         ui.focus[ui.current_screen] = index
-        ui.enter(item.action)
+        ui.enter(item.target)
         return True
 
     @staticmethod
