@@ -162,6 +162,8 @@ def load_config():
         "display_backlight_pin": _get("MPG_DISPLAY_BACKLIGHT_PIN", ""),
         "display_touch_sda_pin": _get("MPG_DISPLAY_TOUCH_SDA_PIN", ""),
         "display_touch_scl_pin": _get("MPG_DISPLAY_TOUCH_SCL_PIN", ""),
+        "ui_theme": _get("MPG_UI_THEME", "industrial").lower(),
+        "ui_animations": _get_bool("MPG_UI_ANIMATIONS", True),
         "touch_enabled": _get_bool("MPG_TOUCH_ENABLED"),
         "touch_rotation": _get_int("MPG_TOUCH_ROTATION", 0),
         "touch_invert_x": _get_bool("MPG_TOUCH_INVERT_X", False),
