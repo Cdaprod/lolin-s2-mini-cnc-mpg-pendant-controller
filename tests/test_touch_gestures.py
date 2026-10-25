@@ -34,6 +34,43 @@ class GestureTests(unittest.TestCase):
         clock.t = 1.0
         self.assertEqual(gestures.poll(None), (("long_press", 125, 110),))
 
+    def test_drag_previews_then_releases_into_selection(self):
+        clock = Clock()
+        gestures = TouchGestures(clock)
+        self.assertEqual(gestures.poll((90, 65)), (("drag", 90, 65),))
+        self.assertEqual(gestures.poll((90, 87)), (("drag", 90, 87),))
+        self.assertEqual(gestures.poll(None), (("release_select", 90, 87),))
+
+    def test_top_level_swipes_change_page_only(self):
+        state = PendantState()
+        ui = UIManager(state)
+        ui.complete_boot()
+        self.assertEqual(ui.current_screen, "HOME")
+        ui.handle(TouchEvent("swipe_left", 120, 110))
+        self.assertEqual(ui.current_screen, "EXPLORER")
+        self.assertEqual(state.active_page, "EXPLORER")
+        ui.handle(TouchEvent("swipe_left", 120, 110))
+        self.assertEqual(ui.current_screen, "CONFIGURATION")
+        ui.handle(TouchEvent("swipe_right", 120, 110))
+        self.assertEqual(ui.current_screen, "EXPLORER")
+        ui.handle(TouchEvent("swipe_right", 120, 110))
+        self.assertEqual(ui.current_screen, "HOME")
+
+    def test_released_static_row_selects_but_machine_action_does_not(self):
+        state = PendantState()
+        ui = UIManager(state)
+        ui.complete_boot()
+        ui.enter("MAIN_MENU")
+        ui.handle(TouchEvent("drag", 95, 87))
+        self.assertEqual(ui.focus["MAIN_MENU"], 1)
+        ui.handle(TouchEvent("release_select", 95, 87))
+        self.assertEqual(ui.current_screen, "JOBS")
+        ui.back()
+        ui.handle(TouchEvent("release_select", 95, 65))
+        self.assertEqual(ui.current_screen, "MACHINE")
+        ui.handle(TouchEvent("release_select", 95, 65))
+        self.assertIsNone(ui.confirmation)
+
     def test_directional_swipes(self):
         for end, expected in [((120, 20), "swipe_up"),
                               ((120, 200), "swipe_down"),
