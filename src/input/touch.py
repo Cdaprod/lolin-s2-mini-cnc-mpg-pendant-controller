@@ -58,6 +58,8 @@ class TouchInput:
         self.event_count += 1
         self.last_feedback = (x, y, kind)
         self.feedback_until = self.clock() + 0.20
+        if kind == "drag":
+            return (TouchEvent(kind, x, y),)
         if kind == "swipe_up":
             return (ROTATE_CW,)
         if kind == "swipe_down":
