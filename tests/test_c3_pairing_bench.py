@@ -14,6 +14,11 @@ class Packet:
         self.mac, self.msg = mac, msg
 
 
+class Peer:
+    def __init__(self, mac):
+        self.mac = mac
+
+
 class Esp:
     def __init__(self):
         self.active = False
@@ -21,15 +26,16 @@ class Esp:
         self.incoming = []
         self.sent = []
 
-    def add_peer(self, mac):
-        if mac not in self.peers:
-            self.peers.append(mac)
+    def register_peer(self, mac):
+        peer = Peer(mac)
+        self.peers.append(peer)
+        return peer
 
     def read(self):
         return self.incoming.pop(0) if self.incoming else None
 
     def send(self, msg, peer=None):
-        self.sent.append((peer, msg))
+        self.sent.append((peer.mac if peer else None, msg))
 
 
 class PairTests(unittest.TestCase):

@@ -39,10 +39,17 @@ class C3PairingBench:
         self.good = 0
         self.bad = 0
         self.events = []
+        self.rx_frames = 0
+        self.rx_pair_acks = 0
+        self.last_rx_error = None
+        self._last_diag = None
 
     def start(self):
         if not self.radio.enabled:
             raise RuntimeError("Wi-Fi disabled")
+        if hasattr(self.esp, "register_peer"):
+            self.broadcast_peer = self.esp.register_peer(BROADCAST)
+            return
         import espnow
         self.broadcast_peer = espnow.Peer(mac=BROADCAST)
         self.esp.peers.append(self.broadcast_peer)
@@ -84,8 +91,11 @@ class C3PairingBench:
             if packet is None:
                 break
             sender = bytes(packet.mac)
+            self.rx_frames += 1
             try:
                 kind, session, seq, payload = proto.decode(packet.msg)
+                if kind == proto.PAIR_ACK:
+                    self.rx_pair_acks += 1
                 if kind == proto.PAIR_ACK and session == self.session:
                     peer_mac, _function = proto.validate_pair_ack(
                         packet.msg, self.session, self.local_mac)
@@ -93,15 +103,19 @@ class C3PairingBench:
                         raise ValueError("pair ACK contains wrong local MAC")
                     if sender == BROADCAST or sender == self.local_mac:
                         raise ValueError("invalid bridge MAC")
-                    import espnow
                     if self.unicast_peer is None or bytes(self.unicast_peer.mac) != sender:
-                        candidate = espnow.Peer(mac=sender)
-                        self.esp.peers.append(candidate)
-                        self.unicast_peer = candidate
+                        if hasattr(self.esp, "register_peer"):
+                            self.unicast_peer = self.esp.register_peer(sender)
+                        else:
+                            import espnow
+                            candidate = espnow.Peer(mac=sender)
+                            self.esp.peers.append(candidate)
+                            self.unicast_peer = candidate
                     self.peer = sender
                     self.paired = True
                     self.last_rx = current
                     self.good += 1
+                    print("[espnow] PAIR_ACK accepted from", ":".join("%02x" % x for x in sender))
                 elif self.paired and sender == self.peer and kind in (
                         proto.HEARTBEAT, proto.HEARTBEAT_ACK):
                     if session not in (0, self.session) or payload:
@@ -121,8 +135,14 @@ class C3PairingBench:
                     self.good += 1
                 else:
                     self.bad += 1
-            except (ValueError, TypeError):
+            except (ValueError, TypeError) as exc:
                 self.bad += 1
+                self.last_rx_error = repr(exc)
+                print("[espnow] RX rejected:", self.last_rx_error)
+        if self._last_diag is None or current - self._last_diag >= 10:
+            self._last_diag = current
+            print("[espnow] paired=%s rx=%d pair_acks=%d good=%d bad=%d last_error=%s" % (
+                self.paired, self.rx_frames, self.rx_pair_acks, self.good, self.bad, self.last_rx_error))
         if not self.paired and (
                 self.last_pair is None or current - self.last_pair >= 3):
             self.last_pair = current
@@ -139,6 +159,9 @@ class C3PairingBench:
             "bridge_mac": ":".join("%02x" % c for c in self.peer)
                           if self.peer else None,
             "valid_packets": self.good,
+            "rx_frames": self.rx_frames,
+            "rx_pair_acks": self.rx_pair_acks,
+            "last_rx_error": self.last_rx_error,
             "rejected_packets": self.bad,
             "motion_enabled": False,
         }
