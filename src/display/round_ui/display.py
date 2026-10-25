@@ -180,8 +180,9 @@ def displayio_scene(display, colors=None):
     for i in range(7):
         dot = displayio.Bitmap(7, 7, 2)
         dot_palette = displayio.Palette(2)
-        dot_palette[0] = colors["muted"]
-        dot_palette[1] = colors["text"]
+        dot_palette[0] = 0x000000
+        dot_palette.make_transparent(0)
+        dot_palette[1] = colors["muted"]
         for dy in range(7):
             for dx in range(7):
                 if (dx - 3) ** 2 + (dy - 3) ** 2 <= 9:
@@ -205,7 +206,8 @@ def displayio_scene(display, colors=None):
         highlight_bitmap[x, 0] = 1
         highlight_bitmap[x, 17] = 1
     for y in range(18):
-        highlight_bitmap[0, y] = 1
+        for x in range(4):
+            highlight_bitmap[x, y] = 1
         highlight_bitmap[179, y] = 1
     highlight_grid = displayio.TileGrid(highlight_bitmap,
                                         pixel_shader=highlight_palette,
@@ -220,7 +222,7 @@ def displayio_scene(display, colors=None):
     # Subtle separators make adjacent main-menu entries recognizable.
     separator_bitmap = displayio.Bitmap(170, 1, 1)
     separator_palette = displayio.Palette(1)
-    separator_palette[0] = colors["panel"]
+    separator_palette[0] = colors.get("separator", colors["muted"])
     for index in range(5):
         menu_group.append(displayio.TileGrid(
             separator_bitmap, pixel_shader=separator_palette,
