@@ -163,6 +163,9 @@ def load_config():
         "display_touch_sda_pin": _get("MPG_DISPLAY_TOUCH_SDA_PIN", ""),
         "display_touch_scl_pin": _get("MPG_DISPLAY_TOUCH_SCL_PIN", ""),
         "touch_enabled": _get_bool("MPG_TOUCH_ENABLED"),
+        "touch_rotation": _get_int("MPG_TOUCH_ROTATION", 0),
+        "touch_invert_x": _get_bool("MPG_TOUCH_INVERT_X", False),
+        "touch_invert_y": _get_bool("MPG_TOUCH_INVERT_Y", False),
     }
     configured = apply_hardware_profile(config)
     if not configured.get("selector_backend"):
