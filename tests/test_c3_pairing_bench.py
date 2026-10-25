@@ -46,6 +46,7 @@ class PairTests(unittest.TestCase):
         client.poll()
         self.assertEqual(esp.sent[0][0], BROADCAST)
         self.assertEqual(proto.decode(esp.sent[0][1])[0], proto.PAIR)
+        self.assertEqual(client.info()["tx_pair_requests"], 1)
         self.assertEqual(proto.decode(esp.sent[0][1])[3], Radio.mac_address)
         bridge = bytes.fromhex("aabbccddeeff")
         ack = proto.encode(proto.PAIR_ACK, 7, payload=bytes((1, 1)) +
@@ -56,6 +57,7 @@ class PairTests(unittest.TestCase):
         self.assertTrue(client.paired)
         self.assertEqual(client.peer, bridge)
         self.assertEqual(proto.decode(esp.sent[-1][1])[0], proto.HEARTBEAT)
+        self.assertEqual(client.info()["tx_heartbeats"], 1)
         for _peer, raw in esp.sent:
             self.assertNotEqual(proto.decode(raw)[0], proto.UART_COMMAND)
         t[0] = 7
