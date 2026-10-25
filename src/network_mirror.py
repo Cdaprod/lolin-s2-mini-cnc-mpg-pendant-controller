@@ -59,6 +59,8 @@ class PendantMirror:
             ui.pop(field, None)
         if ui.get("screen") == "TEXT_ENTRY":
             ui["items"] = []
+        if ui.get("screen") in ("NETWORK_INFO", "SYSTEM_INFO", "CONTROLLER_INFO"):
+            ui["items"] = []
         ui.pop("jog_armed", None)
         ui.pop("motion_available", None)
         return {"ui": ui, "remote_navigation": self.allow_navigation,
@@ -82,11 +84,34 @@ class PendantMirror:
                 ui.state.estop_observed or ui.state.alarm is not None):
             return False
         from src.display.ui import TouchEvent
-        # Refuse every selection that would produce an executable command.
-        # Even if state changes internally, no UICommand can reach the dispatcher.
-        result = ui.handle(TouchEvent("tap", x, y))
-        if result is not None:
+        # Limit browser input to BACK/HOME and static submenu entry only.
+        # Never call app.handle_ui_event or UIManager._select on action items.
+        if y >= 190:
+            ui.handle(TouchEvent("tap", x, y))
+            return True
+        if y < 45:
+            ui.back()
+            return True
+        if not (58 <= y < 190):
             return False
+        from src.display.navigation import menu_window_start
+        items = ui.items()
+        if not items:
+            return False
+        selected = min(ui.focus.get(ui.current_screen, 0), len(items) - 1)
+        start = menu_window_start(selected, len(items), 6)
+        index = start + (y - 58) // 22
+        if index >= len(items) or not items[index].enabled:
+            return False
+        item = items[index]
+        # A static screen destination is the only admissible remote selection.
+        # No actions, jobs, network mutations, macros, or confirmations.
+        from src.display.ui import build_screens
+        screens = build_screens()
+        if getattr(item, "action", None) not in screens:
+            return False
+        ui.focus[ui.current_screen] = index
+        ui.enter(item.action)
         return True
 
     @staticmethod
