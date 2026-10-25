@@ -357,6 +357,16 @@ class PendantApplication:
                     self.handle_ui_event(event)
                 except SafetyError as exc:
                     self.ui.toast = str(exc)
+            # Feedback is visual only. No touch event can write controller I/O
+            # except through the existing safety-checked UI action dispatcher.
+            feedback = self.touch_manager.last_feedback
+            if (feedback is not None and
+                    hasattr(self.display, "touch_feedback")):
+                self.display.touch_feedback(
+                    feedback[:2], self.touch_manager.feedback_until)
+                self.touch_manager.last_feedback = None
+        if hasattr(self.display, "animate"):
+            self.display.animate(started)
         if getattr(self.network_service, "scanning", False):
             if self.network_service.poll_scan():
                 self.ui.set_dynamic_items(
