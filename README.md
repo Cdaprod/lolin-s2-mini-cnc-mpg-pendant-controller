@@ -322,8 +322,11 @@ FAT32 microSD **second**. The GC9A01/SD share D8 SCK and D10 MOSI; SD MISO
 uses D9, SD CS D2, and display CS D1 according to the current board profile.
 Verify these pins against your display revision before enabling SD.
 
-To test with an inserted FAT32 microSD, configure
-`MPG_SD_ENABLED=true`. Leave this **false** until physical verification.
+The tracked XIAO commissioning configuration now sets `MPG_SD_ENABLED=true`.
+It remains a hardware experiment, not proof that a card mounts. Deploying
+migrates the known old `false` value on XIAO unless the ignored repo-local
+`settings.toml` explicitly overrides it with `--apply-local-settings`.
+If the display or SD fails, set `MPG_SD_ENABLED=false` locally and redeploy.
 A successful mount creates `/sd/jobs`, `/sd/macros`, `/sd/config`,
 `/sd/fonts`, and `/sd/logs`; an unreadable jobs directory fails mounting.
 Program code, boot-critical libraries and `settings.toml` must remain on
