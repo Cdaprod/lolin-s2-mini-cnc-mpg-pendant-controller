@@ -612,6 +612,14 @@ class UIManager:
             "page_index": {"EXPLORER": 1, "CONFIGURATION": 2,
                            "PREVIEW": 3}.get(self.state.active_page, 0),
             "page_count": 4,
+            "link_state": self.state.link_state,
+            "wireless_status": ({"GRBL_FRESH": "ESP-NOW LINKED",
+                                 "PAIRED_NO_GRBL": "ESP-NOW LINKED",
+                                 "PAIRING": "ESP-NOW PAIRING",
+                                 "LINK_LOST": "ESP-NOW LOST"}.get(self.state.link_state, "ESP-NOW WAITING")
+                                if self.state.transport == "c3-espnow" else None),
+            "grbl_status": ("GRBL ONLINE" if self.state.connection_state == "connected"
+                            else "GRBL OFFLINE"),
             "selector_function": self.state.selector_function,
             "physical_selector": self.state.selected_physical_axis,
         }
