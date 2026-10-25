@@ -207,6 +207,9 @@ def displayio_scene(display, colors=None):
         nav_dots.append((node, dot_palette))
 
     menu_group = displayio.Group()
+    # HOME is the initial screen; menu must not cover operational readouts
+    # before the renderer's first scheduled refresh.
+    menu_group.hidden = True
     root.append(menu_group)
     menu_title = _line(displayio, terminalio, 150, 20, 45, 30,
                        colors["accent"], True, 2)
