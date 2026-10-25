@@ -148,6 +148,8 @@ class C3WirelessController:
                  current - self._last_status <= 0.5)
         online = bool(fresh and self.transport.paired and
                       self._status_peer == self.transport.peer)
+        # Keep machine readiness distinct from radio pairing. A paired radio
+        # cannot imply GRBL is ready or authorize jogging.
         self.state.connection_state = "connected" if online else "disconnected"
         self.state.link_state = ("GRBL_FRESH" if online else
                                  "PAIRED_NO_GRBL" if self.transport.paired
