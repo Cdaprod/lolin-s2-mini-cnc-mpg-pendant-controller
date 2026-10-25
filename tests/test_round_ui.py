@@ -233,5 +233,51 @@ class RoundRendererTests(unittest.TestCase):
             self.assertTrue(RoundLayout.region_within_safe_circle(region))
 
 
+
+    def test_transient_top_page_dots_follow_physical_order(self):
+        state, ui, _, renderer = self.make_renderer()
+        nav = Node()
+        nav.hidden = True
+        renderer.nav_group = nav
+        renderer.nav_dots = [(Node(), [0, 0]) for _ in range(4)]
+        renderer.render(state)
+        self.assertFalse(nav.hidden)
+        self.assertEqual([palette[1] for _, palette in renderer.nav_dots],
+                         [0xFFFFFF, 0x667176, 0x667176, 0x667176])
+        positions = [node.x for node, _ in renderer.nav_dots]
+        self.assertEqual(positions, sorted(positions))
+        state.active_page = "PREVIEW"
+        ui.apply_selector_context()
+        renderer.render(state)
+        self.assertEqual([palette[1] for _, palette in renderer.nav_dots],
+                         [0x667176, 0x667176, 0x667176, 0xFFFFFF])
+        self.assertFalse(nav.hidden)
+        self.assertTrue(renderer.animate(renderer._nav_until + 0.01))
+        self.assertTrue(nav.hidden)
+        renderer.render(state)
+        self.assertTrue(nav.hidden)
+        state.alarm = "2"
+        ui.refresh_context()
+        ui.enter("SYSTEM")
+        renderer.render(state)
+        self.assertTrue(nav.hidden)
+
+    def test_scrolling_focus_is_centered_after_initial_rows(self):
+        from src.display.navigation import menu_window_start
+        self.assertEqual(menu_window_start(0, 18, 6), 0)
+        self.assertEqual(menu_window_start(5, 18, 6), 3)
+        self.assertEqual(menu_window_start(17, 18, 6), 12)
+        self.assertEqual(menu_window_start(0, 3, 6), 0)
+        state, ui, _, renderer = self.make_renderer()
+        ui.enter("MAIN_MENU")
+        ui.enter("SYSTEM")
+        ui.detail_title = "Diagnostics"
+        ui.enter("SYSTEM_INFO")
+        for _ in range(8):
+            ui.handle(ROTATE_CW)
+        renderer.render(state)
+        self.assertEqual(renderer.menu_highlight.row, 2)
+        self.assertIn("Storage", renderer.menu[0].value)
+
 if __name__ == "__main__":
     unittest.main()
