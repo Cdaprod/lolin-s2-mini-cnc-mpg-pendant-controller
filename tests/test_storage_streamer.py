@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from src.controller.grbl import GRBLController
 from src.gcode.macros import MacroLibrary
@@ -9,6 +10,32 @@ from src.safety.state_machine import SafetyStateMachine
 from src.state import PendantState
 from src.storage.sdcard import SDStorage
 from src.transport.mock import MockTransport
+
+
+class SharedSPICompositionTests(unittest.TestCase):
+    def test_round_display_receives_exact_sd_spi_object(self):
+        from src.hardware import build_display, build_storage
+        from src.display.round_ui import display as round_display
+        shared = object()
+        config = {"display_enabled": True, "display_renderer": "round",
+                  "sd_enabled": True, "sd_mount_path": "/sd"}
+        with patch.object(round_display, "from_config", return_value="lcd") as lcd:
+            self.assertEqual(build_display(config, shared_spi=shared), "lcd")
+            self.assertIs(lcd.call_args.kwargs["shared_spi"], shared)
+        from src.storage import circuitpython_sd
+        with patch.object(circuitpython_sd, "mount_from_config",
+                          return_value=(None, "mount_error", "card missing")) as mount:
+            store, sd = build_storage(config, shared)
+            self.assertIsNone(sd)
+            self.assertIs(mount.call_args.args[1], shared)
+            self.assertEqual(store.status, "mount_error")
+
+    def test_display_stays_independent_when_sd_disabled(self):
+        from src.hardware import build_storage
+        with patch("src.storage.circuitpython_sd.mount_from_config") as mount:
+            store, sd = build_storage({"sd_enabled": False})
+            self.assertIsNone(sd)
+            mount.assert_not_called()
 
 
 class StorageTests(unittest.TestCase):
