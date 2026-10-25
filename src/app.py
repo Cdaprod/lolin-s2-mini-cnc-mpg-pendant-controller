@@ -105,25 +105,41 @@ class PendantApplication:
                 "PARK": config.get("park", "G53 G0 X0 Y0"),
             }, watchdog=watchdog, clock=clock
         )
-        # CircuitPython's GC9A01 display retains ownership of its SPI bus.
-        # A second SPI object for SD can raise "pins in use" and previously
-        # caused us to replace the operational round UI with a text fallback.
-        # Keep the display independent; SD failure is nonfatal.
+        # One SPI object must be shared by the GC9A01 and SD card. Build it
+        # with MISO at creation (the LCD alone only needs SCK and MOSI).
+        # Never make SD a prerequisite for starting the round UI.
         sd_spi = shared_spi
+        if (sd_spi is None and config.get("sd_enabled") and
+                config.get("display_enabled") and
+                config.get("display_renderer") == "round" and
+                sys.implementation.name == "circuitpython"):
+            from src.hardware import build_shared_spi
+            try:
+                sd_spi = build_shared_spi(config)
+            except (OSError, RuntimeError, ValueError, AttributeError) as exc:
+                print("shared SPI unavailable:", type(exc).__name__)
         # Initialize the round GC9A01 before mounting the SPI SD card.
         # A card/mount failure must never prevent critical display startup.
         ui = UIManager(state)
         ui.complete_boot()
         display_error = None
         try:
-            renderer = display or build_display(config)
+            renderer = display or build_display(config, shared_spi=sd_spi)
         except Exception as exc:
             display_error = "display initialization failed: {}".format(
                 type(exc).__name__)
             renderer = build_display({"display_enabled": False})
         sd_mount = None
         if storage is None:
-            storage, sd_mount = build_storage(config, sd_spi)
+            if (config.get("sd_enabled") and config.get("display_enabled") and
+                    config.get("display_renderer") == "round" and
+                    sd_spi is None and sys.implementation.name == "circuitpython"):
+                sd_config = dict(config)
+                sd_config["sd_enabled"] = False
+                storage, sd_mount = build_storage(sd_config)
+                state.sd_startup_error = "shared SPI unavailable"
+            else:
+                storage, sd_mount = build_storage(config, sd_spi)
         macros = MacroLibrary(storage.macros_path)
         streamer = GCodeStreamer(state, controller, clock=clock)
         if hasattr(renderer, "bind_ui"):
