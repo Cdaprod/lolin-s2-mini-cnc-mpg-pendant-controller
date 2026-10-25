@@ -268,3 +268,31 @@ python -m compileall -q code.py src tests
 ```
 
 No external Python test dependency is required.
+
+### Optional browser pendant mirror (experimental)
+
+CircuitPython's built-in Web API remains on port 80 (`/fs/`, `/code/`,
+`/cp/serial/`). A separate cooperative HTTP server can show the current
+pendant UI state at `http://<pendant-LAN-IP>:8080/pendant/`.
+
+The mirror is **off by default**. To turn on viewing, set in your local
+`settings.toml`:
+
+```toml
+MPG_MIRROR_ENABLED=true
+MPG_MIRROR_PORT=8080
+MPG_MIRROR_NAVIGATION=false
+```
+
+For experimental, same-LAN **menu-only** remote navigation, explicitly set
+`MPG_MIRROR_NAVIGATION=true`. The server accepts only static submenu entries,
+Back and Home; **no** jogging, macros, job starts, confirmations, or CNC
+commands are dispatched. View mode requires no input permission. The server
+never exposes credentials or detail lists. It is a state-driven approximation,
+**not** an RGB framebuffer capture, and requires Wi-Fi station connectivity.
+Disable it on untrusted networks: port 8080 has no authentication or TLS.
+Device RAM, simultaneous CircuitPython Web API access and touch must be
+commissioned on real hardware before production use.
+
+Deploy with `CIRCUITPY=/Volumes/CIRCUITPY ./deploy.sh --apply-local-settings`.
+Existing device settings do not inherit template changes automatically.
