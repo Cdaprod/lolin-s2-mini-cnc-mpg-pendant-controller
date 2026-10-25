@@ -493,6 +493,8 @@ class UIManager:
 
     def handle(self, event):
         if isinstance(event, TouchEvent):
+            if self.active_overlay() is not None:
+                return None
             # Touch navigation must not execute motion, machine or network commands.
             if event.kind in ("tap", "release_select") and (
                     self.current_screen != "HOME" and 58 <= event.y < 190):
