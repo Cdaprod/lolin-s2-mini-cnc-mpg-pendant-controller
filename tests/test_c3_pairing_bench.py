@@ -63,6 +63,37 @@ class PairTests(unittest.TestCase):
         self.assertFalse(client.paired)
         self.assertFalse(client.info()["motion_enabled"])
 
+    def test_repeated_timeout_does_not_leak_registered_peers(self):
+        esp, t = Esp(), [0]
+        client = C3PairingBench(Radio(), now=lambda: t[0], esp=esp, session=7)
+        client.start()
+        bridge = bytes.fromhex("aabbccddeeff")
+        ack = proto.encode(proto.PAIR_ACK, 7, payload=bytes((1, 1)) +
+                           Radio.mac_address + bytes((255,)))
+        for cycle in range(4):
+            esp.incoming.append(Packet(bridge, ack))
+            client.poll()
+            self.assertTrue(client.paired)
+            self.assertEqual(len(esp.peers), 2)
+            t[0] += 6
+            client.poll()
+            self.assertFalse(client.paired)
+            self.assertEqual(len(esp.peers), 2)
+            t[0] += 1
+
+    def test_mismatched_ack_session_diagnostics(self):
+        esp = Esp()
+        client = C3PairingBench(Radio(), now=lambda: 0, esp=esp, session=7)
+        client.start()
+        bridge = bytes.fromhex("aabbccddeeff")
+        ack = proto.encode(proto.PAIR_ACK, 8, payload=bytes((1, 1)) +
+                           Radio.mac_address + bytes((255,)))
+        esp.incoming.append(Packet(bridge, ack))
+        client.poll()
+        self.assertFalse(client.paired)
+        self.assertEqual(client.info()["pair_ack_session_mismatch"], 1)
+        self.assertEqual(client.info()["last_pair_ack_sender"], "aa:bb:cc:dd:ee:ff")
+
     def test_spoofed_pair_ack_wrong_mac_rejected(self):
         esp = Esp()
         client = C3PairingBench(Radio(), now=lambda: 0, esp=esp, session=2)
