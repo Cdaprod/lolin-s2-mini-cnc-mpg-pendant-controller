@@ -15,7 +15,7 @@ CIRCUITPY_WIFI_PASSWORD=""
 MPG_HOSTNAME="cdaprod-cnc-pendant"
 # Opt-in LAN display-state mirror, separate from CircuitPython Web API port 80.
 # Remote navigation is off by default and never dispatches CNC commands.
-MPG_MIRROR_ENABLED="true"
+MPG_MIRROR_ENABLED="false"
 MPG_MIRROR_NAVIGATION="false"
 MPG_MIRROR_PORT="8080"
 # Automatic fallback setup AP lifetime in seconds; 0 disables expiry.
