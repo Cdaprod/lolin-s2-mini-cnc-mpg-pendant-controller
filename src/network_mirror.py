@@ -145,7 +145,7 @@ class PendantMirror:
             first = head.split("\r\n", 1)[0]
             if first.startswith("GET /api/state "):
                 self._reply(client, "200 OK", json.dumps(self.snapshot()), "application/json")
-            elif first.startswith("GET / ") or first.startswith("GET /pendant "):
+            elif first.startswith("GET / ") or first.startswith("GET /pendant ") or first.startswith("GET /pendant/ "):
                 self._reply(client, "200 OK", HTML, "text/html; charset=utf-8")
             elif first.startswith("POST /api/touch "):
                 try:
