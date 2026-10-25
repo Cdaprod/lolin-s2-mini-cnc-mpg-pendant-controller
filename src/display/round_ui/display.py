@@ -210,8 +210,29 @@ def displayio_scene(display, colors=None):
     overlay_group.append(overlay_detail.node)
     root.append(overlay_group)
 
+    # Tiny, retained touch halo, invisible until the application observes a
+    # physical release. A 13x13 indexed sprite costs 169 pixels and is never
+    # rewritten during normal polling. Critical alarm overlay stays above it.
+    halo = displayio.Bitmap(13, 13, 2)
+    halo_palette = displayio.Palette(2)
+    halo_palette[0] = 0x000000
+    halo_palette.make_transparent(0)
+    halo_palette[1] = colors["accent"]
+    for hy in range(13):
+        for hx in range(13):
+            radius2 = (hx - 6) ** 2 + (hy - 6) ** 2
+            if 22 <= radius2 <= 42:
+                halo[hx, hy] = 1
+    halo_node = displayio.TileGrid(halo, pixel_shader=halo_palette)
+    halo_node.hidden = True
+    root.append(halo_node)
+    # Append the high-priority overlay last so it always covers the halo.
+    root.remove(overlay_group)
+    root.append(overlay_group)
+
     return {
         "root": root, "ring": _InstrumentRingNode(palette, colors),
+        "touch_halo": halo_node,
         "home_group": home, "state_label": state_label,
         "axis_feedback": axis_feedback, "step_feedback": step_feedback,
         "axis": axis,
@@ -233,4 +254,6 @@ def from_config(config):
     else:
         raise ValueError("round renderer requires a supported display driver")
     colors = theme.select(config.get("ui_theme", "industrial"))
-    return RoundRenderer(display, lambda d: displayio_scene(d, colors))
+    return RoundRenderer(
+        display, lambda d: displayio_scene(d, colors),
+        animations=config.get("ui_animations", True))
