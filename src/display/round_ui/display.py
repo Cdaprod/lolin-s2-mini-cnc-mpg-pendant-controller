@@ -64,9 +64,10 @@ def _line(displayio, terminalio, width, height, x, y, color=theme.TEXT,
 class _InstrumentRingNode:
     """Palette-driven ring: no per-frame bitmap writes or object allocation."""
 
-    def __init__(self, palette):
+    def __init__(self, palette, colors):
         self.palette = palette
-        self.color = theme.MUTED
+        self.colors = colors
+        self.color = colors["muted"]
         self.signature = None
 
     def update(self, state, activity, armed, axis_transition,
@@ -74,15 +75,15 @@ class _InstrumentRingNode:
         self.signature = (state, activity, armed, axis_transition,
                           increment_transition)
         exceptional = state in ("alarm", "estop")
-        base = theme.RED if exceptional else (theme.CYAN if armed else 0x24343A)
+        accent = self.colors["accent"]
+        danger = self.colors["danger"]
+        base = danger if exceptional else (accent if armed else self.colors["panel"])
         self.color = base
         self.palette[1] = base
-        self.palette[2] = theme.CYAN if axis_transition else 0x31545B
-        self.palette[3] = theme.YELLOW if increment_transition else 0x544B2A
-        self.palette[4] = (theme.RED if exceptional else
-                           (theme.CYAN if activity > 0 else 0x18343A))
-        self.palette[5] = (theme.RED if exceptional else
-                           (theme.YELLOW if activity < 0 else 0x352F1B))
+        self.palette[2] = accent if axis_transition else self.colors["highlight"]
+        self.palette[3] = self.colors["warning"] if increment_transition else self.colors["panel"]
+        self.palette[4] = danger if exceptional else (accent if activity > 0 else self.colors["panel"])
+        self.palette[5] = danger if exceptional else (self.colors["warning"] if activity < 0 else self.colors["panel"])
 
 
 class _HighlightNode:
@@ -106,16 +107,16 @@ class _HighlightNode:
         self.node.y = value
 
 
-def _instrument_bitmap(displayio):
+def _instrument_bitmap(displayio, colors):
     """Build one indexed backdrop with directional arcs and subtle dial ticks."""
     bitmap = displayio.Bitmap(240, 240, 6)
     palette = displayio.Palette(6)
-    palette[0] = theme.BACKGROUND
-    palette[1] = 0x24343A
-    palette[2] = 0x31545B
-    palette[3] = 0x544B2A
-    palette[4] = 0x18343A
-    palette[5] = 0x352F1B
+    palette[0] = colors["background"]
+    palette[1] = colors["panel"]
+    palette[2] = colors["highlight"]
+    palette[3] = colors["panel"]
+    palette[4] = colors["panel"]
+    palette[5] = colors["panel"]
     for y in range(240):
         dy = y - 120
         for x in range(240):
@@ -136,35 +137,36 @@ def _instrument_bitmap(displayio):
     return bitmap, palette
 
 
-def displayio_scene(display):
+def displayio_scene(display, colors=None):
     """Create a bounded retained scene optimized for a 240px circular panel."""
     import displayio
     import terminalio
+    colors = colors or theme.select("industrial")
 
     root = displayio.Group()
-    bitmap, palette = _instrument_bitmap(displayio)
+    bitmap, palette = _instrument_bitmap(displayio, colors)
     root.append(displayio.TileGrid(bitmap, pixel_shader=palette))
 
     home = displayio.Group()
     root.append(home)
     axis_feedback = _line(displayio, terminalio, 68, 10, 46, 48,
-                          theme.CYAN, True)
+                          colors["accent"], True)
     step_feedback = _line(displayio, terminalio, 68, 10, 126, 48,
-                          theme.YELLOW, True)
+                          colors["warning"], True)
     state_label = _line(displayio, terminalio, 96, 12, 72, 29,
-                        theme.GREEN, True)
+                        colors["success"], True)
     axis = _line(displayio, terminalio, 72, 30, 84, 59,
-                 theme.CYAN, True, 3)
+                 colors["accent"], True, 3)
     value = _line(displayio, terminalio, 174, 30, 33, 89,
-                  theme.TEXT, True, 3)
+                  colors["text"], True, 3)
     context = _line(displayio, terminalio, 100, 10, 70, 121,
-                    theme.MUTED, True)
+                    colors["muted"], True)
     increment = _line(displayio, terminalio, 88, 20, 76, 137,
-                      theme.YELLOW, True, 2)
+                      colors["warning"], True, 2)
     motion = _line(displayio, terminalio, 152, 12, 44, 168,
-                   theme.CYAN, True)
+                   colors["accent"], True)
     connectivity = _line(displayio, terminalio, 106, 10, 67, 194,
-                         theme.MUTED, True)
+                         colors["muted"], True)
     for line in (state_label, axis_feedback, step_feedback, axis, value,
                  context, increment, motion, connectivity):
         home.append(line.node)
@@ -172,11 +174,11 @@ def displayio_scene(display):
     menu_group = displayio.Group()
     root.append(menu_group)
     menu_title = _line(displayio, terminalio, 150, 20, 45, 30,
-                       theme.CYAN, True, 2)
+                       colors["accent"], True, 2)
     menu_group.append(menu_title.node)
     highlight_bitmap = displayio.Bitmap(180, 18, 1)
     highlight_palette = displayio.Palette(1)
-    highlight_palette[0] = 0x15333A
+    highlight_palette[0] = colors["highlight"]
     highlight_grid = displayio.TileGrid(highlight_bitmap,
                                         pixel_shader=highlight_palette,
                                         x=30, y=58)
@@ -184,11 +186,11 @@ def displayio_scene(display):
     menu = []
     for index in range(6):
         line = _line(displayio, terminalio, 164, 12, 38, 63 + index * 22,
-                     theme.TEXT)
+                     colors["text"])
         menu.append(line)
         menu_group.append(line.node)
     menu_footer = _line(displayio, terminalio, 110, 10, 65, 202,
-                        theme.MUTED, True)
+                        colors["muted"], True)
     menu_group.append(menu_footer.node)
 
     overlay_group = displayio.Group()
@@ -201,15 +203,15 @@ def displayio_scene(display):
         modal_bitmap, pixel_shader=modal_palette, x=25, y=73
     ))
     overlay_title = _line(displayio, terminalio, 160, 28, 40, 89,
-                          theme.RED, True, 2)
+                          colors["danger"], True, 2)
     overlay_detail = _line(displayio, terminalio, 166, 14, 37, 128,
-                           theme.TEXT, True)
+                           colors["text"], True)
     overlay_group.append(overlay_title.node)
     overlay_group.append(overlay_detail.node)
     root.append(overlay_group)
 
     return {
-        "root": root, "ring": _InstrumentRingNode(palette),
+        "root": root, "ring": _InstrumentRingNode(palette, colors),
         "home_group": home, "state_label": state_label,
         "axis_feedback": axis_feedback, "step_feedback": step_feedback,
         "axis": axis,
@@ -230,4 +232,5 @@ def from_config(config):
         display = build_gc9a01(config)
     else:
         raise ValueError("round renderer requires a supported display driver")
-    return RoundRenderer(display, displayio_scene)
+    colors = theme.select(config.get("ui_theme", "industrial"))
+    return RoundRenderer(display, lambda d: displayio_scene(d, colors))
