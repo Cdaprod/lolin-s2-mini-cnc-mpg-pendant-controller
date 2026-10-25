@@ -66,7 +66,7 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
                 y = 62 + row * 22
                 if row == focus - start:
                     d.rounded_rectangle((30, y-4, 210, y+17), radius=5,
-                                        fill=c["panel"], outline=c["accent"], width=1)
+                                        fill=c["panel"], outline=c.get("focus_border", c["muted"]), width=1)
                     d.rounded_rectangle((30, y-4, 34, y+17), radius=2, fill=c["accent"])
                 elif row:
                     d.line((37, y-7, 203, y-7), fill=c.get("separator", c["muted"]), width=1)
