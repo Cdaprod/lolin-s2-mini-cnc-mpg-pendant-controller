@@ -27,7 +27,7 @@ document.querySelector('#home').onclick=()=>send('tap',200,210);
 dial.onclick=e=>{const r=dial.getBoundingClientRect(),x=Math.floor((e.clientX-r.left)*240/r.width),y=Math.floor((e.clientY-r.top)*240/r.height);send('tap',Math.max(0,Math.min(239,x)),Math.max(0,Math.min(239,y)))};
 function draw(v){const m=v.ui||{},s=v.status||{};authorized=!!v.remote_navigation;
 const themes={HOME:['#030708','#00d9ec'],EXPLORER:['#090704','#ffb62b'],CONFIGURATION:['#01080f','#43e8ff'],PREVIEW:['#03050b','#00d8ff']};
-const t=themes[m.active_page]||themes.HOME;dial.style.background=t[0];dial.style.borderColor=t[1];title.textContent=m.title||m.screen||'Pendant';status.textContent=(s.machine||'offline')+' · '+(m.axis_selector||'OFF')+' · ×'+(m.resolution_selector||1);items.replaceChildren();
+const t=themes[m.active_page]||themes.HOME;dial.style.background=t[0];dial.style.borderColor=t[1];title.textContent=m.title||m.screen||'Pendant';status.textContent=(m.wireless_status||s.connection||'offline')+' · '+(m.grbl_status||'')+' · '+(m.axis_selector||'OFF');items.replaceChildren();
 (m.items||[]).slice(0,7).forEach((item,i)=>{const el=document.createElement('div');el.className='item'+(i===m.selected?' sel':'');el.style.borderColor=i===m.selected?t[1]:'#31404a';el.textContent=item[0];items.appendChild(el)});
 const overlay=m.overlay;if(overlay){message(String(overlay[0])+': '+String(overlay[1]||''))}else{message(authorized?'Remote menu navigation enabled (no CNC commands)':'View only · remote input disabled')}
 link.textContent='Connected · '+(m.screen||'')+' · '+(s.connection||'');}
