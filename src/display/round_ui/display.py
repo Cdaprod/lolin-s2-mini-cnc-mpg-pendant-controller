@@ -234,8 +234,8 @@ def displayio_scene(display, colors=None):
     menu_group.append(highlight_grid)
     menu = []
     for index in range(6):
-        line = _line(displayio, terminalio, 164, 12, 38, 63 + index * 22,
-                     colors["text"])
+        line = _line(displayio, terminalio, 150, 12, 33, 63 + index * 22,
+                     colors["text"], True)
         menu.append(line)
         menu_group.append(line.node)
     # Subtle separators make adjacent main-menu entries recognizable.
