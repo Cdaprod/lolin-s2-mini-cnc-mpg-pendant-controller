@@ -315,20 +315,18 @@ screen is intentionally stable, not evidence that its loop is stopped.
 
 ### Round Display microSD commissioning
 
-The Seeed round display's two KE switches are for battery voltage sensing
-(D0) and backlight (D6), not SD or touch enable. The firmware now constructs
-the shared SPI bus, initializes GC9A01 **first**, and mounts the optional
-FAT32 microSD **second**. The GC9A01/SD share D8 SCK and D10 MOSI; SD MISO
-uses D9, SD CS D2, and display CS D1 according to the current board profile.
-Verify these pins against your display revision before enabling SD.
+The Seeed round display's KE switches control battery sensing (D0) and
+backlight (D6); neither selects SD or touch. The GC9A01 round display is
+initialized before optional SD mounting.
 
-The tracked XIAO commissioning configuration now sets `MPG_SD_ENABLED=true`.
-It remains a hardware experiment, not proof that a card mounts. Deploying
-migrates the known old `false` value on XIAO unless the ignored repo-local
-`settings.toml` explicitly overrides it with `--apply-local-settings`.
-If the display or SD fails, set `MPG_SD_ENABLED=false` locally and redeploy.
-A successful mount creates `/sd/jobs`, `/sd/macros`, `/sd/config`,
-`/sd/fonts`, and `/sd/logs`; an unreadable jobs directory fails mounting.
-Program code, boot-critical libraries and `settings.toml` must remain on
-internal CIRCUITPY flash. Do not copy them to SD. The host CI does not
-validate the physical bus or FAT32 card.
+**SD is temporarily disabled by default** because on-device boot reports
+display and touch initialization errors when SD is enabled. The tentative
+D8/D10/D9 SPI and D1/D2 CS assignments require hardware commissioning.
+Do not treat host CI as proof of SPI bus compatibility.
+
+If SD was enabled in local or device settings, set
+`MPG_SD_ENABLED="false"` in both your ignored repo-local
+`settings.toml` (if present) and `/Volumes/CIRCUITPY/settings.toml`.
+Then deploy without `--verify` to apply the new firmware. The deployer
+preserves explicit device settings unless overridden. Firmware stays on
+CIRCUITPY, not SD. SD must remain optional and never gate display startup.
