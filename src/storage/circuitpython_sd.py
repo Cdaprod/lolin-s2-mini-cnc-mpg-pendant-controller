@@ -31,6 +31,16 @@ def mount_from_config(config, spi=None):
         card = sdcardio.SDCard(spi, getattr(board, names[3]))
         mount_path = config.get("sd_mount_path", "/sd")
         storage.mount(storage.VfsFat(card), mount_path)
+        # A newly formatted card has no project directories. Initialize only
+        # the optional data folders; never put boot code or secrets on SD.
+        import os
+        for folder in ("jobs", "macros", "config", "fonts", "logs"):
+            path = mount_path.rstrip("/") + "/" + folder
+            try:
+                os.mkdir(path)
+            except OSError:
+                # Existing folders and read-only cards are nonfatal.
+                pass
         return SDMount(spi, card, mount_path), "available", None
     except Exception as exc:
         return None, "mount_error", type(exc).__name__
