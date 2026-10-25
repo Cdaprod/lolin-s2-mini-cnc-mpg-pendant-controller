@@ -277,7 +277,7 @@ class RoundRendererTests(unittest.TestCase):
             ui.handle(ROTATE_CW)
         renderer.render(state)
         self.assertEqual(renderer.menu_highlight.row, 2)
-        self.assertIn("Storage", renderer.menu[0].value)
+        self.assertIn("I2C", renderer.menu[0].value)
 
 if __name__ == "__main__":
     unittest.main()
