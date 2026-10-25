@@ -226,7 +226,7 @@ def displayio_scene(display, colors=None):
     halo_node = displayio.TileGrid(halo, pixel_shader=halo_palette)
     halo_node.hidden = True
     root.append(halo_node)
-    # Append the high-priority overlay last so it always covers the halo.
+    # Keep the high-priority overlay above the touch indicator.
     root.remove(overlay_group)
     root.append(overlay_group)
 
