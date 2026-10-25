@@ -7,6 +7,8 @@ import time
 from src.controller.actions import ActionDispatcher
 from src.controller.grbl import GRBLController
 from src.controller.bridge import BridgeController
+from src.controller.c3_status import C3StatusController
+from src.controller.c3_wireless import C3WirelessController
 from src.display.base import Indicator
 from src.display.ui import UIManager
 from src.gcode.macros import MacroLibrary
@@ -63,7 +65,9 @@ class PendantApplication:
         mode = config.get("controller_mode", "disabled")
         state.controller_enabled = mode != "disabled"
         if transport is None:
-            if mode in ("uart", "bridge"):
+            if mode in ("c3_espnow_bench", "c3_espnow"):
+                transport = MockTransport(connected=False)
+            elif mode in ("uart", "bridge"):
                 transport = UARTTransport.from_pin_names(
                     config.get("uart_tx_pin"), config.get("uart_rx_pin"),
                     config.get("uart_baudrate", 115200)
@@ -74,7 +78,15 @@ class PendantApplication:
                 transport = MockTransport(connected=False)
             else:
                 raise ValueError("unsupported controller mode: " + mode)
-        if mode == "bridge":
+        if mode == "c3_espnow_bench":
+            if sys.implementation.name != "circuitpython":
+                raise RuntimeError("ESP-NOW hardware mode requires CircuitPython")
+            controller = C3StatusController(state)
+        elif mode == "c3_espnow":
+            if sys.implementation.name != "circuitpython":
+                raise RuntimeError("ESP-NOW hardware mode requires CircuitPython")
+            controller = C3WirelessController(state, now=clock)
+        elif mode == "bridge":
             controller = BridgeController(
                 state, transport, clock,
                 motion_enabled=config.get("bridge_motion_enabled", False))
@@ -194,7 +206,7 @@ class PendantApplication:
     def observe_estop(self, active):
         """Observe supplementary E-stop contact and immediately inhibit I/O."""
         self.safety.observe_estop(active)
-        if active and self.transport.connected:
+        if active and (self.transport.connected or isinstance(self.controller, C3WirelessController)):
             self.controller.cancel_jog()
             self.streamer.inhibit()
 
@@ -227,24 +239,30 @@ class PendantApplication:
                 return True
             return self.actions.dispatch(command.value)
         if name == "JOB_START":
-            if isinstance(self.controller, BridgeController):
+            if isinstance(self.controller, (BridgeController, C3StatusController, C3WirelessController)):
                 raise SafetyError("bridge file streaming is not implemented")
             job = self.storage.select_job(command.value)
             self.streamer.start(job, self.clock())
             self.ui.enter("ACTIVE_JOB")
             return True
         if name == "JOB_HOLD":
+            if isinstance(self.controller, (C3StatusController, C3WirelessController)):
+                raise SafetyError("C3 bench mode cannot control jobs")
             self.streamer.pause()
             return True
         if name == "JOB_RESUME":
+            if isinstance(self.controller, C3StatusController):
+                raise SafetyError("C3 bench mode cannot control jobs")
             self.streamer.resume()
             return True
         if name == "JOB_CANCEL":
+            if isinstance(self.controller, C3StatusController):
+                raise SafetyError("C3 bench mode cannot control jobs")
             self.streamer.cancel()
             return True
         if name == "MACRO_RUN":
-            if isinstance(self.controller, BridgeController):
-                raise SafetyError("bridge macros are not implemented")
+            if isinstance(self.controller, (BridgeController, C3WirelessController, C3StatusController)):
+                raise SafetyError("wireless macros are not implemented")
             self.macros.queue(command.value, self.controller, self.safety)
             return True
         if name == "NETWORK_SCAN":
@@ -303,11 +321,15 @@ class PendantApplication:
             # owner before any wheel event from this sample is dispatched.
             queued_jog = any(item[1] == "jog" for item in self.controller.queue)
             self.controller.discard_queued("jog")
-            if self.transport.connected and (self.state.jog_active or queued_jog):
+            if (self.transport.connected or isinstance(self.controller, C3WirelessController)) and (self.state.jog_active or queued_jog):
                 self.controller.cancel_jog()
             self.state.jog_active = False
             self.ui.apply_selector_context()
         if sample.multiplier_changed:
+            # Resolution changes also revoke the previous handwheel command.
+            # Never interpret wheel deltas across a multiplier transition.
+            if isinstance(self.controller, C3WirelessController):
+                self.controller.cancel_jog()
             self._record_selector_transition(
                 "resolution", sample.multiplier_direction, started)
         for kind in ("axis", "resolution"):
@@ -318,7 +340,7 @@ class PendantApplication:
             self.observe_estop(sample.estop)
         if sample.deadman_changed and not self.state.deadman_enabled:
             queued_jog = any(item[1] == "jog" for item in self.controller.queue)
-            if self.transport.connected and (self.state.jog_active or queued_jog):
+            if (self.transport.connected or isinstance(self.controller, C3WirelessController)) and (self.state.jog_active or queued_jog):
                 self.controller.cancel_jog()
         for event in sample.events:
             try:
@@ -343,9 +365,10 @@ class PendantApplication:
                         len(self.network_service.scan_results)
                     )
         self.controller.poll(started)
-        self.streamer.poll(started)
+        if not isinstance(self.controller, (C3StatusController, C3WirelessController)):
+            self.streamer.poll(started)
         events = self.watchdog.poll(started)
-        if "jog_timeout" in events and self.transport.connected:
+        if "jog_timeout" in events and (self.transport.connected or isinstance(self.controller, C3WirelessController)):
             self.controller.cancel_jog()
         self.ui.refresh_context()
         info = self.network_service.info()
