@@ -1,13 +1,46 @@
-"""Allocation-free visual tokens for the round CNC instrument panel."""
+"""Small, editable 240px round UI palettes. No machine logic belongs here.
 
-BACKGROUND = 0x030708
-PANEL = 0x101719
-TEXT = 0xF4F7F8
-MUTED = 0x738084
-CYAN = 0x00D9EC
-GREEN = 0x21E69A
-YELLOW = 0xF2C230
-RED = 0xFF4057
+Add a palette to THEMES and set MPG_UI_THEME in settings.toml to activate it.
+The original symbols remain for compatibility with existing renderers.
+"""
+
+THEMES = {
+    "industrial": {
+        "background": 0x030708, "panel": 0x101719, "text": 0xF4F7F8,
+        "muted": 0x738084, "accent": 0x00D9EC, "success": 0x21E69A,
+        "warning": 0xF2C230, "danger": 0xFF4057, "highlight": 0x15333A,
+    },
+    "ice": {
+        "background": 0x01080F, "panel": 0x0A1926, "text": 0xF2FCFF,
+        "muted": 0x7496A9, "accent": 0x43E8FF, "success": 0x62F5C0,
+        "warning": 0xFFCA5C, "danger": 0xFF5368, "highlight": 0x143548,
+    },
+    "amber": {
+        "background": 0x090704, "panel": 0x19140A, "text": 0xFFF7DC,
+        "muted": 0xA29174, "accent": 0xFFB62B, "success": 0xBFE970,
+        "warning": 0xF5CE4B, "danger": 0xFF5163, "highlight": 0x403017,
+    },
+    "spectrum": {
+        "background": 0x03050B, "panel": 0x101526, "text": 0xF6F8FF,
+        "muted": 0x8C93AD, "accent": 0x00D8FF, "success": 0x65FBA9,
+        "warning": 0xF6CC45, "danger": 0xFF4D72, "highlight": 0x29234A,
+    },
+}
+
+
+def select(name):
+    """Return immutable-by-convention palette mapping, falling back safely."""
+    return THEMES.get(str(name or "industrial").lower(), THEMES["industrial"])
+
+
+BACKGROUND = THEMES["industrial"]["background"]
+PANEL = THEMES["industrial"]["panel"]
+TEXT = THEMES["industrial"]["text"]
+MUTED = THEMES["industrial"]["muted"]
+CYAN = THEMES["industrial"]["accent"]
+GREEN = THEMES["industrial"]["success"]
+YELLOW = THEMES["industrial"]["warning"]
+RED = THEMES["industrial"]["danger"]
 
 MACHINE_COLORS = {
     "idle": GREEN, "run": CYAN, "jog": CYAN, "hold": YELLOW,
