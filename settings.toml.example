@@ -20,7 +20,7 @@ MPG_NETWORK_CONNECT_TIMEOUT="15"
 
 # disabled | uart (direct GRBL) | mock | bridge (Protocol v1 over UART)
 # c3_espnow_bench (radio pairing diagnostics; NO CNC commands)
-MPG_CONTROLLER_MODE="disabled"
+MPG_CONTROLLER_MODE="c3_espnow"
 # Setting c3_espnow_bench only verifies radio pairing. It never enables jogging.
 # Bridge jog is bounded continuous movement, not exact per-detent stepping.
 # Keep disabled until host safety and real hardware are verified.
@@ -101,7 +101,7 @@ MPG_SPI_MISO_PIN="D9"
 # Display profile/controller settings remain independent of the board profile.
 # Round Display reservations: D0/GPIO1 battery sense, D7/GPIO44 touch IRQ;
 # touch and RTC share D4/D5 I2C with the MCP23017. Do not reuse these pins.
-MPG_DISPLAY_ENABLED="false"
+MPG_DISPLAY_ENABLED="true"
 MPG_DISPLAY_USE_BOARD_DISPLAY="false"
 MPG_DISPLAY_WIDTH="240"
 MPG_DISPLAY_HEIGHT="240"
