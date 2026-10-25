@@ -8,22 +8,22 @@ THEMES = {
     "industrial": {
         "background": 0x030708, "panel": 0x101719, "text": 0xF4F7F8,
         "muted": 0x738084, "accent": 0x00D9EC, "success": 0x21E69A,
-        "warning": 0xF2C230, "danger": 0xFF4057, "highlight": 0x15333A, "separator": 0x2A373C,
+        "warning": 0xF2C230, "danger": 0xFF4057, "highlight": 0x15333A, "separator": 0x2A373C, "focus_border": 0x86989E,
     },
     "ice": {
         "background": 0x01080F, "panel": 0x0A1926, "text": 0xF2FCFF,
         "muted": 0x7496A9, "accent": 0x43E8FF, "success": 0x62F5C0,
-        "warning": 0xFFCA5C, "danger": 0xFF5368, "highlight": 0x143548, "separator": 0x2B4754,
+        "warning": 0xFFCA5C, "danger": 0xFF5368, "highlight": 0x143548, "separator": 0x2B4754, "focus_border": 0x8AA9B6,
     },
     "amber": {
         "background": 0x090704, "panel": 0x19140A, "text": 0xFFF7DC,
         "muted": 0xA29174, "accent": 0xFFB62B, "success": 0xBFE970,
-        "warning": 0xF5CE4B, "danger": 0xFF5163, "highlight": 0x403017, "separator": 0x493B28,
+        "warning": 0xF5CE4B, "danger": 0xFF5163, "highlight": 0x403017, "separator": 0x493B28, "focus_border": 0xB2A48B,
     },
     "spectrum": {
         "background": 0x03050B, "panel": 0x101526, "text": 0xF6F8FF,
         "muted": 0x8C93AD, "accent": 0x00D8FF, "success": 0x65FBA9,
-        "warning": 0xF6CC45, "danger": 0xFF4D72, "highlight": 0x29234A, "separator": 0x343448,
+        "warning": 0xF6CC45, "danger": 0xFF4D72, "highlight": 0x29234A, "separator": 0x343448, "focus_border": 0x9498B3,
     },
 }
 
