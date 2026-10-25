@@ -101,7 +101,7 @@ class ReconciliationTests(unittest.TestCase):
         assert values["CIRCUITPY_WIFI_PASSWORD"] == '"secret"'
         assert ("migrate-default", "MPG_PIN_A") in actions
 
-    def test_xiao_sd_setting_migrates_only_known_disabled_default(self):
+    def test_sd_remains_disabled_until_explicitly_enabled(self):
         root = self.fixture(
             local='',
             device='MPG_BOARD_PROFILE="xiao_esp32s3"\n'
@@ -111,8 +111,8 @@ class ReconciliationTests(unittest.TestCase):
             (deploy.ROOT / "settings.toml.example").read_text(encoding="utf-8"),
             encoding="utf-8")
         values, _, actions = self.reconcile(root)
-        self.assertEqual(values["MPG_SD_ENABLED"], '"true"')
-        self.assertIn(("migrate-default", "MPG_SD_ENABLED"), actions)
+        self.assertEqual(values["MPG_SD_ENABLED"], '"false"')
+        self.assertNotIn(("migrate-default", "MPG_SD_ENABLED"), actions)
         self.assertEqual(values["CIRCUITPY_WIFI_PASSWORD"], '"private"')
         (root / "local.toml").write_text('MPG_SD_ENABLED="false"\n',
                                          encoding="utf-8")
