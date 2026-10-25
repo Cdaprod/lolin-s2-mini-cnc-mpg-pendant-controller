@@ -342,3 +342,16 @@ the XIAO round display. With a FAT32 card inserted, set
 `MPG_SD_ENABLED="true"` only for an attended hardware test. Revert to
 `false` if display startup or touch fails. Never infer success from a
 `/sd` folder alone: confirm `sd MOUNTED` and readable `/sd/jobs`.
+
+### CHSC6X touch driver (Seeed Round Display)
+
+Manufacturer source identifies the Round Display's touch controller as
+CHSC6X, I2C address `0x2E`, with active-low interrupt on D7. The former
+CST8XX default was incorrect for this board. The firmware now reads the
+five-byte CHSC6X packet through the existing shared I2C bus; other board
+profiles may explicitly select `MPG_TOUCH_DRIVER="cst8xx"`.
+Default: `MPG_TOUCH_DRIVER="chsc6x"` and `MPG_TOUCH_IRQ_PIN="D7"`.
+Physical touches require both `MPG_TOUCH_ENABLED=true` and responsive
+I2C/IRQ hardware. The SD and display are separate from this I2C driver.
+
+Reference: https://github.com/Seeed-Studio/Seeed_Arduino_RoundDisplay/blob/main/src/lv_xiao_round_screen.h
