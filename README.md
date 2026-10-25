@@ -330,3 +330,15 @@ If SD was enabled in local or device settings, set
 Then deploy without `--verify` to apply the new firmware. The deployer
 preserves explicit device settings unless overridden. Firmware stays on
 CIRCUITPY, not SD. SD must remain optional and never gate display startup.
+
+### Shared GC9A01 + microSD bus (experimental)
+
+PR #22 now passes one SPI object (SCK D8, MOSI D10, MISO D9) to both
+GC9A01 display (CS D1) and SD (CS D2) rather than claiming the pins twice.
+Touch and MCP23017 independently use shared I2C (D4/D5). The display is
+created before SD is mounted and an SD failure must not stop the round UI.
+**SD remains off by default** until this exact configuration is verified on
+the XIAO round display. With a FAT32 card inserted, set
+`MPG_SD_ENABLED="true"` only for an attended hardware test. Revert to
+`false` if display startup or touch fails. Never infer success from a
+`/sd` folder alone: confirm `sd MOUNTED` and readable `/sd/jobs`.
