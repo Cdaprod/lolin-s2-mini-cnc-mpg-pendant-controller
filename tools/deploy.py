@@ -204,10 +204,12 @@ def reconcile(template_path, local_path, device_path, apply_local=False,
     outdated = {"MPG_PIN_A": ('"GPIO42"', '"GPIO39"'),
                 "MPG_PIN_B": ('"GPIO41"', '"GPIO40"'),
                 "MPG_TOUCH_ENABLED": ("false", "true")}
-    # Migrate legacy disabled transport/mirror defaults on the XIAO only.
-    # Local overrides take precedence; other device settings remain intact.
-    enable_defaults = {"MPG_CONTROLLER_MODE": ('"disabled"', '"c3_espnow"'),
-                       "MPG_MIRROR_ENABLED": ('"false"', '"true"')}
+    # These safe, repo-controlled defaults are authoritative during deployment
+    # even when the device has stale values from an earlier deployment.
+    # All unrelated device settings (especially credentials) are preserved.
+    DEPLOY_DEFAULTS = ("MPG_MIRROR_ENABLED",)
+    # Preserve the user's explicit, ignored ./settings.toml overrides when
+    # --apply-local-settings is requested; otherwise use the tracked template.
     for key in all_keys:
         if key in device:
             value, action = device[key], "preserve"
@@ -215,10 +217,8 @@ def reconcile(template_path, local_path, device_path, apply_local=False,
                     value == outdated[key][0] and
                     not (apply_local and key in local)):
                 value, action = outdated[key][1], "migrate-default"
-            if (xiao and key in enable_defaults and
-                    value == enable_defaults[key][0] and
-                    not (apply_local and key in local)):
-                value, action = enable_defaults[key][1], "migrate-default"
+            if key in DEPLOY_DEFAULTS and not (apply_local and key in local):
+                value, action = template[key], "sync-default"
             if apply_local and key in local and not is_secret(key):
                 value, action = local[key], "update"
             elif apply_secrets and key in local and is_secret(key):
@@ -310,7 +310,9 @@ def dependency_problems(settings, root=ROOT, target=None):
     display_enabled = literal_value(
         settings.get("MPG_DISPLAY_ENABLED", "false")).lower() == "true"
     modules = list(PROFILE_DEPENDENCIES.get(profile, ())) if display_enabled else []
-    if literal_value(settings.get("MPG_TOUCH_ENABLED", "false")).lower() == "true":
+    if (literal_value(settings.get("MPG_TOUCH_ENABLED", "false")).lower() == "true"
+            and literal_value(settings.get("MPG_TOUCH_DRIVER", '"chsc6x"')).lower()
+            == "cst8xx"):
         modules.append("adafruit_cst8xx")
     for module in modules:
         candidates = ("lib/{}.mpy".format(module), "lib/{}.py".format(module),
