@@ -16,6 +16,7 @@ class TouchGestures:
         self.last = None
         self.started = 0
         self.active = False
+        self.last_preview = None
 
     def poll(self, point):
         """Return zero or one ('tap'|'long_press'|'swipe_*', x, y).
@@ -32,7 +33,13 @@ class TouchGestures:
                 self.start = (x, y)
                 self.started = now
                 self.active = True
+                self.last_preview = None
             self.last = (x, y)
+            # Highlight the hovered menu row while the finger remains down.
+            row = (y - 58) // 22 if 58 <= y < 190 else None
+            if row is not None and row != self.last_preview:
+                self.last_preview = row
+                return (("drag", x, y),)
             return ()
         if self.start is None:
             return ()
@@ -42,6 +49,7 @@ class TouchGestures:
         self.start = None
         self.last = None
         self.active = False
+        self.last_preview = None
         dx, dy = x1 - x0, y1 - y0
         if abs(dx) >= self.swipe_distance or abs(dy) >= self.swipe_distance:
             if abs(dx) > abs(dy):
@@ -50,6 +58,9 @@ class TouchGestures:
                 kind = "swipe_down" if dy > 0 else "swipe_up"
         elif abs(dx) <= self.movement_tolerance and abs(dy) <= self.movement_tolerance:
             kind = "long_press" if duration >= self.long_press else "tap"
+        elif 58 <= y1 < 190:
+            kind = "release_select"
         else:
             return ()
-        return ((kind, x0, y0),)
+        return ((kind, x1 if kind == "release_select" else x0,
+                 y1 if kind == "release_select" else y0),)
