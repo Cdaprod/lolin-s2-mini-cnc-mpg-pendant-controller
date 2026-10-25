@@ -1,44 +1,61 @@
-"""Normalize a touch controller into UI events; never dispatch machine actions."""
+"""CST8XX touch input. User-interface only, never machine motion."""
 
 from src.display.ui import ROTATE_CCW, ROTATE_CW, TouchEvent
+from src.input.touch_gestures import TouchGestures
 
 
 class TouchInput:
-    """Recognize tap, long-press, and deliberate vertical page movement."""
+    """Normalize releases to UI navigation, with a tiny visual touch signal."""
 
-    def __init__(self, source, clock, long_press=0.8, swipe_distance=45):
+    def __init__(self, source, clock, long_press=0.8, swipe_distance=38,
+                 rotation=0, invert_x=False, invert_y=False):
         self.source = source
+        self.gestures = TouchGestures(clock, long_press, swipe_distance)
+        self.rotation = int(rotation) % 360
+        self.invert_x = bool(invert_x)
+        self.invert_y = bool(invert_y)
+        self.last_feedback = None
+        self.feedback_until = 0
         self.clock = clock
-        self.long_press = float(long_press)
-        self.swipe_distance = int(swipe_distance)
-        self._start = None
-        self._started_at = None
+        self.sample_count = 0
+        self.event_count = 0
+
+    def _transform(self, point):
+        if point is None:
+            return None
+        x, y = int(point[0]), int(point[1])
+        if self.rotation == 90:
+            x, y = 239 - y, x
+        elif self.rotation == 180:
+            x, y = 239 - x, 239 - y
+        elif self.rotation == 270:
+            x, y = y, 239 - x
+        if self.invert_x:
+            x = 239 - x
+        if self.invert_y:
+            y = 239 - y
+        return x, y
 
     def poll(self):
-        point = self.source.point()
-        now = self.clock()
-        if point is not None and self._start is None:
-            self._start = (int(point[0]), int(point[1]))
-            self._started_at = now
-            return ()
+        point = self._transform(self.source.point())
         if point is not None:
+            self.sample_count += 1
+        events = self.gestures.poll(point)
+        if not events:
             return ()
-        if self._start is None:
-            return ()
-        x, y = self._start
-        end = self.source.last_point() or self._start
-        duration = now - self._started_at
-        self._start = None
-        self._started_at = None
-        delta_y = int(end[1]) - y
-        if abs(delta_y) >= self.swipe_distance:
-            return (ROTATE_CW if delta_y < 0 else ROTATE_CCW,)
-        return (TouchEvent("long_press" if duration >= self.long_press else
-                           "tap", x, y),)
+        kind, x, y = events[0]
+        self.event_count += 1
+        self.last_feedback = (x, y, kind)
+        self.feedback_until = self.clock() + 0.20
+        if kind == "swipe_up":
+            return (ROTATE_CW,)
+        if kind == "swipe_down":
+            return (ROTATE_CCW,)
+        return (TouchEvent(kind, x, y),)
 
 
 class CST8XXTouchSource:
-    """Small adapter around the CircuitPython CST816/CST8XX driver."""
+    """Adapter for Seeed's CST816/CST8XX family (shared I2C)."""
 
     def __init__(self, controller):
         self.controller = controller
@@ -55,6 +72,6 @@ class CST8XXTouchSource:
 
 
 def build_cst8xx(i2c):
-    """Build the Seeed round-display touch source on the shared I2C bus."""
+    """Create a touch source; the shared I2C bus also hosts MCP23017."""
     import adafruit_cst8xx
     return CST8XXTouchSource(adafruit_cst8xx.CST8XX(i2c))
