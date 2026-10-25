@@ -14,9 +14,19 @@ class _DisplayIOTextLine:
         palette = displayio.Palette(2)
         palette[0] = 0x000000
         palette[1] = color
+        self.palette = palette
+        self.color = color
         palette.make_transparent(0)
         self.node = displayio.TileGrid(self.bitmap, pixel_shader=palette)
         self.text = None
+
+    def set_color(self, color):
+        """Recolor existing glyph pixels in place without bitmap rewriting."""
+        if self.color == color:
+            return False
+        self.palette[1] = color
+        self.color = color
+        return True
 
     def set_text(self, text):
         text = str(text)
