@@ -22,6 +22,8 @@ font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
 small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 10)
 large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 17)
 for skin in ("industrial", "ice", "amber", "spectrum"):
+    # Retain per-theme previews for color regression; also publish a page-
+    # accurate composite showing the palette chosen by physical selector.
     c = theme.select(skin)
     for name in names:
         screen = screens[name]
@@ -80,6 +82,20 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
                        fill=c["text"] if enabled else c["muted"])
             d.text((120, 211), "BACK  ·  HOME", anchor="mm", font=small, fill=c["muted"])
         im.save(OUT / f"{skin}-{name.lower()}.png")
+
+# Dedicated preview of each physical page in its assigned theme.
+assigned = (("HOME", "industrial"), ("EXPLORER", "amber"),
+            ("CONFIGURATION", "ice"), ("PREVIEW", "spectrum"))
+page_sheet = Image.new("RGB", (1120, 310), "#15191D")
+page_draw = ImageDraw.Draw(page_sheet)
+heading = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 18)
+for i, (screen, palette) in enumerate(assigned):
+    x = 20 + i * 280
+    preview = Image.open(OUT / f"{palette}-{screen.lower()}.png")
+    page_sheet.paste(preview, (x, 12))
+    page_draw.text((x, 260), f"{screen} · {palette.upper()}",
+                   font=heading, fill="#E5E7EB")
+page_sheet.save(OUT / "physical-pages-themed.png")
 # Readable contact sheets accompany every CI artifact for visual regression review.
 for skin in ("industrial", "ice", "amber", "spectrum"):
     sheet = Image.new("RGB", (1120, 1160), "#15191D")
