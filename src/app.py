@@ -105,29 +105,25 @@ class PendantApplication:
                 "PARK": config.get("park", "G53 G0 X0 Y0"),
             }, watchdog=watchdog, clock=clock
         )
-        # Display and microSD use the same SPI pins on the Seeed round board.
-        # Allocate the bus once when SD is requested, before either consumer.
-        if (shared_spi is None and config.get("sd_enabled") and
-                config.get("display_enabled") and
-                config.get("display_renderer") == "round" and
-                sys.implementation.name == "circuitpython"):
-            from src.hardware import build_shared_spi
-            shared_spi = build_shared_spi(config)
+        # CircuitPython's GC9A01 display retains ownership of its SPI bus.
+        # A second SPI object for SD can raise "pins in use" and previously
+        # caused us to replace the operational round UI with a text fallback.
+        # Keep the display independent; SD failure is nonfatal.
+        sd_spi = shared_spi
         # Initialize the round GC9A01 before mounting the SPI SD card.
         # A card/mount failure must never prevent critical display startup.
         ui = UIManager(state)
         ui.complete_boot()
         display_error = None
         try:
-            renderer = display or (build_display(config, shared_spi=shared_spi)
-                                   if shared_spi is not None else build_display(config))
+            renderer = display or build_display(config)
         except Exception as exc:
             display_error = "display initialization failed: {}".format(
                 type(exc).__name__)
             renderer = build_display({"display_enabled": False})
         sd_mount = None
         if storage is None:
-            storage, sd_mount = build_storage(config, shared_spi)
+            storage, sd_mount = build_storage(config, sd_spi)
         macros = MacroLibrary(storage.macros_path)
         streamer = GCodeStreamer(state, controller, clock=clock)
         if hasattr(renderer, "bind_ui"):
