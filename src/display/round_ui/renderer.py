@@ -4,6 +4,7 @@ import math
 import time
 
 from ..navigation import menu_window_start
+from . import theme
 
 from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
@@ -31,6 +32,9 @@ class RoundRenderer:
         self.touch_halo = scene.get("touch_halo")
         self.nav_group = scene.get("nav_group")
         self.nav_dots = scene.get("nav_dots", ())
+        self.palettes = scene.get("palettes", {})
+        self.themed_text = scene.get("themed_text", ())
+        self.active_theme = None
         self.home_group = scene.get("home_group")
         self.menu_group = scene.get("menu_group")
         self.ring = InstrumentRing(scene["ring"])
@@ -49,6 +53,35 @@ class RoundRenderer:
         self.overlay = Overlay(scene["overlay_group"], scene["overlay_title"],
                                scene["overlay_detail"])
         self.display.root_group = self.root
+
+
+    def _apply_page_theme(self, active_page):
+        """Recolor retained DisplayIO objects without rebuilding the screen."""
+        name = theme.PAGE_THEMES.get(str(active_page or "HOME").upper(),
+                                     "industrial")
+        if name == self.active_theme:
+            return False
+        colors = theme.select(name)
+        self.active_theme = name
+        if self.palettes:
+            dial = self.palettes["dial"]
+            dial[0] = colors["background"]
+            for index in (1, 2, 3, 4, 5):
+                dial[index] = colors["panel"]
+            focus = self.palettes["focus"]
+            focus[0] = colors["panel"]
+            focus[1] = colors.get("focus_border", colors["muted"])
+            focus[2] = colors["accent"]
+            self.palettes["separator"][0] = colors["separator"]
+            self.palettes["halo"][1] = colors["accent"]
+        if hasattr(self.ring.node, "colors"):
+            self.ring.node.colors = colors
+            self.ring.signature = None
+        for line, token in self.themed_text:
+            if hasattr(line, "set_color"):
+                line.set_color(colors[token])
+        self.menu_colors = (colors["text"], colors["muted"])
+        return True
 
     def bind_ui(self, ui):
         self.ui = ui
@@ -121,6 +154,7 @@ class RoundRenderer:
         if self.ui is None:
             raise RuntimeError("RoundRenderer must be bound to UIManager")
         model = self.ui.view_model()
+        theme_changed = self._apply_page_theme(model.get("active_page", "HOME"))
         nav_changed = self._navigation(model)
         if model.get("overlay") and self._nav_visible:
             self.nav_group.hidden = True
@@ -192,7 +226,8 @@ class RoundRenderer:
         page = "{}/{}".format(selected + 1, len(items)) if items else "-"
         changed = self.menu_footer.set(page + "  BACK | HOME") or changed
         changed = self.overlay.update(model.get("overlay")) or changed
-        changed = self._halo_dirty or self._nav_dirty or nav_changed or changed
+        changed = (theme_changed or self._halo_dirty or self._nav_dirty
+                   or nav_changed or changed)
         self._halo_dirty = False
         self._nav_dirty = False
         if not changed:
