@@ -42,6 +42,8 @@ class C3PairingBench:
         self.rx_frames = 0
         self.rx_pair_acks = 0
         self.last_rx_error = None
+        self.last_pair_ack_sender = None
+        self.pair_ack_session_mismatch = 0
         self._last_diag = None
 
     def start(self):
@@ -85,7 +87,10 @@ class C3PairingBench:
         if self.last_rx is not None and current - self.last_rx > 5:
             self.paired = False
             self.peer = None
-            self.unicast_peer = None
+            self.last_rx = None
+            self.last_heartbeat = None
+            # Retain registered peer object; re-registering stale MACs can
+            # overflow the fixed CircuitPython ESP-NOW peer table.
         for _ in range(4):
             packet = self.esp.read()
             if packet is None:
@@ -96,6 +101,9 @@ class C3PairingBench:
                 kind, session, seq, payload = proto.decode(packet.msg)
                 if kind == proto.PAIR_ACK:
                     self.rx_pair_acks += 1
+                    self.last_pair_ack_sender = ":".join("%02x" % x for x in sender)
+                    if session != self.session:
+                        self.pair_ack_session_mismatch += 1
                 if kind == proto.PAIR_ACK and session == self.session:
                     peer_mac, _function = proto.validate_pair_ack(
                         packet.msg, self.session, self.local_mac)
@@ -113,6 +121,7 @@ class C3PairingBench:
                             self.unicast_peer = candidate
                     self.peer = sender
                     self.paired = True
+                    self.last_heartbeat = None
                     self.last_rx = current
                     self.good += 1
                     print("[espnow] PAIR_ACK accepted from", ":".join("%02x" % x for x in sender))
@@ -161,6 +170,8 @@ class C3PairingBench:
             "valid_packets": self.good,
             "rx_frames": self.rx_frames,
             "rx_pair_acks": self.rx_pair_acks,
+            "pair_ack_session_mismatch": self.pair_ack_session_mismatch,
+            "last_pair_ack_sender": self.last_pair_ack_sender,
             "last_rx_error": self.last_rx_error,
             "rejected_packets": self.bad,
             "motion_enabled": False,
