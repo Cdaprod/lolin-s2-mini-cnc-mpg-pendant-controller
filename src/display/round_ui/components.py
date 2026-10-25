@@ -89,7 +89,8 @@ class MotionPrompt:
     def update(self, hold, armed, activity, controller, link_state=None):
         activity = int(activity)
         if not controller:
-            value = "GRBL OFFLINE" if link_state == "PAIRED_NO_GRBL" else "WAITING FOR GRBL"
+            value = ("GRBL OFFLINE" if link_state == "PAIRED_NO_GRBL" else
+                     "CONTROLLER OFFLINE")
         elif not hold:
             value = "HOLD TO JOG"
         elif not armed:
