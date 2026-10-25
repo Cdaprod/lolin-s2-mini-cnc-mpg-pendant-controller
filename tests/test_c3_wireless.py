@@ -49,6 +49,38 @@ class WirelessTests(unittest.TestCase):
             (proto.UART_RESPONSE, 0, line.encode("ascii") + b"\n"))
         self.ctrl.poll()
 
+    def test_display_reports_pairing_radio_and_grbl_independently(self):
+        from src.display.round_ui.renderer import RoundRenderer
+        from src.display.ui import UIManager
+        from tests.test_round_ui import Display, scene_factory
+        ui = UIManager(self.state)
+        ui.complete_boot()
+        renderer = RoundRenderer(Display(), scene_factory)
+        renderer.bind_ui(ui)
+        self.ctrl.transport.paired = False
+        self.ctrl.poll()
+        renderer.render(self.state)
+        self.assertEqual(renderer.state_label.value, "ESP-NOW PAIRING")
+        self.ctrl.transport.paired = True
+        self.ctrl.poll()
+        renderer.render(self.state)
+        self.assertEqual(renderer.state_label.value, "ESP-NOW LINKED")
+        self.assertEqual(renderer.motion.text.value, "GRBL OFFLINE")
+        self.assertEqual(self.state.connection_state, "disconnected")
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        renderer.render(self.state)
+        self.assertEqual(self.state.link_state, "GRBL_FRESH")
+        self.assertEqual(renderer.state_label.value, "ESP-NOW LINKED")
+        self.time[0] += .51
+        self.ctrl.poll()
+        renderer.render(self.state)
+        self.assertEqual(renderer.motion.text.value, "GRBL OFFLINE")
+        self.assertEqual(self.state.connection_state, "disconnected")
+        self.ctrl.transport.paired = False
+        self.ctrl.poll()
+        renderer.render(self.state)
+        self.assertEqual(renderer.state_label.value, "ESP-NOW LOST")
+
     def test_no_motion_without_fresh_grbl_status(self):
         self.state.deadman_enabled = True
         self.assertFalse(self.ctrl.queue_jog("X", .01, 200))
