@@ -16,6 +16,7 @@ class RoundRenderer:
         self.animations = bool(animations)
         self._halo_until = 0
         self._halo_visible = False
+        self._halo_dirty = False
         scene = scene_factory(display)
         self.root = scene["root"]
         self.touch_halo = scene.get("touch_halo")
@@ -54,6 +55,7 @@ class RoundRenderer:
         self.touch_halo.hidden = False
         self._halo_visible = True
         self._halo_until = float(until)
+        self._halo_dirty = True
 
     def animate(self, now):
         """Bounded animation maintenance, with no blocking sleeps or allocation."""
@@ -63,6 +65,7 @@ class RoundRenderer:
             return False
         self.touch_halo.hidden = True
         self._halo_visible = False
+        self._halo_dirty = True
         return True
 
     def render(self, state):
@@ -132,7 +135,8 @@ class RoundRenderer:
         page = "{}/{}".format(selected + 1, len(items)) if items else "-"
         changed = self.menu_footer.set(page + "  BACK | HOME") or changed
         changed = self.overlay.update(model.get("overlay")) or changed
-        changed = self._halo_visible or changed
+        changed = self._halo_dirty or changed
+        self._halo_dirty = False
         if not changed:
             self.skipped_count += 1
             return False
