@@ -8,13 +8,17 @@ from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
 class RoundRenderer:
     """Mutate a small persistent scene; never issue controller operations."""
 
-    def __init__(self, display, scene_factory):
+    def __init__(self, display, scene_factory, animations=True):
         self.display = display
         self.ui = None
         self.render_count = 0
         self.skipped_count = 0
+        self.animations = bool(animations)
+        self._halo_until = 0
+        self._halo_visible = False
         scene = scene_factory(display)
         self.root = scene["root"]
+        self.touch_halo = scene.get("touch_halo")
         self.home_group = scene.get("home_group")
         self.menu_group = scene.get("menu_group")
         self.ring = InstrumentRing(scene["ring"])
@@ -35,6 +39,31 @@ class RoundRenderer:
 
     def bind_ui(self, ui):
         self.ui = ui
+
+    def touch_feedback(self, point, until):
+        """Show a preallocated, temporary touch target; never dispatch actions."""
+        if not self.animations or self.touch_halo is None:
+            return
+        if point is None:
+            return
+        x, y = int(point[0]), int(point[1])
+        if not (7 <= x <= 232 and 7 <= y <= 232):
+            return
+        self.touch_halo.x = x - 6
+        self.touch_halo.y = y - 6
+        self.touch_halo.hidden = False
+        self._halo_visible = True
+        self._halo_until = float(until)
+
+    def animate(self, now):
+        """Bounded animation maintenance, with no blocking sleeps or allocation."""
+        if self.touch_halo is None or not self._halo_visible:
+            return False
+        if float(now) < self._halo_until:
+            return False
+        self.touch_halo.hidden = True
+        self._halo_visible = False
+        return True
 
     def render(self, state):
         if self.ui is None:
@@ -103,6 +132,7 @@ class RoundRenderer:
         page = "{}/{}".format(selected + 1, len(items)) if items else "-"
         changed = self.menu_footer.set(page + "  BACK | HOME") or changed
         changed = self.overlay.update(model.get("overlay")) or changed
+        changed = self._halo_visible or changed
         if not changed:
             self.skipped_count += 1
             return False
