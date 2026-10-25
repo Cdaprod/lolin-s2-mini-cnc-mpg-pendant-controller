@@ -3,6 +3,7 @@ import unittest
 from src.display.round_ui.renderer import RoundRenderer
 from src.display.round_ui.bootstrap import apply_mock_state
 from src.display.round_ui.geometry import RoundLayout
+from src.display.round_ui import theme
 from src.display.ui import ROTATE_CCW, ROTATE_CW, SELECT, UIManager
 from src.state import PendantState
 
@@ -197,6 +198,35 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(len(ui.items()), 6)
         self.assertTrue(renderer.menu[0].value.startswith("Wi-Fi"))
         self.assertIn("Reason", renderer.menu[5].value)
+
+    def test_palettes_supply_safe_named_tokens(self):
+        required = {"background", "panel", "text", "muted", "accent",
+                    "success", "warning", "danger", "highlight"}
+        for name in ("industrial", "ice", "amber", "spectrum"):
+            palette = theme.select(name)
+            self.assertTrue(required.issubset(palette))
+            self.assertNotEqual(palette["text"], palette["background"])
+        self.assertEqual(theme.select("unknown"), theme.select("industrial"))
+
+    def test_touch_feedback_nonblocking_expiration(self):
+        state, ui, display, renderer = self.make_renderer()
+        class Halo(Node):
+            def __init__(self):
+                super().__init__()
+                self.x = 0
+                self.hidden = True
+        renderer.touch_halo = Halo()
+        renderer.render(state)
+        initial = display.refreshes
+        renderer.touch_feedback((120, 120), 1.2)
+        self.assertFalse(renderer.touch_halo.hidden)
+        self.assertFalse(renderer.animate(1.1))
+        self.assertTrue(renderer.render(state))
+        self.assertEqual(display.refreshes, initial + 1)
+        self.assertFalse(renderer.render(state))
+        self.assertTrue(renderer.animate(1.2))
+        self.assertTrue(renderer.touch_halo.hidden)
+        self.assertTrue(renderer.render(state))
 
     def test_layout_regions_are_inside_round_safe_area(self):
         for region in RoundLayout.content_rows().values():
