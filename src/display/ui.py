@@ -1,6 +1,7 @@
 """Cohesive pendant information architecture and contextual event router."""
 
 from .text_entry import TextEntry
+from .navigation import menu_window_start
 
 MOTION = "MOTION"
 NAVIGATION = "NAVIGATION"
@@ -552,7 +553,7 @@ class UIManager:
         if not items:
             return None
         selected = min(self.focus.get(self.current_screen, 0), len(items) - 1)
-        start = max(0, min(selected - 5, len(items) - 6))
+        start = menu_window_start(selected, len(items), 6)
         target = start + row
         if target >= len(items):
             return None
