@@ -126,6 +126,9 @@ MPG_DISPLAY_TOUCH_SCL_PIN="D5"
 MPG_UI_THEME="industrial"
 MPG_UI_ANIMATIONS="true"
 MPG_TOUCH_ENABLED=true
+# Seeed Round Display uses CHSC6X at I2C 0x2E, IRQ D7.
+MPG_TOUCH_DRIVER="chsc6x"
+MPG_TOUCH_IRQ_PIN="D7"
 # Touch orientation is independent of LCD rotation; calibrate with the test.
 # Touch rotation: 0, 90, 180, 270
 MPG_TOUCH_ROTATION="0"
