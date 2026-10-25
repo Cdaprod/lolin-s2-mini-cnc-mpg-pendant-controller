@@ -146,6 +146,8 @@ def displayio_scene(display, colors=None):
     root = displayio.Group()
     bitmap, palette = _instrument_bitmap(displayio, colors)
     root.append(displayio.TileGrid(bitmap, pixel_shader=palette))
+    palettes = {"dial": palette}
+
 
     home = displayio.Group()
     root.append(home)
@@ -210,6 +212,7 @@ def displayio_scene(display, colors=None):
         for x in range(4):
             highlight_bitmap[x, y] = 2
         highlight_bitmap[179, y] = 1
+    palettes["focus"] = highlight_palette
     highlight_grid = displayio.TileGrid(highlight_bitmap,
                                         pixel_shader=highlight_palette,
                                         x=30, y=58)
@@ -224,6 +227,7 @@ def displayio_scene(display, colors=None):
     separator_bitmap = displayio.Bitmap(170, 1, 1)
     separator_palette = displayio.Palette(1)
     separator_palette[0] = colors.get("separator", colors["muted"])
+    palettes["separator"] = separator_palette
     for index in range(5):
         menu_group.append(displayio.TileGrid(
             separator_bitmap, pixel_shader=separator_palette,
@@ -263,6 +267,7 @@ def displayio_scene(display, colors=None):
             radius2 = (hx - 6) ** 2 + (hy - 6) ** 2
             if 22 <= radius2 <= 42:
                 halo[hx, hy] = 1
+    palettes["halo"] = halo_palette
     halo_node = displayio.TileGrid(halo, pixel_shader=halo_palette)
     halo_node.hidden = True
     root.append(halo_node)
@@ -272,6 +277,14 @@ def displayio_scene(display, colors=None):
 
     return {
         "root": root, "ring": _InstrumentRingNode(palette, colors),
+        "palettes": palettes,
+        "themed_text": ((axis_feedback, "accent"), (step_feedback, "warning"),
+                        (state_label, "success"), (axis, "accent"),
+                        (value, "text"), (context, "muted"),
+                        (increment, "warning"), (motion, "accent"),
+                        (connectivity, "muted"), (menu_title, "accent"),
+                        (menu_footer, "muted"), (overlay_title, "danger"),
+                        (overlay_detail, "text")),
         "touch_halo": halo_node, "nav_group": nav_group,
         "nav_dots": nav_dots,
         "home_group": home, "state_label": state_label,
