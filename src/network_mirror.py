@@ -59,6 +59,8 @@ class PendantMirror:
             ui.pop(field, None)
         if ui.get("screen") == "TEXT_ENTRY":
             ui["items"] = []
+        if ui.get("screen") in ("WIFI_SCAN", "JOB_BROWSER", "EXPLORER", "MACRO_BROWSER"):
+            ui["items"] = []
         if ui.get("screen") in ("NETWORK_INFO", "SYSTEM_INFO", "CONTROLLER_INFO"):
             ui["items"] = []
         ui.pop("jog_armed", None)
@@ -106,10 +108,8 @@ class PendantMirror:
         item = items[index]
         # A static screen destination is the only admissible remote selection.
         # No actions, jobs, network mutations, macros, or confirmations.
-        from src.display.ui import build_screens
-        screens = build_screens()
         if (not item.target or item.command is not None or
-                item.target not in screens or
+                item.target not in ui.screens or
                 item.target in ("ACTIVE_JOB", "TEXT_ENTRY", "JOB_DETAILS",
                                 "MACRO_DETAILS", "WIFI_SCAN")):
             return False
