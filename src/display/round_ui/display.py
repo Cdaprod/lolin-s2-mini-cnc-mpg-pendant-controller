@@ -14,7 +14,7 @@ def _pin(board, name):
     return getattr(board, name)
 
 
-def build_gc9a01(config):
+def build_gc9a01(config, shared_spi=None):
     """Construct a GC9A01 from profile-selected pins."""
     global _BACKLIGHT_OUTPUT
     import board
@@ -22,8 +22,8 @@ def build_gc9a01(config):
     import displayio
     import adafruit_gc9a01a
     displayio.release_displays()
-    spi = busio.SPI(_pin(board, config["display_sck_pin"]),
-                    MOSI=_pin(board, config["display_mosi_pin"]))
+    spi = shared_spi or busio.SPI(_pin(board, config["display_sck_pin"]),
+                                 MOSI=_pin(board, config["display_mosi_pin"]))
     try:
         from fourwire import FourWire
     except ImportError:
@@ -312,12 +312,12 @@ def displayio_scene(display, colors=None):
     }
 
 
-def from_config(config):
+def from_config(config, shared_spi=None):
     if config.get("display_use_board_display"):
         import board
         display = board.DISPLAY
     elif config.get("display_driver") == "gc9a01":
-        display = build_gc9a01(config)
+        display = build_gc9a01(config, shared_spi=shared_spi)
     else:
         raise ValueError("round renderer requires a supported display driver")
     colors = theme.select(config.get("ui_theme", "industrial"))
