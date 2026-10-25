@@ -178,8 +178,11 @@ class PendantApplication:
             try:
                 if shared_i2c is None:
                     raise RuntimeError("shared I2C unavailable")
-                from src.input.touch import build_cst8xx
-                touch_source = build_cst8xx(shared_i2c)
+                from src.input.touch import build_chsc6x, build_cst8xx
+                touch_driver = config.get("touch_driver", "chsc6x")
+                touch_source = (build_chsc6x(shared_i2c, config.get("touch_irq_pin", "D7"))
+                                if touch_driver == "chsc6x" else
+                                build_cst8xx(shared_i2c))
             except Exception as exc:
                 touch_error = "touch initialization failed: {}".format(
                     type(exc).__name__)
