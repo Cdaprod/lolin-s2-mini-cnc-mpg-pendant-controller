@@ -375,6 +375,12 @@ class PendantApplication:
                     self.handle_ui_event(event)
                 except SafetyError as exc:
                     self.ui.toast = str(exc)
+            if getattr(self.touch_manager, "consecutive_errors", 0) >= 3:
+                self.state.touch_error = "touch polling failed: " + self.touch_manager.last_error
+                self.state.subsystems["touch"] = "ERROR"
+            elif getattr(self.touch_manager, "last_error", None) is None:
+                self.state.touch_error = None
+                self.state.subsystems["touch"] = "OK"
             # Feedback is visual only. No touch event can write controller I/O
             # except through the existing safety-checked UI action dispatcher.
             feedback = self.touch_manager.last_feedback
