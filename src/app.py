@@ -176,6 +176,8 @@ class PendantApplication:
         state.i2c_error = i2c_init_error or i2c_error
         state.display_error = display_error
         state.touch_error = touch_error
+        if touch_error:
+            print("touch diagnostic:", touch_error)
         storage_status = str(state.storage_state).lower()
         state.subsystems = {
             "display": "ERROR" if state.display_error else
