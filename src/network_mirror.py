@@ -142,7 +142,12 @@ class PendantMirror:
             return
         try:
             client.settimeout(0.05)
-            request = client.recv(1536).decode("utf-8")
+            # CircuitPython socketpool.Socket exposes recv_into(), not recv().
+            buffer = bytearray(1536)
+            received = client.recv_into(buffer)
+            if not received:
+                return
+            request = bytes(memoryview(buffer)[:received]).decode("utf-8")
             head, separator, body = request.partition("\r\n\r\n")
             first = head.split("\r\n", 1)[0]
             if first.startswith("GET /api/state "):
