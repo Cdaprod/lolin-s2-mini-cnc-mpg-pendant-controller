@@ -21,6 +21,7 @@ class C3WirelessController:
         self._partial = bytearray()
         self._last_status = None
         self._status_peer = None
+        self._had_pair = False
         self._pending_seq = None
         self._pending_at = None
         self._stop_pending = False
@@ -145,6 +146,8 @@ class C3WirelessController:
                     self._stop_pending = False
                     self._stop_seq = None
                     self._stop_at = None
+        if self.transport.paired:
+            self._had_pair = True
         fresh = (self._last_status is not None and
                  current - self._last_status <= 0.5)
         online = bool(fresh and self.transport.paired and
@@ -154,8 +157,7 @@ class C3WirelessController:
         self.state.connection_state = "connected" if online else "disconnected"
         self.state.link_state = ("GRBL_FRESH" if online else
                                  "PAIRED_NO_GRBL" if self.transport.paired
-                                 else "LINK_LOST" if self.transport.last_rx is None
-                                 and self._status_peer is not None
+                                 else "LINK_LOST" if self._had_pair
                                  else "PAIRING")
         if self._stop_pending and self._stop_at is not None and (
                 current - self._stop_at >= 0.08):
