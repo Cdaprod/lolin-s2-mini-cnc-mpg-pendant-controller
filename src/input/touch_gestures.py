@@ -59,7 +59,8 @@ class TouchGestures:
             else:
                 kind = "swipe_down" if dy > 0 else "swipe_up"
         elif abs(dx) <= self.movement_tolerance and abs(dy) <= self.movement_tolerance:
-            kind = "long_press" if duration >= self.long_press else "tap"
+            kind = ("release_select" if 58 <= y1 < 190 else
+                    "long_press" if duration >= self.long_press else "tap")
         elif 58 <= y1 < 190:
             kind = "release_select"
         else:
