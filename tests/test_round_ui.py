@@ -83,6 +83,22 @@ class RoundRendererTests(unittest.TestCase):
         renderer.bind_ui(ui)
         return state, ui, display, renderer
 
+    def test_home_and_menu_groups_are_mutually_exclusive(self):
+        state, ui, _, renderer = self.make_renderer()
+        renderer.home_group = Node()
+        renderer.menu_group = Node()
+        renderer.render(state)
+        self.assertFalse(renderer.home_group.hidden)
+        self.assertTrue(renderer.menu_group.hidden)
+        ui.enter("MAIN_MENU")
+        renderer.render(state)
+        self.assertTrue(renderer.home_group.hidden)
+        self.assertFalse(renderer.menu_group.hidden)
+        ui.back()
+        renderer.render(state)
+        self.assertFalse(renderer.home_group.hidden)
+        self.assertTrue(renderer.menu_group.hidden)
+
     def test_maps_home_state_and_updates_only_changed_component(self):
         state, _, display, renderer = self.make_renderer()
         self.assertTrue(renderer.render(state))
