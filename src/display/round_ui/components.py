@@ -86,10 +86,10 @@ class MotionPrompt:
     def __init__(self, line):
         self.text = TextComponent(line)
 
-    def update(self, hold, armed, activity, controller):
+    def update(self, hold, armed, activity, controller, link_state=None):
         activity = int(activity)
         if not controller:
-            value = "CONTROLLER OFFLINE"
+            value = "GRBL OFFLINE" if link_state == "PAIRED_NO_GRBL" else "WAITING FOR GRBL"
         elif not hold:
             value = "HOLD TO JOG"
         elif not armed:
