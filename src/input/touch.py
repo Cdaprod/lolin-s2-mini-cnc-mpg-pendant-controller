@@ -19,6 +19,9 @@ class TouchInput:
         self.clock = clock
         self.sample_count = 0
         self.event_count = 0
+        self.last_point = None
+        self.last_error = None
+        self.consecutive_errors = 0
 
     def _transform(self, point):
         if point is None:
@@ -37,7 +40,15 @@ class TouchInput:
         return x, y
 
     def poll(self):
-        point = self._transform(self.source.point())
+        try:
+            point = self._transform(self.source.point())
+            self.last_error = None
+            self.consecutive_errors = 0
+        except (OSError, RuntimeError, ValueError) as exc:
+            self.last_error = type(exc).__name__
+            self.consecutive_errors += 1
+            return ()
+        self.last_point = point
         if point is not None:
             self.sample_count += 1
         events = self.gestures.poll(point)
