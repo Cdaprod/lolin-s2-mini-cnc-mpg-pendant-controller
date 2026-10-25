@@ -47,6 +47,7 @@ class PendantApplication:
         self.sd_mount = sd_mount
         self.touch_manager = touch_manager
         self.clock = clock
+        self.mirror = None
 
     @classmethod
     def from_config(cls, config, transport=None, display=None,
@@ -202,10 +203,24 @@ class PendantApplication:
         if config.get("round_ui_bootstrap"):
             from src.display.round_ui.bootstrap import apply_mock_state
             apply_mock_state(state)
-        return cls(state, transport, controller, safety, actions,
-                   renderer, storage, streamer, watchdog, Indicator(), ui,
-                   network_service, macros, input_manager, indicator_output,
-                   sd_mount, touch_manager, clock)
+        app = cls(state, transport, controller, safety, actions,
+                  renderer, storage, streamer, watchdog, Indicator(), ui,
+                  network_service, macros, input_manager, indicator_output,
+                  sd_mount, touch_manager, clock)
+        if config.get("mirror_enabled") and sys.implementation.name == "circuitpython":
+            if not 1024 <= config.get("mirror_port", 8080) <= 65535:
+                print("mirror disabled: invalid port")
+            else:
+                try:
+                    from src.network_mirror import PendantMirror
+                    radio = network_service.radio
+                    app.mirror = PendantMirror(
+                        radio, app, config.get("mirror_port", 8080),
+                        config.get("mirror_navigation", False))
+                    print("mirror listening on port", config.get("mirror_port", 8080))
+                except (OSError, ImportError, RuntimeError) as exc:
+                    print("mirror disabled:", type(exc).__name__)
+        return app
 
     def observe_estop(self, active):
         """Observe supplementary E-stop contact and immediately inhibit I/O."""
@@ -311,6 +326,9 @@ class PendantApplication:
     def poll(self):
         started = self.clock()
         self.network_service.poll()
+        if self.mirror is not None:
+            if self.network_service.connected:
+                self.mirror.poll()
         sample = self.input_manager.poll(started)
         if sample.mpg_activity:
             self.state.mpg_activity = sample.mpg_activity
