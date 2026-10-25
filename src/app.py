@@ -360,10 +360,10 @@ class PendantApplication:
             # Feedback is visual only. No touch event can write controller I/O
             # except through the existing safety-checked UI action dispatcher.
             feedback = self.touch_manager.last_feedback
-            if (feedback is not None and
-                    hasattr(self.display, "touch_feedback")):
-                self.display.touch_feedback(
-                    feedback[:2], self.touch_manager.feedback_until)
+            if feedback is not None:
+                if hasattr(self.display, "touch_feedback"):
+                    self.display.touch_feedback(
+                        feedback[:2], self.touch_manager.feedback_until)
                 self.touch_manager.last_feedback = None
         if hasattr(self.display, "animate"):
             self.display.animate(started)
