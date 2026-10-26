@@ -132,19 +132,19 @@ class ReconciliationTests(unittest.TestCase):
         root = self.fixture(
             local='',
             device='MPG_BOARD_PROFILE="xiao_esp32s3"\n'
-                   'MPG_SD_ENABLED="false"\n'
+                   'MPG_SD_ENABLED="true"\n'
                    'CIRCUITPY_WIFI_PASSWORD="private"\n')
         (root / "template.toml").write_text(
             (deploy.ROOT / "settings.toml.example").read_text(encoding="utf-8"),
             encoding="utf-8")
         values, _, actions = self.reconcile(root)
         self.assertEqual(values["MPG_SD_ENABLED"], '"false"')
-        self.assertNotIn(("migrate-default", "MPG_SD_ENABLED"), actions)
+        self.assertIn(("sync-default", "MPG_SD_ENABLED"), actions)
         self.assertEqual(values["CIRCUITPY_WIFI_PASSWORD"], '"private"')
-        (root / "local.toml").write_text('MPG_SD_ENABLED="false"\n',
+        (root / "local.toml").write_text('MPG_SD_ENABLED="true"\n',
                                          encoding="utf-8")
         values, _, _ = self.reconcile(root, apply=True)
-        self.assertEqual(values["MPG_SD_ENABLED"], '"false"')
+        self.assertEqual(values["MPG_SD_ENABLED"], '"true"')
 
     def test_custom_device_encoder_pins_are_not_overwritten(self):
         root = self.fixture(
@@ -199,7 +199,8 @@ class ReconciliationTests(unittest.TestCase):
 
     def test_enabled_touch_requires_cst8xx_dependency(self):
         settings = {"MPG_DISPLAY_PROFILE": '""',
-                    "MPG_TOUCH_ENABLED": "true"}
+                    "MPG_TOUCH_ENABLED": "true",
+                    "MPG_TOUCH_DRIVER": '"cst8xx"'}
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             self.assertIn("adafruit_cst8xx",
@@ -234,6 +235,7 @@ class DeploymentCLITests(unittest.TestCase):
         lib = Path(target) / "lib"
         lib.mkdir(exist_ok=True)
         (lib / "adafruit_cst8xx.mpy").write_bytes(b"test-driver")
+        (lib / "adafruit_gc9a01a.mpy").write_bytes(b"test-display-driver")
 
     def test_missing_circuitpy_fails_safely(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -270,7 +272,8 @@ class DeploymentCLITests(unittest.TestCase):
             self.assertEqual(first.returncode, 0, first.stderr)
             self.assertTrue((target / "settings.toml.bak").is_file())
             manifest = json.loads((target / deploy.MANIFEST_NAME).read_text())
-            self.assertIn("src/network.py", manifest["managed_files"])
+            self.assertIn(os.path.join("src", "network.py"),
+                          manifest["managed_files"])
             deployed = (target / "settings.toml").read_text()
             self.assertEqual(deployed.count("MPG_BOARD_PROFILE="), 1)
             self.assertIn('CIRCUITPY_WIFI_PASSWORD="secret"', deployed)
@@ -286,14 +289,33 @@ class DeploymentCLITests(unittest.TestCase):
             settings = target / "settings.toml"
             settings.write_text('MPG_BOARD_PROFILE="xiao_esp32s3"\n',
                                 encoding="utf-8")
-            before = {path.name: path.read_bytes() for path in target.iterdir()}
+            before = {str(path.relative_to(target)): path.read_bytes()
+                      for path in target.rglob("*") if path.is_file()}
             with patch.object(deploy, "target_is_writable", return_value=False):
                 result = self.run_cli(target)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("mounted read-only", result.stderr)
             self.assertEqual(
-                {path.name: path.read_bytes() for path in target.iterdir()}, before)
+                {str(path.relative_to(target)): path.read_bytes()
+                 for path in target.rglob("*") if path.is_file()}, before)
             self.assertFalse(any(target.rglob("*.tmp")))
+
+    def test_verify_detects_feature_configuration_drift(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.mark_circuitpython(target)
+            result = self.run_cli(target)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            settings = target / "settings.toml"
+            content = settings.read_text(encoding="utf-8")
+            self.assertIn('MPG_SD_ENABLED="false"', content)
+            settings.write_text(content.replace(
+                'MPG_SD_ENABLED="false"',
+                'MPG_SD_ENABLED="true"', 1), encoding="utf-8")
+            verified = self.run_cli(target, "--verify")
+            self.assertNotEqual(verified.returncode, 0)
+            self.assertIn("configuration mismatch: MPG_SD_ENABLED",
+                          verified.stderr)
 
     def test_previous_boot_manifest_is_safely_reconciled(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -330,6 +352,7 @@ class DeploymentCLITests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
             self.mark_circuitpython(target)
+            (target / "lib" / "adafruit_gc9a01a.mpy").unlink()
             (target / "settings.toml").write_text(
                 'MPG_HARDWARE_PROFILE=""\nMPG_BOARD_PROFILE="xiao_esp32s3"\n'
                 'MPG_DISPLAY_PROFILE="seeed_round_240"\n'
