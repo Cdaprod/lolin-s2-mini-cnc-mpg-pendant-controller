@@ -44,12 +44,14 @@ class PendantMirror:
     SEND_CHUNK = 512
     CLIENT_TIMEOUT = 1.5
 
-    def __init__(self, radio, app, port=8080, allow_navigation=False):
+    def __init__(self, radio, app, port=8080, allow_navigation=False,
+                 socket_pool=None):
         import socketpool
         import time
         self.app = app
         self.allow_navigation = bool(allow_navigation)
-        self.pool = socketpool.SocketPool(radio)
+        self.pool = (socket_pool if socket_pool is not None else
+                     socketpool.SocketPool(radio))
         self.sock = self.pool.socket()
         self.sock.setblocking(False)
         self.sock.bind(("0.0.0.0", int(port)))

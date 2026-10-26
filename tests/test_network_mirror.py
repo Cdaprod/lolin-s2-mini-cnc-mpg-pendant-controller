@@ -99,6 +99,19 @@ def socket_mirror(clients=(), now=None):
 
 
 class MirrorTests(unittest.TestCase):
+    def test_mirror_can_share_radio_socket_pool_with_setup_portal(self):
+        class Pool:
+            def __init__(self):
+                self.listener = FakeListener()
+            def socket(self):
+                return self.listener
+        pool = Pool()
+        with patch.dict(sys.modules, {"socketpool": SimpleNamespace(
+                SocketPool=lambda radio: self.fail("duplicate SocketPool"))}):
+            m = PendantMirror(object(), FakeApp(), socket_pool=pool)
+        self.assertIs(m.pool, pool)
+        m.deinit()
+
     def test_socketpool_listener_is_nonblocking_and_owned(self):
         class Pool:
             def __init__(self, radio):

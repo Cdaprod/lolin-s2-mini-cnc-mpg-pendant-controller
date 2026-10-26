@@ -7,7 +7,7 @@ from types import SimpleNamespace
 from unittest.mock import patch
 
 from src.app import PendantApplication
-from src.hardware import scan_i2c
+from src.hardware import build_storage, scan_i2c
 from src.display.console import ConsoleDisplay
 from src.display.indicator import DigitalIndicatorOutput
 from src.display.ui import ROTATE_CW
@@ -52,7 +52,34 @@ class FailingI2C(FakeI2C):
         raise OSError("bus fault")
 
 
+class CountingWiFiService(MockWiFiService):
+    def __init__(self):
+        super().__init__()
+        self.poll_count = 0
+        self.connect_count = 0
+
+    def poll(self):
+        self.poll_count += 1
+
+    def connect(self, ssid, password, persist=True):
+        self.connect_count += 1
+        return super().connect(ssid, password, persist)
+
+
 class DiagnosticScanTests(unittest.TestCase):
+    def test_disabled_sd_does_not_report_absent_optional_jobs_directory_as_error(self):
+        with tempfile.TemporaryDirectory() as root:
+            missing_jobs = os.path.join(root, "jobs")
+            storage, mount = build_storage({
+                "sd_enabled": False, "jobs_path": missing_jobs,
+                "macros_path": os.path.join(root, "macros"),
+            })
+            self.assertIsNone(mount)
+            self.assertEqual(storage.status, "unconfigured")
+            self.assertIsNone(storage.error)
+            self.assertEqual(storage.list_jobs(), [])
+            self.assertEqual(storage.status, "unconfigured")
+
     def test_application_deinit_releases_owned_optional_resources_once(self):
         class Resource:
             def __init__(self):
@@ -255,6 +282,25 @@ class PhysicalInputTests(unittest.TestCase):
 
 
 class ApplicationInputPipelineTests(unittest.TestCase):
+    def test_wifi_association_poll_is_deferred_during_machine_activity(self):
+        with tempfile.TemporaryDirectory() as root:
+            jobs, macros = os.path.join(root, "jobs"), os.path.join(root, "macros")
+            os.mkdir(jobs)
+            os.mkdir(macros)
+            network = CountingWiFiService()
+            app = PendantApplication.from_config(
+                {"controller_mode": "disabled", "jobs_path": jobs,
+                 "macros_path": macros},
+                display=ConsoleDisplay(lambda value: None),
+                network_service=network)
+            app.state.deadman_enabled = True
+            app.poll()
+            self.assertEqual(network.poll_count, 0)
+            app.state.deadman_enabled = False
+            app.state.machine_state = "idle"
+            app.poll()
+            self.assertEqual(network.poll_count, 1)
+
     def make_app(self, root):
         jobs = os.path.join(root, "jobs")
         macros = os.path.join(root, "macros")

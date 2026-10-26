@@ -274,9 +274,12 @@ class PendantApplication:
                 try:
                     from src.network_mirror import PendantMirror
                     radio = network_service.radio
+                    pool_factory = getattr(network_service, "socket_pool", None)
+                    socket_pool = pool_factory() if pool_factory else None
                     app.mirror = PendantMirror(
                         radio, app, config.get("mirror_port", 8080),
-                        config.get("mirror_navigation", False))
+                        config.get("mirror_navigation", False),
+                        socket_pool=socket_pool)
                     print("mirror listening on port", config.get("mirror_port", 8080))
                 except (OSError, ImportError, RuntimeError, ValueError,
                         AttributeError) as exc:
@@ -294,6 +297,17 @@ class PendantApplication:
     def recover_estop(self):
         """Explicit recovery after the independently wired contact is safe."""
         self.state.clear_estop_latch()
+
+    def _machine_activity_blocks_network_association(self):
+        """Defer blocking CircuitPython Wi-Fi association during machine work."""
+        if (self.state.jog_active or self.state.deadman_enabled or
+                self.state.machine_state in ("jog", "run", "hold", "home",
+                                             "probe", "check")):
+            return True
+        if self.state.sd_job_state in ("streaming", "paused"):
+            return True
+        return any(len(item) > 1 and item[1] in ("jog", "stream")
+                   for item in getattr(self.controller, "queue", ()))
 
     def deinit(self):
         """Release optional services and peripheral ownership before reload."""
@@ -359,6 +373,13 @@ class PendantApplication:
         if command is None:
             return None
         name = command.name
+        if (name in ("NETWORK_CONNECT", "NETWORK_SCAN", "NETWORK_TOGGLE",
+                     "NETWORK_SETUP_AP", "NETWORK_DISCONNECT") and
+                self._machine_activity_blocks_network_association()):
+            if name == "NETWORK_CONNECT":
+                command.value = None
+            self.ui.toast = "Wi-Fi changes wait until machine activity stops"
+            return False
         if name == "JOG":
             return self.actions.jog(command.value)
         if name == "ACTION":
@@ -518,7 +539,11 @@ class PendantApplication:
         # Give network transitions their turn after physical safety and
         # transport processing; HTTP services themselves advance one bounded
         # nonblocking operation per poll.
-        self.network_service.poll()
+        # CircuitPython's portable wifi.radio.connect() call is synchronous.
+        # Do not let a reconnect or setup-portal submission pause pendant
+        # servicing while a jog or job has authority on the machine.
+        if not self._machine_activity_blocks_network_association():
+            self.network_service.poll()
         info = self.network_service.info()
         self.state.wifi_state = info.get("state", "DISABLED")
         self.state.wifi_ssid = info.get("ssid")

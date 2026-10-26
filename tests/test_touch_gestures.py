@@ -102,8 +102,20 @@ class GestureTests(unittest.TestCase):
         ui.back()
         ui.handle(TouchEvent("release_select", 95, 65))
         self.assertEqual(ui.current_screen, "MACHINE")
-        ui.handle(TouchEvent("release_select", 95, 65))
+        result = ui.handle(TouchEvent("release_select", 95, 65))
+        self.assertIsNone(result)
+        self.assertEqual(ui.confirmation["command"], "ACTION")
+        self.assertFalse(ui.confirmation["accept"])
+
+    def test_touch_does_not_resume_active_job(self):
+        state = PendantState()
+        ui = UIManager(state)
+        ui.complete_boot()
+        ui.enter("ACTIVE_JOB")
+        result = ui.handle(TouchEvent("release_select", 90, 87))
+        self.assertIsNone(result)
         self.assertIsNone(ui.confirmation)
+        self.assertEqual(ui.current_screen, "ACTIVE_JOB")
 
     def test_directional_swipes(self):
         for end, expected in [((120, 20), "swipe_up"),

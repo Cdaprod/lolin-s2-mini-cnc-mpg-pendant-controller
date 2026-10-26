@@ -141,15 +141,16 @@ class UIStateMachineTests(unittest.TestCase):
         self.assertIsNone(ui.handle(TouchEvent("tap", 200, 205)))
         self.assertEqual(ui.current_screen, "HOME")
 
-    def test_touch_acknowledgement_cannot_bypass_confirmation_or_safety(self):
+    def test_touch_action_selection_opens_confirmation_but_cannot_accept_it(self):
         state = PendantState()
         ui = UIManager(state)
         ui.complete_boot()
         ui.handle(TouchEvent("tap", 120, 120))
         ui.handle(TouchEvent("tap", 120, 60))
         self.assertIsNone(ui.handle(TouchEvent("tap", 120, 60)))
-        # Direct touch cannot initiate a CNC action or its confirmation.
-        self.assertIsNone(ui.confirmation)
+        # Touch selects the row but cannot accept the resulting motion dialog.
+        self.assertEqual(ui.confirmation["command"], "ACTION")
+        self.assertFalse(ui.confirmation["accept"])
         self.assertEqual(ui.current_screen, "MACHINE")
         self.assertEqual(state.connection_state, "disconnected")
 
@@ -191,6 +192,10 @@ class UIIntegrationTests(unittest.TestCase):
             self.assertEqual(sum(b"$J=" in w for w in app.transport.writes), 1)
 
             # Navigate directly to Network, then use its real scan command.
+            app.controller.cancel_jog()
+            app.state.jog_active = False
+            app.state.machine_state = "idle"
+            app.state.deadman_enabled = False
             app.ui.enter("NETWORK")
             app.handle_ui_event(ROTATE_CW)  # Scan Networks
             app.handle_ui_event(SELECT)
@@ -217,6 +222,8 @@ class UIIntegrationTests(unittest.TestCase):
             app.handle_ui_event(SELECT)
             app.handle_ui_event(SELECT)  # 'a'
             self.assertEqual(app.ui.view_model()["text"], "•")
+            # Runtime Wi-Fi association is deferred while the deadman is held.
+            app.state.deadman_enabled = False
             app.handle_ui_event(LONG_SELECT)
             self.assertTrue(wifi.connected)
             self.assertEqual(wifi.password_length, 1)
