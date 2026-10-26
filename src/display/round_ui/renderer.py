@@ -32,6 +32,9 @@ class RoundRenderer:
         self.touch_halo = scene.get("touch_halo")
         self.nav_group = scene.get("nav_group")
         self.nav_dots = scene.get("nav_dots", ())
+        self.hud_markers = scene.get("hud_markers", ())
+        self._hud_phase = -1
+        self._hud_dirty = False
         self.palettes = scene.get("palettes", {})
         self.themed_text = scene.get("themed_text", ())
         self.active_theme = None
@@ -74,6 +77,8 @@ class RoundRenderer:
             focus[2] = colors["accent"]
             self.palettes["separator"][0] = colors["separator"]
             self.palettes["halo"][1] = colors["accent"]
+            for index, palette in enumerate(self.palettes.get("hud_markers", ())):
+                palette[1] = colors["accent"] if index == 0 else colors["highlight"]
         if hasattr(self.ring.node, "colors"):
             self.ring.node.colors = colors
             self.ring.signature = None
@@ -117,6 +122,27 @@ class RoundRenderer:
                 self._nav_visible = False
                 self._nav_dirty = True
                 changed = True
+        if self.animations and self.hud_markers:
+            overlay = self.ui.active_overlay() if self.ui else None
+            unsafe = bool(overlay and overlay[0] in ("E-STOP", "ALARM"))
+            if unsafe:
+                for sprite, _, _ in self.hud_markers:
+                    if not sprite.hidden:
+                        sprite.hidden = True
+                        self._hud_dirty = True
+                        changed = True
+            else:
+                phase = int(float(now) * 8)
+                if phase != self._hud_phase:
+                    self._hud_phase = phase
+                    for index, (sprite, radius, _) in enumerate(self.hud_markers):
+                        angle = phase * (0.11 if index == 0 else -0.07)
+                        sprite.x = 118 + int(radius * math.cos(angle))
+                        sprite.y = 118 + int(radius * math.sin(angle))
+                        if sprite.hidden:
+                            sprite.hidden = False
+                    self._hud_dirty = True
+                    changed = True
         return changed
 
     def _navigation(self, model):
@@ -234,9 +260,10 @@ class RoundRenderer:
         changed = self.menu_footer.set(page + "  BACK | HOME") or changed
         changed = self.overlay.update(model.get("overlay")) or changed
         changed = (theme_changed or self._halo_dirty or self._nav_dirty
-                   or nav_changed or changed)
+                   or self._hud_dirty or nav_changed or changed)
         self._halo_dirty = False
         self._nav_dirty = False
+        self._hud_dirty = False
         if not changed:
             self.skipped_count += 1
             return False
