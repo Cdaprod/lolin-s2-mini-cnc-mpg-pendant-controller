@@ -83,6 +83,27 @@ class RoundRendererTests(unittest.TestCase):
         renderer.bind_ui(ui)
         return state, ui, display, renderer
 
+    def test_hud_orbit_is_rate_limited_and_suppressed_on_estop(self):
+        state, ui, display, renderer = self.make_renderer()
+        first, second = Node(), Node()
+        first.x = second.x = 0
+        first.y = second.y = 0
+        renderer.hud_markers = ((first, 109, None), (second, 99, None))
+        self.assertTrue(renderer.animate(0.20))
+        self.assertNotEqual((first.x, first.y), (0, 0))
+        initial = (first.x, first.y)
+        self.assertFalse(renderer.animate(0.21))
+        self.assertEqual((first.x, first.y), initial)
+        self.assertTrue(renderer.animate(0.40))
+        self.assertNotEqual((first.x, first.y), initial)
+        state.estop_observed = True
+        self.assertTrue(renderer.animate(0.55))
+        self.assertTrue(first.hidden)
+        self.assertTrue(second.hidden)
+        state.estop_observed = False
+        self.assertTrue(renderer.animate(0.70))
+        self.assertFalse(first.hidden)
+
     def test_home_and_menu_groups_are_mutually_exclusive(self):
         state, ui, _, renderer = self.make_renderer()
         renderer.home_group = Node()
