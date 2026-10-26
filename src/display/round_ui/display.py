@@ -159,6 +159,24 @@ def displayio_scene(display, colors=None):
     bitmap, palette = _instrument_bitmap(displayio, colors)
     root.append(displayio.TileGrid(bitmap, pixel_shader=palette))
     palettes = {"dial": palette}
+    # Two tiny retained perimeter sprites animate independently of the UI.
+    # 5x5 bitmaps move; the 240x240 background is never redrawn in Python.
+    hud_markers = []
+    for radius, color in ((109, colors["accent"]), (99, colors["highlight"])):
+        pixels = displayio.Bitmap(5, 5, 2)
+        marker_palette = displayio.Palette(2)
+        marker_palette[0] = 0
+        marker_palette.make_transparent(0)
+        marker_palette[1] = color
+        for yy in range(5):
+            for xx in range(5):
+                if (xx - 2) ** 2 + (yy - 2) ** 2 <= 4:
+                    pixels[xx, yy] = 1
+        sprite = displayio.TileGrid(pixels, pixel_shader=marker_palette)
+        sprite.x, sprite.y = 120 + radius - 2, 118
+        root.append(sprite)
+        hud_markers.append((sprite, radius, marker_palette))
+    palettes["hud_markers"] = tuple(item[2] for item in hud_markers)
 
 
     home = displayio.Group()
@@ -300,7 +318,8 @@ def displayio_scene(display, colors=None):
                         (connectivity, "muted"), (menu_title, "accent"),
                         (menu_footer, "muted"), (overlay_title, "danger"),
                         (overlay_detail, "text")),
-        "touch_halo": halo_node, "nav_group": nav_group,
+        "touch_halo": halo_node, "hud_markers": tuple(hud_markers),
+        "nav_group": nav_group,
         "nav_dots": nav_dots,
         "home_group": home, "state_label": state_label,
         "axis_feedback": axis_feedback, "step_feedback": step_feedback,
