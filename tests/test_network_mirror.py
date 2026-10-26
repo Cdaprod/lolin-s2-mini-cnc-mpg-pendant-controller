@@ -158,6 +158,22 @@ class MirrorTests(unittest.TestCase):
         self.assertIn(b"403 Forbidden", b.sent)
         self.assertEqual(m.completed_requests, 2)
 
+    def test_invalid_post_content_length_returns_error_and_recovers(self):
+        malformed = (b"POST /api/touch HTTP/1.1\\r\\n"
+                     b"Content-Length: nonsense\\r\\n\\r\\n")
+        valid = b"GET /api/state HTTP/1.1\\r\\n\\r\\n"
+        first = FakeClient((malformed,), send_limit=700)
+        second = FakeClient((valid,), send_limit=700)
+        m = socket_mirror((first, second))
+        for _ in range(30):
+            m.poll()
+            if second.closed:
+                break
+        self.assertTrue(first.closed)
+        self.assertIn(b"400 Bad Request", first.sent)
+        self.assertTrue(second.closed)
+        self.assertIn(b"200 OK", second.sent)
+
     def test_disconnected_or_slow_client_is_bounded_and_released(self):
         now = [0.0]
         client = FakeClient()
