@@ -1,6 +1,6 @@
 """Touch input adapters. User-interface only, never machine motion."""
 
-from src.display.ui import ROTATE_CCW, ROTATE_CW, TouchEvent
+from src.display.ui import TouchEvent
 from src.input.touch_gestures import TouchGestures
 
 
@@ -22,6 +22,10 @@ class TouchInput:
         self.last_point = None
         self.last_error = None
         self.consecutive_errors = 0
+
+    def deinit(self):
+        if hasattr(self.source, "deinit"):
+            self.source.deinit()
 
     def _transform(self, point):
         if point is None:
@@ -61,9 +65,9 @@ class TouchInput:
         if kind == "drag":
             return (TouchEvent(kind, x, y),)
         if kind == "swipe_up":
-            return (ROTATE_CW,)
+            return (TouchEvent(kind, x, y),)
         if kind == "swipe_down":
-            return (ROTATE_CCW,)
+            return (TouchEvent(kind, x, y),)
         return (TouchEvent(kind, x, y),)
 
 
@@ -119,6 +123,11 @@ class CHSC6XTouchSource:
             return None
         x, y = self.buffer[2], self.buffer[4]
         return (x, y) if x < 240 and y < 240 else None
+
+    def deinit(self):
+        if self.irq is not None:
+            self.irq.deinit()
+            self.irq = None
 
 
 def build_chsc6x(i2c, irq_pin="D7"):

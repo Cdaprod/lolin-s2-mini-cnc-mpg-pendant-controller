@@ -8,6 +8,16 @@ from .renderer import RoundRenderer
 _BACKLIGHT_OUTPUT = None
 
 
+def release_existing_displays():
+    """Release the prior DisplayIO owner before allocating shared SPI pins.
+
+    Call once during composition, before constructing the SPI bus. Releasing
+    after another peripheral has retained that bus can invalidate ownership.
+    """
+    import displayio
+    displayio.release_displays()
+
+
 def _pin(board, name):
     if not name or not hasattr(board, name):
         return None
@@ -21,7 +31,6 @@ def build_gc9a01(config, shared_spi=None):
     import busio
     import displayio
     import adafruit_gc9a01a
-    displayio.release_displays()
     spi = shared_spi or busio.SPI(_pin(board, config["display_sck_pin"]),
                                  MOSI=_pin(board, config["display_mosi_pin"]))
     try:

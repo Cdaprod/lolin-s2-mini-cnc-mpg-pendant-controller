@@ -320,9 +320,14 @@ class UIManager:
                 ("Board", self.state.board_profile),
                 ("Display", self.state.display_profile),
                 ("Free heap", self.state.free_heap or "unknown"),
+                ("Main loop", "{} / {}s".format(
+                    self.state.loop_count, self.state.last_loop_duration)),
                 ("Storage", self.state.subsystems.get("storage", "unknown")),
                 ("SD", self.state.subsystems.get("sd", "unknown")),
                 ("I2C", self.state.subsystems.get("i2c", "unknown")),
+                ("I2C devices", ", ".join(
+                    "0x{:02X}".format(address)
+                    for address in self.state.i2c_addresses) or "none"),
                 ("MCP23017", "0x{:02X}".format(self.state.mcp23017_address)
                  if self.state.mcp23017_detected else "not detected"),
                 ("Wi-Fi", self.state.wifi_state),
@@ -333,6 +338,8 @@ class UIManager:
                 ("Controller", self.state.connection_state),
                 ("Selector", self.state.selector_backend),
                 ("Touch", self.state.subsystems.get("touch", "unknown")),
+                ("Mirror", "{} requests / {} errors".format(
+                    self.state.mirror_clients, self.state.mirror_errors)),
                 ("I2C error", self.state.i2c_error or "none"),
                 ("Last error", self.state.network_error or
                  self.state.controller_error or self.state.input_error or
@@ -545,6 +552,21 @@ class UIManager:
 
     def _touch_event(self, event):
         """Map gestures onto menu navigation, never direct CNC actions."""
+        if event.kind in ("swipe_up", "swipe_down"):
+            # Vertical gestures are navigation-only even when the physical
+            # selector currently grants the handwheel motion authority.
+            if self.current_screen == "HOME" or self.confirmation:
+                return None
+            items = self.items()
+            if items:
+                key = self.current_screen
+                target = self._touch_row_index(event.y)
+                if target is None:
+                    delta = 1 if event.kind == "swipe_down" else -1
+                    target = (self.focus.get(key, 0) + delta) % len(items)
+                self.focus[key] = target
+                self._changed()
+            return None
         if event.kind in ("swipe_left", "swipe_right"):
             if len(self.stack) == 1 and self.current_screen in (
                     "HOME", "EXPLORER", "CONFIGURATION", "PREVIEW"):
@@ -557,7 +579,9 @@ class UIManager:
                 return None
             return BACK if event.kind == "swipe_right" else HOME
         if event.kind in ("drag", "release_select"):
-            if self.current_screen == "HOME" or self.confirmation:
+            if self.current_screen == "HOME":
+                return SELECT if event.kind == "release_select" else None
+            if self.confirmation:
                 return None
             target = self._touch_row_index(event.y)
             if target is None:

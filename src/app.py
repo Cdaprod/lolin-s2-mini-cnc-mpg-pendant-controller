@@ -28,7 +28,8 @@ class PendantApplication:
     def __init__(self, state, transport, controller, safety, actions, display,
                  storage, streamer, watchdog, indicator, ui, network_service,
                  macros, input_manager, indicator_output, sd_mount=None,
-                 touch_manager=None, clock=time.monotonic):
+                 touch_manager=None, clock=time.monotonic, spi_bus=None,
+                 i2c_bus=None):
         self.state = state
         self.transport = transport
         self.controller = controller
@@ -47,7 +48,11 @@ class PendantApplication:
         self.sd_mount = sd_mount
         self.touch_manager = touch_manager
         self.clock = clock
+        # Keep the shared bus alive independently of individual drivers.
+        self.spi_bus = spi_bus
+        self.i2c_bus = i2c_bus
         self.mirror = None
+        self._last_heap_warning = None
 
     @classmethod
     def from_config(cls, config, transport=None, display=None,
@@ -109,26 +114,43 @@ class PendantApplication:
         # with MISO at creation (the LCD alone only needs SCK and MOSI).
         # Never make SD a prerequisite for starting the round UI.
         sd_spi = shared_spi
-        if (sd_spi is None and config.get("sd_enabled") and
+        display_release_error = None
+        if (display is None and sd_spi is None and config.get("display_enabled") and
+                config.get("display_renderer") == "round" and
+                sys.implementation.name == "circuitpython"):
+            try:
+                from src.display.round_ui.display import release_existing_displays
+                release_existing_displays()
+            except (ImportError, OSError, RuntimeError, AttributeError) as exc:
+                display_release_error = "display release failed: {}".format(
+                    type(exc).__name__)
+                print("display release diagnostic:", type(exc).__name__, str(exc)[:80])
+        if (display_release_error is None and sd_spi is None and config.get("sd_enabled") and
                 config.get("display_enabled") and
                 config.get("display_renderer") == "round" and
                 sys.implementation.name == "circuitpython"):
             from src.hardware import build_shared_spi
             try:
                 sd_spi = build_shared_spi(config)
-            except (OSError, RuntimeError, ValueError, AttributeError) as exc:
-                print("shared SPI unavailable:", type(exc).__name__)
+            except (OSError, RuntimeError, ValueError, AttributeError,
+                    ImportError, KeyError) as exc:
+                print("shared SPI allocation failed:", type(exc).__name__, str(exc)[:80])
         # Initialize the round GC9A01 before mounting the SPI SD card.
         # A card/mount failure must never prevent critical display startup.
         ui = UIManager(state)
         ui.complete_boot()
-        display_error = None
-        try:
-            renderer = display or build_display(config, shared_spi=sd_spi)
-        except Exception as exc:
-            display_error = "display initialization failed: {}".format(
-                type(exc).__name__)
+        display_error = display_release_error
+        if display_release_error is not None:
             renderer = build_display({"display_enabled": False})
+        else:
+            try:
+                renderer = display or build_display(config, shared_spi=sd_spi)
+            except (OSError, RuntimeError, ValueError, AttributeError,
+                    ImportError, KeyError) as exc:
+                display_error = "display initialization failed: {}".format(
+                    type(exc).__name__)
+                print("display diagnostic:", type(exc).__name__, str(exc)[:80])
+                renderer = build_display({"display_enabled": False})
         sd_mount = None
         if storage is None:
             if (config.get("sd_enabled") and config.get("display_enabled") and
@@ -199,13 +221,14 @@ class PendantApplication:
         expected_address = config.get("mcp23017_address", 0x20)
         state.mcp23017_detected = expected_address in addresses
         state.mcp23017_address = expected_address if state.mcp23017_detected else None
+        state.i2c_addresses = addresses
         state.i2c_error = i2c_init_error or i2c_error
         state.display_error = display_error
         state.touch_error = touch_error
-        if display_error:
-            print("display diagnostic:", display_error)
         if storage.error:
             print("storage diagnostic:", storage.error)
+        if state.i2c_error:
+            print("I2C diagnostic:", state.i2c_error)
         if touch_error:
             print("touch diagnostic:", touch_error)
         storage_status = str(state.storage_state).lower()
@@ -214,12 +237,14 @@ class PendantApplication:
                        "OK" if config.get("display_enabled") or display is not None
                        else "DISABLED",
             "storage": "OK" if storage_status == "available" else
-                       "NOT PRESENT" if storage_status in ("missing", "unconfigured")
-                       else "ERROR" if state.storage_error else "DISABLED",
-            "sd": ("NOT PRESENT" if not config.get("sd_enabled") else
+                       "NOT PRESENT" if storage_status == "missing" else
+                       "ERROR" if storage_status == "mount_error" else
+                       "DISABLED" if storage_status == "unconfigured" else
+                       "ERROR" if state.storage_error else "DISABLED",
+            "sd": ("DISABLED" if not config.get("sd_enabled") else
                    "MOUNTED" if storage_status == "available" else
-                   "NOT PRESENT" if storage_status in ("missing", "unconfigured")
-                   else "ERROR" if state.storage_error else "DISABLED"),
+                   "NOT PRESENT" if storage_status == "missing" else
+                   "ERROR" if state.storage_error else "DISABLED"),
             "i2c": "ERROR" if state.i2c_error else
                    "OK" if shared_i2c is not None else "DISABLED",
             "inputs": "ERROR" if state.input_error else
@@ -232,13 +257,16 @@ class PendantApplication:
         for name in ("display", "storage", "sd", "i2c", "inputs", "touch",
                      "wifi", "controller"):
             print("{:<13} {}".format(name, state.subsystems[name]))
+        state.free_heap = gc.mem_free() if hasattr(gc, "mem_free") else None
+        if state.free_heap is not None:
+            print("runtime heap:", state.free_heap)
         if config.get("round_ui_bootstrap"):
             from src.display.round_ui.bootstrap import apply_mock_state
             apply_mock_state(state)
         app = cls(state, transport, controller, safety, actions,
                   renderer, storage, streamer, watchdog, Indicator(), ui,
                   network_service, macros, input_manager, indicator_output,
-                  sd_mount, touch_manager, clock)
+                  sd_mount, touch_manager, clock, sd_spi, shared_i2c)
         if config.get("mirror_enabled") and sys.implementation.name == "circuitpython":
             if not 1024 <= config.get("mirror_port", 8080) <= 65535:
                 print("mirror disabled: invalid port")
@@ -250,8 +278,10 @@ class PendantApplication:
                         radio, app, config.get("mirror_port", 8080),
                         config.get("mirror_navigation", False))
                     print("mirror listening on port", config.get("mirror_port", 8080))
-                except (OSError, ImportError, RuntimeError) as exc:
-                    print("mirror disabled:", type(exc).__name__)
+                except (OSError, ImportError, RuntimeError, ValueError,
+                        AttributeError) as exc:
+                    state.mirror_error = "startup: {}".format(type(exc).__name__)
+                    print("mirror startup failed:", type(exc).__name__, str(exc)[:80])
         return app
 
     def observe_estop(self, active):
@@ -264,6 +294,53 @@ class PendantApplication:
     def recover_estop(self):
         """Explicit recovery after the independently wired contact is safe."""
         self.state.clear_estop_latch()
+
+    def deinit(self):
+        """Release optional services and peripheral ownership before reload."""
+        if getattr(self, "_deinitialized", False):
+            return
+        self._deinitialized = True
+        if self.mirror is not None:
+            try:
+                self.mirror.deinit()
+            except (OSError, RuntimeError):
+                pass
+            self.mirror = None
+        if hasattr(self.network_service, "deinit"):
+            try:
+                self.network_service.deinit()
+            except (OSError, RuntimeError):
+                pass
+        if self.sd_mount is not None and hasattr(self.sd_mount, "deinit"):
+            try:
+                self.sd_mount.deinit()
+            except (OSError, RuntimeError, ImportError):
+                pass
+            self.sd_mount = None
+        if self.touch_manager is not None and hasattr(self.touch_manager, "deinit"):
+            try:
+                self.touch_manager.deinit()
+            except (OSError, RuntimeError):
+                pass
+            self.touch_manager = None
+        if self.spi_bus is not None or hasattr(self.display, "display"):
+            try:
+                from src.display.round_ui.display import release_existing_displays
+                release_existing_displays()
+            except (ImportError, RuntimeError, AttributeError):
+                pass
+            if self.spi_bus is not None and hasattr(self.spi_bus, "deinit"):
+                try:
+                    self.spi_bus.deinit()
+                except (OSError, RuntimeError):
+                    pass
+            self.spi_bus = None
+        if self.i2c_bus is not None and hasattr(self.i2c_bus, "deinit"):
+            try:
+                self.i2c_bus.deinit()
+            except (OSError, RuntimeError):
+                pass
+            self.i2c_bus = None
 
     def handle_ui_event(self, event):
         """Route a normalized UI event and execute only its semantic result."""
@@ -350,6 +427,7 @@ class PendantApplication:
             return True
         if name == "RESTART":
             if sys.implementation.name == "circuitpython":
+                self.deinit()
                 import supervisor
                 supervisor.reload()
             return True
@@ -357,10 +435,6 @@ class PendantApplication:
 
     def poll(self):
         started = self.clock()
-        self.network_service.poll()
-        if self.mirror is not None:
-            if self.network_service.connected:
-                self.mirror.poll()
         sample = self.input_manager.poll(started)
         if sample.mpg_activity:
             self.state.mpg_activity = sample.mpg_activity
@@ -441,6 +515,10 @@ class PendantApplication:
         if "jog_timeout" in events and (self.transport.connected or isinstance(self.controller, C3WirelessController)):
             self.controller.cancel_jog()
         self.ui.refresh_context()
+        # Give network transitions their turn after physical safety and
+        # transport processing; HTTP services themselves advance one bounded
+        # nonblocking operation per poll.
+        self.network_service.poll()
         info = self.network_service.info()
         self.state.wifi_state = info.get("state", "DISABLED")
         self.state.wifi_ssid = info.get("ssid")
@@ -457,6 +535,13 @@ class PendantApplication:
         self._update_indicator()
         self.display.render(self.state)
         self.state.render_count = getattr(self.display, "render_count", 0)
+        # Low-priority, one-step nonblocking HTTP work runs only after safety,
+        # inputs, transport, UI and display refresh have had their turn.
+        if self.mirror is not None:
+            self.mirror.poll()
+            self.state.mirror_clients = self.mirror.completed_requests
+            self.state.mirror_errors = self.mirror.client_errors
+            self.state.mirror_error = self.mirror.last_error
         self.state.loop_count += 1
         finished = self.clock()
         self.state.last_loop_duration = max(0.0, finished - started)
@@ -464,6 +549,11 @@ class PendantApplication:
         self.state.last_status_age = (None if last is None else
                                       max(0.0, finished - last))
         self.state.free_heap = gc.mem_free() if hasattr(gc, "mem_free") else None
+        if (self.state.free_heap is not None and self.state.free_heap < 32768 and
+                (self._last_heap_warning is None or
+                 finished - self._last_heap_warning >= 10.0)):
+            print("runtime heap warning:", self.state.free_heap, "bytes free")
+            self._last_heap_warning = finished
 
     def _record_selector_transition(self, kind, direction, now):
         setattr(self.state, kind + "_transition_direction", int(direction))

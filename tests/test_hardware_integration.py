@@ -1,6 +1,10 @@
 import os
+import sys
 import tempfile
 import unittest
+import types
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from src.app import PendantApplication
 from src.hardware import scan_i2c
@@ -49,6 +53,112 @@ class FailingI2C(FakeI2C):
 
 
 class DiagnosticScanTests(unittest.TestCase):
+    def test_application_deinit_releases_owned_optional_resources_once(self):
+        class Resource:
+            def __init__(self):
+                self.closed = 0
+            def deinit(self):
+                self.closed += 1
+        app = object.__new__(PendantApplication)
+        app.mirror = Resource()
+        app.network_service = Resource()
+        app.sd_mount = Resource()
+        app.touch_manager = Resource()
+        app.spi_bus = Resource()
+        app.i2c_bus = Resource()
+        app.display = SimpleNamespace(display=object())
+        resources = {name: getattr(app, name) for name in
+                     ("mirror", "network_service", "sd_mount",
+                      "touch_manager", "spi_bus", "i2c_bus")}
+        with patch("src.display.round_ui.display.release_existing_displays") as release:
+            app.deinit()
+            app.deinit()
+        release.assert_called_once()
+        for name, resource in resources.items():
+            self.assertEqual(resource.closed, 1)
+            if name != "network_service":
+                self.assertIsNone(getattr(app, name))
+
+    def test_sd_failure_is_reported_and_retry_recovers_with_shared_spi(self):
+        from src.storage import circuitpython_sd
+        with tempfile.TemporaryDirectory() as root:
+            board = types.ModuleType("board")
+            for name in ("D8", "D10", "D9", "D2"):
+                setattr(board, name, name)
+            busio = types.ModuleType("busio")
+            busio.SPI = lambda *args, **kwargs: object()
+            sdcardio = types.ModuleType("sdcardio")
+            storage = types.ModuleType("storage")
+            state = {"fail": True, "mounts": 0, "unmounts": 0,
+                     "card_deinits": 0}
+            class Card:
+                def __init__(self, spi, chip_select):
+                    self.spi, self.chip_select = spi, chip_select
+                    if state["fail"]:
+                        raise OSError("card absent")
+                def deinit(self):
+                    state["card_deinits"] += 1
+            sdcardio.SDCard = Card
+            storage.VfsFat = lambda card: ("vfs", card)
+            def mount(vfs, path):
+                state["mounts"] += 1
+                os.makedirs(os.path.join(path, "jobs"), exist_ok=True)
+            storage.mount = mount
+            storage.umount = lambda path: state.__setitem__(
+                "unmounts", state["unmounts"] + 1)
+            shared = object()
+            config = {"sd_enabled": True, "sd_sck_pin": "D8",
+                      "sd_mosi_pin": "D10", "sd_miso_pin": "D9",
+                      "sd_cs_pin": "D2", "sd_mount_path": os.path.join(root, "sd")}
+            with patch.dict(sys.modules, {"board": board, "busio": busio,
+                                          "sdcardio": sdcardio, "storage": storage}):
+                result = circuitpython_sd.mount_from_config(config, shared)
+                self.assertEqual(result[1], "mount_error")
+                self.assertIn("initialize SD card", result[2])
+                state["fail"] = False
+                recovered = circuitpython_sd.mount_from_config(config, shared)
+                recovered[0].deinit()
+                recovered[0].deinit()
+            self.assertEqual(recovered[1], "available")
+            self.assertIs(recovered[0].spi, shared)
+            self.assertEqual(state["mounts"], 1)
+            self.assertEqual(state["unmounts"], 1)
+            self.assertEqual(state["card_deinits"], 1)
+
+    def test_round_display_releases_before_spi_and_mounts_sd_after_lcd(self):
+        import src.app as app_module
+        from src.storage.sdcard import SDStorage
+        with tempfile.TemporaryDirectory() as root:
+            jobs, macros = os.path.join(root, "jobs"), os.path.join(root, "macros")
+            os.mkdir(jobs)
+            os.mkdir(macros)
+            events = []
+            shared = object()
+            def display_factory(config, shared_spi=None):
+                events.append(("display", shared_spi))
+                return ConsoleDisplay(lambda value: None)
+            def storage_factory(config, shared_spi=None):
+                events.append(("sd", shared_spi))
+                return SDStorage(jobs, macros), object()
+            with patch("src.app.sys", SimpleNamespace(
+                    implementation=SimpleNamespace(name="circuitpython"))), \
+                 patch("src.display.round_ui.display.release_existing_displays",
+                       side_effect=lambda: events.append(("release", None))), \
+                 patch("src.hardware.build_shared_spi",
+                       side_effect=lambda config: events.append(("spi", None)) or shared), \
+                 patch("src.app.build_display", side_effect=display_factory), \
+                 patch("src.app.build_storage", side_effect=storage_factory):
+                app = PendantApplication.from_config(
+                    {"controller_mode": "disabled", "display_enabled": True,
+                     "display_renderer": "round", "sd_enabled": True,
+                     "jobs_path": jobs, "macros_path": macros},
+                    network_service=MockWiFiService())
+            self.assertEqual([item[0] for item in events],
+                             ["release", "spi", "display", "sd"])
+            self.assertIs(events[2][1], shared)
+            self.assertIs(events[3][1], shared)
+            self.assertIs(app.spi_bus, shared)
+
     def test_scan_is_read_only_and_reports_addresses(self):
         bus = FakeI2C((0x3C, 0x20))
         self.assertEqual(scan_i2c(bus), ((0x20, 0x3C), None))
@@ -70,7 +180,7 @@ class DiagnosticScanTests(unittest.TestCase):
             self.assertEqual(app.state.storage_state, "available")
             self.assertIsNone(app.state.storage_error)
             self.assertEqual(app.state.subsystems["storage"], "OK")
-            self.assertEqual(app.state.subsystems["sd"], "NOT PRESENT")
+            self.assertEqual(app.state.subsystems["sd"], "DISABLED")
             self.assertEqual(app.state.subsystems["i2c"], "ERROR")
             self.assertIn("OSError", app.state.i2c_error)
 

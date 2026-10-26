@@ -87,6 +87,12 @@ class PendantState:
         self.loop_count = 0
         self.last_loop_duration = 0.0
         self.free_heap = None
+        self.i2c_addresses = ()
+        self.mirror_error = None
+        self.mirror_clients = 0
+        self.mirror_errors = 0
+        self.loop_error = None
+        self.loop_error_count = 0
         self.render_count = 0
         self.last_status_age = None
         self.round_ui_bootstrap = False
