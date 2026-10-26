@@ -1,6 +1,8 @@
 import os
+import sys
 import tempfile
 import unittest
+import types
 from unittest.mock import patch
 
 from src.config import load_config
@@ -111,6 +113,13 @@ class NetworkTests(unittest.TestCase):
         with patch.dict(os.environ, {}, clear=True):
             self.assertEqual(load_config()["hostname"],
                              "cdaprod-cnc-pendant")
+
+    def test_optional_mirror_and_sd_default_to_disabled(self):
+        with patch.dict(os.environ, {}, clear=True):
+            config = load_config()
+        self.assertFalse(config["mirror_enabled"])
+        self.assertFalse(config["mirror_navigation"])
+        self.assertFalse(config["sd_enabled"])
 
     def test_credentials_round_trip_without_repr_leak(self):
         with tempfile.TemporaryDirectory() as root:
@@ -250,3 +259,69 @@ class NetworkTests(unittest.TestCase):
 
     def test_portal_explains_that_ap_drops_during_connection(self):
         self.assertIn("setup network will disappear", PortalServer.SUBMITTED)
+
+    def test_portal_is_nonblocking_recv_into_and_handles_partial_response(self):
+        class Client:
+            def __init__(self, chunks):
+                self.chunks = list(chunks)
+                self.sent = bytearray()
+                self.closed = False
+            def setblocking(self, value):
+                self.blocking = value
+            def recv_into(self, target):
+                if not self.chunks:
+                    raise BlockingIOError()
+                chunk = self.chunks.pop(0)
+                count = min(len(target), len(chunk))
+                target[:count] = chunk[:count]
+                if count < len(chunk):
+                    self.chunks.insert(0, chunk[count:])
+                return count
+            def send(self, payload):
+                count = min(23, len(payload))
+                self.sent.extend(payload[:count])
+                return count
+            def close(self):
+                self.closed = True
+        class Listener:
+            def __init__(self, client):
+                self.client = client
+                self.closed = False
+            def setblocking(self, value):
+                self.blocking = value
+            def bind(self, address):
+                self.address = address
+            def listen(self, backlog):
+                self.backlog = backlog
+            def accept(self):
+                if self.client is None:
+                    raise BlockingIOError()
+                client, self.client = self.client, None
+                return client, ("127.0.0.1", 1)
+            def close(self):
+                self.closed = True
+        body = b"ssid=Workshop+Net&password=p%40ss"
+        request = (b"POST /configure HTTP/1.1\r\nContent-Length: " +
+                   str(len(body)).encode() + b"\r\n\r\n" + body)
+        client = Client((request[:42], request[42:]))
+        listener = Listener(client)
+        class Pool:
+            def __init__(self, radio):
+                pass
+            def socket(self):
+                return listener
+        with patch.dict(sys.modules, {"socketpool": types.SimpleNamespace(
+                SocketPool=Pool)}):
+            portal = PortalServer(FakeRadio(), "setup")
+        result = None
+        for _ in range(50):
+            result = portal.poll()
+            if result:
+                break
+        self.assertEqual(result, ("Workshop Net", "p@ss"))
+        self.assertFalse(client.blocking)
+        self.assertTrue(client.closed)
+        self.assertIn(b"HTTP/1.1 200 OK", client.sent)
+        self.assertIn(b"Credentials received", client.sent)
+        portal.deinit()
+        self.assertTrue(listener.closed)

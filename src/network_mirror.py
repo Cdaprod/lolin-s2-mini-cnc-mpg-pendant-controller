@@ -37,10 +37,16 @@ async function loop(){await poll();setTimeout(loop,1200)}loop();
 
 
 class PendantMirror:
-    """Small cooperative socket server; disabled unless explicitly configured."""
+    """One-client, bounded, nonblocking HTTP mirror for CircuitPython."""
+
+    REQUEST_LIMIT = 1536
+    RESPONSE_LIMIT = 8192
+    SEND_CHUNK = 512
+    CLIENT_TIMEOUT = 1.5
 
     def __init__(self, radio, app, port=8080, allow_navigation=False):
         import socketpool
+        import time
         self.app = app
         self.allow_navigation = bool(allow_navigation)
         self.pool = socketpool.SocketPool(radio)
@@ -48,9 +54,41 @@ class PendantMirror:
         self.sock.setblocking(False)
         self.sock.bind(("0.0.0.0", int(port)))
         self.sock.listen(1)
+        self._time = time.monotonic
+        self._client = None
+        self._request = bytearray(self.REQUEST_LIMIT)
+        self._request_size = 0
+        self._request_length = None
+        self._response = None
+        self._response_offset = 0
+        self._client_started = 0.0
+        self.completed_requests = 0
+        self.client_errors = 0
+        self.last_error = None
 
     def deinit(self):
-        self.sock.close()
+        self._close_client()
+        if self.sock is not None:
+            self.sock.close()
+            self.sock = None
+
+    def _close_client(self):
+        client = self._client
+        self._client = None
+        self._request_size = 0
+        self._request_length = None
+        self._response = None
+        self._response_offset = 0
+        if client is not None:
+            try:
+                client.close()
+            except OSError:
+                pass
+
+    def _fail_client(self, error):
+        self.client_errors += 1
+        self.last_error = type(error).__name__
+        self._close_client()
 
     def snapshot(self):
         ui = self.app.ui.view_model()
@@ -65,6 +103,14 @@ class PendantMirror:
             ui["items"] = []
         ui.pop("jog_armed", None)
         ui.pop("motion_available", None)
+        ui["title"] = str(ui.get("title", "Pendant"))[:48]
+        ui["screen"] = str(ui.get("screen", ""))[:32]
+        if isinstance(ui.get("items"), list):
+            ui["items"] = [
+                [str(item[0])[:48]] + list(item[1:])
+                for item in ui["items"][:8]
+                if isinstance(item, (list, tuple)) and item
+            ]
         return {"ui": ui, "remote_navigation": self.allow_navigation,
                 "status": {"machine": self.app.state.machine_state,
                            "connection": self.app.state.connection_state}}
@@ -119,56 +165,115 @@ class PendantMirror:
         ui.enter(item.target)
         return True
 
-    @staticmethod
-    def _reply(client, code, body, mime):
+    def _make_response(self, code, body, mime):
         encoded = body.encode("utf-8")
-        # Bounded small responses; socket writes may be partial.
+        if len(encoded) > self.RESPONSE_LIMIT:
+            code, mime = "503 Service Unavailable", "text/plain"
+            encoded = b"Mirror response exceeds limit"
         header = ("HTTP/1.1 {}\r\nContent-Type: {}\r\nCache-Control: no-store\r\n"
                   "Connection: close\r\nContent-Length: {}\r\n\r\n"
                   .format(code, mime, len(encoded))).encode("utf-8")
-        for payload in (header, encoded):
-            # A bounded per-client socket timeout prevents a stalled browser
-            # from blocking the pendant's cooperative control loop forever.
-            while payload:
-                sent = client.send(payload)
-                if sent is None or sent <= 0:
-                    raise OSError("mirror socket did not progress")
-                payload = payload[sent:]
+        self._response = header + encoded
+        self._response_offset = 0
+
+    def _request_complete(self):
+        view = memoryview(self._request)[:self._request_size]
+        boundary = bytes(view).find(b"\r\n\r\n")
+        if boundary < 0:
+            return False
+        if self._request_length is None:
+            header = bytes(view[:boundary]).decode("utf-8")
+            first = header.split("\r\n", 1)[0]
+            if first.startswith("POST "):
+                try:
+                    self._request_length = int(next(
+                        line.split(":", 1)[1].strip()
+                        for line in header.split("\r\n")
+                        if line.lower().startswith("content-length:")))
+                except (StopIteration, ValueError):
+                    self._make_response("400 Bad Request", "Bad request", "text/plain")
+                    return True
+                if not 1 <= self._request_length <= 256:
+                    self._make_response("413 Payload Too Large", "Request too large", "text/plain")
+                    return True
+            else:
+                self._request_length = 0
+        return self._request_size >= boundary + 4 + self._request_length
+
+    def _handle_request(self):
+        request = bytes(memoryview(self._request)[:self._request_size]).decode("utf-8")
+        head, _, body = request.partition("\r\n\r\n")
+        first = head.split("\r\n", 1)[0]
+        if first.startswith("GET /api/state "):
+            body_text = json.dumps(self.snapshot())
+            self._make_response("200 OK", body_text, "application/json")
+        elif (first.startswith("GET / ") or first.startswith("GET /pendant ") or
+              first.startswith("GET /pendant/ ")):
+            self._make_response("200 OK", HTML, "text/html; charset=utf-8")
+        elif first.startswith("POST /api/touch "):
+            try:
+                accepted = self.navigate(json.loads(body[:self._request_length]))
+            except (ValueError, TypeError):
+                accepted = False
+            self._make_response("204 No Content" if accepted else "403 Forbidden",
+                                "", "text/plain")
+        else:
+            self._make_response("404 Not Found", "Not found", "text/plain")
 
     def poll(self):
+        """Advance one nonblocking socket operation; never wait for a client."""
+        if self.sock is None:
+            return
+        now = self._time()
+        if self._client is None:
+            try:
+                self._client, _ = self.sock.accept()
+                self._client.setblocking(False)
+                self._client_started = now
+            except OSError:
+                return
+        if now - self._client_started > self.CLIENT_TIMEOUT:
+            self._fail_client(TimeoutError("client deadline exceeded"))
+            return
+        if self._response is None:
+            remaining = self.REQUEST_LIMIT - self._request_size
+            if remaining <= 0:
+                self._make_response("413 Payload Too Large", "Request too large", "text/plain")
+            else:
+                try:
+                    received = self._client.recv_into(
+                        memoryview(self._request)[self._request_size:])
+                except OSError:
+                    # Nonblocking sockets report no data and disconnects as
+                    # OSError on CircuitPython; the deadline bounds retries.
+                    return
+                if received <= 0:
+                    self._fail_client(OSError("client disconnected"))
+                    return
+                self._request_size += received
+                try:
+                    if self._request_complete():
+                        if self._response is None:
+                            self._handle_request()
+                except (UnicodeError, ValueError, TypeError, KeyError) as exc:
+                    self._make_response("400 Bad Request", "Bad request", "text/plain")
+                except MemoryError as exc:
+                    self.client_errors += 1
+                    self.last_error = "MemoryError"
+                    self._make_response("503 Service Unavailable",
+                                        "Mirror temporarily unavailable", "text/plain")
+        if self._response is None:
+            return
+        end = min(self._response_offset + self.SEND_CHUNK, len(self._response))
         try:
-            client, _ = self.sock.accept()
+            sent = self._client.send(memoryview(self._response)[self._response_offset:end])
         except OSError:
             return
-        try:
-            client.settimeout(0.05)
-            # CircuitPython socketpool.Socket exposes recv_into(), not recv().
-            buffer = bytearray(1536)
-            received = client.recv_into(buffer)
-            if not received:
-                return
-            request = bytes(memoryview(buffer)[:received]).decode("utf-8")
-            head, separator, body = request.partition("\r\n\r\n")
-            first = head.split("\r\n", 1)[0]
-            if first.startswith("GET /api/state "):
-                self._reply(client, "200 OK", json.dumps(self.snapshot()), "application/json")
-            elif first.startswith("GET / ") or first.startswith("GET /pendant ") or first.startswith("GET /pendant/ "):
-                self._reply(client, "200 OK", HTML, "text/html; charset=utf-8")
-            elif first.startswith("POST /api/touch "):
-                try:
-                    length = int(next((line.split(":", 1)[1].strip()
-                                      for line in head.split("\r\n")
-                                      if line.lower().startswith("content-length:")), "0"))
-                    if length < 1 or length > 256 or length > len(body.encode("utf-8")):
-                        raise ValueError("incomplete body")
-                    accepted = self.navigate(json.loads(body))
-                except (ValueError, TypeError):
-                    accepted = False
-                self._reply(client, "204 No Content" if accepted else "403 Forbidden",
-                            "", "text/plain")
-            else:
-                self._reply(client, "404 Not Found", "Not found", "text/plain")
-        except (OSError, ValueError):
-            pass
-        finally:
-            client.close()
+        if sent is None or sent <= 0:
+            self._fail_client(OSError("client disconnected during response"))
+            return
+        self._response_offset += sent
+        if self._response_offset >= len(self._response):
+            self.completed_requests += 1
+            self.last_error = None
+            self._close_client()

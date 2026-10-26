@@ -26,7 +26,12 @@ class CredentialStore:
         )
 
     def save(self, ssid, password):
-        directory = self.path.rsplit("/", 1)[0]
+        if "/" in self.path:
+            directory = self.path.rsplit("/", 1)[0]
+        elif chr(92) in self.path:
+            directory = self.path.rsplit(chr(92), 1)[0]
+        else:
+            directory = ""
         if directory:
             try:
                 os.mkdir(directory)
@@ -340,6 +345,16 @@ class WiFiService:
         self._stop_mdns()
         self.state = NetworkState.DISABLED
 
+    def deinit(self):
+        """Close cooperative servers before the radio or runtime is reset."""
+        self._stop_mdns()
+        self._stop_ap()
+        try:
+            self.radio.stop_station()
+        except (AttributeError, OSError, RuntimeError):
+            pass
+        self.state = NetworkState.DISABLED
+
     def info(self):
         result = {
             "enabled": self.enabled, "connected": self.connected,
@@ -375,6 +390,15 @@ class PortalServer:
         self.socket.bind(("0.0.0.0", 80))
         self.socket.listen(1)
         self.form = self._build_form(radio)
+        self._client = None
+        self._request = bytearray(1024)
+        self._request_size = 0
+        self._request_length = None
+        self._response = None
+        self._response_offset = 0
+        self._credentials = None
+        self._client_started = 0.0
+        self._time = time.monotonic
 
     @staticmethod
     def _build_form(radio):
@@ -391,22 +415,108 @@ class PortalServer:
                 .replace('"', "&quot;"))
 
     def poll(self):
+        """Advance one bounded portal socket operation; do not wait for clients."""
+        if self.socket is None:
+            return None
+        now = self._time()
+        if self._client is None:
+            try:
+                self._client, _ = self.socket.accept()
+                self._client.setblocking(False)
+                self._client_started = now
+            except OSError:
+                return None
+            return None
+        if now - self._client_started > 2.0:
+            self._close_client()
+            return None
+        if self._response is None:
+            remaining = len(self._request) - self._request_size
+            if remaining <= 0:
+                self._response_for(None)
+            else:
+                try:
+                    received = self._client.recv_into(
+                        memoryview(self._request)[self._request_size:])
+                except OSError:
+                    return None
+                if received <= 0:
+                    self._close_client()
+                    return None
+                self._request_size += received
+                if not self._request_complete():
+                    return None
+                request = bytes(memoryview(self._request)[:self._request_size])
+                try:
+                    credentials = self._parse_credentials(request.decode("utf-8"))
+                except UnicodeError:
+                    credentials = None
+                self._response_for(credentials)
+                return None
+        end = min(self._response_offset + 256, len(self._response))
         try:
-            client, _ = self.socket.accept()
+            sent = self._client.send(
+                memoryview(self._response)[self._response_offset:end])
         except OSError:
             return None
-        try:
-            client.settimeout(0.1)
-            request = client.recv(1024).decode("utf-8")
-            credentials = self._parse_credentials(request)
-            body = self.SUBMITTED if credentials else self.form
-            response = ("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n"
-                        "Connection: close\r\nContent-Length: {}\r\n\r\n{}"
-                        .format(len(body), body))
-            client.send(response.encode("utf-8"))
+        if sent is None or sent <= 0:
+            self._close_client()
+            return None
+        self._response_offset += sent
+        if self._response_offset >= len(self._response):
+            credentials = self._credentials
+            self._close_client()
             return credentials
-        finally:
-            client.close()
+        return None
+
+    def _request_complete(self):
+        raw = bytes(memoryview(self._request)[:self._request_size])
+        boundary = raw.find(b"\r\n\r\n")
+        if boundary < 0:
+            return False
+        if self._request_length is None:
+            header = raw[:boundary].decode("utf-8", "replace")
+            first = header.split("\r\n", 1)[0]
+            if first.startswith("POST /configure "):
+                try:
+                    self._request_length = int(next(
+                        line.split(":", 1)[1].strip()
+                        for line in header.split("\r\n")
+                        if line.lower().startswith("content-length:")))
+                except (StopIteration, ValueError):
+                    self._request_length = -1
+                if not 0 <= self._request_length <= 512:
+                    self._request_length = -1
+                    return True
+            else:
+                self._request_length = 0
+        if self._request_length < 0:
+            return True
+        return self._request_size >= boundary + 4 + self._request_length
+
+    def _response_for(self, credentials):
+        self._credentials = credentials
+        body = self.SUBMITTED if credentials else self.form
+        encoded = body.encode("utf-8")
+        header = ("HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n"
+                  "Connection: close\r\nContent-Length: {}\r\n\r\n"
+                  .format(len(encoded))).encode("utf-8")
+        self._response = header + encoded
+        self._response_offset = 0
+
+    def _close_client(self):
+        client = self._client
+        self._client = None
+        self._request_size = 0
+        self._request_length = None
+        self._response = None
+        self._response_offset = 0
+        self._credentials = None
+        if client is not None:
+            try:
+                client.close()
+            except OSError:
+                pass
 
     @staticmethod
     def _parse_credentials(request):
@@ -420,7 +530,10 @@ class PortalServer:
                 values[key] = PortalServer._url_decode(value)
         if not values.get("ssid"):
             return None
-        return values["ssid"], values.get("password", "")
+        ssid, password = values["ssid"], values.get("password", "")
+        if len(ssid.encode("utf-8")) > 32 or len(password.encode("utf-8")) > 63:
+            return None
+        return ssid, password
 
     @staticmethod
     def _url_decode(value):
@@ -440,7 +553,10 @@ class PortalServer:
         return output
 
     def deinit(self):
-        self.socket.close()
+        self._close_client()
+        if self.socket is not None:
+            self.socket.close()
+            self.socket = None
 
 
 class MockWiFiService:
@@ -475,6 +591,10 @@ class MockWiFiService:
         self.enabled = bool(enabled)
         if not enabled:
             self.state = NetworkState.DISABLED
+
+    def deinit(self):
+        self.connected = False
+        self.state = NetworkState.DISABLED
 
     def scan(self):
         return list(self.networks)
