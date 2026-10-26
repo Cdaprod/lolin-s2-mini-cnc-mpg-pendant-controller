@@ -207,7 +207,7 @@ def reconcile(template_path, local_path, device_path, apply_local=False,
     # These safe, repo-controlled defaults are authoritative during deployment
     # even when the device has stale values from an earlier deployment.
     # All unrelated device settings (especially credentials) are preserved.
-    DEPLOY_DEFAULTS = ("MPG_MIRROR_ENABLED",)
+    DEPLOY_DEFAULTS = ("MPG_MIRROR_ENABLED", "MPG_SD_ENABLED")
     # Preserve the user's explicit, ignored ./settings.toml overrides when
     # --apply-local-settings is requested; otherwise use the tracked template.
     for key in all_keys:
