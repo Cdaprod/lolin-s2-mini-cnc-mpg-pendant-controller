@@ -87,7 +87,7 @@ class GestureTests(unittest.TestCase):
         self.assertEqual(gestures.poll(None), ())
         gestures.poll((120, 120))
         gestures.poll((140, 136))
-        self.assertEqual(gestures.poll(None), (("release_select", 140, 136),))
+        self.assertEqual(gestures.poll(None), ())  # axis-locked diagonal is cancelled
         self.assertEqual(gestures.poll((-5, 20)), ())
 
     def test_touch_transform_and_counting(self):
