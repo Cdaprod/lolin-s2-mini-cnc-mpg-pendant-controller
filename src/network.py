@@ -94,6 +94,7 @@ class WiFiService:
         self._password = None
         self._portal = None
         self._mdns = None
+        self._socket_pool = None
         self._ap_started = None
         self._manual_ap = False
         self._next_reconnect = 0
@@ -198,8 +199,11 @@ class WiFiService:
             except (AttributeError, RuntimeError):
                 pass
             self.radio.start_ap(self.ap_ssid)
-            factory = self.portal_factory or self._default_portal_factory
-            self._portal = factory(self.radio, self.ap_ssid)
+            if self.portal_factory is None:
+                self._portal = PortalServer(
+                    self.radio, self.ap_ssid, self.socket_pool())
+            else:
+                self._portal = self.portal_factory(self.radio, self.ap_ssid)
             self._ap_started = self.clock()
             self._manual_ap = bool(manual)
             self._transition(NetworkState.AP_SETUP, "SSID {}".format(self.ap_ssid))
@@ -246,9 +250,16 @@ class WiFiService:
             pass
         self._ap_started = None
 
-    @staticmethod
-    def _default_portal_factory(radio, ap_ssid):
-        return PortalServer(radio, ap_ssid)
+    def socket_pool(self):
+        """Return the one CircuitPython socket pool owned by this radio.
+
+        CircuitPython permits one SocketPool per Wi-Fi radio. The setup
+        portal and optional mirror share it while owning separate sockets.
+        """
+        if self._socket_pool is None:
+            import socketpool
+            self._socket_pool = socketpool.SocketPool(self.radio)
+        return self._socket_pool
 
     @staticmethod
     def _default_mdns_factory(radio, hostname):
@@ -381,10 +392,11 @@ class PortalServer:
     SUBMITTED = ("Credentials received. The setup network will disappear "
                  "while the device attempts to connect.")
 
-    def __init__(self, radio, ap_ssid):
+    def __init__(self, radio, ap_ssid, socket_pool=None):
         import socketpool
         self.ap_ssid = ap_ssid
-        self.pool = socketpool.SocketPool(radio)
+        self.pool = (socket_pool if socket_pool is not None else
+                     socketpool.SocketPool(radio))
         self.socket = self.pool.socket()
         self.socket.setblocking(False)
         self.socket.bind(("0.0.0.0", 80))

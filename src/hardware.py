@@ -88,7 +88,9 @@ def build_storage(config, shared_spi=None):
         jobs_path = root + "/jobs"
         macros_path = root + "/macros"
         config_path = root + "/config"
-    storage = SDStorage(jobs_path, macros_path, config_path)
+    storage = SDStorage(
+        jobs_path, macros_path, config_path,
+        missing_is_unconfigured=not config.get("sd_enabled"))
     if status is not None and status != "available":
         storage.status = status
         storage.error = error

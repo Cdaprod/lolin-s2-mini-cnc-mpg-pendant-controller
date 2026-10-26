@@ -146,6 +146,16 @@ def test_grbl_adapter_emits_controller_specific_cancel_on_lease_stop():
     assert transport.writes[-1] == b"\x85"
 
 
+def test_grbl_poll_does_not_cancel_a_live_bounded_jog_segment():
+    transport, adapter, _ = ready_grbl()
+    assert adapter.start_jog("X", 1, 500)
+    adapter.poll()
+    assert adapter._active_jog == ("X", 1, 500.0)
+    assert b"\x85" not in transport.writes
+    assert adapter.stop_jog()
+    assert transport.writes[-1] == b"\x85"
+
+
 def test_grbl_motion_commands_are_gated_but_hold_and_cancel_remain_available():
     transport = MockGRBLTransport()
     adapter = GrblAdapter(transport)
@@ -156,7 +166,7 @@ def test_grbl_motion_commands_are_gated_but_hold_and_cancel_remain_available():
     assert adapter.command("HOLD")
     assert transport.writes[-1] == b"!"
     assert adapter.stop_jog()
-    assert transport.writes[-1] == b"\x85"
+    assert transport.writes[-1] == b"!"  # no jog was active to cancel
 
 
 def test_grbl_poll_requests_status_and_derives_work_coordinates():

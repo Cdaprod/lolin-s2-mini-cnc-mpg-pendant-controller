@@ -114,6 +114,35 @@ class NetworkTests(unittest.TestCase):
             self.assertEqual(load_config()["hostname"],
                              "cdaprod-cnc-pendant")
 
+    def test_default_setup_portal_uses_one_service_owned_socket_pool(self):
+        class Listener:
+            def setblocking(self, value):
+                self.blocking = value
+            def bind(self, address):
+                self.address = address
+            def listen(self, backlog):
+                self.backlog = backlog
+            def close(self):
+                self.closed = True
+        class Pool:
+            created = 0
+            def __init__(self, radio):
+                type(self).created += 1
+                self.listener = Listener()
+            def socket(self):
+                return self.listener
+        radio = FakeRadio()
+        with patch.dict(sys.modules, {"socketpool": types.SimpleNamespace(
+                SocketPool=Pool)}):
+            service = WiFiService(radio, CredentialStore(
+                "/path/that/does/not/exist"))
+            self.assertFalse(service.start("pendant"))
+            pool = service.socket_pool()
+            self.assertIs(service._portal.pool, pool)
+            self.assertIs(service.socket_pool(), pool)
+            self.assertEqual(Pool.created, 1)
+            service.deinit()
+
     def test_optional_mirror_and_sd_default_to_disabled(self):
         with patch.dict(os.environ, {}, clear=True):
             config = load_config()

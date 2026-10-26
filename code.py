@@ -20,9 +20,5 @@ def main():
         time.sleep(0.01)
 
 
-try:
+if __name__ == "__main__":
     main()
-except Exception as exc:
-    print("[fatal]", repr(exc))
-    while True:
-        time.sleep(1)

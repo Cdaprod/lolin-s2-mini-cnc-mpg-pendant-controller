@@ -502,20 +502,30 @@ class UIManager:
         if isinstance(event, TouchEvent):
             if self.active_overlay() is not None:
                 return None
-            # Touch navigation must not execute motion, machine or network commands.
+            # A physical tap/release selects the row under the finger. Action
+            # rows that can start/resume machine motion remain gated behind the
+            # existing physical confirmation path; navigation and safe UI
+            # commands retain normal menu behavior.
             if event.kind in ("tap", "release_select") and (
                     self.current_screen != "HOME" and 58 <= event.y < 190):
                 target = self._touch_row_index(event.y)
                 items = self.items()
                 if target is not None and target < len(items):
                     item = items[target]
-                    if (item.command is not None or
-                            self.current_screen in
-                            ("EXPLORER", "JOB_BROWSER", "MACRO_BROWSER",
-                             "WIFI_SCAN", "ACTIVE_JOB", "TEXT_ENTRY")):
-                        self.focus[self.current_screen] = target
-                        self._changed()
+                    self.focus[self.current_screen] = target
+                    self._changed()
+                    if not item.enabled:
+                        self.toast = item.reason or "Unavailable"
                         return None
+                    safe_commands = (
+                        "CONFIRM_ACTION", "CONFIRM_JOB_CANCEL",
+                        "CONFIRM_RESTART", "NETWORK_TOGGLE", "NETWORK_SCAN",
+                        "NETWORK_MANUAL_SSID", "NETWORK_SETUP_AP",
+                        "NETWORK_DISCONNECT", "JOB_HOLD",
+                    )
+                    if item.command is None or item.command in safe_commands:
+                        return self._select_item()
+                    return None
             event = self._touch_event(event)
             if event is None:
                 return None
