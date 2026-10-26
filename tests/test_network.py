@@ -109,6 +109,19 @@ class NetworkTests(unittest.TestCase):
         self.assertEqual(service.scan(), [("Lab", -20), ("Shop", -40)])
         self.assertTrue(radio.stopped_scan)
 
+    def test_incremental_scan_retains_only_the_strongest_bounded_results(self):
+        radio = FakeRadio()
+        radio.networks = [FakeNetwork("network-{}".format(i), -100 + i)
+                          for i in range(100)]
+        service = self.make_service(radio)
+        service.start_scan()
+        while service.scanning:
+            service.poll_scan(budget=7)
+        self.assertEqual(len(service._scan_found), service.MAX_SCAN_RESULTS)
+        self.assertEqual(len(service.scan_results), service.MAX_SCAN_RESULTS)
+        self.assertEqual(service.scan_results[0], ("network-99", -1))
+        self.assertTrue(radio.stopped_scan)
+
     def test_default_hostname_identifies_cnc_pendant(self):
         with patch.dict(os.environ, {}, clear=True):
             self.assertEqual(load_config()["hostname"],
@@ -354,3 +367,4 @@ class NetworkTests(unittest.TestCase):
         self.assertIn(b"Credentials received", client.sent)
         portal.deinit()
         self.assertTrue(listener.closed)
+        self.assertFalse(any(portal._request))

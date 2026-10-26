@@ -67,6 +67,8 @@ class CredentialStore:
 
 
 class WiFiService:
+    MAX_SCAN_RESULTS = 32
+
     """Own STA/AP transitions without making networking a boot prerequisite."""
 
     def __init__(self, radio=None, credential_store=None, clock=time.monotonic,
@@ -274,13 +276,27 @@ class WiFiService:
         networks = self.radio.start_scanning_networks()
         try:
             for network in networks:
-                ssid = str(network.ssid)
-                rssi = int(network.rssi)
-                if ssid and (ssid not in found or rssi > found[ssid]):
-                    found[ssid] = rssi
+                self._record_scan_result(found, network)
         finally:
             self.radio.stop_scanning_networks()
         return sorted(found.items(), key=lambda item: item[1], reverse=True)
+
+    @classmethod
+    def _record_scan_result(cls, found, network):
+        ssid = str(network.ssid)[:32]
+        rssi = int(network.rssi)
+        if not ssid:
+            return
+        if ssid in found:
+            if rssi > found[ssid]:
+                found[ssid] = rssi
+        elif len(found) < cls.MAX_SCAN_RESULTS:
+            found[ssid] = rssi
+        else:
+            weakest = min(found, key=found.get)
+            if rssi > found[weakest]:
+                del found[weakest]
+                found[ssid] = rssi
 
     def start_scan(self):
         if self.scanning:
@@ -304,7 +320,7 @@ class WiFiService:
                 self.scan_results = sorted(
                     self._scan_found.items(), key=lambda item: item[1],
                     reverse=True
-                )[:32]
+                )[:self.MAX_SCAN_RESULTS]
                 return True
             except Exception as exc:
                 try:
@@ -317,11 +333,7 @@ class WiFiService:
                     type(exc).__name__
                 )
                 return True
-            ssid = str(network.ssid)
-            rssi = int(network.rssi)
-            if (ssid and (ssid not in self._scan_found or
-                          rssi > self._scan_found[ssid])):
-                self._scan_found[ssid] = rssi
+            self._record_scan_result(self._scan_found, network)
         return False
 
     def connect(self, ssid, password, persist=True):
@@ -524,6 +536,8 @@ class PortalServer:
         self._response = None
         self._response_offset = 0
         self._credentials = None
+        for index in range(len(self._request)):
+            self._request[index] = 0
         if client is not None:
             try:
                 client.close()
