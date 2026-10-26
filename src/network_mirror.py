@@ -200,6 +200,8 @@ class PendantMirror:
                     return True
             else:
                 self._request_length = 0
+        if self._response is not None:
+            return True
         return self._request_size >= boundary + 4 + self._request_length
 
     def _handle_request(self):
