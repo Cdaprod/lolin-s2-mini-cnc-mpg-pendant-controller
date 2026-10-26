@@ -362,8 +362,13 @@ def historical_managed_path(relative):
 
 def target_is_writable(target):
     """Return whether the mounted target permits host-side deployment writes."""
+    statvfs = getattr(os, "statvfs", None)
+    if statvfs is None:
+        # Windows has no statvfs; os.access is the available preflight and
+        # each write remains protected by the normal atomic-write error path.
+        return os.access(str(target), os.W_OK)
     try:
-        flags = os.statvfs(str(target)).f_flag
+        flags = statvfs(str(target)).f_flag
     except OSError:
         return False
     readonly_flag = getattr(os, "ST_RDONLY", 1)
@@ -409,6 +414,13 @@ def verify(target, root=ROOT):
             errors.append("runtime mismatch: {}".format(relative))
     settings, _ = parse_settings(target / "settings.toml", required=True)
     validate_profiles(settings)
+    # The manifest records the effective values selected at deployment time,
+    # including deliberate local opt-ins, so verify checks the real device
+    # config instead of assuming every install uses the safe defaults.
+    expected_features = manifest.get("feature_flags", {})
+    for key, expected in expected_features.items():
+        if settings.get(key) != expected:
+            errors.append("configuration mismatch: {}".format(key))
     errors.extend(dependency_problems(settings, root=None, target=target))
     if errors:
         raise DeployError("verification failed:\n- " + "\n- ".join(errors))
@@ -498,6 +510,9 @@ def deploy(args):
         "deployed_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "board_profile": literal_value(settings.get("MPG_BOARD_PROFILE", '""')),
         "display_profile": literal_value(settings.get("MPG_DISPLAY_PROFILE", '""')),
+        "feature_flags": {key: settings[key] for key in
+                          ("MPG_MIRROR_ENABLED", "MPG_SD_ENABLED")
+                          if key in settings},
         "managed_files": files,
     }
     atomic_write(target / MANIFEST_NAME,
