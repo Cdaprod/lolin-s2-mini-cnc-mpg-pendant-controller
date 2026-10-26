@@ -1,5 +1,8 @@
 """Regression tests for C3 bench controller. No CNC command may escape."""
+import sys
+import types
 import unittest
+from unittest.mock import patch
 
 from src.controller.c3_status import C3StatusController
 from src.state import PendantState
@@ -32,8 +35,11 @@ class C3StatusTests(unittest.TestCase):
     def test_all_machine_actions_denied(self):
         state = PendantState()
         esp = Esp()
-        controller = C3StatusController(
-            state, radio=Radio(), esp=esp, now=lambda: 0, session=42)
+        espnow = types.ModuleType("espnow")
+        espnow.Peer = lambda mac: types.SimpleNamespace(mac=bytes(mac))
+        with patch.dict(sys.modules, {"espnow": espnow}):
+            controller = C3StatusController(
+                state, radio=Radio(), esp=esp, now=lambda: 0, session=42)
         self.assertFalse(controller.queue_jog("X", 1, 300))
         self.assertFalse(controller.queue_command("$H"))
         self.assertFalse(controller.realtime("hold"))

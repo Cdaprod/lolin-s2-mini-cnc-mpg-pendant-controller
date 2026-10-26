@@ -57,6 +57,39 @@ class GestureTests(unittest.TestCase):
         ui.handle(TouchEvent("swipe_right", 120, 110))
         self.assertEqual(ui.current_screen, "HOME")
 
+    def test_vertical_touch_swipe_only_moves_menu_focus_never_jogs(self):
+        state = PendantState()
+        ui = UIManager(state)
+        ui.complete_boot()
+        ui.enter("MAIN_MENU")
+        ui.focus["MAIN_MENU"] = 0
+        before = ui.focus["MAIN_MENU"]
+        result = ui.handle(TouchEvent("swipe_down", 100, 130))
+        self.assertIsNone(result)
+        self.assertEqual(ui.focus["MAIN_MENU"], 3)
+        self.assertNotEqual(ui.focus["MAIN_MENU"], before)
+        ui.home()
+        state.connection_state = "connected"
+        ui.refresh_context()
+        self.assertIsNone(ui.handle(TouchEvent("swipe_down", 100, 130)))
+        self.assertEqual(ui.current_screen, "HOME")
+
+    def test_physical_release_select_on_home_opens_menu_without_motion(self):
+        state = PendantState()
+        state.connection_state = "connected"
+        ui = UIManager(state)
+        ui.complete_boot()
+        ui.refresh_context()
+        clock, source = Clock(), Source()
+        touch = TouchInput(source, clock)
+        source.current = (120, 120)
+        self.assertEqual(touch.poll(), ())
+        source.current = None
+        event = touch.poll()[0]
+        self.assertEqual(event.kind, "release_select")
+        self.assertIsNone(ui.handle(event))
+        self.assertEqual(ui.current_screen, "MAIN_MENU")
+
     def test_released_static_row_selects_but_machine_action_does_not(self):
         state = PendantState()
         ui = UIManager(state)
@@ -81,6 +114,18 @@ class GestureTests(unittest.TestCase):
             self.assertEqual(gestures.poll((120, 120)), ())
             self.assertEqual(gestures.poll(end), ())
             self.assertEqual(gestures.poll(None)[0][0], expected)
+
+    def test_vertical_swipes_remain_touch_events_not_handwheel_rotations(self):
+        clock, source = Clock(), Source()
+        touch = TouchInput(source, clock)
+        source.current = (120, 120)
+        self.assertEqual(touch.poll(), ())
+        source.current = (120, 70)
+        self.assertEqual(touch.poll()[0].kind, "drag")
+        source.current = None
+        events = touch.poll()
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0].kind, "swipe_up")
 
     def test_no_unexpected_release_or_movement_action(self):
         gestures = TouchGestures(Clock())

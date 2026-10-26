@@ -1,6 +1,8 @@
 import os
 import tempfile
 import unittest
+import sys
+import types
 from unittest.mock import patch
 
 from src.controller.grbl import GRBLController
@@ -13,6 +15,29 @@ from src.transport.mock import MockTransport
 
 
 class SharedSPICompositionTests(unittest.TestCase):
+    def test_shared_spi_uses_one_bus_with_sck_mosi_miso(self):
+        from src.hardware import build_shared_spi
+        calls = []
+        board = types.ModuleType("board")
+        for name in ("D8", "D10", "D9"):
+            setattr(board, name, name)
+        busio = types.ModuleType("busio")
+        busio.SPI = lambda *args, **kwargs: calls.append((args, kwargs)) or "spi"
+        config = {"display_sck_pin": "D8", "display_mosi_pin": "D10",
+                  "sd_sck_pin": "D8", "sd_mosi_pin": "D10",
+                  "sd_miso_pin": "D9"}
+        with patch.dict(sys.modules, {"board": board, "busio": busio}):
+            self.assertEqual(build_shared_spi(config), "spi")
+        self.assertEqual(calls, [(('D8',), {"MOSI": "D10", "MISO": "D9"})])
+
+    def test_shared_spi_rejects_conflicting_signal_assignments(self):
+        from src.hardware import build_shared_spi
+        config = {"display_sck_pin": "D8", "display_mosi_pin": "D10",
+                  "sd_sck_pin": "D7", "sd_mosi_pin": "D10",
+                  "sd_miso_pin": "D9"}
+        with self.assertRaisesRegex(ValueError, "same SCK/MOSI"):
+            build_shared_spi(config)
+
     def test_round_display_receives_exact_sd_spi_object(self):
         from src.hardware import build_display, build_storage
         from src.display.round_ui import display as round_display

@@ -209,19 +209,19 @@ class RoundRendererTests(unittest.TestCase):
         ui.enter("SYSTEM")
         ui.detail_title = "Diagnostics"
         ui.enter("SYSTEM_INFO")
-        self.assertEqual(len(ui.items()), 18)
+        self.assertEqual(len(ui.items()), 21)
         renderer.render(ui.state)
         first = [line.value for line in renderer.menu]
         self.assertIn("CircuitPython", first[0])
-        for _ in range(17):
+        for _ in range(20):
             ui.handle(ROTATE_CW)
         renderer.render(ui.state)
-        self.assertEqual(ui.focus["SYSTEM_INFO"], 17)
+        self.assertEqual(ui.focus["SYSTEM_INFO"], 20)
         self.assertTrue(any("Last error" in line.value for line in renderer.menu))
         ui.handle(ROTATE_CCW)
         renderer.render(ui.state)
-        self.assertEqual(ui.focus["SYSTEM_INFO"], 16)
-        for _ in range(16):
+        self.assertEqual(ui.focus["SYSTEM_INFO"], 19)
+        for _ in range(19):
             ui.handle(ROTATE_CCW)
         renderer.render(ui.state)
         self.assertEqual([line.value for line in renderer.menu], first)
@@ -301,16 +301,16 @@ class RoundRendererTests(unittest.TestCase):
 
     def test_scrolling_focus_is_centered_after_initial_rows(self):
         from src.display.navigation import menu_window_start
-        self.assertEqual(menu_window_start(0, 18, 6), 0)
-        self.assertEqual(menu_window_start(5, 18, 6), 3)
-        self.assertEqual(menu_window_start(17, 18, 6), 12)
+        self.assertEqual(menu_window_start(0, 21, 6), 0)
+        self.assertEqual(menu_window_start(5, 21, 6), 3)
+        self.assertEqual(menu_window_start(20, 21, 6), 15)
         self.assertEqual(menu_window_start(0, 3, 6), 0)
         state, ui, _, renderer = self.make_renderer()
         ui.enter("MAIN_MENU")
         ui.enter("SYSTEM")
         ui.detail_title = "Diagnostics"
         ui.enter("SYSTEM_INFO")
-        for _ in range(8):
+        for _ in range(9):
             ui.handle(ROTATE_CW)
         renderer.render(state)
         self.assertEqual(renderer.menu_highlight.row, 2)

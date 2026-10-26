@@ -21,7 +21,7 @@ class HardwareProfileTests(unittest.TestCase):
         }, clear=True):
             config = load_config()
         self.assertEqual((config["mpg_a_pin"], config["mpg_b_pin"]),
-                         ("GPIO42", "GPIO41"))
+                         ("GPIO39", "GPIO40"))
         self.assertEqual(config["mcp23017_address"], 0x20)
         self.assertEqual(config["sd_cs_pin"], "D2")
         self.assertFalse(config["inputs_enabled"])
@@ -79,8 +79,8 @@ class HardwareProfileTests(unittest.TestCase):
             "display_enabled": True,
         })
         self.assertNotIn("uart_tx_pin", config)
-        self.assertEqual(config["mpg_a_pin"], "GPIO42")
-        self.assertEqual(config["mpg_b_pin"], "GPIO41")
+        self.assertEqual(config["mpg_a_pin"], "GPIO39")
+        self.assertEqual(config["mpg_b_pin"], "GPIO40")
         self.assertEqual(config["axis_pins"]["X"], "GPA0")
         self.assertEqual(config["multiplier_pins"]["X100"], "GPB0")
         self.assertEqual(config["estop_observe_pin"], "GPB1")
@@ -167,19 +167,23 @@ class MCP23017Tests(unittest.TestCase):
 class CurrentPendantInputTests(unittest.TestCase):
     def setUp(self):
         self.board = types.ModuleType("board")
-        self.board.GPIO42 = object()
-        self.board.GPIO41 = object()
+        self.board.GPIO39 = object()
+        self.board.GPIO40 = object()
         self.digitalio = types.ModuleType("digitalio")
         self.digitalio.Direction = types.SimpleNamespace(INPUT="input")
         self.digitalio.Pull = types.SimpleNamespace(UP="up", DOWN="down")
         self.digitalio.DigitalInOut = lambda pin: types.SimpleNamespace(
             pin=pin, direction=None, pull=None, value=True)
+        microcontroller = types.ModuleType("microcontroller")
+        microcontroller.pin = types.SimpleNamespace(
+            GPIO39=self.board.GPIO39, GPIO40=self.board.GPIO40)
         self.rotaryio = types.ModuleType("rotaryio")
         self.rotaryio.IncrementalEncoder = lambda a, b, divisor=1: \
             types.SimpleNamespace(a=a, b=b, divisor=divisor, position=0)
         self.modules = patch.dict(sys.modules, {
             "board": self.board, "digitalio": self.digitalio,
             "rotaryio": self.rotaryio,
+            "microcontroller": microcontroller,
         })
         self.modules.start()
 
@@ -190,7 +194,7 @@ class CurrentPendantInputTests(unittest.TestCase):
         return {
             "inputs_enabled": True, "selector_backend": "mcp23017",
             "selector_interface_verified": verified,
-            "mpg_a_pin": "GPIO42", "mpg_b_pin": "GPIO41",
+            "mpg_a_pin": "GPIO39", "mpg_b_pin": "GPIO40",
             "mpg_use_rotaryio": True, "mcp23017_address": 32,
             "i2c_sda_pin": "D4", "i2c_scl_pin": "D5",
             "axis_pins": {"X": "GPA0", "Y": "GPA1", "Z": "GPA2",
@@ -206,10 +210,10 @@ class CurrentPendantInputTests(unittest.TestCase):
         }
 
     def test_native_resolution_does_not_accept_virtual_pins(self):
-        self.assertIs(resolve_native_pin(self.board, "GPIO42"),
-                      self.board.GPIO42)
-        self.assertIs(resolve_native_pin(self.board, "GPIO41"),
-                      self.board.GPIO41)
+        self.assertIs(resolve_native_pin(self.board, "GPIO39"),
+                      self.board.GPIO39)
+        self.assertIs(resolve_native_pin(self.board, "GPIO40"),
+                      self.board.GPIO40)
         with self.assertRaises(ValueError):
             resolve_native_pin(self.board, "GPA0")
         with self.assertRaises(ValueError):
@@ -237,7 +241,7 @@ class CurrentPendantInputTests(unittest.TestCase):
         self.assertTrue(sample.buttons["SELECT"])
         self.assertFalse(sample.deadman)
         self.assertEqual((adapter.encoder.a, adapter.encoder.b),
-                         (self.board.GPIO42, self.board.GPIO41))
+                         (self.board.GPIO39, self.board.GPIO40))
 
 
 if __name__ == "__main__":

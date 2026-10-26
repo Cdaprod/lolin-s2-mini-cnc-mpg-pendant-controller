@@ -48,15 +48,20 @@ def build_inputs(config, state, shared_i2c=None):
 
 
 def build_shared_spi(config):
-    """Allocate one SPI bus for the round display and optional SD card."""
-    try:
-        import board
-        import busio
-        return busio.SPI(getattr(board, config["display_sck_pin"]),
-                         MOSI=getattr(board, config["display_mosi_pin"]),
-                         MISO=getattr(board, config["sd_miso_pin"]))
-    except (ImportError, AttributeError, ValueError, RuntimeError, KeyError, OSError):
-        return None
+    """Allocate the single Round Display SPI bus, including SD MISO."""
+    pins = ("display_sck_pin", "display_mosi_pin", "sd_sck_pin",
+            "sd_mosi_pin", "sd_miso_pin")
+    missing = [name for name in pins if not config.get(name)]
+    if missing:
+        raise ValueError("shared SPI missing pins: " + ", ".join(missing))
+    if (config["display_sck_pin"] != config["sd_sck_pin"] or
+            config["display_mosi_pin"] != config["sd_mosi_pin"]):
+        raise ValueError("display and SD must use the same SCK/MOSI pins")
+    import board
+    import busio
+    return busio.SPI(getattr(board, config["display_sck_pin"]),
+                     MOSI=getattr(board, config["display_mosi_pin"]),
+                     MISO=getattr(board, config["sd_miso_pin"]))
 
 
 def build_display(config, shared_spi=None):

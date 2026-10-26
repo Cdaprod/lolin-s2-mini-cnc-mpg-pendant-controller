@@ -65,7 +65,8 @@ class SDStorage:
             self.error = None
         except OSError as exc:
             self.status = "missing"
-            self.error = type(exc).__name__
+            self.error = "listdir {}: {}: {}".format(
+                self.jobs_path, type(exc).__name__, str(exc)[:80])
         return self.status
 
     def list_jobs(self):
@@ -75,7 +76,8 @@ class SDStorage:
             self.error = None
         except OSError as exc:
             self.status = "missing"
-            self.error = type(exc).__name__
+            self.error = "listdir {}: {}: {}".format(
+                self.jobs_path, type(exc).__name__, str(exc)[:80])
             return []
         return sorted(name for name in names if
                       name.lower().endswith(JOB_EXTENSIONS) and

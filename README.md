@@ -342,6 +342,9 @@ the XIAO round display. With a FAT32 card inserted, set
 `MPG_SD_ENABLED="true"` only for an attended hardware test. Revert to
 `false` if display startup or touch fails. Never infer success from a
 `/sd` folder alone: confirm `sd MOUNTED` and readable `/sd/jobs`.
+The signal and SD chip-select assignments match [Seeed's Round Display
+hardware guide](https://wiki.seeedstudio.com/seeedstudio_round_display_usage/)
+and [XIAO Round Display setup guide](https://wiki.seeedstudio.com/get_start_round_display/).
 
 ### CHSC6X touch driver (Seeed Round Display)
 

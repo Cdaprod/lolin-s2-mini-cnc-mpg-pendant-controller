@@ -5,7 +5,7 @@ from src.input.mpg import MPGDecoder
 from src.input.selectors import SelectorError, SelectorModel
 from src.state import PendantState
 from src.input.touch import TouchInput
-from src.display.ui import ROTATE_CW, TouchEvent
+from src.display.ui import TouchEvent
 
 
 class MPGTests(unittest.TestCase):
@@ -93,7 +93,7 @@ class TouchTests(unittest.TestCase):
         now[0] = 0.1
         event = touch.poll()[0]
         self.assertIsInstance(event, TouchEvent)
-        self.assertEqual((event.kind, event.x, event.y), ("tap", 100, 80))
+        self.assertEqual((event.kind, event.x, event.y), ("release_select", 100, 80))
 
     def test_vertical_motion_is_normalized_as_navigation(self):
         now = [0.0]
@@ -101,4 +101,6 @@ class TouchTests(unittest.TestCase):
         touch = TouchInput(source, lambda: now[0])
         touch.poll()
         touch.poll()
-        self.assertEqual(touch.poll(), (ROTATE_CW,))
+        event = touch.poll()[0]
+        self.assertIsInstance(event, TouchEvent)
+        self.assertEqual(event.kind, "swipe_up")
