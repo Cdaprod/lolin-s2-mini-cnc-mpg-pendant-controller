@@ -159,9 +159,9 @@ class MirrorTests(unittest.TestCase):
         self.assertEqual(m.completed_requests, 2)
 
     def test_invalid_post_content_length_returns_error_and_recovers(self):
-        malformed = (b"POST /api/touch HTTP/1.1\\r\\n"
-                     b"Content-Length: nonsense\\r\\n\\r\\n")
-        valid = b"GET /api/state HTTP/1.1\\r\\n\\r\\n"
+        malformed = (b"POST /api/touch HTTP/1.1\r\n"
+                     b"Content-Length: nonsense\r\n\r\n")
+        valid = b"GET /api/state HTTP/1.1\r\n\r\n"
         first = FakeClient((malformed,), send_limit=700)
         second = FakeClient((valid,), send_limit=700)
         m = socket_mirror((first, second))
