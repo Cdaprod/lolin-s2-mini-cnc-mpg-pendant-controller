@@ -17,6 +17,7 @@ class TouchGestures:
         self.started = 0
         self.active = False
         self.last_preview = None
+        self.axis_lock = None
 
     def poll(self, point):
         """Return zero or one ('tap'|'long_press'|'swipe_*', x, y).
@@ -34,14 +35,20 @@ class TouchGestures:
                 self.started = now
                 self.active = True
                 self.last_preview = None
+                self.axis_lock = None
                 self.last = (x, y)
                 return ()
             self.last = (x, y)
-            # Highlight the hovered menu row while the finger remains down.
+            dx, dy = x - self.start[0], y - self.start[1]
+            if self.axis_lock is None and max(abs(dx), abs(dy)) > self.movement_tolerance:
+                # Lock the gesture's intent once; horizontal travel must
+                # never preview menu rows, even if the finger crosses them.
+                self.axis_lock = ("horizontal" if abs(dx) > abs(dy)
+                                  else "vertical")
+            if self.axis_lock == "horizontal":
+                return ()
             row = (y - 58) // 22 if 58 <= y < 190 else None
-            if (row is not None and row != self.last_preview and
-                    abs(y - self.start[1]) < self.swipe_distance and
-                    abs(x - self.start[0]) < self.swipe_distance):
+            if row is not None and row != self.last_preview:
                 self.last_preview = row
                 return (("drag", x, y),)
             return ()
@@ -54,8 +61,16 @@ class TouchGestures:
         self.last = None
         self.active = False
         self.last_preview = None
+        axis_lock = self.axis_lock
+        self.axis_lock = None
         dx, dy = x1 - x0, y1 - y0
-        if abs(dx) >= self.swipe_distance or abs(dy) >= self.swipe_distance:
+        if axis_lock == "horizontal" and abs(dx) >= self.swipe_distance:
+            kind = "swipe_right" if dx > 0 else "swipe_left"
+        elif axis_lock == "vertical" and abs(dy) >= self.swipe_distance:
+            kind = "swipe_down" if dy > 0 else "swipe_up"
+        elif axis_lock == "horizontal":
+            return ()
+        elif abs(dx) >= self.swipe_distance or abs(dy) >= self.swipe_distance:
             if abs(dx) > abs(dy):
                 kind = "swipe_right" if dx > 0 else "swipe_left"
             else:
