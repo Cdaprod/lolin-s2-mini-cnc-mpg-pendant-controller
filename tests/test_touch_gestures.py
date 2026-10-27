@@ -146,12 +146,13 @@ class GestureTests(unittest.TestCase):
         touch = TouchInput(source, clock)
         source.current = (120, 120)
         self.assertEqual(touch.poll(), ())
-        source.current = (120, 70)
-        self.assertEqual(touch.poll()[0].kind, "drag")
+        source.current = (120, 50)
         clock.t = .10
+        self.assertEqual(touch.poll()[0].kind, "drag")
+        clock.t = .12
         source.current = None
         self.assertEqual(touch.poll(), ())
-        clock.t = .20
+        clock.t = .22
         events = touch.poll()
         self.assertEqual(len(events), 1)
         self.assertEqual(events[0].kind, "swipe_up")
