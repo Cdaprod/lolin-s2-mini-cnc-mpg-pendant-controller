@@ -78,7 +78,9 @@ class RoundRenderer:
             self.palettes["separator"][0] = colors["separator"]
             self.palettes["halo"][1] = colors["accent"]
             for index, palette in enumerate(self.palettes.get("hud_markers", ())):
-                palette[1] = colors["accent"] if index == 0 else colors["highlight"]
+                color = colors["accent"] if index == 0 else colors["highlight"]
+                palette[1] = color
+                palette[2] = ((color & 0xFEFEFE) >> 1)
         if hasattr(self.ring.node, "colors"):
             self.ring.node.colors = colors
             self.ring.signature = None
