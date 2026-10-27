@@ -179,8 +179,8 @@ class DiagnosticScanTests(unittest.TestCase):
                 events.append(("sd", shared_spi))
                 return SDStorage(jobs, macros), object()
             with patch("src.app.sys", SimpleNamespace(
-                    implementation=SimpleNamespace(name="circuitpython"))), \
-                 patch.object(app_module, "_CIRCUITPY_COMPOSITION_STARTED", False), \
+                    implementation=SimpleNamespace(name="circuitpython"),
+                    modules={})), \
                  patch("src.display.round_ui.display.release_existing_displays",
                        side_effect=lambda: events.append(("release", None))), \
                  patch("src.hardware.build_shared_spi",
@@ -200,10 +200,11 @@ class DiagnosticScanTests(unittest.TestCase):
 
     def test_circuitpython_composition_rejects_same_session_reinitialization(self):
         import src.app as app_module
+        modules = {app_module._CIRCUITPY_COMPOSITION_KEY: True}
         circuitpython = SimpleNamespace(
-            implementation=SimpleNamespace(name="circuitpython"))
-        with patch("src.app.sys", circuitpython), \
-             patch.object(app_module, "_CIRCUITPY_COMPOSITION_STARTED", True):
+            implementation=SimpleNamespace(name="circuitpython"),
+            modules=modules)
+        with patch("src.app.sys", circuitpython):
             with self.assertRaisesRegex(RuntimeError, "one-shot per interpreter"):
                 PendantApplication.from_config({"controller_mode": "disabled"})
 
