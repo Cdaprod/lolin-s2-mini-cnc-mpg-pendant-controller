@@ -18,7 +18,6 @@ class TouchGestures:
         self.min_duration = float(min_duration)
         self.missing_since = None
         self.block_until = 0.0
-        self.seen_motion = False
         self.start = None
         self.last = None
         self.started = 0
