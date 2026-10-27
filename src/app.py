@@ -66,15 +66,13 @@ class PendantApplication:
                     indicator_output=None, shared_spi=None, shared_i2c=None,
                     touch_manager=None, touch_source=None):
         if sys.implementation.name == "circuitpython":
-            lifecycle = sys.modules.get(_CIRCUITPY_COMPOSITION_KEY)
-            if lifecycle and not lifecycle.get("deinitialized", False):
+            if sys.modules.get(_CIRCUITPY_COMPOSITION_KEY):
                 raise RuntimeError(
-                    "deinit the current CircuitPython app before "
-                    "reinitializing peripheral resources")
+                    "CircuitPython app composition is one-shot per run; "
+                    "use supervisor.reload() to restart safely")
             # Mark before allocating peripherals: partial initialization may
             # already have claimed pins even when a later optional service fails.
-            lifecycle = {"deinitialized": False}
-            sys.modules[_CIRCUITPY_COMPOSITION_KEY] = lifecycle
+            sys.modules[_CIRCUITPY_COMPOSITION_KEY] = True
         state = PendantState(config.get("base_increment", 0.001))
         state.runtime_version = getattr(sys, "version", "unknown").split(";", 1)[0]
         state.board_profile = config.get("board_profile", "") or "default"
@@ -282,8 +280,6 @@ class PendantApplication:
                   renderer, storage, streamer, watchdog, Indicator(), ui,
                   network_service, macros, input_manager, indicator_output,
                   sd_mount, touch_manager, clock, sd_spi, shared_i2c)
-        if sys.implementation.name == "circuitpython":
-            app._circuitpython_lifecycle = lifecycle
         if config.get("mirror_enabled") and sys.implementation.name == "circuitpython":
             if not 1024 <= config.get("mirror_port", 8080) <= 65535:
                 print("mirror disabled: invalid port")
@@ -327,7 +323,7 @@ class PendantApplication:
                    for item in getattr(self.controller, "queue", ()))
 
     def deinit(self):
-        """Release resources before reload or same-session re-composition."""
+        """Release optional services and peripheral ownership before reload."""
         if getattr(self, "_deinitialized", False):
             return
         self._deinitialized = True
@@ -372,9 +368,6 @@ class PendantApplication:
             except (OSError, RuntimeError):
                 pass
             self.i2c_bus = None
-        lifecycle = getattr(self, "_circuitpython_lifecycle", None)
-        if lifecycle is not None:
-            lifecycle["deinitialized"] = True
 
     def handle_ui_event(self, event):
         """Route a normalized UI event and execute only its semantic result."""
