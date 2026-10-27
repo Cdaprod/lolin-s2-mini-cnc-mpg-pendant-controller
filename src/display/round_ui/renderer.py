@@ -10,6 +10,11 @@ from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
                          SelectorFeedback, TextComponent)
 
+# At 24 updates/s, keep tangential motion below one pixel per update at the
+# retained marker radii. Integer DisplayIO coordinates then produce a regular
+# one-pixel cadence instead of the visible multi-pixel jumps from faster rates.
+HUD_ORBIT_RATES = (0.18, -0.14)
+
 
 class RoundRenderer:
     """Mutate a small persistent scene; never issue controller operations."""
@@ -140,7 +145,7 @@ class RoundRenderer:
                 if frame != self._hud_phase:
                     self._hud_phase = frame
                     for index, (sprite, radius, _) in enumerate(self.hud_markers):
-                        angle = float(now) * (0.88 if index == 0 else -0.56)
+                        angle = float(now) * HUD_ORBIT_RATES[index]
                         x = 117 + round(radius * math.cos(angle))
                         y = 117 + round(radius * math.sin(angle))
                         if sprite.x != x or sprite.y != y or sprite.hidden:
