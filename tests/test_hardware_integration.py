@@ -500,6 +500,40 @@ class ApplicationInputPipelineTests(unittest.TestCase):
 
 
 class StorageHardwareTests(unittest.TestCase):
+    def test_sd_write_probe_round_trips_and_removes_its_marker(self):
+        board = types.ModuleType("board")
+        for name in ("D8", "D10", "D9", "D2"):
+            setattr(board, name, name)
+        busio = types.ModuleType("busio")
+        busio.SPI = lambda *args, **kwargs: object()
+        sdcardio = types.ModuleType("sdcardio")
+        storage = types.ModuleType("storage")
+        class Card:
+            def __init__(self, spi, chip_select):
+                self.spi = spi
+            def deinit(self):
+                pass
+        sdcardio.SDCard = Card
+        storage.VfsFat = lambda card: card
+        storage.mount = lambda _vfs, path: os.makedirs(
+            os.path.join(path, "jobs"), exist_ok=True)
+        storage.umount = lambda _path: None
+        with tempfile.TemporaryDirectory() as root:
+            mount_path = os.path.join(root, "sd")
+            config = {"sd_enabled": True, "sd_write_test": True,
+                      "sd_sck_pin": "D8", "sd_mosi_pin": "D10",
+                      "sd_miso_pin": "D9", "sd_cs_pin": "D2",
+                      "sd_mount_path": mount_path}
+            with patch.dict(sys.modules, {"board": board, "busio": busio,
+                                          "sdcardio": sdcardio,
+                                          "storage": storage}):
+                mount, status, error = mount_from_config(config, object())
+                mount.deinit()
+            self.assertEqual(status, "available")
+            self.assertIsNone(error)
+            self.assertFalse(os.path.exists(os.path.join(
+                mount_path, ".cdaprod-sd-self-test.tmp")))
+
     def test_missing_and_empty_storage_are_safe(self):
         with tempfile.TemporaryDirectory() as root:
             missing = SDStorage(os.path.join(root, "missing"))

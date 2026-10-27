@@ -62,6 +62,17 @@ def mount_from_config(config, spi=None):
                 pass  # Existing folders or read-only media are acceptable.
         operation = "read SD jobs directory"
         os.listdir(jobs_path)
+        if config.get("sd_write_test"):
+            operation = "SD write/read/remove self-test"
+            probe_path = mount_path.rstrip("/") + "/.cdaprod-sd-self-test.tmp"
+            if probe_path in os.listdir(mount_path):
+                raise OSError("self-test path already exists; refusing to overwrite")
+            with open(probe_path, "w") as probe:
+                probe.write("cdaprod-sd-self-test-v1")
+            with open(probe_path, "r") as probe:
+                if probe.read() != "cdaprod-sd-self-test-v1":
+                    raise OSError("self-test readback mismatch")
+            os.remove(probe_path)
         return SDMount(spi, card, mount_path), "available", None
     except Exception as exc:
         # SD is optional: a mount failure must never stop display/UI boot.

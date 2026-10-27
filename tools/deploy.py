@@ -304,6 +304,16 @@ def file_hash(path):
     return digest.hexdigest()
 
 
+def changed_runtime_files(files, target, root=ROOT):
+    """Return only managed files whose bytes differ from the deployment."""
+    target = Path(target)
+    root = Path(root)
+    return [relative for relative in files
+            if not (target.joinpath(relative).is_file() and
+                    file_hash(root / relative) ==
+                    file_hash(target / relative))]
+
+
 def dependency_problems(settings, root=ROOT, target=None):
     profile = literal_value(settings.get("MPG_DISPLAY_PROFILE", '""'))
     problems = []
@@ -471,11 +481,12 @@ def deploy(args):
     for action, key in actions:
         print("settings: {:13} {}={}".format(
             action, key, "<redacted>" if is_secret(key) else settings[key]))
+    files_to_write = set(changed_runtime_files(files, target))
     for relative in files:
         destination = target / relative
-        action = "preserve" if (destination.is_file() and
-                                file_hash(ROOT / relative) == file_hash(destination)) else (
-                                    "change" if destination.exists() else "add")
+        unchanged = relative not in files_to_write
+        action = "preserve" if unchanged else (
+            "change" if destination.exists() else "add")
         print("runtime:  {:13} {}".format(action, relative))
     for relative in stale:
         print("runtime:  remove-managed {}".format(relative))
@@ -487,7 +498,7 @@ def deploy(args):
         print("Dry run complete; no files changed.")
         return
     rendered = render_settings(template, settings, order)
-    for relative in files:
+    for relative in files_to_write:
         destination = target / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         temporary = destination.with_name(destination.name + ".tmp")
@@ -502,7 +513,8 @@ def deploy(args):
         deployed = target / relative
         if deployed.is_file():
             deployed.unlink()
-    atomic_write(device, rendered, backup=True)
+    if not device.exists() or device.read_text(encoding="utf-8") != rendered:
+        atomic_write(device, rendered, backup=True)
     manifest = {
         "format": 1,
         "firmware_commit": git_value("rev-parse", "HEAD"),
