@@ -325,16 +325,17 @@ PR #22 now passes one SPI object (SCK D8, MOSI D10, MISO D9) to both
 GC9A01 display (CS D1) and SD (CS D2) rather than claiming the pins twice.
 Touch and MCP23017 independently use shared I2C (D4/D5). The display is
 created before SD is mounted and an SD failure must not stop the round UI.
-A combined boot with GC9A01, CHSC6X, Wi-Fi, and SD mounted succeeded once with
-the controller disabled, and the one-shot mount-time write/read/remove test
-passed on the installed card. A later boot entered CircuitPython safe mode with
-a core hard fault. The cause is unverified; SD interaction is a possibility,
-not a confirmed root cause. After a physical reset, the display, touch, and
-Wi-Fi booted normally with SD disabled. Keep SD disabled on this installation
-until the hard fault is reproduced and diagnosed. SD defaults off in the
-template. `MPG_SD_WRITE_TEST=true` runs a one-time hidden marker write/read/
-remove during boot, never in the UI loop. Confirm `sd MOUNTED` and readable
-`/sd/jobs` before using stored jobs.
+A combined boot with GC9A01, CHSC6X, Wi-Fi, and SD mounted succeeded with the
+controller disabled, and the one-shot mount-time write/read/remove test passed
+on the installed card. In a later SD-enabled session, the app again reached
+ready with SD mounted, then CircuitPython entered safe mode with a core hard
+fault. The failure has occurred across SD-enabled trials, but its cause is not
+confirmed; shared-SPI/SD interaction remains a hypothesis. With SD disabled,
+display, touch, and Wi-Fi booted normally. Keep SD disabled on this installation
+until the fault is diagnosed. SD defaults off in the template.
+`MPG_SD_WRITE_TEST=true` runs a one-time hidden marker write/read/remove during
+boot, never in the UI loop. Confirm `sd MOUNTED` and readable `/sd/jobs` before
+using stored jobs.
 The signal and SD chip-select assignments match [Seeed's Round Display
 hardware guide](https://wiki.seeedstudio.com/seeedstudio_round_display_usage/)
 and [XIAO Round Display setup guide](https://wiki.seeedstudio.com/get_start_round_display/).
