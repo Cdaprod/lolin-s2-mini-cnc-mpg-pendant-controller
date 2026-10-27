@@ -92,7 +92,7 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer.animate(0.20))
         self.assertNotEqual((first.x, first.y), (0, 0))
         initial = (first.x, first.y)
-        self.assertFalse(renderer.animate(0.21))
+        self.assertFalse(renderer.animate(0.205))  # same 24 Hz frame
         self.assertEqual((first.x, first.y), initial)
         self.assertTrue(renderer.animate(0.40))
         self.assertNotEqual((first.x, first.y), initial)
