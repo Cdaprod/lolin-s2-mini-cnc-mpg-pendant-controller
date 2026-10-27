@@ -49,6 +49,56 @@ class GestureTests(unittest.TestCase):
         clock.t = .10
         self.assertEqual(gestures.poll(None), ())  # short contact is ignored
 
+    def test_sensor_dropout_does_not_release_or_change_page(self):
+        clock = Clock()
+        gestures = TouchGestures(clock)
+        gestures.poll((120, 120))
+        clock.t = .08
+        self.assertEqual(gestures.poll(None), ())
+        clock.t = .11
+        self.assertEqual(gestures.poll((115, 120)), ())
+        clock.t = .20
+        self.assertEqual(gestures.poll(None), ())
+        clock.t = .30
+        self.assertEqual(gestures.poll(None), (("release_select", 115, 120),))
+
+    def test_short_contact_and_navigation_cooldown(self):
+        clock = Clock()
+        gestures = TouchGestures(clock)
+        gestures.poll((120, 120))
+        clock.t = .02
+        gestures.poll(None)
+        clock.t = .12
+        self.assertEqual(gestures.poll(None), ())
+        gestures.poll((120, 120))
+        clock.t = .20
+        self.assertEqual(gestures.poll(None), ())
+        clock.t = .46
+        gestures.poll((120, 120))
+        clock.t = .55
+        gestures.poll(None)
+        clock.t = .65
+        self.assertEqual(gestures.poll(None), (("release_select", 120, 120),))
+
+    def test_jitter_and_diagonal_motion_never_select(self):
+        clock = Clock()
+        gestures = TouchGestures(clock)
+        gestures.poll((100, 66))
+        clock.t = .10
+        self.assertEqual(gestures.poll((114, 79)), ())
+        clock.t = .20
+        gestures.poll(None)
+        clock.t = .30
+        self.assertEqual(gestures.poll(None), (("release_select", 114, 79),))
+        clock.t = .60
+        gestures.poll((100, 90))
+        clock.t = .70
+        gestures.poll((143, 135))
+        clock.t = .80
+        gestures.poll(None)
+        clock.t = .90
+        self.assertEqual(gestures.poll(None), ())
+
     def test_top_level_swipes_change_page_only(self):
         state = PendantState()
         ui = UIManager(state)
