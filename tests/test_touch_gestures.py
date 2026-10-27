@@ -198,7 +198,7 @@ class GestureTests(unittest.TestCase):
         self.assertEqual(touch.poll(), ())
         source.current = (120, 50)
         clock.t = .10
-        self.assertEqual(touch.poll()[0].kind, "drag")
+        self.assertEqual(touch.poll(), ())  # outside menu rows: no preview
         clock.t = .12
         source.current = None
         self.assertEqual(touch.poll(), ())
