@@ -168,21 +168,25 @@ def displayio_scene(display, colors=None):
     bitmap, palette = _instrument_bitmap(displayio, colors)
     root.append(displayio.TileGrid(bitmap, pixel_shader=palette))
     palettes = {"dial": palette}
-    # Two tiny retained perimeter sprites animate independently of the UI.
-    # 5x5 bitmaps move; the 240x240 background is never redrawn in Python.
+    # Small retained 7x7 discs: a dim edge softens pixel stair-steps.
+    # Only sprite positions change per frame; no bitmap rebuilds.
     hud_markers = []
     for radius, color in ((109, colors["accent"]), (99, colors["highlight"])):
-        pixels = displayio.Bitmap(5, 5, 2)
-        marker_palette = displayio.Palette(2)
+        pixels = displayio.Bitmap(7, 7, 3)
+        marker_palette = displayio.Palette(3)
         marker_palette[0] = 0
         marker_palette.make_transparent(0)
         marker_palette[1] = color
-        for yy in range(5):
-            for xx in range(5):
-                if (xx - 2) ** 2 + (yy - 2) ** 2 <= 4:
+        marker_palette[2] = ((color & 0xFEFEFE) >> 1)
+        for yy in range(7):
+            for xx in range(7):
+                distance2 = (xx - 3) ** 2 + (yy - 3) ** 2
+                if distance2 <= 6:
                     pixels[xx, yy] = 1
+                elif distance2 <= 10:
+                    pixels[xx, yy] = 2
         sprite = displayio.TileGrid(pixels, pixel_shader=marker_palette)
-        sprite.x, sprite.y = 120 + radius - 2, 118
+        sprite.x, sprite.y = 117 + radius, 117
         root.append(sprite)
         hud_markers.append((sprite, radius, marker_palette))
     palettes["hud_markers"] = tuple(item[2] for item in hud_markers)
