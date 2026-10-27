@@ -7,7 +7,7 @@ from src.input.touch_gestures import TouchGestures
 class TouchInput:
     """Normalize releases to UI navigation, with a tiny visual touch signal."""
 
-    def __init__(self, source, clock, long_press=0.8, swipe_distance=38,
+    def __init__(self, source, clock, long_press=0.8, swipe_distance=58,
                  rotation=0, invert_x=False, invert_y=False):
         self.source = source
         self.gestures = TouchGestures(clock, long_press, swipe_distance)
