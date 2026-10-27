@@ -104,6 +104,34 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer.animate(0.70))
         self.assertFalse(first.hidden)
 
+    def test_hud_markers_move_at_most_one_pixel_per_24hz_frame(self):
+        _, _, _, renderer = self.make_renderer()
+        markers = []
+        for radius in (109, 99):
+            marker = Node()
+            marker.x = marker.y = 0
+            markers.append(marker)
+        renderer.hud_markers = tuple(
+            (marker, radius, None)
+            for marker, radius in zip(markers, (109, 99))
+        )
+        previous = None
+        first_delta = second_delta = 0
+        for frame in range(241):
+            renderer.animate(frame / 24.0)
+            current = tuple((marker.x, marker.y) for marker in markers)
+            if previous is not None and current != previous:
+                for before, after in zip(previous, current):
+                    self.assertLessEqual(abs(after[0] - before[0]), 1)
+                    self.assertLessEqual(abs(after[1] - before[1]), 1)
+                # Signed tangent directions at t=0 verify counter-rotation.
+                if frame < 30:
+                    first_delta += current[0][1] - previous[0][1]
+                    second_delta += current[1][1] - previous[1][1]
+            previous = current
+        self.assertGreater(first_delta, 0)
+        self.assertLess(second_delta, 0)
+
     def test_home_and_menu_groups_are_mutually_exclusive(self):
         state, ui, _, renderer = self.make_renderer()
         renderer.home_group = Node()
