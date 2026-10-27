@@ -319,29 +319,21 @@ The Seeed round display's KE switches control battery sensing (D0) and
 backlight (D6); neither selects SD or touch. The GC9A01 round display is
 initialized before optional SD mounting.
 
-**SD is temporarily disabled by default** because on-device boot reports
-display and touch initialization errors when SD is enabled. The tentative
-D8/D10/D9 SPI and D1/D2 CS assignments require hardware commissioning.
-Do not treat host CI as proof of SPI bus compatibility.
-
-If SD was enabled in local or device settings, set
-`MPG_SD_ENABLED="false"` in both your ignored repo-local
-`settings.toml` (if present) and `/Volumes/CIRCUITPY/settings.toml`.
-Then deploy without `--verify` to apply the new firmware. The deployer
-preserves explicit device settings unless overridden. Firmware stays on
-CIRCUITPY, not SD. SD must remain optional and never gate display startup.
-
-### Shared GC9A01 + microSD bus (experimental)
+### Shared GC9A01 + microSD bus
 
 PR #22 now passes one SPI object (SCK D8, MOSI D10, MISO D9) to both
 GC9A01 display (CS D1) and SD (CS D2) rather than claiming the pins twice.
 Touch and MCP23017 independently use shared I2C (D4/D5). The display is
 created before SD is mounted and an SD failure must not stop the round UI.
-**SD remains off by default** until this exact configuration is verified on
-the XIAO round display. With a FAT32 card inserted, set
-`MPG_SD_ENABLED="true"` only for an attended hardware test. Revert to
-`false` if display startup or touch fails. Never infer success from a
-`/sd` folder alone: confirm `sd MOUNTED` and readable `/sd/jobs`.
+This shared bus has been validated on the connected XIAO Round Display: the
+GC9A01, CHSC6X, Wi-Fi, and SD mount booted together with the controller
+disabled. A one-shot mount-time write/read/remove test also passed on the
+installed card. SD still defaults off in the template so other installations
+must commission their own wiring before enabling it. For this installation,
+`MPG_SD_ENABLED="true"` is stored in device settings. `MPG_SD_WRITE_TEST=true`
+can be enabled temporarily to verify the card remains writable; it creates,
+reads, and removes one hidden marker during boot, never during the UI loop.
+Confirm `sd MOUNTED` and readable `/sd/jobs` before using stored jobs.
 The signal and SD chip-select assignments match [Seeed's Round Display
 hardware guide](https://wiki.seeedstudio.com/seeedstudio_round_display_usage/)
 and [XIAO Round Display setup guide](https://wiki.seeedstudio.com/get_start_round_display/).

@@ -135,9 +135,10 @@ MPG_TOUCH_ROTATION="0"
 MPG_TOUCH_INVERT_X="false"
 MPG_TOUCH_INVERT_Y="false"
 
-# Optional SD: disabled while round-display shared SPI is commissioned.
-# Turning this on prematurely can conflict with the GC9A01 display bus.
+# Optional SD: default off until the installation's round-display wiring is commissioned.
 MPG_SD_ENABLED="false"
+# Optional one-shot mount-time write/read/remove diagnostic; never runs each frame.
+MPG_SD_WRITE_TEST="false"
 MPG_SD_SCK_PIN="D8"
 MPG_SD_MOSI_PIN="D10"
 MPG_SD_MISO_PIN="D9"

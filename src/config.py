@@ -131,6 +131,7 @@ def load_config():
         "display_renderer": _get("MPG_DISPLAY_RENDERER", "").lower(),
         "round_ui_bootstrap": _get_bool("MPG_ROUND_UI_BOOTSTRAP"),
         "sd_enabled": _get_bool("MPG_SD_ENABLED"),
+        "sd_write_test": _get_bool("MPG_SD_WRITE_TEST"),
         "sd_sck_pin": _get("MPG_SD_SCK_PIN", ""),
         "sd_mosi_pin": _get("MPG_SD_MOSI_PIN", ""),
         "sd_miso_pin": _get("MPG_SD_MISO_PIN", ""),

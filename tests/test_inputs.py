@@ -102,6 +102,7 @@ class TouchTests(unittest.TestCase):
         source = FakeTouch(((100, 160), (100, 80), None))
         touch = TouchInput(source, lambda: now[0])
         touch.poll()
+        now[0] = 0.1
         touch.poll()
         self.assertEqual(touch.poll(), ())
         now[0] = 0.2

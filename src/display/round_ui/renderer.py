@@ -13,7 +13,7 @@ from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
 # At 24 updates/s, keep tangential motion below one pixel per update at the
 # retained marker radii. Integer DisplayIO coordinates then produce a regular
 # one-pixel cadence instead of the visible multi-pixel jumps from faster rates.
-HUD_ORBIT_RATES = (0.18, -0.14)
+HUD_ORBIT_RATES = (0.20, -0.16)
 
 
 class RoundRenderer:

@@ -214,12 +214,27 @@ class ReconciliationTests(unittest.TestCase):
         self.assertFalse(deploy.managed_path("boot.py"))
         self.assertTrue(deploy.historical_managed_path("boot.py"))
 
+    def test_deployment_skips_byte_identical_runtime_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root, target = Path(directory) / "source", Path(directory) / "target"
+            (root / "src").mkdir(parents=True)
+            (target / "src").mkdir(parents=True)
+            (root / "src/app.py").write_bytes(b"same")
+            (target / "src/app.py").write_bytes(b"same")
+            (root / "src/changed.py").write_bytes(b"new")
+            (target / "src/changed.py").write_bytes(b"old")
+            self.assertEqual(deploy.changed_runtime_files(
+                ["src/app.py", "src/changed.py"], target, root),
+                ["src/changed.py"])
+
 class DeploymentCLITests(unittest.TestCase):
     def run_cli(self, target, *arguments):
         stdout, stderr = io.StringIO(), io.StringIO()
         with patch.dict(os.environ, {"CIRCUITPY": str(target)}), \
                 patch.object(deploy, "mounted_filesystems",
                              return_value={os.path.realpath(str(target))}), \
+                patch.object(deploy, "diskutil_confirms_mount",
+                             return_value=True), \
                 contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
             code = deploy.main(list(arguments))
         return SimpleNamespace(returncode=code, stdout=stdout.getvalue(),
