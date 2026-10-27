@@ -29,6 +29,7 @@ class C3PairingBench:
         if len(self.local_mac) != 6:
             raise ValueError("invalid Wi-Fi MAC")
         self.peer = None
+        self.assigned_function = None
         self.broadcast_peer = None
         self.unicast_peer = None
         self.last_rx = None
@@ -111,7 +112,7 @@ class C3PairingBench:
                     if session != self.session:
                         self.pair_ack_session_mismatch += 1
                 if kind == proto.PAIR_ACK and session == self.session:
-                    peer_mac, _function = proto.validate_pair_ack(
+                    peer_mac, assigned_function = proto.validate_pair_ack(
                         packet.msg, self.session, self.local_mac)
                     if peer_mac != self.local_mac:
                         raise ValueError("pair ACK contains wrong local MAC")
@@ -127,10 +128,20 @@ class C3PairingBench:
                             self.unicast_peer = candidate
                     self.peer = sender
                     self.paired = True
+                    self.assigned_function = assigned_function
                     self.last_heartbeat = None
                     self.last_rx = current
                     self.good += 1
                     print("[espnow] PAIR_ACK accepted from", ":".join("%02x" % x for x in sender))
+                elif (self.paired and sender == self.peer and
+                      session == self.session and
+                      kind == proto.SENSOR_ASSIGNMENT):
+                    if (len(payload) != 1 or
+                            (payload[0] > 6 and payload[0] != 255)):
+                        raise ValueError("invalid sensor assignment")
+                    self.assigned_function = payload[0]
+                    self.last_rx = current
+                    self.good += 1
                 elif self.paired and sender == self.peer and kind in (
                         proto.HEARTBEAT, proto.HEARTBEAT_ACK):
                     if session not in (0, self.session) or payload:
@@ -174,6 +185,7 @@ class C3PairingBench:
             "paired": self.paired,
             "bridge_mac": ":".join("%02x" % c for c in self.peer)
                           if self.peer else None,
+            "assigned_function": self.assigned_function,
             "valid_packets": self.good,
             "rx_frames": self.rx_frames,
             "tx_pair_requests": self.tx_pair_requests,

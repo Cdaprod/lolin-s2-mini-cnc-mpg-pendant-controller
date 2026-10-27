@@ -65,6 +65,25 @@ class PairTests(unittest.TestCase):
         self.assertFalse(client.paired)
         self.assertFalse(client.info()["motion_enabled"])
 
+    def test_pair_accepts_c3_sensor_assignment(self):
+        esp, t = Esp(), [0]
+        client = C3PairingBench(Radio(), now=lambda: t[0], esp=esp, session=7)
+        client.start()
+        client.poll()
+        bridge = bytes.fromhex("aabbccddeeff")
+        ack = proto.encode(proto.PAIR_ACK, 7, payload=bytes((1, 1)) +
+                           Radio.mac_address + bytes((255,)))
+        assignment = proto.encode(proto.SENSOR_ASSIGNMENT, 7, payload=b"\xff")
+        esp.incoming.extend((Packet(bridge, ack), Packet(bridge, assignment)))
+
+        t[0] = 1
+        client.poll()
+
+        self.assertTrue(client.paired)
+        self.assertEqual(client.info()["assigned_function"], 255)
+        self.assertEqual(client.info()["rejected_packets"], 0)
+        self.assertEqual(client.info()["valid_packets"], 2)
+
     def test_repeated_timeout_does_not_leak_registered_peers(self):
         esp, t = Esp(), [0]
         client = C3PairingBench(Radio(), now=lambda: t[0], esp=esp, session=7)
