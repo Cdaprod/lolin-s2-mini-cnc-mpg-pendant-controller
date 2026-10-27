@@ -29,18 +29,25 @@ class GestureTests(unittest.TestCase):
         gestures = TouchGestures(clock)
         self.assertEqual(gestures.poll((120, 120)), ())
         clock.t = .10
+        self.assertEqual(gestures.poll(None), ())
+        clock.t = .20
         self.assertEqual(gestures.poll(None), (("release_select", 120, 120),))
+        clock.t = .50
         gestures.poll((125, 110))
         clock.t = 1.0
+        self.assertEqual(gestures.poll(None), ())
+        clock.t = 1.10
         self.assertEqual(gestures.poll(None), (("release_select", 125, 110),))
 
     def test_drag_previews_then_releases_into_selection(self):
         clock = Clock()
         gestures = TouchGestures(clock)
         self.assertEqual(gestures.poll((90, 65)), ())
-        self.assertEqual(gestures.poll((90, 66)), (("drag", 90, 66),))
+        self.assertEqual(gestures.poll((90, 66)), ())
         self.assertEqual(gestures.poll((90, 87)), (("drag", 90, 87),))
-        self.assertEqual(gestures.poll(None), (("release_select", 90, 87),))
+        self.assertEqual(gestures.poll(None), ())
+        clock.t = .10
+        self.assertEqual(gestures.poll(None), ())  # short contact is ignored
 
     def test_top_level_swipes_change_page_only(self):
         state = PendantState()
@@ -84,7 +91,10 @@ class GestureTests(unittest.TestCase):
         touch = TouchInput(source, clock)
         source.current = (120, 120)
         self.assertEqual(touch.poll(), ())
+        clock.t = .10
         source.current = None
+        self.assertEqual(touch.poll(), ())
+        clock.t = .20
         event = touch.poll()[0]
         self.assertEqual(event.kind, "release_select")
         self.assertIsNone(ui.handle(event))
@@ -122,9 +132,13 @@ class GestureTests(unittest.TestCase):
                               ((120, 200), "swipe_down"),
                               ((30, 120), "swipe_left"),
                               ((205, 120), "swipe_right")]:
-            gestures = TouchGestures(Clock())
+            clock = Clock()
+            gestures = TouchGestures(clock)
             self.assertEqual(gestures.poll((120, 120)), ())
+            clock.t = .10
             self.assertEqual(gestures.poll(end), ())
+            self.assertEqual(gestures.poll(None), ())
+            clock.t = .20
             self.assertEqual(gestures.poll(None)[0][0], expected)
 
     def test_vertical_swipes_remain_touch_events_not_handwheel_rotations(self):
@@ -134,7 +148,10 @@ class GestureTests(unittest.TestCase):
         self.assertEqual(touch.poll(), ())
         source.current = (120, 70)
         self.assertEqual(touch.poll()[0].kind, "drag")
+        clock.t = .10
         source.current = None
+        self.assertEqual(touch.poll(), ())
+        clock.t = .20
         events = touch.poll()
         self.assertEqual(len(events), 1)
         self.assertEqual(events[0].kind, "swipe_up")
@@ -152,7 +169,10 @@ class GestureTests(unittest.TestCase):
         touch = TouchInput(source, clock, rotation=90, invert_y=True)
         source.current = (10, 20)
         self.assertEqual(touch.poll(), ())
+        clock.t = .10
         source.current = None
+        self.assertEqual(touch.poll(), ())
+        clock.t = .20
         events = touch.poll()
         self.assertEqual((events[0].kind, events[0].x, events[0].y),
                          ("tap", 219, 229))
