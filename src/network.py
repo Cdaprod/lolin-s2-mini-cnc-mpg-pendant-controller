@@ -233,7 +233,7 @@ class WiFiService:
         try:
             factory = self.mdns_factory or self._default_mdns_factory
             self._mdns = factory(self.radio, self.hostname)
-        except (ImportError, OSError, RuntimeError) as exc:
+        except (ImportError, OSError, RuntimeError, ValueError) as exc:
             self.last_error = "connected; mDNS unavailable: {}".format(
                 type(exc).__name__)
 

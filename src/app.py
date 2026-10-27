@@ -24,6 +24,12 @@ from src.transport.mock import MockGRBLTransport, MockTransport
 from src.transport.uart import UARTTransport
 
 
+# CircuitPython peripheral objects are interpreter-owned singletons. App
+# teardown exists for a full supervisor reload; rebuilding the composition in
+# the same interpreter can reuse deinitialized wifi/display objects.
+_CIRCUITPY_COMPOSITION_STARTED = False
+
+
 class PendantApplication:
     def __init__(self, state, transport, controller, safety, actions, display,
                  storage, streamer, watchdog, indicator, ui, network_service,
@@ -60,6 +66,15 @@ class PendantApplication:
                     input_manager=None, input_adapter=None, storage=None,
                     indicator_output=None, shared_spi=None, shared_i2c=None,
                     touch_manager=None, touch_source=None):
+        global _CIRCUITPY_COMPOSITION_STARTED
+        if sys.implementation.name == "circuitpython":
+            if _CIRCUITPY_COMPOSITION_STARTED:
+                raise RuntimeError(
+                    "CircuitPython app composition is one-shot per interpreter; "
+                    "use supervisor.reload() to restart safely")
+            # Mark before allocating peripherals: partial initialization may
+            # already have claimed pins even when a later optional service fails.
+            _CIRCUITPY_COMPOSITION_STARTED = True
         state = PendantState(config.get("base_increment", 0.001))
         state.runtime_version = getattr(sys, "version", "unknown").split(";", 1)[0]
         state.board_profile = config.get("board_profile", "") or "default"

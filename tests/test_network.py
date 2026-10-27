@@ -200,6 +200,19 @@ class NetworkTests(unittest.TestCase):
         self.assertIsNone(radio.ap_ssid)
         self.assertEqual(radio.connect_timeout, service.connect_timeout)
 
+    def test_mdns_value_error_does_not_abort_connected_wifi_service(self):
+        radio = FakeRadio()
+        service = WiFiService(
+            radio, CredentialStore("/missing"),
+            mdns_factory=lambda *_: (_ for _ in ()).throw(
+                ValueError("object has been deinitialized")))
+        service.start("pendant", "Shop", "secret")
+        service.poll()
+        self.assertTrue(radio.connected)
+        self.assertEqual(service.state, NetworkState.CONNECTED)
+        self.assertEqual(service.last_error,
+                         "connected; mDNS unavailable: ValueError")
+
     def test_start_defers_bounded_association_until_poll(self):
         radio = FakeRadio()
         service = self.make_service(radio)
