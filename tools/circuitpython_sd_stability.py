@@ -59,6 +59,12 @@ def run(duration_seconds=DURATION_SECONDS):
         print("[HIL] started: SD test override only; controller disabled")
         print("[HIL] subsystems", app.state.subsystems)
         print("[HIL] heap", gc.mem_free())
+        try:
+            PendantApplication.from_config(config)
+        except RuntimeError as exc:
+            print("[HIL] duplicate-composition guard PASS", str(exc))
+        else:
+            raise RuntimeError("duplicate composition was not rejected")
         if app.sd_mount is None or app.state.subsystems.get("sd") != "MOUNTED":
             raise RuntimeError("SD failed to mount")
         if app.state.subsystems.get("display") != "OK":
@@ -84,12 +90,14 @@ def run(duration_seconds=DURATION_SECONDS):
                 next_memory = now + MEMORY_SECONDS
             if now >= next_heartbeat:
                 print("[HIL] uptime={:.0f}s loops={} renders={} "
-                      "touch_errors={} wifi={} sd={} fs={} heap={}".format(
+                      "touch_errors={} wifi={} network_error={} sd={} "
+                      "fs={} heap={}".format(
                           now - started, app.state.loop_count,
                           app.state.render_count,
                           getattr(app.touch_manager, "consecutive_errors", 0),
-                          app.state.wifi_state, app.state.subsystems.get("sd"),
-                          last_fs, gc.mem_free()))
+                          app.state.wifi_state, app.state.network_error,
+                          app.state.subsystems.get("sd"), last_fs,
+                          gc.mem_free()))
                 if app.sd_mount is None or not app.sd_mount.mounted:
                     raise RuntimeError("SD mount ownership lost")
                 if app.state.subsystems.get("display") != "OK":
