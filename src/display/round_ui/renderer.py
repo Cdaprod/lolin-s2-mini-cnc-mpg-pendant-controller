@@ -132,17 +132,20 @@ class RoundRenderer:
                         self._hud_dirty = True
                         changed = True
             else:
-                phase = int(float(now) * 8)
-                if phase != self._hud_phase:
-                    self._hud_phase = phase
+                # Time-based angular motion: quantize refresh cadence, not
+                # position/angle. The old 8 Hz phase produced visible jumps.
+                frame = int(float(now) * 24)
+                if frame != self._hud_phase:
+                    self._hud_phase = frame
                     for index, (sprite, radius, _) in enumerate(self.hud_markers):
-                        angle = phase * (0.11 if index == 0 else -0.07)
-                        sprite.x = 118 + int(radius * math.cos(angle))
-                        sprite.y = 118 + int(radius * math.sin(angle))
-                        if sprite.hidden:
+                        angle = float(now) * (0.88 if index == 0 else -0.56)
+                        x = 117 + round(radius * math.cos(angle))
+                        y = 117 + round(radius * math.sin(angle))
+                        if sprite.x != x or sprite.y != y or sprite.hidden:
+                            sprite.x, sprite.y = x, y
                             sprite.hidden = False
-                    self._hud_dirty = True
-                    changed = True
+                            self._hud_dirty = True
+                            changed = True
         return changed
 
     def _navigation(self, model):
