@@ -91,6 +91,8 @@ class TouchTests(unittest.TestCase):
         touch = TouchInput(FakeTouch(((100, 80), None)), lambda: now[0])
         self.assertEqual(touch.poll(), ())
         now[0] = 0.1
+        self.assertEqual(touch.poll(), ())
+        now[0] = 0.2
         event = touch.poll()[0]
         self.assertIsInstance(event, TouchEvent)
         self.assertEqual((event.kind, event.x, event.y), ("release_select", 100, 80))
@@ -101,6 +103,8 @@ class TouchTests(unittest.TestCase):
         touch = TouchInput(source, lambda: now[0])
         touch.poll()
         touch.poll()
+        self.assertEqual(touch.poll(), ())
+        now[0] = 0.2
         event = touch.poll()[0]
         self.assertIsInstance(event, TouchEvent)
         self.assertEqual(event.kind, "swipe_up")
