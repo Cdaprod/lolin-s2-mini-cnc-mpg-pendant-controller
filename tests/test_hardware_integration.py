@@ -67,6 +67,17 @@ class CountingWiFiService(MockWiFiService):
 
 
 class DiagnosticScanTests(unittest.TestCase):
+    def test_round_display_release_deinitializes_backlight_pin_owner(self):
+        import src.display.round_ui.display as round_display
+        events = []
+        output = SimpleNamespace(deinit=lambda: events.append("backlight"))
+        with patch.dict(sys.modules, {"displayio": SimpleNamespace(
+                release_displays=lambda: events.append("displayio whole"))}), \
+             patch.object(round_display, "_BACKLIGHT_OUTPUT", output):
+            round_display.release_existing_displays()
+            self.assertIsNone(round_display._BACKLIGHT_OUTPUT)
+        self.assertEqual(events, ["displayio whole", "backlight"])
+
     def test_disabled_sd_does_not_report_absent_optional_jobs_directory_as_error(self):
         with tempfile.TemporaryDirectory() as root:
             missing_jobs = os.path.join(root, "jobs")
@@ -169,6 +180,7 @@ class DiagnosticScanTests(unittest.TestCase):
                 return SDStorage(jobs, macros), object()
             with patch("src.app.sys", SimpleNamespace(
                     implementation=SimpleNamespace(name="circuitpython"))), \
+                 patch.object(app_module, "_CIRCUITPY_COMPOSITION_STARTED", False), \
                  patch("src.display.round_ui.display.release_existing_displays",
                        side_effect=lambda: events.append(("release", None))), \
                  patch("src.hardware.build_shared_spi",
@@ -185,6 +197,15 @@ class DiagnosticScanTests(unittest.TestCase):
             self.assertIs(events[2][1], shared)
             self.assertIs(events[3][1], shared)
             self.assertIs(app.spi_bus, shared)
+
+    def test_circuitpython_composition_rejects_same_session_reinitialization(self):
+        import src.app as app_module
+        circuitpython = SimpleNamespace(
+            implementation=SimpleNamespace(name="circuitpython"))
+        with patch("src.app.sys", circuitpython), \
+             patch.object(app_module, "_CIRCUITPY_COMPOSITION_STARTED", True):
+            with self.assertRaisesRegex(RuntimeError, "one-shot per interpreter"):
+                PendantApplication.from_config({"controller_mode": "disabled"})
 
     def test_scan_is_read_only_and_reports_addresses(self):
         bus = FakeI2C((0x3C, 0x20))

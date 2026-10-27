@@ -9,13 +9,21 @@ _BACKLIGHT_OUTPUT = None
 
 
 def release_existing_displays():
-    """Release the prior DisplayIO owner before allocating shared SPI pins.
+    """Release resources owned by the prior round display composition.
 
     Call once during composition, before constructing the SPI bus. Releasing
     after another peripheral has retained that bus can invalidate ownership.
     """
+    global _BACKLIGHT_OUTPUT
     import displayio
-    displayio.release_displays()
+    try:
+        displayio.release_displays()
+    finally:
+        # DisplayIO does not own this DigitalInOut. Keep its lifecycle beside
+        # the display release or D6 remains claimed across app teardown.
+        if _BACKLIGHT_OUTPUT is not None:
+            output, _BACKLIGHT_OUTPUT = _BACKLIGHT_OUTPUT, None
+            output.deinit()
 
 
 def _pin(board, name):
