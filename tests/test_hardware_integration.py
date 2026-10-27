@@ -200,13 +200,31 @@ class DiagnosticScanTests(unittest.TestCase):
 
     def test_circuitpython_composition_rejects_same_session_reinitialization(self):
         import src.app as app_module
-        modules = {app_module._CIRCUITPY_COMPOSITION_KEY: True}
+        modules = {app_module._CIRCUITPY_COMPOSITION_KEY:
+                   {"deinitialized": False}}
         circuitpython = SimpleNamespace(
             implementation=SimpleNamespace(name="circuitpython"),
             modules=modules)
         with patch("src.app.sys", circuitpython):
-            with self.assertRaisesRegex(RuntimeError, "one-shot per interpreter"):
+            with self.assertRaisesRegex(RuntimeError, "deinit the current"):
                 PendantApplication.from_config({"controller_mode": "disabled"})
+
+    def test_circuitpython_composition_can_restart_after_clean_deinit(self):
+        import src.app as app_module
+        circuitpython = SimpleNamespace(
+            implementation=SimpleNamespace(name="circuitpython"), modules={})
+        config = {"controller_mode": "disabled", "display_enabled": False,
+                  "inputs_enabled": False}
+        with patch("src.app.sys", circuitpython):
+            first = PendantApplication.from_config(
+                config, display=ConsoleDisplay(lambda value: None),
+                network_service=MockWiFiService(), shared_i2c=FakeI2C(()))
+            first.deinit()
+            self.assertTrue(first._circuitpython_lifecycle["deinitialized"])
+            second = PendantApplication.from_config(
+                config, display=ConsoleDisplay(lambda value: None),
+                network_service=MockWiFiService(), shared_i2c=FakeI2C(()))
+            second.deinit()
 
     def test_scan_is_read_only_and_reports_addresses(self):
         bus = FakeI2C((0x3C, 0x20))

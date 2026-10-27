@@ -24,10 +24,8 @@ from src.transport.mock import MockGRBLTransport, MockTransport
 from src.transport.uart import UARTTransport
 
 
-# CircuitPython peripheral objects are interpreter-owned singletons. App
-# teardown exists for a full supervisor reload; rebuilding the composition in
-# the same interpreter can reuse deinitialized wifi/display objects. Keep this
-# in sys.modules so it survives re-importing src.app from the REPL.
+# CircuitPython peripheral objects are interpreter-owned singletons. Track
+# composition in sys.modules so re-importing src.app cannot bypass the guard.
 _CIRCUITPY_COMPOSITION_KEY = "_cdaprod_circuitpython_app_composition"
 
 
@@ -68,13 +66,15 @@ class PendantApplication:
                     indicator_output=None, shared_spi=None, shared_i2c=None,
                     touch_manager=None, touch_source=None):
         if sys.implementation.name == "circuitpython":
-            if sys.modules.get(_CIRCUITPY_COMPOSITION_KEY):
+            lifecycle = sys.modules.get(_CIRCUITPY_COMPOSITION_KEY)
+            if lifecycle and not lifecycle.get("deinitialized", False):
                 raise RuntimeError(
-                    "CircuitPython app composition is one-shot per interpreter; "
-                    "use supervisor.reload() to restart safely")
+                    "deinit the current CircuitPython app before "
+                    "reinitializing peripheral resources")
             # Mark before allocating peripherals: partial initialization may
             # already have claimed pins even when a later optional service fails.
-            sys.modules[_CIRCUITPY_COMPOSITION_KEY] = True
+            lifecycle = {"deinitialized": False}
+            sys.modules[_CIRCUITPY_COMPOSITION_KEY] = lifecycle
         state = PendantState(config.get("base_increment", 0.001))
         state.runtime_version = getattr(sys, "version", "unknown").split(";", 1)[0]
         state.board_profile = config.get("board_profile", "") or "default"
@@ -282,6 +282,8 @@ class PendantApplication:
                   renderer, storage, streamer, watchdog, Indicator(), ui,
                   network_service, macros, input_manager, indicator_output,
                   sd_mount, touch_manager, clock, sd_spi, shared_i2c)
+        if sys.implementation.name == "circuitpython":
+            app._circuitpython_lifecycle = lifecycle
         if config.get("mirror_enabled") and sys.implementation.name == "circuitpython":
             if not 1024 <= config.get("mirror_port", 8080) <= 65535:
                 print("mirror disabled: invalid port")
@@ -325,7 +327,7 @@ class PendantApplication:
                    for item in getattr(self.controller, "queue", ()))
 
     def deinit(self):
-        """Release optional services and peripheral ownership before reload."""
+        """Release resources before reload or same-session re-composition."""
         if getattr(self, "_deinitialized", False):
             return
         self._deinitialized = True
@@ -370,6 +372,9 @@ class PendantApplication:
             except (OSError, RuntimeError):
                 pass
             self.i2c_bus = None
+        lifecycle = getattr(self, "_circuitpython_lifecycle", None)
+        if lifecycle is not None:
+            lifecycle["deinitialized"] = True
 
     def handle_ui_event(self, event):
         """Route a normalized UI event and execute only its semantic result."""
