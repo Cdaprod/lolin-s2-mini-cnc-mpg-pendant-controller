@@ -64,6 +64,7 @@ class PendantApplication:
         self._diag_last_touch_error = None
         self._diag_last_wifi_state = None
         self._diag_last_controller_state = None
+        self._diag_last_display_state = None
         self._diag_buttons = {}
         self._diag_last_input_error = None
 
@@ -597,6 +598,11 @@ class PendantApplication:
         if "jog_timeout" in events and (self.transport.connected or isinstance(self.controller, C3WirelessController)):
             self.controller.cancel_jog()
         self.ui.refresh_context()
+        display_state = (self.ui.current_screen, self.state.active_page)
+        if display_state != self._diag_last_display_state:
+            emit("display_navigation", screen=display_state[0],
+                 page=display_state[1])
+            self._diag_last_display_state = display_state
         # Give network transitions their turn after physical safety and
         # transport processing; HTTP services themselves advance one bounded
         # nonblocking operation per poll.
