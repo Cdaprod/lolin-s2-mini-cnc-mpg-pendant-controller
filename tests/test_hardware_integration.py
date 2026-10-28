@@ -407,6 +407,34 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(runtime.kwargs["increment"], "X10")
             self.assertEqual(runtime.kwargs["deadman"], "active")
 
+    def test_input_diagnostics_separate_logical_axis_from_selector_position(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            adapter.set(axes=("4",), multipliers=("X1",))
+            with patch("src.app.emit") as emit:
+                app.poll()
+            selector = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "selector_state")
+            self.assertEqual(selector.kwargs["axis"], "A")
+            self.assertEqual(selector.kwargs["selector_position"], "4")
+
+            adapter.set(mpg_delta=4)
+            clock.advance(10)
+            with patch("src.app.emit") as emit:
+                app.poll()
+            operator_input = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "operator_input")
+            encoder_delta = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "encoder_delta")
+            self.assertEqual(operator_input.kwargs["axis"], "A")
+            self.assertEqual(operator_input.kwargs["selector_position"], "4")
+            self.assertEqual(encoder_delta.kwargs["axis"], "A")
+            self.assertEqual(encoder_delta.kwargs["selector_position"], "4")
+            self.assertEqual(encoder_delta.kwargs["delta"], 4)
+
     def test_runtime_marks_controls_unavailable_after_failed_input_sample(self):
         with tempfile.TemporaryDirectory() as root:
             app, adapter, clock = self.make_app(root)
