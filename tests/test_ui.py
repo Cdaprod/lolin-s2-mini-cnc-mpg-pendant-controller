@@ -19,6 +19,7 @@ def ready_ui():
     state.connection_state = "connected"
     state.machine_state = "idle"
     state.deadman_enabled = True
+    state.input_valid = True
     ui = UIManager(state)
     ui.complete_boot()
     ui.refresh_context()
@@ -172,6 +173,7 @@ class UIIntegrationTests(unittest.TestCase):
         app.state.connection_state = "connected"
         app.state.machine_state = "idle"
         app.state.deadman_enabled = True
+        app.state.input_valid = True
         app.state.selected_physical_axis = "X"
         app.state.selected_axis = "X"
         app.ui.refresh_context()

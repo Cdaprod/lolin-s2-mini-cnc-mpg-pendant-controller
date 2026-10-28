@@ -658,7 +658,7 @@ class UIManager:
             self.state.machine_state in ("idle", "jog") and
             self.state.selected_axis is not None and
             getattr(self.state, "selectors_valid", True) and
-            getattr(self.state, "input_valid", True) is not False and
+            getattr(self.state, "input_valid", True) is True and
             self.state.deadman_enabled and not self.state.estop_latched and
             self.state.alarm is None)
         model = {

@@ -15,6 +15,7 @@ class ActionSafetyTests(unittest.TestCase):
         self.state.connection_state = "connected"
         self.state.machine_state = "idle"
         self.state.deadman_enabled = True
+        self.state.input_valid = True
         self.state.ui_handwheel_mode = "MOTION"
         SelectorModel(self.state).select_axis("X")
         self.transport = MockTransport()
@@ -43,6 +44,12 @@ class ActionSafetyTests(unittest.TestCase):
         self.state.clear_estop_latch()
         self.state.machine_state = "idle"
         self.assertTrue(self.actions.jog(1))
+
+    def test_unknown_input_backend_cannot_authorize_jog(self):
+        self.state.input_valid = None
+        with self.assertRaisesRegex(SafetyError, "physical input sample"):
+            self.actions.jog(1)
+        self.assertEqual(self.controller.queue, [])
 
     def test_action_dispatch(self):
         self.assertTrue(self.actions.dispatch("ZERO_AXIS"))
