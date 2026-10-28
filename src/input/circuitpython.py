@@ -34,9 +34,30 @@ class CircuitPythonInputAdapter:
         value = bool(pin.value)
         return not value if active_low else value
 
+    def _invalid_sample(self, reason):
+        # Drop any native encoder movement that accumulated during a failed
+        # shared-I2C read; it must not become a jog after the bus recovers.
+        if self.encoder is not None:
+            try:
+                self.encoder_position = self.encoder.position
+            except (AttributeError, OSError, RuntimeError):
+                pass
+        return InputSnapshot(
+            axes=(), multipliers=(),
+            buttons=dict((name, False) for name in self.button_inputs),
+            estop=self.estop_input is not None, deadman=False, mpg_delta=0,
+            valid=False, valid_reason=reason,
+        )
+
     def read(self):
         if self.selector_refresh is not None:
-            self.selector_refresh()
+            try:
+                refreshed = self.selector_refresh()
+            except (OSError, RuntimeError) as exc:
+                return self._invalid_sample(
+                    "mcp23017_read_" + type(exc).__name__.lower())
+            if refreshed is False:
+                return self._invalid_sample("mcp23017_read_failed")
         axes = tuple(name for name, pin in self.axis_inputs.items()
                      if self._active(pin, self.selector_active_low))
         multipliers = tuple(name for name, pin in self.multiplier_inputs.items()

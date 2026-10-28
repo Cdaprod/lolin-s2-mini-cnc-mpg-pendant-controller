@@ -103,6 +103,37 @@ class MPGTests(unittest.TestCase):
         self.assertEqual(settled.events, [])
         self.assertEqual(manager.hardware_accumulator, 0)
 
+    def test_invalid_hardware_sample_clears_deadman_controls_and_encoder(self):
+        state = PendantState()
+        adapter = SyntheticInputAdapter()
+        manager = InputManager(state, adapter, counts_per_detent=4)
+        adapter.set(axes=("X",), multipliers=("X10",), deadman=True,
+                    mpg_delta=0)
+        manager.poll(0)
+        self.assertTrue(state.input_valid)
+        self.assertTrue(state.deadman_enabled)
+
+        adapter.set(valid=False, valid_reason="mcp23017_read_failed",
+                    deadman=True, buttons={"SELECT": True}, mpg_delta=4)
+        failed = manager.poll(1)
+        self.assertTrue(failed.input_valid_changed)
+        self.assertEqual(failed.events, [])
+        self.assertEqual(failed.button_states, {})
+        self.assertFalse(state.input_valid)
+        self.assertFalse(state.deadman_enabled)
+        self.assertFalse(state.selectors_valid)
+        self.assertIsNone(state.selected_axis)
+        self.assertEqual(manager.hardware_accumulator, 0)
+
+        adapter.set(valid=True, valid_reason=None, axes=("X",),
+                    multipliers=("X10",), deadman=True,
+                    buttons={"SELECT": False}, mpg_delta=4)
+        recovered = manager.poll(2)
+        self.assertTrue(recovered.input_valid_changed)
+        self.assertEqual(recovered.events, [])
+        self.assertTrue(state.input_valid)
+        self.assertEqual(manager.hardware_accumulator, 0)
+
     def test_selector_transition_resets_partial_quadrature_detent(self):
         state = PendantState()
         adapter = SyntheticInputAdapter()

@@ -7,7 +7,8 @@ from unittest.mock import patch
 from src.config import load_config
 from src.hardware_profiles import (LOLIN_S2_MINI_V1, SEEED_ROUND_240,
                                    XIAO_ESP32S3, apply_hardware_profile)
-from src.input.circuitpython import from_config, resolve_native_pin
+from src.input.circuitpython import (CircuitPythonInputAdapter, from_config,
+                                     resolve_native_pin)
 from src.input.mcp23017 import (MCP23017InputBank, parse_virtual_pin,
                                 virtual_pin_name)
 
@@ -163,6 +164,47 @@ class MCP23017Tests(unittest.TestCase):
         self.assertFalse(bank.refresh())
         self.assertEqual(bank.value, 0xFFFF)
         self.assertEqual(bank.read_errors, 1)
+
+
+class CircuitPythonInputFailureTests(unittest.TestCase):
+    class Pin:
+        def __init__(self, value):
+            self.value = value
+
+    class Encoder:
+        position = 10
+
+    def test_failed_mcp_refresh_never_returns_cached_motion_inputs(self):
+        i2c = FakeI2C()
+        i2c.gpio = (0x08, 0xFF)  # X, X10, SELECT, and deadman active-low.
+        bank = MCP23017InputBank(i2c, pullup_mask=0x001F)
+        adapter = CircuitPythonInputAdapter(
+            inputs={},
+            axis_inputs={"X": bank.resolve("GPA0")},
+            multiplier_inputs={"X10": bank.resolve("GPA1")},
+            button_inputs={"SELECT": bank.resolve("GPA2")},
+            estop_input=bank.resolve("GPA3"),
+            deadman_input=bank.resolve("GPA4"),
+            encoder=self.Encoder(), selector_refresh=bank.refresh,
+        )
+        healthy = adapter.read()
+        self.assertTrue(healthy.valid)
+        self.assertEqual(healthy.axes, ("X",))
+        self.assertEqual(healthy.multipliers, ("X10",))
+        self.assertTrue(healthy.buttons["SELECT"])
+        self.assertTrue(healthy.deadman)
+        self.assertFalse(healthy.estop)
+
+        i2c.locked = True
+        sample = adapter.read()
+        self.assertFalse(sample.valid)
+        self.assertEqual(sample.valid_reason, "mcp23017_read_failed")
+        self.assertEqual(sample.axes, ())
+        self.assertEqual(sample.multipliers, ())
+        self.assertEqual(sample.buttons, {"SELECT": False})
+        self.assertFalse(sample.deadman)
+        self.assertTrue(sample.estop)
+        self.assertEqual(sample.mpg_delta, 0)
 
 
 class CurrentPendantInputTests(unittest.TestCase):

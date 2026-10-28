@@ -146,6 +146,9 @@ class WirelessTests(unittest.TestCase):
         self.state.selectors_valid = False
         self.assertFalse(self.ctrl.queue_jog("A", .01, 200))
         self.state.selectors_valid = True
+        self.state.input_valid = False
+        self.assertFalse(self.ctrl.queue_jog("A", .01, 200))
+        self.state.input_valid = True
         self.assertTrue(self.ctrl.queue_jog("A", .01, 200))
         frame, _peer = self.esp.sent[-1]
         kind, _session, _seq, payload = proto.decode(frame)

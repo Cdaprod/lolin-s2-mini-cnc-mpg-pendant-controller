@@ -66,6 +66,7 @@ class PendantApplication:
         self._diag_last_controller_state = None
         self._diag_last_display_state = None
         self._diag_last_selectors_valid = None
+        self._diag_last_input_valid = None
         self._diag_buttons = {}
         self._diag_last_input_error = None
 
@@ -491,7 +492,7 @@ class PendantApplication:
         started = self.clock()
         sample = self.input_manager.poll(started)
         if (sample.selector_changed or sample.multiplier_changed or
-                sample.selectors_valid_changed):
+                sample.selectors_valid_changed or sample.input_valid_changed):
             # The input manager drops detents spanning selector transitions.
             # Clear retained visual/diagnostic activity as well so stale
             # movement is not shown or later attributed to the new selection.
@@ -505,6 +506,23 @@ class PendantApplication:
             emit("encoder_overrun", delta=sample.encoder_overrun_delta,
                  max_detents=getattr(self.input_manager,
                                      "MAX_ENCODER_DETENTS_PER_POLL", 4))
+        if (self._diag_last_input_valid is None or
+                self._diag_last_input_valid != self.state.input_valid):
+            emit("input_validity", domain="hardware",
+                 valid=self.state.input_valid,
+                 reason=self.state.input_error or "none")
+            self._diag_last_input_valid = self.state.input_valid
+        if sample.input_valid_changed and not self.state.input_valid:
+            # A failed MCP23017 snapshot invalidates the deadman and every
+            # selector at once. Revoke both queued and active jog ownership.
+            queued_jog = any(item[1] == "jog"
+                             for item in getattr(self.controller, "queue", ()))
+            self.controller.discard_queued("jog")
+            if (isinstance(self.controller, C3WirelessController) or
+                    (self.transport.connected and
+                     (self.state.jog_active or queued_jog))):
+                self.controller.cancel_jog()
+            self.state.jog_active = False
         if (self._diag_last_selectors_valid is None or
                 self._diag_last_selectors_valid != self.state.selectors_valid):
             emit("input_validity", domain="selectors",
