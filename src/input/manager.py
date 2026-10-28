@@ -41,7 +41,7 @@ class InputPollResult:
     def __init__(self, events, estop, estop_changed, deadman_changed,
                  selector_changed, multiplier_changed=False, mpg_activity=0,
                  selector_direction=0, multiplier_direction=0,
-                 button_states=None):
+                 button_states=None, selectors_valid_changed=False):
         self.events = events
         self.estop = estop
         self.estop_changed = estop_changed
@@ -52,6 +52,7 @@ class InputPollResult:
         self.selector_direction = int(selector_direction)
         self.multiplier_direction = int(multiplier_direction)
         self.button_states = dict(button_states or {})
+        self.selectors_valid_changed = bool(selectors_valid_changed)
 
 
 class InputManager:
@@ -74,6 +75,13 @@ class InputManager:
         self.last_multipliers = None
         self.dropped_events = 0
         self.hardware_accumulator = 0
+        self._discard_next_encoder_sample = False
+
+    def reset_encoder(self):
+        """Discard a partial detent at a transport or safety boundary."""
+        self.decoder.reset()
+        self.hardware_accumulator = 0
+        self._discard_next_encoder_sample = True
 
     def _emit(self, event):
         if event is None:
@@ -88,27 +96,49 @@ class InputManager:
             return
         axes = sample.axes
         multipliers = sample.multipliers
-        if axes != self.last_axes:
-            self.last_axes = axes
-            if len(axes) == 0:
+        previous_selector_error = self.state.selector_error
+        valid = True
+        error = None
+        axes_changed = axes != self.last_axes
+        self.last_axes = axes
+        if len(axes) == 0:
+            if axes_changed:
                 self.selectors.select_axis("OFF")
-            elif len(axes) == 1:
+        elif len(axes) == 1:
+            if axes[0] not in self.selectors.axis_map:
+                if axes_changed:
+                    self.selectors.select_axis("OFF")
+                valid = False
+                error = "axis selector value is invalid"
+            elif axes_changed:
                 try:
                     self.selectors.select_axis(axes[0])
                 except SelectorError:
                     self.selectors.select_axis("OFF")
-            else:
+                    valid = False
+                    error = "axis selector value is invalid"
+        else:
+            if axes_changed:
                 self.selectors.select_axis("OFF")
-                self.state.error = "axis selector is not one-hot"
-        if multipliers != self.last_multipliers:
-            self.last_multipliers = multipliers
-            if len(multipliers) == 1:
-                try:
-                    self.selectors.select_multiplier(multipliers[0])
-                except SelectorError as exc:
-                    self.state.error = str(exc)
-            elif len(multipliers) > 1:
-                self.state.error = "multiplier selector is not one-hot"
+            valid = False
+            error = "axis selector is not one-hot"
+        self.last_multipliers = multipliers
+        if len(multipliers) == 1:
+            try:
+                self.selectors.select_multiplier(multipliers[0])
+            except SelectorError as exc:
+                valid = False
+                error = str(exc)
+        else:
+            valid = False
+            error = "multiplier selector is not one-hot"
+        self.state.selectors_valid = valid
+        self.state.selector_error = error
+        if error:
+            self.state.error = error
+        elif (previous_selector_error is not None and
+              self.state.error == previous_selector_error):
+            self.state.error = None
 
     def poll(self, now):
         sample = self.adapter.read()
@@ -120,29 +150,43 @@ class InputManager:
         self.last_deadman = sample.deadman
         previous_physical_axis = self.state.selected_physical_axis
         previous_multiplier = self.state.selected_multiplier
+        previous_selectors_valid = self.state.selectors_valid
         self._update_selectors(sample)
+        selector_changed = previous_physical_axis != self.state.selected_physical_axis
+        multiplier_changed = previous_multiplier != self.state.selected_multiplier
+        selectors_valid_changed = previous_selectors_valid != self.state.selectors_valid
         if getattr(self.adapter, "configured", True):
             self.state.deadman_enabled = sample.deadman
         activity = 0
-        if sample.mpg_delta is None:
-            direction = self.decoder.update(sample.mpg_a, sample.mpg_b, now)
-            if direction > 0:
-                self._emit(ROTATE_CW)
-                activity += 1
-            elif direction < 0:
-                self._emit(ROTATE_CCW)
-                activity -= 1
+        if (selector_changed or multiplier_changed or selectors_valid_changed or
+                self._discard_next_encoder_sample):
+            # A detent sampled with a selector transition has ambiguous
+            # ownership. Drop it and partial counts instead of applying it
+            # to the newly selected axis or increment. A reset also discards
+            # the first sample after a transport boundary.
+            self.decoder.reset(sample.mpg_a, sample.mpg_b)
+            self.hardware_accumulator = 0
+            self._discard_next_encoder_sample = False
         else:
-            signed_delta = sample.mpg_delta * self.decoder.direction
-            activity += signed_delta
-            self.hardware_accumulator += signed_delta
-            threshold = self.decoder.counts_per_detent
-            while abs(self.hardware_accumulator) >= threshold:
-                direction = 1 if self.hardware_accumulator > 0 else -1
-                self._emit(ROTATE_CW if direction > 0 else ROTATE_CCW)
-                self.hardware_accumulator -= direction * threshold
-                if len(self.events) >= self.MAX_EVENTS:
-                    break
+            if sample.mpg_delta is None:
+                direction = self.decoder.update(sample.mpg_a, sample.mpg_b, now)
+                if direction > 0:
+                    self._emit(ROTATE_CW)
+                    activity += 1
+                elif direction < 0:
+                    self._emit(ROTATE_CCW)
+                    activity -= 1
+            else:
+                signed_delta = sample.mpg_delta * self.decoder.direction
+                activity += signed_delta
+                self.hardware_accumulator += signed_delta
+                threshold = self.decoder.counts_per_detent
+                while abs(self.hardware_accumulator) >= threshold:
+                    direction = 1 if self.hardware_accumulator > 0 else -1
+                    self._emit(ROTATE_CW if direction > 0 else ROTATE_CCW)
+                    self.hardware_accumulator -= direction * threshold
+                    if len(self.events) >= self.MAX_EVENTS:
+                        break
         for name, button in self.buttons.items():
             generated = button.update(bool(sample.buttons.get(name, False)), now)
             if ((name in ("BACK", "CANCEL") and "press" in generated) or
@@ -161,9 +205,9 @@ class InputManager:
             multiplier_order, previous_multiplier, self.state.selected_multiplier)
         return InputPollResult(
             events, sample.estop, estop_changed, deadman_changed,
-            previous_physical_axis != self.state.selected_physical_axis,
-            previous_multiplier != self.state.selected_multiplier, activity,
-            axis_direction, multiplier_direction, sample.buttons
+            selector_changed, multiplier_changed, activity,
+            axis_direction, multiplier_direction, sample.buttons,
+            selectors_valid_changed
         )
 
     @staticmethod

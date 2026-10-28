@@ -2,6 +2,10 @@
 import unittest
 
 from src.controller.c3_wireless import C3WirelessController
+from src.controller.actions import ActionDispatcher
+from src.display.ui import ROTATE_CW, UIManager
+from src.input.manager import InputManager, SyntheticInputAdapter
+from src.safety.state_machine import SafetyStateMachine
 from src.state import PendantState
 from src.transport import c3_espnow_protocol as proto
 
@@ -139,6 +143,9 @@ class WirelessTests(unittest.TestCase):
         self.status("<Idle|MPos:0,0,0|FS:0,0>")
         self.assertFalse(self.ctrl.queue_jog("X", .01, 200))
         self.state.deadman_enabled = True
+        self.state.selectors_valid = False
+        self.assertFalse(self.ctrl.queue_jog("A", .01, 200))
+        self.state.selectors_valid = True
         self.assertTrue(self.ctrl.queue_jog("A", .01, 200))
         frame, _peer = self.esp.sent[-1]
         kind, _session, _seq, payload = proto.decode(frame)
@@ -147,6 +154,41 @@ class WirelessTests(unittest.TestCase):
         self.ctrl._pending_seq = None  # test fixture: no physical ACK expected
         self.assertFalse(self.ctrl.queue_jog("B", .01, 200))
         self.assertFalse(self.ctrl.queue_jog("X", 2, 200))
+
+    def test_physical_input_pipeline_emits_exact_fourth_axis_frame(self):
+        self.state.connection_state = "connected"
+        self.state.machine_state = "idle"
+        adapter = SyntheticInputAdapter()
+        inputs = InputManager(self.state, adapter, counts_per_detent=4)
+        ui = UIManager(self.state)
+        ui.complete_boot()
+        actions = ActionDispatcher(
+            self.state, self.ctrl, SafetyStateMachine(self.state),
+            jog_feed=500)
+
+        adapter.set(axes=("X",), multipliers=("X1",), deadman=True,
+                    mpg_delta=0)
+        inputs.poll(0)
+        ui.apply_selector_context()
+        ui.refresh_context()
+        adapter.set(axes=("4",), multipliers=("X10",), deadman=True,
+                    mpg_delta=0)
+        transition = inputs.poll(1)
+        self.assertEqual(transition.events, [])
+        ui.apply_selector_context()
+        ui.refresh_context()
+
+        adapter.set(mpg_delta=4)
+        detent = inputs.poll(2)
+        self.assertEqual(detent.events, [ROTATE_CW])
+        command = ui.handle(detent.events[0])
+        self.assertEqual(command.name, "JOG")
+        self.assertTrue(actions.jog(command.value))
+
+        frame, peer = self.esp.sent[-1]
+        self.assertEqual(peer, self.ctrl.transport.peer)
+        self.assertEqual(frame, bytes.fromhex(
+            "01307b0000000000080041010a000000f401"))
 
 
 if __name__ == "__main__":
