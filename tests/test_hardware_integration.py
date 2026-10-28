@@ -719,6 +719,7 @@ class ApplicationInputPipelineTests(unittest.TestCase):
     def test_estop_view_model_requires_explicit_recovery(self):
         with tempfile.TemporaryDirectory() as root:
             app, _, _ = self.make_app(root)
+            app.state.estop_input_configured = True
             app.observe_estop(True)
             self.assertEqual(app.ui.view_model()["estop_state"], "ACTIVE")
             app.observe_estop(False)
@@ -726,6 +727,25 @@ class ApplicationInputPipelineTests(unittest.TestCase):
                              "RECOVERY_REQUIRED")
             app.recover_estop()
             self.assertEqual(app.ui.view_model()["estop_state"], "CLEAR")
+
+    def test_unconfigured_remote_stop_is_unknown_not_clear(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, _, _ = self.make_app(root, NullInputAdapter())
+            app.ui.enter("PREVIEW")
+            self.assertEqual(app.ui.view_model()["estop_state"], "UNKNOWN")
+            details = dict(app.ui.view_model()["details"])
+            self.assertEqual(details["Remote stop"], "UNKNOWN")
+
+    def test_remote_stop_read_failure_is_unavailable_not_clear(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, _ = self.make_app(root)
+            app.state.estop_input_configured = True
+            adapter.set(valid=False, valid_reason="mcp23017_read_failed")
+            app.poll()
+            app.ui.enter("PREVIEW")
+            self.assertEqual(app.ui.view_model()["estop_state"], "UNAVAILABLE")
+            details = dict(app.ui.view_model()["details"])
+            self.assertEqual(details["Remote stop"], "UNAVAILABLE")
 
     def test_estop_preempts_jog_stream_and_requires_long_recovery(self):
         with tempfile.TemporaryDirectory() as root:

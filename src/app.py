@@ -217,6 +217,10 @@ class PendantApplication:
                 state.input_error = "input initialization failed: {}".format(
                     type(exc).__name__)
                 input_manager = build_inputs({}, state)
+        input_adapter_for_status = getattr(input_manager, "adapter", None)
+        state.estop_input_configured = bool(
+            config.get("estop_observe_pin") and
+            getattr(input_adapter_for_status, "configured", False))
         indicator_output = indicator_output or build_indicator(config)
         touch_error = None
         if (touch_manager is None and touch_source is None and

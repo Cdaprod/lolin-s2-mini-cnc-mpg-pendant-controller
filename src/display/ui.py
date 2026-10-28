@@ -362,8 +362,7 @@ class UIManager:
                 ("Simulated X", "{:+.4f}".format(
                     self.state.preview_position["X"])),
                 ("Multiplier", self.state.selected_multiplier),
-                ("Remote stop", "ACTIVE" if self.state.estop_observed else
-                 "LATCHED" if self.state.estop_latched else "CLEAR"),
+                ("Remote stop", self._estop_status()),
             )
         return ()
 
@@ -648,6 +647,20 @@ class UIManager:
             return ("TOAST", self.toast, 40)
         return None
 
+    def _estop_status(self):
+        """Report CLEAR only after a configured physical input reads valid."""
+        if getattr(self.state, "input_valid", None) is False and getattr(
+                self.state, "estop_input_configured", False):
+            return "UNAVAILABLE"
+        if self.state.estop_observed:
+            return "ACTIVE"
+        if self.state.estop_latched:
+            return "RECOVERY_REQUIRED"
+        if (not getattr(self.state, "estop_input_configured", False) or
+                getattr(self.state, "input_valid", None) is not True):
+            return "UNKNOWN"
+        return "CLEAR"
+
     def view_model(self):
         """Return backend-independent primitives without exposing passwords."""
         items = self.items()
@@ -680,9 +693,7 @@ class UIManager:
             "axis_transition_direction": self.state.axis_transition_direction,
             "resolution_transition_direction":
                 self.state.resolution_transition_direction,
-            "estop_state": ("ACTIVE" if self.state.estop_observed else
-                            "RECOVERY_REQUIRED" if self.state.estop_latched else
-                            "CLEAR"),
+            "estop_state": self._estop_status(),
             "motion_available": motion_available,
             "active_page": self.state.active_page,
             # Physical top-level selector order, never a UI permission grant.
