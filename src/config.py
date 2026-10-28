@@ -109,7 +109,7 @@ def load_config():
         "axis_map": dict((name, _get("MPG_AXIS_MAP_" + name, logical))
                          for name, logical in (
                              ("X", "AXIS_X"), ("Y", "AXIS_Y"),
-                             ("Z", "AXIS_Z"), ("4", "FILES"),
+                             ("Z", "AXIS_Z"), ("4", "AXIS_A"),
                              ("5", "CONFIG"), ("6", "PREVIEW"))),
         "axis_pins": _pin_map("MPG_PIN_AXIS_", ("X", "Y", "Z", "4", "5", "6")),
         "multiplier_pins": _pin_map("MPG_PIN_MULTIPLIER_", ("X1", "X10", "X100")),

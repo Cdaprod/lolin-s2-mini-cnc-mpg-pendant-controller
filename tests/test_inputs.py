@@ -38,10 +38,12 @@ class SelectorTests(unittest.TestCase):
         self.state = PendantState()
         self.selectors = SelectorModel(self.state)
 
-    def test_axis_four_five_six_map_to_safe_pages(self):
-        self.assertEqual(self.selectors.select_axis("4"), "FILES")
-        self.assertEqual(self.state.active_page, "EXPLORER")
-        self.assertIsNone(self.state.selected_axis)
+    def test_fourth_axis_selector_maps_to_a_axis(self):
+        self.assertEqual(self.selectors.select_axis("4"), "AXIS_A")
+        self.assertEqual(self.state.selected_axis, "A")
+        self.assertEqual(self.state.active_page, "OPERATIONAL")
+
+    def test_five_and_six_selector_positions_remain_safe_pages(self):
         self.assertEqual(self.selectors.select_axis("5"), "CONFIG")
         self.assertEqual(self.state.active_page, "CONFIGURATION")
         self.assertEqual(self.selectors.select_axis("6"), "PREVIEW")

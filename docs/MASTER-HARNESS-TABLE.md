@@ -266,17 +266,19 @@ Pink             5            GPA4
 Pink/Black       6            GPA5
 
 
-Firmware axis mapping:
+Firmware axis and function mapping:
 
 X -> AXIS_X / Operational
 Y -> AXIS_Y / Operational
 Z -> AXIS_Z / Operational
-4 -> FILES / Explorer
+4 -> AXIS_A / Operational (Doesbot fourth axis)
 5 -> CONFIG / Configuration
 6 -> PREVIEW / safe Test & Demo
 
-The semantic map is configurable; a verified six-axis profile may map the same
-GPA3/GPA4/GPA5 contacts to AXIS_A/AXIS_B/AXIS_C without changing wiring.
+The semantic map remains configurable. The current four-axis Doesbot mapping
+uses the manufacturer's `4` contact as A. Positions 5 and 6 remain UI functions
+on this profile; remap those only when a controller with corresponding axes is
+commissioned and the C3 adapter supports them.
 
 
 ===============================================================================

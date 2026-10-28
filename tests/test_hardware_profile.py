@@ -24,6 +24,7 @@ class HardwareProfileTests(unittest.TestCase):
                          ("GPIO39", "GPIO40"))
         self.assertEqual(config["mcp23017_address"], 0x20)
         self.assertEqual(config["sd_cs_pin"], "D2")
+        self.assertEqual(config["axis_map"]["4"], "AXIS_A")
         self.assertFalse(config["inputs_enabled"])
         self.assertFalse(config["selector_interface_verified"])
         for address in ("not-an-address", "31", "40"):
