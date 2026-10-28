@@ -82,7 +82,12 @@ def validate_pair_ack(raw, expected_session, expected_mac=None):
 
 def encode_mpg_jog(session, sequence, axis, distance_microns, feed_mm_min,
                    deadman):
-    """Explicit bounded MPG request. The C3 currently rejects it by design."""
+    """Encode a bounded MPG request for the C3 admission/dry-run path.
+
+    A successful encode or radio ACK does not authorize physical motion; the
+    receiver's trusted-peer, session, sequence, controller-state, and motion
+    admission checks remain authoritative.
+    """
     if axis not in ("X", "Y", "Z"):
         raise ValueError("invalid MPG axis")
     if not isinstance(distance_microns, int) or not (-1000 <= distance_microns <= 1000) or distance_microns == 0:
