@@ -1,3 +1,13 @@
+# Historical planning note — superseded for the current Doesbot profile
+
+This note records an earlier three-axis-machine proposal in which selector
+positions 4/5/6 opened pendant modes. It is not the active hardware contract.
+The current Doesbot is four-axis: position 4 selects the A axis, while 5 and 6
+remain Configuration and safe Preview. Use
+[`../MASTER-HARNESS-TABLE.md`](../MASTER-HARNESS-TABLE.md) and
+`settings.toml.example` as the current source of truth. The ideas below remain
+historical context only and must not override the active profile.
+
 Don’t forget we discussed either… using extra axis’ as configuration displayed menus or renders… they could be like… since I only have x, y, z… using 4, 5, and 6 for….
 
 File Explorer: of SD card stuff and running programs
