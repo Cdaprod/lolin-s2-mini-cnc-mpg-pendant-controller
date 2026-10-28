@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import types
 import unittest
@@ -6,7 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from src.config import load_config
-from src.hardware_profiles import (LOLIN_S2_MINI_V1, SEEED_ROUND_240,
+from src.hardware_profiles import (BOARD_PROFILES, LOLIN_S2_MINI_V1, SEEED_ROUND_240,
                                    XIAO_ESP32S3, apply_hardware_profile)
 from src.input.circuitpython import (CircuitPythonInputAdapter, from_config,
                                      resolve_native_pin)
@@ -38,6 +39,46 @@ class HardwareProfileTests(unittest.TestCase):
         for key in ("MPG_PIN_BUTTON_BACK", "MPG_PIN_BUTTON_FN",
                     "MPG_PIN_BUTTON_CANCEL", "MPG_PIN_DEADMAN"):
             self.assertEqual(values[key], "")
+
+    def test_xiao_profile_and_example_match_canonical_harness_pin_map(self):
+        root = Path(__file__).resolve().parents[1]
+        docs = (root / "docs" / "MASTER-HARNESS-TABLE.md").read_text()
+        section = docs.split("FIRMWARE PIN MAP", 1)[1]
+        bindings = {
+            "MPG_PIN_A": BOARD_PROFILES[XIAO_ESP32S3]["mpg_a_pin"],
+            "MPG_PIN_B": BOARD_PROFILES[XIAO_ESP32S3]["mpg_b_pin"],
+            "MPG_PIN_ESTOP_OBSERVE": BOARD_PROFILES[XIAO_ESP32S3]["estop_observe_pin"],
+            "MPG_PIN_DEADMAN": BOARD_PROFILES[XIAO_ESP32S3]["deadman_pin"],
+        }
+        profile = BOARD_PROFILES[XIAO_ESP32S3]
+        for key, value in profile["axis_pins"].items():
+            bindings["MPG_PIN_AXIS_" + key] = value
+        for key, value in profile["multiplier_pins"].items():
+            bindings["MPG_PIN_MULTIPLIER_" + key] = value
+        for key, value in profile["button_pins"].items():
+            bindings["MPG_PIN_BUTTON_" + key] = value
+
+        template = {}
+        for line in (root / "settings.toml.example").read_text().splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                key, value = line.split("=", 1)
+                template[key.strip()] = value.strip().strip('"')
+
+        found = set()
+        for line in section.splitlines():
+            match = re.match(r"^(MPG_PIN_[A-Z0-9_]+)\s+([^\s]+)(.*)$", line)
+            if not match or match.group(1) not in bindings:
+                continue
+            name, documented_pin, suffix = match.groups()
+            found.add(name)
+            if "RESERVED" in suffix:
+                self.assertEqual(bindings[name], "", name)
+                self.assertEqual(template[name], "", name)
+            else:
+                self.assertEqual(bindings[name], documented_pin, name)
+                self.assertEqual(template[name], documented_pin, name)
+        self.assertEqual(found, set(bindings))
 
     def test_current_environment_defaults_and_invalid_address(self):
         with patch.dict(os.environ, {
