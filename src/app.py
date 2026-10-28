@@ -61,6 +61,7 @@ class PendantApplication:
         self._last_heap_warning = None
         self._diag_last_heartbeat = None
         self._diag_encoder_delta = 0
+        self._diag_loop_overruns = 0
         self._diag_last_touch_error = None
         self._diag_last_wifi_state = None
         self._diag_last_controller_state = None
@@ -712,6 +713,8 @@ class PendantApplication:
         self.state.loop_count += 1
         finished = self.clock()
         self.state.last_loop_duration = max(0.0, finished - started)
+        if self.state.last_loop_duration >= 0.01:
+            self._diag_loop_overruns += 1
         last = self.state.last_controller_response
         self.state.last_status_age = (None if last is None else
                                       max(0.0, finished - last))
@@ -758,6 +761,8 @@ class PendantApplication:
             emit("runtime", loops=self.state.loop_count,
                  renders=self.state.render_count,
                  free_heap=self.state.free_heap,
+                 loop_work_ms=int(self.state.last_loop_duration * 1000),
+                 loop_overruns=self._diag_loop_overruns,
                  touch_polls=getattr(self.touch_manager, "poll_count", 0)
                              if self.touch_manager is not None else 0,
                  touch_active_samples=getattr(
@@ -785,6 +790,7 @@ class PendantApplication:
                  deadman=deadman_state,
                  wifi=self.state.wifi_state,
                  controller=self.state.connection_state)
+            self._diag_loop_overruns = 0
             self._diag_last_heartbeat = finished
         if (self.state.free_heap is not None and self.state.free_heap < 32768 and
                 (self._last_heap_warning is None or
