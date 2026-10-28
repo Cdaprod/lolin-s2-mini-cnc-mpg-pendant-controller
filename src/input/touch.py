@@ -17,6 +17,7 @@ class TouchInput:
         self.last_feedback = None
         self.feedback_until = 0
         self.clock = clock
+        self.poll_count = 0
         self.sample_count = 0
         self.event_count = 0
         self.last_point = None
@@ -44,6 +45,7 @@ class TouchInput:
         return x, y
 
     def poll(self):
+        self.poll_count += 1
         try:
             point = self._transform(self.source.point())
             self.last_error = None
@@ -108,15 +110,21 @@ class CHSC6XTouchSource:
         self.i2c = i2c
         self.irq = irq
         self.buffer = bytearray(5)
+        self.irq_idle_count = 0
+        self.bus_busy_count = 0
+        self.read_count = 0
 
     def point(self):
         if self.irq is not None and self.irq.value:
+            self.irq_idle_count += 1
             return None
         if not self.i2c.try_lock():
             # No new touch sample while other shared-I2C clients are busy.
+            self.bus_busy_count += 1
             return None
         try:
             self.i2c.readfrom_into(self.ADDRESS, self.buffer)
+            self.read_count += 1
         finally:
             self.i2c.unlock()
         if self.buffer[0] != 1:

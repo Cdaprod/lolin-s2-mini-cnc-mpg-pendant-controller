@@ -228,6 +228,7 @@ class GestureTests(unittest.TestCase):
         self.assertEqual((events[0].kind, events[0].x, events[0].y),
                          ("tap", 219, 229))
         self.assertEqual(touch.event_count, 1)
+        self.assertEqual(touch.poll_count, 3)
         self.assertEqual(touch.sample_count, 1)
 
     def test_touch_poll_failure_is_recorded_and_recovery_clears_error(self):
@@ -242,12 +243,14 @@ class GestureTests(unittest.TestCase):
         touch = TouchInput(source, clock)
         for _ in range(3):
             self.assertEqual(touch.poll(), ())
+        self.assertEqual(touch.poll_count, 3)
         self.assertEqual(touch.consecutive_errors, 3)
         self.assertEqual(touch.last_error, "OSError")
         source.broken = False
         self.assertEqual(touch.poll(), ())
         self.assertEqual(touch.consecutive_errors, 0)
         self.assertIsNone(touch.last_error)
+        self.assertEqual(touch.poll_count, 4)
 
     def test_chsc6x_irq_and_five_byte_packet(self):
         class I2C:
@@ -271,6 +274,7 @@ class GestureTests(unittest.TestCase):
         touch = CHSC6XTouchSource(bus, irq)
         self.assertIsNone(touch.point())
         self.assertEqual(bus.reads, 0)
+        self.assertEqual(touch.irq_idle_count, 1)
         irq.value = False
         self.assertEqual(touch.point(), (101, 193))
         self.assertEqual(bus.address, 0x2E)
@@ -280,6 +284,8 @@ class GestureTests(unittest.TestCase):
         self.assertIsNone(touch.point())
         bus.locked = True
         self.assertIsNone(touch.point())
+        self.assertEqual(touch.read_count, 3)
+        self.assertEqual(touch.bus_busy_count, 1)
 
     def test_touch_never_recovers_estop(self):
         state = PendantState()

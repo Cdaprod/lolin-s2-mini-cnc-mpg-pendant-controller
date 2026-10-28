@@ -393,6 +393,12 @@ class ApplicationInputPipelineTests(unittest.TestCase):
     def test_runtime_reports_current_valid_physical_input_state(self):
         with tempfile.TemporaryDirectory() as root:
             app, _, clock = self.make_app(root)
+            app.touch_manager = SimpleNamespace(
+                poll=lambda: (), poll_count=120, sample_count=0,
+                event_count=0, consecutive_errors=0, last_error=None,
+                last_feedback=None,
+                source=SimpleNamespace(read_count=0, bus_busy_count=0,
+                                       irq_idle_count=120))
             clock.advance(10)
             with patch("src.app.emit") as emit:
                 app.poll()
@@ -406,6 +412,11 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(runtime.kwargs["selector_position"], "X")
             self.assertEqual(runtime.kwargs["increment"], "X10")
             self.assertEqual(runtime.kwargs["deadman"], "active")
+            self.assertEqual(runtime.kwargs["touch_polls"], 120)
+            self.assertEqual(runtime.kwargs["touch_active_samples"], 0)
+            self.assertEqual(runtime.kwargs["touch_i2c_reads"], 0)
+            self.assertEqual(runtime.kwargs["touch_i2c_busy"], 0)
+            self.assertEqual(runtime.kwargs["touch_irq_idle"], 120)
 
     def test_runtime_reports_unconfigured_deadman_as_unavailable(self):
         with tempfile.TemporaryDirectory() as root:
