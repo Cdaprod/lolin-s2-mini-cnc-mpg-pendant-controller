@@ -400,6 +400,13 @@ class ApplicationInputPipelineTests(unittest.TestCase):
                 source=SimpleNamespace(read_count=0, bus_busy_count=0,
                                        irq_idle_count=120))
             clock.advance(10)
+            loop_clock = [clock.now]
+
+            def slow_poll_clock():
+                loop_clock[0] += 0.015
+                return loop_clock[0]
+
+            app.clock = slow_poll_clock
             with patch("src.app.emit") as emit:
                 app.poll()
             runtime = next(
@@ -417,6 +424,8 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(runtime.kwargs["touch_i2c_reads"], 0)
             self.assertEqual(runtime.kwargs["touch_i2c_busy"], 0)
             self.assertEqual(runtime.kwargs["touch_irq_idle"], 120)
+            self.assertEqual(runtime.kwargs["loop_work_ms"], 15)
+            self.assertEqual(runtime.kwargs["loop_overruns"], 1)
 
     def test_runtime_reports_unconfigured_deadman_as_unavailable(self):
         with tempfile.TemporaryDirectory() as root:
