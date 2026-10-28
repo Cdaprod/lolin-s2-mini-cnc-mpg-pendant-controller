@@ -149,9 +149,9 @@ class WirelessTests(unittest.TestCase):
         self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
         self.state.jog_active = True
 
-        # Model radio loss before a STOP can be sent or acknowledged.
-        self.ctrl.transport.paired = False
-        self.ctrl.transport.peer = None
+        # Let the real pairing transport hit its heartbeat timeout before a
+        # STOP can be sent or acknowledged.
+        self.time[0] += 5.1
         self.ctrl.poll()
         self.assertTrue(self.ctrl._stop_pending)
         self.assertIsNone(self.ctrl._stop_seq)
