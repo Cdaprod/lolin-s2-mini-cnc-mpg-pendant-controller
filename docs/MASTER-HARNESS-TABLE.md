@@ -287,6 +287,10 @@ so movement accumulated during a reconnect cannot become a later jog. This
 behavior is host-tested; physical control validation remains pending. The
 selector state is one-hot validated; invalid axis or increment combinations
 are reported as invalid and inhibit jogging until a stable valid state returns.
+The encoder drops and reports a sample larger than four detents per application
+poll, clearing partial counts so a stalled-loop backlog cannot replay as later
+jog requests. These safeguards are host-tested; physical validation remains
+pending the connected harness.
 
 
 ===============================================================================

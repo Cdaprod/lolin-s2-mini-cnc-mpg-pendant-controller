@@ -503,6 +503,28 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(app.state.selected_axis, "Y")
             self.assertTrue(app.ui.view_model()["motion_available"])
 
+    def test_encoder_overrun_is_dropped_and_reported_without_jog(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            baseline = sum(b"$J=" in data for data in app.transport.writes)
+            app.state.mpg_activity = 3
+            app.state.mpg_activity_timestamp = clock()
+            adapter.set(mpg_delta=100)
+            clock.advance(0.01)
+            with patch("src.app.emit") as emit:
+                app.poll()
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline)
+            self.assertEqual(app.input_manager.hardware_accumulator, 0)
+            self.assertEqual(app.state.mpg_activity, 0)
+            emit.assert_any_call("encoder_overrun", delta=100, max_detents=4)
+
+            adapter.set(mpg_delta=0)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline)
+
     def test_link_loss_clears_partial_encoder_counts_before_recovery(self):
         with tempfile.TemporaryDirectory() as root:
             app, adapter, clock = self.make_app(root)
