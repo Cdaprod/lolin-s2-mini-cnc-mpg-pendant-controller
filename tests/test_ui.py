@@ -27,6 +27,13 @@ def ready_ui():
 
 
 class UIStateMachineTests(unittest.TestCase):
+    def test_unknown_physical_inputs_never_show_motion_armed(self):
+        state, ui = ready_ui()
+        state.input_valid = None
+        model = ui.view_model()
+        self.assertFalse(model["motion_available"])
+        self.assertFalse(model["jog_armed"])
+
     def test_boot_home_menu_and_back(self):
         state = PendantState()
         ui = UIManager(state)
