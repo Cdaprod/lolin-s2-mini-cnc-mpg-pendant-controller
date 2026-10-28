@@ -719,6 +719,8 @@ class PendantApplication:
         if self._diag_last_heartbeat is None or finished - self._diag_last_heartbeat >= 10.0:
             input_backend_configured = bool(
                 getattr(self.input_manager.adapter, "configured", True))
+            deadman_configured = bool(
+                getattr(self.input_manager.adapter, "deadman_configured", True))
             input_health = (
                 "unknown" if not input_backend_configured or
                 self.state.input_valid is None else
@@ -740,8 +742,9 @@ class PendantApplication:
                     if self.state.selectors_valid else "invalid")
                 increment_state = (self.state.selected_multiplier
                                    if self.state.selectors_valid else "invalid")
-                deadman_state = ("active" if self.state.deadman_enabled
-                                 else "inactive")
+                deadman_state = (
+                    "unavailable" if not deadman_configured else
+                    ("active" if self.state.deadman_enabled else "inactive"))
             if self._diag_encoder_delta:
                 emit("encoder_delta", delta=self._diag_encoder_delta,
                      axis=self.state.selected_axis or "OFF",
