@@ -40,6 +40,7 @@ class WirelessTests(unittest.TestCase):
         self.time = [100.0]
         self.esp = Esp()
         self.state = PendantState()
+        self.state.input_valid = True
         self.ctrl = C3WirelessController(
             self.state, radio=Radio(), esp=self.esp, now=lambda: self.time[0],
             session=123)
@@ -147,6 +148,8 @@ class WirelessTests(unittest.TestCase):
         self.assertFalse(self.ctrl.queue_jog("A", .01, 200))
         self.state.selectors_valid = True
         self.state.input_valid = False
+        self.assertFalse(self.ctrl.queue_jog("A", .01, 200))
+        self.state.input_valid = None
         self.assertFalse(self.ctrl.queue_jog("A", .01, 200))
         self.state.input_valid = True
         self.assertTrue(self.ctrl.queue_jog("A", .01, 200))

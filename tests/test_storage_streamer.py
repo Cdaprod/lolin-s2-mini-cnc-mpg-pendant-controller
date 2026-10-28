@@ -167,6 +167,7 @@ class MacroTests(unittest.TestCase):
             state.connection_state = "connected"
             state.machine_state = "idle"
             state.deadman_enabled = True
+            state.input_valid = True
             controller = GRBLController(state, MockTransport())
             count = MacroLibrary(root).queue(
                 "park", controller, SafetyStateMachine(state)

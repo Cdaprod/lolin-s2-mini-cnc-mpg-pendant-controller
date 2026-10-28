@@ -167,6 +167,7 @@ class RoundRendererTests(unittest.TestCase):
     def test_home_prioritizes_armed_hold_and_signed_relative_activity(self):
         state, _, _, renderer = self.make_renderer()
         state.deadman_enabled = True
+        state.input_valid = True
         state.mpg_activity = -4
         renderer.render(state)
         self.assertEqual(renderer.state_label.value, "READY")
