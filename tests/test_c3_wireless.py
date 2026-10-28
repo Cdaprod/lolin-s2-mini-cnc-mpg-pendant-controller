@@ -25,11 +25,14 @@ class Esp:
         self.active = False
         self.sent = []
         self.peers = []
+        self.fail_types = set()
     def register_peer(self, mac):
         peer = Peer(mac)
         self.peers.append(peer)
         return peer
     def send(self, packet, peer):
+        if proto.decode(packet)[0] in self.fail_types:
+            raise OSError("simulated ESP-NOW send failure")
         self.sent.append((packet, peer.mac if peer else None))
     def read(self):
         return None
@@ -175,6 +178,34 @@ class WirelessTests(unittest.TestCase):
         self.assertFalse(self.ctrl.queue_jog("X", 0.01, 200))
         self.status("<Idle|MPos:0,0,0|FS:0,0>")
         self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
+
+    def test_stop_send_error_is_bounded_and_recovers_after_retry_interval(self):
+        self.state.deadman_enabled = True
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        self.esp.fail_types.add(proto.MPG_STOP)
+        stop_count = lambda: sum(
+            proto.decode(frame)[0] == proto.MPG_STOP
+            for frame, _peer in self.esp.sent
+        )
+
+        self.assertFalse(self.ctrl.cancel_jog())
+        self.assertEqual(self.ctrl._stop_attempts, 1)
+        self.ctrl.poll()
+        self.assertEqual(self.ctrl._stop_attempts, 1)
+        self.assertEqual(stop_count(), 0)
+
+        self.time[0] += 0.081
+        self.ctrl.poll()
+        self.assertEqual(self.ctrl._stop_attempts, 2)
+        self.assertEqual(stop_count(), 0)
+
+        self.esp.fail_types.clear()
+        self.time[0] += 0.081
+        self.ctrl.poll()
+        self.assertEqual(self.ctrl._stop_attempts, 3)
+        self.assertIsNotNone(self.ctrl._stop_seq)
+        self.assertEqual(proto.decode(self.esp.sent[-1][0])[0], proto.MPG_STOP)
+        self.assertFalse(self.ctrl.queue_jog("X", 0.01, 200))
 
     def test_deadman_rejection_and_fourth_axis_a_packet(self):
         self.status("<Idle|MPos:0,0,0|FS:0,0>")
