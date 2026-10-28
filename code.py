@@ -1,9 +1,11 @@
 """CircuitPython entry point; composes the pendant and runs its event loop."""
 
 import time
+import sys
 
 from src.config import load_config
 from src.app import PendantApplication
+from src.diagnostics import emit
 
 
 def main():
@@ -21,4 +23,11 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except BaseException as exc:
+        emit("application_exception", type=type(exc).__name__)
+        printer = getattr(sys, "print_exception", None)
+        if printer is not None:
+            printer(exc)
+        raise

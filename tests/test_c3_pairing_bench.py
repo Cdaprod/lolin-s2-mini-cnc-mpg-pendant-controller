@@ -1,5 +1,7 @@
 """Deterministic tests for C3 radio-level pairing with machine TX forbidden."""
 import unittest
+import contextlib
+import io
 from src.transport.c3_pairing_bench import C3PairingBench, BROADCAST
 from src.transport import c3_espnow_protocol as proto
 
@@ -64,6 +66,16 @@ class PairTests(unittest.TestCase):
         client.poll()
         self.assertFalse(client.paired)
         self.assertFalse(client.info()["motion_enabled"])
+
+    def test_packet_diagnostics_include_session_sequence_and_peer(self):
+        esp = Esp()
+        client = C3PairingBench(Radio(), now=lambda: 12.5, esp=esp, session=7)
+        client.start()
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            client.poll()
+        self.assertIn("event=espnow_tx packet_type=pair session=7 seq=0", output.getvalue())
+        self.assertIn("peer=ff:ff:ff:ff:ff:ff result=driver_accepted_not_ota_ack uptime_ms=12500", output.getvalue())
 
     def test_pair_accepts_c3_sensor_assignment(self):
         esp, t = Esp(), [0]

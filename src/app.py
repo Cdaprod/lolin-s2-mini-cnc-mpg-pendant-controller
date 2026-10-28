@@ -22,6 +22,7 @@ from src.state import PendantState
 from src.network import MockWiFiService, WiFiService
 from src.transport.mock import MockGRBLTransport, MockTransport
 from src.transport.uart import UARTTransport
+from src.diagnostics import emit
 
 
 # CircuitPython peripheral objects are interpreter-owned singletons. Track
@@ -58,6 +59,13 @@ class PendantApplication:
         self.i2c_bus = i2c_bus
         self.mirror = None
         self._last_heap_warning = None
+        self._diag_last_heartbeat = None
+        self._diag_encoder_delta = 0
+        self._diag_last_touch_error = None
+        self._diag_last_wifi_state = None
+        self._diag_last_controller_state = None
+        self._diag_buttons = {}
+        self._diag_last_input_error = None
 
     @classmethod
     def from_config(cls, config, transport=None, display=None,
@@ -270,6 +278,16 @@ class PendantApplication:
         for name in ("display", "storage", "sd", "i2c", "inputs", "touch",
                      "wifi", "controller"):
             print("{:<13} {}".format(name, state.subsystems[name]))
+            emit("subsystem", name=name, status=state.subsystems[name])
+        input_adapter_configured = bool(
+            getattr(getattr(input_manager, "adapter", None), "configured", False))
+        emit("input_configuration",
+             selector_backend=state.selector_backend,
+             inputs_enabled=config.get("inputs_enabled", False),
+             adapter_configured=input_adapter_configured,
+             mcp23017_detected=state.mcp23017_detected,
+             mcp23017_address=("0x{:02x}".format(state.mcp23017_address)
+                               if state.mcp23017_address is not None else "none"))
         state.free_heap = gc.mem_free() if hasattr(gc, "mem_free") else None
         if state.free_heap is not None:
             print("runtime heap:", state.free_heap)
@@ -470,13 +488,25 @@ class PendantApplication:
     def poll(self):
         started = self.clock()
         sample = self.input_manager.poll(started)
+        for name, active in sample.button_states.items():
+            active = bool(active)
+            if self._diag_buttons.get(name) != active:
+                emit("input_state", input="button_" + name.lower(), active=active)
+                self._diag_buttons[name] = active
+        if self.state.error and self.state.error != self._diag_last_input_error:
+            emit("input_rejected", reason=self.state.error)
+            self._diag_last_input_error = self.state.error
         if sample.mpg_activity:
             self.state.mpg_activity = sample.mpg_activity
             self.state.mpg_activity_timestamp = started
+            self._diag_encoder_delta += int(sample.mpg_activity)
         elif (self.state.mpg_activity_timestamp is not None and
               started - self.state.mpg_activity_timestamp >= 0.20):
             self.state.mpg_activity = 0
         if sample.selector_changed:
+            emit("selector_state", axis=self.state.selected_physical_axis or "OFF",
+                 increment=self.state.selected_multiplier,
+                 axis_direction=sample.selector_direction)
             self._record_selector_transition(
                 "axis", sample.selector_direction, started)
             # Every physical selector transition revokes the previous motion
@@ -488,6 +518,9 @@ class PendantApplication:
             self.state.jog_active = False
             self.ui.apply_selector_context()
         if sample.multiplier_changed:
+            emit("selector_state", axis=self.state.selected_physical_axis or "OFF",
+                 increment=self.state.selected_multiplier,
+                 increment_direction=sample.multiplier_direction)
             # Resolution changes also revoke the previous handwheel command.
             # Never interpret wheel deltas across a multiplier transition.
             if isinstance(self.controller, C3WirelessController):
@@ -499,18 +532,26 @@ class PendantApplication:
             if timestamp is not None and started - timestamp >= 0.30:
                 setattr(self.state, kind + "_transition_direction", 0)
         if sample.estop_changed:
+            emit("input_state", input="estop_observe", active=sample.estop)
             self.observe_estop(sample.estop)
         if sample.deadman_changed and not self.state.deadman_enabled:
+            emit("input_state", input="deadman", active=False)
             queued_jog = any(item[1] == "jog" for item in self.controller.queue)
             if (self.transport.connected or isinstance(self.controller, C3WirelessController)) and (self.state.jog_active or queued_jog):
                 self.controller.cancel_jog()
+        elif sample.deadman_changed:
+            emit("input_state", input="deadman", active=True)
         for event in sample.events:
+            emit("operator_input", action=event,
+                 axis=self.state.selected_physical_axis or "OFF",
+                 increment=self.state.selected_multiplier)
             try:
                 self.handle_ui_event(event)
             except SafetyError as exc:
                 self.ui.toast = str(exc)
         if self.touch_manager is not None:
             for event in self.touch_manager.poll():
+                emit("touch_gesture", kind=event.kind, x=event.x, y=event.y)
                 try:
                     self.handle_ui_event(event)
                 except SafetyError as exc:
@@ -518,9 +559,16 @@ class PendantApplication:
             if getattr(self.touch_manager, "consecutive_errors", 0) >= 3:
                 self.state.touch_error = "touch polling failed: " + self.touch_manager.last_error
                 self.state.subsystems["touch"] = "ERROR"
+                if self._diag_last_touch_error != self.touch_manager.last_error:
+                    emit("touch_error", error=self.touch_manager.last_error,
+                         consecutive=self.touch_manager.consecutive_errors)
+                    self._diag_last_touch_error = self.touch_manager.last_error
             elif getattr(self.touch_manager, "last_error", None) is None:
                 self.state.touch_error = None
                 self.state.subsystems["touch"] = "OK"
+                if self._diag_last_touch_error is not None:
+                    emit("touch_recovered")
+                    self._diag_last_touch_error = None
             # Feedback is visual only. No touch event can write controller I/O
             # except through the existing safety-checked UI action dispatcher.
             feedback = self.touch_manager.last_feedback
@@ -565,11 +613,23 @@ class PendantApplication:
         self.state.hostname = info.get("hostname")
         self.state.network_error = info.get("last_error")
         self.state.subsystems["wifi"] = self.state.wifi_state
+        if self.state.wifi_state != self._diag_last_wifi_state:
+            emit("wifi_state", state=self.state.wifi_state,
+                 connected=bool(info.get("connected", False)),
+                 ip=info.get("ipv4_address"))
+            self._diag_last_wifi_state = self.state.wifi_state
         self.state.subsystems["controller"] = (
             "DISABLED" if not self.state.controller_enabled else
             "CONNECTED" if self.state.connection_state == "connected" else
             "OFFLINE" if self.state.connection_state != "connecting" else
             "CONNECTING")
+        controller_state = "{}:{}".format(self.state.connection_state,
+                                           self.state.machine_state)
+        if controller_state != self._diag_last_controller_state:
+            emit("controller_state", state=self.state.connection_state,
+                 machine=self.state.machine_state,
+                 link=getattr(self.state, "link_state", None))
+            self._diag_last_controller_state = controller_state
         self._update_indicator()
         self.display.render(self.state)
         self.state.render_count = getattr(self.display, "render_count", 0)
@@ -587,6 +647,30 @@ class PendantApplication:
         self.state.last_status_age = (None if last is None else
                                       max(0.0, finished - last))
         self.state.free_heap = gc.mem_free() if hasattr(gc, "mem_free") else None
+        if self._diag_last_heartbeat is None or finished - self._diag_last_heartbeat >= 10.0:
+            if self._diag_encoder_delta:
+                emit("encoder_delta", delta=self._diag_encoder_delta,
+                     axis=self.state.selected_physical_axis or "OFF",
+                     increment=self.state.selected_multiplier,
+                     deadman=self.state.deadman_enabled)
+                self._diag_encoder_delta = 0
+            emit("runtime", loops=self.state.loop_count,
+                 renders=self.state.render_count,
+                 free_heap=self.state.free_heap,
+                 touch_samples=getattr(self.touch_manager, "sample_count", 0)
+                               if self.touch_manager is not None else 0,
+                 touch_events=getattr(self.touch_manager, "event_count", 0)
+                              if self.touch_manager is not None else 0,
+                 touch_errors=getattr(self.touch_manager, "consecutive_errors", 0)
+                               if self.touch_manager is not None else 0,
+                 mcp23017_read_errors=sum(
+                     getattr(resource, "read_errors", 0)
+                     for resource in getattr(
+                         getattr(self.input_manager, "adapter", None),
+                         "resources", ())),
+                 wifi=self.state.wifi_state,
+                 controller=self.state.connection_state)
+            self._diag_last_heartbeat = finished
         if (self.state.free_heap is not None and self.state.free_heap < 32768 and
                 (self._last_heap_warning is None or
                  finished - self._last_heap_warning >= 10.0)):
