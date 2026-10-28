@@ -16,7 +16,8 @@ class MPGWireTests(unittest.TestCase):
 
     def test_invalid_jogs_do_not_encode(self):
         for axis, distance, feed, deadman in (
-            ("Q", 10, 250, True), ("X", 0, 250, True),
+            ("Q", 10, 250, True), ("B", 10, 250, True),
+            ("X", 0, 250, True),
             ("X", 1001, 250, True), ("X", -1001, 250, True),
             ("X", 10, 0, True), ("X", 10, 1001, True),
             ("X", 10.1, 250, True), ("X", 10, 250, 1),

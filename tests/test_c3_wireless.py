@@ -145,6 +145,7 @@ class WirelessTests(unittest.TestCase):
         self.assertEqual(kind, proto.MPG_JOG)
         self.assertEqual(payload[0], ord("A"))
         self.ctrl._pending_seq = None  # test fixture: no physical ACK expected
+        self.assertFalse(self.ctrl.queue_jog("B", .01, 200))
         self.assertFalse(self.ctrl.queue_jog("X", 2, 200))
 
 
