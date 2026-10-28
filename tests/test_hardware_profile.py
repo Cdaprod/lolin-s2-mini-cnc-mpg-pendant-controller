@@ -28,6 +28,11 @@ class HardwareProfileTests(unittest.TestCase):
         self.assertEqual(values["MPG_CONTROLLER_MODE"], "disabled")
         self.assertEqual(values["MPG_INPUTS_ENABLED"], "false")
         self.assertEqual(values["MPG_SD_ENABLED"], "false")
+        self.assertEqual(values["MPG_PIN_BUTTON_SELECT"], "GPB2")
+        self.assertEqual(values["MPG_PIN_ESTOP_OBSERVE"], "GPB1")
+        for key in ("MPG_PIN_BUTTON_BACK", "MPG_PIN_BUTTON_FN",
+                    "MPG_PIN_BUTTON_CANCEL", "MPG_PIN_DEADMAN"):
+            self.assertEqual(values[key], "")
 
     def test_current_environment_defaults_and_invalid_address(self):
         with patch.dict(os.environ, {
@@ -102,6 +107,10 @@ class HardwareProfileTests(unittest.TestCase):
         self.assertEqual(config["multiplier_pins"]["X100"], "GPB0")
         self.assertEqual(config["estop_observe_pin"], "GPB1")
         self.assertEqual(config["button_pins"]["SELECT"], "GPB2")
+        self.assertEqual(config["button_pins"]["BACK"], "")
+        self.assertEqual(config["button_pins"]["FN"], "")
+        self.assertEqual(config["button_pins"]["CANCEL"], "")
+        self.assertEqual(config["deadman_pin"], "")
         self.assertEqual(config["display_driver"], "gc9a01")
         self.assertEqual(config["display_renderer"], "round")
         self.assertEqual(config["display_width"], 240)

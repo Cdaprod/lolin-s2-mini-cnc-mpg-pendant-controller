@@ -38,9 +38,12 @@ BOARD_PROFILES = {
                       "4": "GPA3", "5": "GPA4", "6": "GPA5"},
         "multiplier_pins": {"X1": "GPA6", "X10": "GPA7",
                             "X100": "GPB0"},
-        "button_pins": {"SELECT": "GPB2", "BACK": "GPB3",
-                        "FN": "GPB4", "CANCEL": "GPB5"},
-        "estop_observe_pin": "GPB1", "deadman_pin": "GPB6",
+        # The canonical harness currently wires only the local SELECT button
+        # on GPB2. GPB3..GPB6 are reserved, including the not-yet-wired
+        # deadman; do not make pull-up-only inputs look like physical controls.
+        "button_pins": {"SELECT": "GPB2", "BACK": "",
+                        "FN": "", "CANCEL": ""},
+        "estop_observe_pin": "GPB1", "deadman_pin": "",
         "selector_backend": "mcp23017", "mcp23017_address": 0x20,
         "spi_sck_pin": "D8", "spi_mosi_pin": "D10",
         "spi_miso_pin": "D9",

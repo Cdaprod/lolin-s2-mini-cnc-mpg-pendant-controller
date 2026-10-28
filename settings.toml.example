@@ -79,13 +79,16 @@ MPG_PIN_MULTIPLIER_X100="GPB0"
 # LOCAL Orange/Black contact; LOCAL Pink/Black returns to common. These are
 # not the MAIN cable conductors with the same colors.
 MPG_PIN_BUTTON_SELECT="GPB2"
-MPG_PIN_BUTTON_BACK="GPB3"
-MPG_PIN_BUTTON_FN="GPB4"
-MPG_PIN_BUTTON_CANCEL="GPB5"
+# GPB3..GPB5 are reserved in the canonical harness and remain unassigned.
+MPG_PIN_BUTTON_BACK=""
+MPG_PIN_BUTTON_FN=""
+MPG_PIN_BUTTON_CANCEL=""
 # Firmware-observed remote stop only; not a safety-rated cabinet E-stop.
 MPG_PIN_ESTOP_OBSERVE="GPB1"
 MPG_ESTOP_ACTIVE_LOW="true"
-MPG_PIN_DEADMAN="GPB6"
+# GPB6 is reserved for a future dedicated deadman connection. Leave blank
+# until that physical contact is wired and verified; MPG admission stays shut.
+MPG_PIN_DEADMAN=""
 MPG_DEADMAN_ACTIVE_LOW="true"
 MPG_BUTTON_DEBOUNCE="0.03"
 MPG_BUTTON_LONG_PRESS="0.8"
