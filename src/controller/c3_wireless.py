@@ -49,7 +49,7 @@ class C3WirelessController:
                 self.state.connection_state != "connected" or
                 self.state.machine_state not in ("idle", "jog") or
                 not getattr(self.state, "selectors_valid", True) or
-                not getattr(self.state, "input_valid", True) or
+                getattr(self.state, "input_valid", True) is False or
                 not self.state.deadman_enabled or self.state.estop_observed or
                 self.state.estop_latched or self._pending_seq is not None or
                 self._stop_pending):

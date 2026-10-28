@@ -2,7 +2,7 @@ import unittest
 
 from src.input.buttons import ButtonMapper
 from src.input.mpg import MPGDecoder
-from src.input.manager import InputManager, SyntheticInputAdapter
+from src.input.manager import InputManager, NullInputAdapter, SyntheticInputAdapter
 from src.input.selectors import SelectorError, SelectorModel
 from src.state import PendantState
 from src.input.touch import TouchInput
@@ -102,6 +102,14 @@ class MPGTests(unittest.TestCase):
         settled = manager.poll(2)
         self.assertEqual(settled.events, [])
         self.assertEqual(manager.hardware_accumulator, 0)
+
+    def test_disabled_input_backend_is_unavailable_not_reported_healthy(self):
+        state = PendantState()
+        manager = InputManager(state, NullInputAdapter())
+        result = manager.poll(0)
+        self.assertFalse(result.input_valid_changed)
+        self.assertIsNone(state.input_valid)
+        self.assertIsNone(state.input_error)
 
     def test_invalid_hardware_sample_clears_deadman_controls_and_encoder(self):
         state = PendantState()

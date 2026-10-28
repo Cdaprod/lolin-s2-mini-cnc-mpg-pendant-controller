@@ -12,7 +12,7 @@ from src.display.console import ConsoleDisplay
 from src.display.indicator import DigitalIndicatorOutput
 from src.display.ui import ROTATE_CW
 from src.input.buttons import DebouncedButton
-from src.input.manager import InputManager, SyntheticInputAdapter
+from src.input.manager import InputManager, NullInputAdapter, SyntheticInputAdapter
 from src.network import MockWiFiService
 from src.state import PendantState
 from src.storage.circuitpython_sd import mount_from_config
@@ -341,13 +341,13 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             app.poll()
             self.assertEqual(network.poll_count, 1)
 
-    def make_app(self, root):
+    def make_app(self, root, adapter=None):
         jobs = os.path.join(root, "jobs")
         macros = os.path.join(root, "macros")
         os.mkdir(jobs)
         os.mkdir(macros)
         clock = MutableClock()
-        adapter = SyntheticInputAdapter()
+        adapter = SyntheticInputAdapter() if adapter is None else adapter
         transport = MockTransport()
         app = PendantApplication.from_config(
             {"controller_mode": "mock", "jobs_path": jobs,
@@ -362,9 +362,22 @@ class ApplicationInputPipelineTests(unittest.TestCase):
         app.state.connection_state = "connected"
         app.state.machine_state = "idle"
         app.state.deadman_enabled = True
-        adapter.set(axes=("X",), multipliers=("X10",), deadman=True)
+        if isinstance(adapter, SyntheticInputAdapter):
+            adapter.set(axes=("X",), multipliers=("X10",), deadman=True)
         app.poll()
         return app, adapter, clock
+
+    def test_unconfigured_inputs_are_not_reported_as_healthy_hardware(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, _, _ = self.make_app(root, NullInputAdapter())
+            with patch("src.app.emit") as emit:
+                app.poll()
+            self.assertIsNone(app.state.input_valid)
+            self.assertIsNone(app.ui.view_model()["input_valid"])
+            self.assertFalse(app.ui.view_model()["motion_available"])
+            self.assertFalse(any(
+                call.args[0] == "input_validity"
+                for call in emit.call_args_list if call.args))
 
     def rotate_cw(self, app, adapter, clock):
         for a, b in ((0, 0), (0, 1), (1, 1), (1, 0), (0, 0)):
