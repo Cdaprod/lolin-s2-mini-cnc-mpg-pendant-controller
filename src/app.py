@@ -753,13 +753,21 @@ class PendantApplication:
                      increment=self.state.selected_multiplier,
                      deadman=self.state.deadman_enabled)
                 self._diag_encoder_delta = 0
+            touch_source = (getattr(self.touch_manager, "source", None)
+                            if self.touch_manager is not None else None)
             emit("runtime", loops=self.state.loop_count,
                  renders=self.state.render_count,
                  free_heap=self.state.free_heap,
-                 touch_samples=getattr(self.touch_manager, "sample_count", 0)
-                               if self.touch_manager is not None else 0,
+                 touch_polls=getattr(self.touch_manager, "poll_count", 0)
+                             if self.touch_manager is not None else 0,
+                 touch_active_samples=getattr(
+                     self.touch_manager, "sample_count", 0)
+                     if self.touch_manager is not None else 0,
                  touch_events=getattr(self.touch_manager, "event_count", 0)
                               if self.touch_manager is not None else 0,
+                 touch_i2c_reads=getattr(touch_source, "read_count", 0),
+                 touch_i2c_busy=getattr(touch_source, "bus_busy_count", 0),
+                 touch_irq_idle=getattr(touch_source, "irq_idle_count", 0),
                  touch_errors=getattr(self.touch_manager, "consecutive_errors", 0)
                                if self.touch_manager is not None else 0,
                  mcp23017_read_errors=sum(
