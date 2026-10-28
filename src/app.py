@@ -549,7 +549,8 @@ class PendantApplication:
               started - self.state.mpg_activity_timestamp >= 0.20):
             self.state.mpg_activity = 0
         if sample.selector_changed:
-            emit("selector_state", axis=self.state.selected_physical_axis or "OFF",
+            emit("selector_state", axis=self.state.selected_axis or "OFF",
+                 selector_position=self.state.selected_physical_axis or "OFF",
                  increment=self.state.selected_multiplier,
                  axis_direction=sample.selector_direction)
             self._record_selector_transition(
@@ -563,7 +564,8 @@ class PendantApplication:
             self.state.jog_active = False
             self.ui.apply_selector_context()
         if sample.multiplier_changed:
-            emit("selector_state", axis=self.state.selected_physical_axis or "OFF",
+            emit("selector_state", axis=self.state.selected_axis or "OFF",
+                 selector_position=self.state.selected_physical_axis or "OFF",
                  increment=self.state.selected_multiplier,
                  increment_direction=sample.multiplier_direction)
             # Resolution changes also revoke the previous handwheel command.
@@ -588,7 +590,8 @@ class PendantApplication:
             emit("input_state", input="deadman", active=True)
         for event in sample.events:
             emit("operator_input", action=event,
-                 axis=self.state.selected_physical_axis or "OFF",
+                 axis=self.state.selected_axis or "OFF",
+                 selector_position=self.state.selected_physical_axis or "OFF",
                  increment=self.state.selected_multiplier)
             try:
                 self.handle_ui_event(event)
@@ -737,7 +740,9 @@ class PendantApplication:
                                  else "inactive")
             if self._diag_encoder_delta:
                 emit("encoder_delta", delta=self._diag_encoder_delta,
-                     axis=self.state.selected_physical_axis or "OFF",
+                     axis=self.state.selected_axis or "OFF",
+                     selector_position=(
+                         self.state.selected_physical_axis or "OFF"),
                      increment=self.state.selected_multiplier,
                      deadman=self.state.deadman_enabled)
                 self._diag_encoder_delta = 0
