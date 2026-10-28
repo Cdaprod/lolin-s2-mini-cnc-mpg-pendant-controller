@@ -52,7 +52,7 @@ class C3WirelessController:
                 self.state.estop_latched or self._pending_seq is not None or
                 self._stop_pending):
             return False
-        if axis not in ("X", "Y", "Z") or not isinstance(distance, (float, int)):
+        if axis not in ("X", "Y", "Z", "A") or not isinstance(distance, (float, int)):
             return False
         try:
             microns = round(float(distance) * 1000)

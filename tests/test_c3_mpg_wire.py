@@ -25,6 +25,12 @@ class MPGWireTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     proto.encode_mpg_jog(1, 1, axis, distance, feed, deadman)
 
+    def test_fourth_axis_a_uses_existing_v1_payload(self):
+        frame = proto.encode_mpg_jog(0x12345678, 0x101, "A", 10, 250, True)
+        self.assertEqual(frame, bytes.fromhex(
+            "0130785634120101080041010a000000fa00"))
+        self.assertEqual(proto.decode(frame)[3][0], ord("A"))
+
 
 if __name__ == "__main__":
     unittest.main()

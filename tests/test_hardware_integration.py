@@ -257,9 +257,9 @@ class PhysicalInputTests(unittest.TestCase):
         manager = InputManager(state, adapter, counts_per_detent=4)
         adapter.set(axes=("4",), multipliers=("X100",))
         manager.poll(0)
-        self.assertIsNone(state.selected_axis)
-        self.assertEqual(state.selector_function, "FILES")
-        self.assertEqual(state.active_page, "EXPLORER")
+        self.assertEqual(state.selected_axis, "A")
+        self.assertEqual(state.selector_function, "AXIS_A")
+        self.assertEqual(state.active_page, "OPERATIONAL")
         self.assertAlmostEqual(state.jog_increment, 0.1)
         events = []
         for now, pins in enumerate(((0, 0), (0, 1), (1, 1), (1, 0), (0, 0))):
@@ -277,7 +277,7 @@ class PhysicalInputTests(unittest.TestCase):
         expected = (("X", "X", "OPERATIONAL"),
                     ("Y", "Y", "OPERATIONAL"),
                     ("Z", "Z", "OPERATIONAL"),
-                    ("4", None, "EXPLORER"),
+                    ("4", "A", "OPERATIONAL"),
                     ("5", None, "CONFIGURATION"),
                     ("6", None, "PREVIEW"))
         for physical, logical, page in expected:
@@ -433,36 +433,27 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertFalse(model["motion_available"])
             self.assertEqual(len(app.transport.writes), writes)
 
-    def test_page_selectors_revoke_motion_before_contextual_wheel(self):
+    def test_fourth_axis_selection_revokes_previous_motion(self):
         with tempfile.TemporaryDirectory() as root:
             app, adapter, _ = self.make_app(root)
             app.controller.queue_jog("X", 0.01, 500)
             app.state.jog_active = True
             before = sum(b"$J=" in data for data in app.transport.writes)
-            adapter.set(axes=("4",), multipliers=("X10",), deadman=True,
-                        mpg_delta=4)
+            adapter.set(axes=("4",), multipliers=("X10",), deadman=False,
+                        mpg_delta=0)
             app.poll()
-            self.assertEqual(app.ui.current_screen, "EXPLORER")
-            self.assertEqual(app.state.active_page, "EXPLORER")
-            self.assertIsNone(app.state.selected_axis)
+            self.assertEqual(app.ui.current_screen, "HOME")
+            self.assertEqual(app.state.selected_axis, "A")
+            self.assertEqual(app.state.selector_function, "AXIS_A")
             self.assertFalse(app.state.jog_active)
             self.assertFalse(any(kind == "jog" for _, kind in app.controller.queue))
             self.assertEqual(
                 sum(b"$J=" in data for data in app.transport.writes), before)
 
-    def test_files_config_and_preview_wheels_are_non_motion(self):
+    def test_config_and_preview_wheels_are_non_motion(self):
         with tempfile.TemporaryDirectory() as root:
             app, adapter, _ = self.make_app(root)
-            for name in ("a.nc", "b.nc"):
-                with open(os.path.join(root, "jobs", name), "w") as output:
-                    output.write("G0 X0\n")
             baseline = sum(b"$J=" in data for data in app.transport.writes)
-
-            adapter.set(axes=("4",), multipliers=("X1",), deadman=True,
-                        mpg_delta=4)
-            app.poll()
-            self.assertEqual(app.ui.current_screen, "EXPLORER")
-            self.assertEqual(app.ui.selected_item().value, "b.nc")
 
             adapter.set(axes=("5",), multipliers=("X1",), deadman=True,
                         mpg_delta=4)
@@ -487,10 +478,10 @@ class ApplicationInputPipelineTests(unittest.TestCase):
     def test_returning_to_xyz_restores_motion_only_after_safe_transition(self):
         with tempfile.TemporaryDirectory() as root:
             app, adapter, _ = self.make_app(root)
-            adapter.set(axes=("4",), multipliers=("X1",), deadman=True,
+            adapter.set(axes=("5",), multipliers=("X1",), deadman=True,
                         mpg_delta=4)
             app.poll()
-            self.assertEqual(app.ui.current_screen, "EXPLORER")
+            self.assertEqual(app.ui.current_screen, "CONFIGURATION")
             adapter.set(axes=("Y",), multipliers=("X1",), deadman=True,
                         mpg_delta=0)
             app.poll()

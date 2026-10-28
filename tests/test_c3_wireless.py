@@ -135,11 +135,16 @@ class WirelessTests(unittest.TestCase):
         self.assertFalse(self.ctrl._stop_pending)
         self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
 
-    def test_deadman_and_axis_rejected(self):
+    def test_deadman_rejection_and_fourth_axis_a_packet(self):
         self.status("<Idle|MPos:0,0,0|FS:0,0>")
         self.assertFalse(self.ctrl.queue_jog("X", .01, 200))
         self.state.deadman_enabled = True
-        self.assertFalse(self.ctrl.queue_jog("A", .01, 200))
+        self.assertTrue(self.ctrl.queue_jog("A", .01, 200))
+        frame, _peer = self.esp.sent[-1]
+        kind, _session, _seq, payload = proto.decode(frame)
+        self.assertEqual(kind, proto.MPG_JOG)
+        self.assertEqual(payload[0], ord("A"))
+        self.ctrl._pending_seq = None  # test fixture: no physical ACK expected
         self.assertFalse(self.ctrl.queue_jog("X", 2, 200))
 
 

@@ -88,7 +88,7 @@ def encode_mpg_jog(session, sequence, axis, distance_microns, feed_mm_min,
     receiver's trusted-peer, session, sequence, controller-state, and motion
     admission checks remain authoritative.
     """
-    if axis not in ("X", "Y", "Z"):
+    if axis not in ("X", "Y", "Z", "A"):
         raise ValueError("invalid MPG axis")
     if not isinstance(distance_microns, int) or not (-1000 <= distance_microns <= 1000) or distance_microns == 0:
         raise ValueError("invalid MPG microns")
