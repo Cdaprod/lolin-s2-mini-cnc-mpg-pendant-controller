@@ -98,6 +98,12 @@ class C3WirelessController:
     def _send_stop(self):
         if not self.transport.paired:
             return False
+        # Count failed local sends as attempts too, and timestamp them before
+        # calling the driver. Otherwise a persistent driver error can retry on
+        # every cooperative poll and flood the radio/log stream.
+        self._stop_attempts += 1
+        self._stop_at = self.clock()
+        self._stop_seq = None
         try:
             seq = self.transport.send_mpg_stop()
         except (OSError, RuntimeError):
@@ -105,8 +111,6 @@ class C3WirelessController:
         if seq is None:
             return False
         self._stop_seq = seq
-        self._stop_at = self.clock()
-        self._stop_attempts += 1
         return True
 
     def realtime(self, name):
