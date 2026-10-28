@@ -76,6 +76,9 @@ class PendantState:
         self.jog_active = False
         self.estop_observed = False
         self.estop_latched = False
+        # Remote-stop state is unknown unless a configured physical input has
+        # produced a valid sample. Never present an unobserved input as CLEAR.
+        self.estop_input_configured = False
         self.deadman_enabled = False
         self.mpg_activity = 0
         self.mpg_activity_timestamp = None
