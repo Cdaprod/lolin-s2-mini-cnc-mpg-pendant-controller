@@ -25,6 +25,9 @@ class HardwareProfileTests(unittest.TestCase):
             key, value = line.split("=", 1)
             values[key.strip()] = value.strip().strip('"')
         self.assertEqual(values["MPG_AXIS_MAP_4"], "AXIS_A")
+        self.assertEqual(values["MPG_CONTROLLER_MODE"], "disabled")
+        self.assertEqual(values["MPG_INPUTS_ENABLED"], "false")
+        self.assertEqual(values["MPG_SD_ENABLED"], "false")
 
     def test_current_environment_defaults_and_invalid_address(self):
         with patch.dict(os.environ, {
