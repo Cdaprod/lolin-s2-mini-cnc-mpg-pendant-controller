@@ -369,7 +369,8 @@ class ApplicationInputPipelineTests(unittest.TestCase):
 
     def test_unconfigured_inputs_are_not_reported_as_healthy_hardware(self):
         with tempfile.TemporaryDirectory() as root:
-            app, _, _ = self.make_app(root, NullInputAdapter())
+            app, _, clock = self.make_app(root, NullInputAdapter())
+            clock.advance(10)
             with patch("src.app.emit") as emit:
                 app.poll()
             self.assertIsNone(app.state.input_valid)
@@ -378,6 +379,12 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertFalse(any(
                 call.args[0] == "input_validity"
                 for call in emit.call_args_list if call.args))
+            runtime = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "runtime")
+            self.assertEqual(runtime.kwargs["input_backend"], "disabled")
+            self.assertEqual(runtime.kwargs["input_validity"], "unknown")
+            self.assertEqual(runtime.kwargs["selector_validity"], "unknown")
 
     def rotate_cw(self, app, adapter, clock):
         for a, b in ((0, 0), (0, 1), (1, 1), (1, 0), (0, 0)):

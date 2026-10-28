@@ -710,6 +710,15 @@ class PendantApplication:
                                       max(0.0, finished - last))
         self.state.free_heap = gc.mem_free() if hasattr(gc, "mem_free") else None
         if self._diag_last_heartbeat is None or finished - self._diag_last_heartbeat >= 10.0:
+            input_backend_configured = bool(
+                getattr(self.input_manager.adapter, "configured", True))
+            input_health = (
+                "unknown" if not input_backend_configured or
+                self.state.input_valid is None else
+                ("valid" if self.state.input_valid else "invalid"))
+            selector_health = (
+                "unknown" if not input_backend_configured else
+                ("valid" if self.state.selectors_valid else "invalid"))
             if self._diag_encoder_delta:
                 emit("encoder_delta", delta=self._diag_encoder_delta,
                      axis=self.state.selected_physical_axis or "OFF",
@@ -730,6 +739,10 @@ class PendantApplication:
                      for resource in getattr(
                          getattr(self.input_manager, "adapter", None),
                          "resources", ())),
+                 input_backend=("configured" if input_backend_configured
+                                else "disabled"),
+                 input_validity=input_health,
+                 selector_validity=selector_health,
                  wifi=self.state.wifi_state,
                  controller=self.state.connection_state)
             self._diag_last_heartbeat = finished
