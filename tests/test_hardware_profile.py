@@ -2,6 +2,7 @@ import os
 import sys
 import types
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 from src.config import load_config
@@ -14,6 +15,17 @@ from src.input.mcp23017 import (MCP23017InputBank, parse_virtual_pin,
 
 
 class HardwareProfileTests(unittest.TestCase):
+    def test_example_config_maps_selector_four_to_a_axis(self):
+        template = Path(__file__).resolve().parents[1] / "settings.toml.example"
+        values = {}
+        for line in template.read_text().splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            values[key.strip()] = value.strip().strip('"')
+        self.assertEqual(values["MPG_AXIS_MAP_4"], "AXIS_A")
+
     def test_current_environment_defaults_and_invalid_address(self):
         with patch.dict(os.environ, {
             "MPG_BOARD_PROFILE": XIAO_ESP32S3,
