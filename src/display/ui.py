@@ -657,6 +657,7 @@ class UIManager:
             self.state.connection_state == "connected" and
             self.state.machine_state in ("idle", "jog") and
             self.state.selected_axis is not None and
+            getattr(self.state, "selectors_valid", True) and
             self.state.deadman_enabled and not self.state.estop_latched and
             self.state.alarm is None)
         model = {
@@ -665,7 +666,11 @@ class UIManager:
             "items": [(item.label, item.enabled, item.reason) for item in items],
             "overlay": self.active_overlay(), "dirty": self.dirty,
             "axis_selector": self.state.selected_axis or "OFF",
-            "resolution_selector": self.state.selected_multiplier,
+            "resolution_selector": (
+                self.state.selected_multiplier
+                if getattr(self.state, "selectors_valid", True) else "INVALID"),
+            "selectors_valid": getattr(self.state, "selectors_valid", True),
+            "selector_error": getattr(self.state, "selector_error", None),
             "jog_hold": bool(self.state.deadman_enabled),
             "jog_armed": motion_available,
             "mpg_activity": self.state.mpg_activity,

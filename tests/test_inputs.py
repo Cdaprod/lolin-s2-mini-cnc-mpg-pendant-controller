@@ -2,10 +2,11 @@ import unittest
 
 from src.input.buttons import ButtonMapper
 from src.input.mpg import MPGDecoder
+from src.input.manager import InputManager, SyntheticInputAdapter
 from src.input.selectors import SelectorError, SelectorModel
 from src.state import PendantState
 from src.input.touch import TouchInput
-from src.display.ui import TouchEvent
+from src.display.ui import ROTATE_CW, TouchEvent
 
 
 class MPGTests(unittest.TestCase):
@@ -31,6 +32,77 @@ class MPGTests(unittest.TestCase):
         self.assertEqual(decoder.update(1, 1, 0.02), 1)
         self.assertEqual(decoder.update(1, 0, 0.03), 0)
         self.assertEqual(decoder.update(0, 0, 0.04), 0)
+
+    def test_selector_change_discards_encoder_delta_from_same_poll(self):
+        state = PendantState()
+        adapter = SyntheticInputAdapter()
+        manager = InputManager(state, adapter, counts_per_detent=4)
+        adapter.set(axes=("X",), multipliers=("X1",), mpg_delta=0)
+        manager.poll(0)
+
+        adapter.set(axes=("4",), multipliers=("X10",), deadman=True,
+                    mpg_delta=4)
+        result = manager.poll(1)
+
+        self.assertEqual(state.selected_axis, "A")
+        self.assertEqual(state.jog_increment, 0.01)
+        self.assertEqual(result.events, [])
+        self.assertEqual(result.mpg_activity, 0)
+
+    def test_selector_change_clears_partial_encoder_counts(self):
+        state = PendantState()
+        adapter = SyntheticInputAdapter()
+        manager = InputManager(state, adapter, counts_per_detent=4)
+        adapter.set(axes=("X",), multipliers=("X1",), mpg_delta=0)
+        manager.poll(0)
+        adapter.set(mpg_delta=2)
+        self.assertEqual(manager.poll(1).events, [])
+        self.assertEqual(manager.hardware_accumulator, 2)
+
+        adapter.set(axes=("4",), mpg_delta=0)
+        transition = manager.poll(2)
+        self.assertEqual(transition.events, [])
+        self.assertEqual(manager.hardware_accumulator, 0)
+        adapter.set(mpg_delta=2)
+        self.assertEqual(manager.poll(3).events, [])
+
+    def test_transport_reset_discards_partial_and_first_recovery_sample(self):
+        state = PendantState()
+        adapter = SyntheticInputAdapter()
+        manager = InputManager(state, adapter, counts_per_detent=4)
+        adapter.set(axes=("X",), multipliers=("X1",), mpg_delta=0)
+        manager.poll(0)
+        adapter.set(mpg_delta=2)
+        self.assertEqual(manager.poll(1).events, [])
+        manager.reset_encoder()
+        self.assertEqual(manager.hardware_accumulator, 0)
+
+        adapter.set(mpg_delta=2)
+        self.assertEqual(manager.poll(2).events, [])
+        self.assertEqual(manager.hardware_accumulator, 0)
+        adapter.set(mpg_delta=2)
+        self.assertEqual(manager.poll(3).events, [])
+        adapter.set(mpg_delta=2)
+        self.assertEqual(manager.poll(4).events, [ROTATE_CW])
+
+    def test_selector_transition_resets_partial_quadrature_detent(self):
+        state = PendantState()
+        adapter = SyntheticInputAdapter()
+        manager = InputManager(state, adapter, counts_per_detent=4)
+        adapter.set(axes=("X",), multipliers=("X1",), mpg_a=0, mpg_b=0)
+        manager.poll(0)
+        adapter.set(mpg_a=0, mpg_b=1)
+        self.assertEqual(manager.poll(1).events, [])
+        self.assertEqual(manager.decoder.accumulator, 1)
+
+        adapter.set(axes=("4",), mpg_a=1, mpg_b=1)
+        self.assertEqual(manager.poll(2).events, [])
+        self.assertEqual(manager.decoder.accumulator, 0)
+        for now, pins in enumerate(((1, 0), (0, 0), (0, 1)), 3):
+            adapter.set(mpg_a=pins[0], mpg_b=pins[1])
+            self.assertEqual(manager.poll(now).events, [])
+        adapter.set(mpg_a=1, mpg_b=1)
+        self.assertEqual(manager.poll(6).events, [ROTATE_CW])
 
 
 class SelectorTests(unittest.TestCase):

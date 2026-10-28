@@ -65,6 +65,7 @@ class PendantApplication:
         self._diag_last_wifi_state = None
         self._diag_last_controller_state = None
         self._diag_last_display_state = None
+        self._diag_last_selectors_valid = None
         self._diag_buttons = {}
         self._diag_last_input_error = None
 
@@ -489,6 +490,20 @@ class PendantApplication:
     def poll(self):
         started = self.clock()
         sample = self.input_manager.poll(started)
+        if (sample.selector_changed or sample.multiplier_changed or
+                sample.selectors_valid_changed):
+            # The input manager drops detents spanning selector transitions.
+            # Clear retained visual/diagnostic activity as well so stale
+            # movement is not shown or later attributed to the new selection.
+            self.state.mpg_activity = 0
+            self.state.mpg_activity_timestamp = None
+            self._diag_encoder_delta = 0
+        if (self._diag_last_selectors_valid is None or
+                self._diag_last_selectors_valid != self.state.selectors_valid):
+            emit("input_validity", domain="selectors",
+                 valid=self.state.selectors_valid,
+                 reason=self.state.selector_error or "none")
+            self._diag_last_selectors_valid = self.state.selectors_valid
         for name, active in sample.button_states.items():
             active = bool(active)
             if self._diag_buttons.get(name) != active:
@@ -632,6 +647,18 @@ class PendantApplication:
         controller_state = "{}:{}".format(self.state.connection_state,
                                            self.state.machine_state)
         if controller_state != self._diag_last_controller_state:
+            previous_connection = (
+                self._diag_last_controller_state.split(":", 1)[0]
+                if self._diag_last_controller_state is not None else None)
+            if (previous_connection is not None and
+                    previous_connection != self.state.connection_state):
+                reset_encoder = getattr(self.input_manager,
+                                        "reset_encoder", None)
+                if reset_encoder is not None:
+                    reset_encoder()
+                self.state.mpg_activity = 0
+                self.state.mpg_activity_timestamp = None
+                self._diag_encoder_delta = 0
             emit("controller_state", state=self.state.connection_state,
                  machine=self.state.machine_state,
                  link=getattr(self.state, "link_state", None))

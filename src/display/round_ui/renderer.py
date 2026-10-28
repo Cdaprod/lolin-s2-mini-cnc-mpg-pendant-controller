@@ -231,7 +231,7 @@ class RoundRenderer:
             selected_axis, coordinates.get(selected_axis), state.coordinate_mode,
             "mm",
         ) or changed
-        changed = self.increment.update(state.selected_multiplier) or changed
+        changed = self.increment.update(model["resolution_selector"]) or changed
         controller = state.connection_state == "connected"
         changed = self.motion.update(
             model["jog_hold"], model["jog_armed"], model["mpg_activity"],

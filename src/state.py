@@ -19,6 +19,8 @@ class PendantState:
         self.selected_physical_axis = "OFF"
         self.selected_axis = None
         self.selector_function = "OFF"
+        self.selectors_valid = True
+        self.selector_error = None
         self.active_page = "OPERATIONAL"
         self.selected_multiplier = "X1"
         self.base_increment = float(base_increment)

@@ -298,10 +298,12 @@ class PhysicalInputTests(unittest.TestCase):
         state = PendantState()
         adapter = SyntheticInputAdapter()
         manager = InputManager(state, adapter, counts_per_detent=4)
+        adapter.set(axes=("X",), multipliers=("X1",))
+        manager.poll(0)  # Establish a stable valid selector baseline.
         adapter.set(mpg_delta=8)
-        self.assertEqual(manager.poll(0).events, [ROTATE_CW, ROTATE_CW])
+        self.assertEqual(manager.poll(1).events, [ROTATE_CW, ROTATE_CW])
         adapter.set(mpg_delta=-4)
-        self.assertEqual(manager.poll(1).events, ["ROTATE_CCW"])
+        self.assertEqual(manager.poll(2).events, ["ROTATE_CCW"])
 
     def test_button_debounce_short_and_long(self):
         button = DebouncedButton(debounce=0.03, long_press=0.5)
@@ -404,6 +406,10 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(model["axis_selector"], "Y")
             self.assertEqual(model["resolution_selector"], "X100")
             self.assertTrue(model["jog_armed"])
+            self.assertEqual(model["mpg_activity"], 0)
+            adapter.set(mpg_delta=4)
+            app.poll()
+            model = app.ui.view_model()
             self.assertEqual(model["mpg_activity"], 4)
             self.assertEqual(model["axis_transition_direction"], 1)
             self.assertEqual(model["resolution_transition_direction"], 1)
@@ -413,6 +419,10 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             reverse = app.ui.view_model()
             self.assertEqual(reverse["axis_transition_direction"], -1)
             self.assertEqual(reverse["resolution_transition_direction"], -1)
+            self.assertEqual(reverse["mpg_activity"], 0)
+            adapter.set(mpg_delta=-4)
+            app.poll()
+            reverse = app.ui.view_model()
             self.assertEqual(reverse["mpg_activity"], -4)
             clock.advance(0.21)
             adapter.set(mpg_delta=0)
@@ -456,13 +466,17 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             baseline = sum(b"$J=" in data for data in app.transport.writes)
 
             adapter.set(axes=("5",), multipliers=("X1",), deadman=True,
-                        mpg_delta=4)
+                        mpg_delta=0)
             app.poll()
             self.assertEqual(app.ui.current_screen, "CONFIGURATION")
+            adapter.set(mpg_delta=4)
+            app.poll()
             self.assertEqual(app.ui.focus["CONFIGURATION"], 1)
 
             adapter.set(axes=("6",), multipliers=("X100",), deadman=True,
-                        mpg_delta=-4)
+                        mpg_delta=0)
+            app.poll()
+            adapter.set(mpg_delta=-4)
             app.poll()
             self.assertEqual(app.ui.current_screen, "PREVIEW")
             self.assertEqual(app.state.preview_wheel_steps, -1)
@@ -488,6 +502,81 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(app.ui.current_screen, "HOME")
             self.assertEqual(app.state.selected_axis, "Y")
             self.assertTrue(app.ui.view_model()["motion_available"])
+
+    def test_link_loss_clears_partial_encoder_counts_before_recovery(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            adapter.set(mpg_delta=2)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(app.input_manager.hardware_accumulator, 2)
+            baseline = sum(b"$J=" in data for data in app.transport.writes)
+
+            app.transport.disconnect()
+            adapter.set(mpg_delta=0)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(app.state.connection_state, "disconnected")
+            self.assertEqual(app.input_manager.hardware_accumulator, 0)
+
+    def test_conflicting_multiplier_contacts_cannot_issue_jog(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            baseline = sum(b"$J=" in data for data in app.transport.writes)
+            adapter.set(axes=("X", "Y"), mpg_delta=4)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline)
+            self.assertFalse(app.state.selectors_valid)
+            self.assertIsNone(app.state.selected_axis)
+
+            adapter.set(axes=("X",), mpg_delta=0)
+            clock.advance(0.01)
+            app.poll()
+            self.assertTrue(app.state.selectors_valid)
+            adapter.set(multipliers=("X1", "X10"), mpg_delta=4)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline)
+            self.assertFalse(app.state.selectors_valid)
+            self.assertEqual(app.ui.view_model()["resolution_selector"],
+                             "INVALID")
+            self.assertFalse(app.ui.view_model()["motion_available"])
+
+            adapter.set(multipliers=("X10",), mpg_delta=4)
+            clock.advance(0.01)
+            app.poll()
+            self.assertTrue(app.state.selectors_valid)
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline)
+            adapter.set(mpg_delta=4)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline + 1)
+
+            accepted_before_reconnect = sum(
+                b"$J=" in data for data in app.transport.writes)
+            app.transport.disconnect()
+            adapter.set(mpg_delta=2)
+            clock.advance(0.01)
+            app.poll()
+            app.transport.connect()
+            adapter.set(mpg_delta=4)
+            clock.advance(0.01)
+            app.poll()
+            app.transport.inject("Grbl 1.1h ['$' for help]")
+            app.transport.inject("<Idle|MPos:0,0,0,0|FS:0,0>")
+            adapter.set(mpg_delta=0)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(app.state.connection_state, "connected")
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes),
+                accepted_before_reconnect)
+            self.assertEqual(app.input_manager.hardware_accumulator, 0)
 
     def test_estop_view_model_requires_explicit_recovery(self):
         with tempfile.TemporaryDirectory() as root:

@@ -33,6 +33,8 @@ class SafetyStateMachine:
             raise SafetyError("jog disallowed in " + self.state.machine_state)
         if self.state.selected_axis is None:
             raise SafetyError("axis selector is OFF")
+        if not getattr(self.state, "selectors_valid", True):
+            raise SafetyError("axis or increment selector state is invalid")
 
     def require_command(self, motion=True):
         reason = self.inhibit_reason(require_deadman=motion)

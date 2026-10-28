@@ -280,6 +280,14 @@ uses the manufacturer's `4` contact as A. Positions 5 and 6 remain UI functions
 on this profile; remap those only when a controller with corresponding axes is
 commissioned and the C3 adapter supports them.
 
+On a selector change, the S3 clears partial encoder counts and drops encoder
+movement sampled in that same poll. It also clears partial counts on controller
+connection-state changes and discards the first encoder sample after a reset,
+so movement accumulated during a reconnect cannot become a later jog. This
+behavior is host-tested; physical control validation remains pending. The
+selector state is one-hot validated; invalid axis or increment combinations
+are reported as invalid and inhibit jogging until a stable valid state returns.
+
 
 ===============================================================================
 MCP23017 — MULTIPLIER SELECTOR
