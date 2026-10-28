@@ -140,6 +140,41 @@ class WirelessTests(unittest.TestCase):
         self.assertFalse(self.ctrl._stop_pending)
         self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
 
+    def test_link_loss_retries_unsent_stop_before_rearming_after_repair(self):
+        self.state.deadman_enabled = True
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
+        self.state.jog_active = True
+
+        # Model radio loss before a STOP can be sent or acknowledged.
+        self.ctrl.transport.paired = False
+        self.ctrl.transport.peer = None
+        self.ctrl.poll()
+        self.assertTrue(self.ctrl._stop_pending)
+        self.assertIsNone(self.ctrl._stop_seq)
+        self.assertFalse(self.ctrl.queue_jog("X", 0.01, 200))
+
+        # Pairing returns with the same controller session. The latched stop
+        # must be transmitted, and a new jog stays blocked until its ACK.
+        self.ctrl.transport.peer = bytes.fromhex("010203040506")
+        self.ctrl.transport.paired = True
+        self.ctrl.transport.last_rx = self.time[0]
+        self.ctrl.poll()
+        self.assertTrue(self.ctrl._stop_pending)
+        self.assertIsNotNone(self.ctrl._stop_seq)
+        sent_kinds = [proto.decode(frame)[0] for frame, _peer in self.esp.sent]
+        self.assertEqual(sent_kinds.count(proto.MPG_STOP), 1)
+        self.assertFalse(self.ctrl.queue_jog("X", 0.01, 200))
+
+        # The receiver must also supply a fresh post-reconnect GRBL report;
+        # cached pre-loss Idle state cannot restore controller readiness.
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        self.ctrl.transport.events.append(
+            (proto.MPG_STOP_ACK, self.ctrl._stop_seq, b"\x01"))
+        self.ctrl.poll()
+        self.assertFalse(self.ctrl._stop_pending)
+        self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
+
     def test_deadman_rejection_and_fourth_axis_a_packet(self):
         self.status("<Idle|MPos:0,0,0|FS:0,0>")
         self.assertFalse(self.ctrl.queue_jog("X", .01, 200))

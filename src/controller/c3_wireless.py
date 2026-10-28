@@ -83,8 +83,16 @@ class C3WirelessController:
         self._pending_seq = None
         self._pending_at = None
         self.state.jog_active = False
+        if not self._stop_pending:
+            self._stop_seq = None
+            self._stop_at = None
+            self._stop_attempts = 0
         self._stop_pending = True
-        self._stop_attempts = 0
+        # Avoid flooding duplicate STOP packets if a radio read keeps failing
+        # while the most recent STOP is still inside its ACK window.
+        if (self._stop_at is not None and
+                self.clock() - self._stop_at < 0.08):
+            return True
         return self._send_stop()
 
     def _send_stop(self):
@@ -161,13 +169,17 @@ class C3WirelessController:
                                  "PAIRED_NO_GRBL" if self.transport.paired
                                  else "LINK_LOST" if self._had_pair
                                  else "PAIRING")
-        if self._stop_pending and self._stop_at is not None and (
-                current - self._stop_at >= 0.08):
-            if self._stop_attempts < 4:
-                self._send_stop()
-            else:
-                # Do not silently rearm motion after a lost STOP ACK.
-                self.state.error = "C3 STOP acknowledgment missing"
+        if self._stop_pending:
+            if not self.transport.paired:
+                # A stop that could not be sent while disconnected remains
+                # latched and is retried after pairing returns.
+                self._stop_at = None
+            elif self._stop_at is None or current - self._stop_at >= 0.08:
+                if self._stop_attempts < 4:
+                    self._send_stop()
+                else:
+                    # Do not silently rearm motion after a lost STOP ACK.
+                    self.state.error = "C3 STOP acknowledgment missing"
         if self._pending_seq is not None and (
                 self._pending_at is None or current - self._pending_at > 0.2):
             self.cancel_jog()
