@@ -506,13 +506,16 @@ class PendantApplication:
             emit("encoder_overrun", delta=sample.encoder_overrun_delta,
                  max_detents=getattr(self.input_manager,
                                      "MAX_ENCODER_DETENTS_PER_POLL", 4))
-        if (self._diag_last_input_valid is None or
-                self._diag_last_input_valid != self.state.input_valid):
+        input_backend_configured = bool(
+            getattr(self.input_manager.adapter, "configured", True))
+        if (input_backend_configured and
+                (self._diag_last_input_valid is None or
+                 self._diag_last_input_valid != self.state.input_valid)):
             emit("input_validity", domain="hardware",
                  valid=self.state.input_valid,
                  reason=self.state.input_error or "none")
             self._diag_last_input_valid = self.state.input_valid
-        if sample.input_valid_changed and not self.state.input_valid:
+        if sample.input_valid_changed and self.state.input_valid is False:
             # A failed MCP23017 snapshot invalidates the deadman and every
             # selector at once. Revoke both queued and active jog ownership.
             queued_jog = any(item[1] == "jog"
@@ -523,8 +526,9 @@ class PendantApplication:
                      (self.state.jog_active or queued_jog))):
                 self.controller.cancel_jog()
             self.state.jog_active = False
-        if (self._diag_last_selectors_valid is None or
-                self._diag_last_selectors_valid != self.state.selectors_valid):
+        if (input_backend_configured and
+                (self._diag_last_selectors_valid is None or
+                 self._diag_last_selectors_valid != self.state.selectors_valid)):
             emit("input_validity", domain="selectors",
                  valid=self.state.selectors_valid,
                  reason=self.state.selector_error or "none")

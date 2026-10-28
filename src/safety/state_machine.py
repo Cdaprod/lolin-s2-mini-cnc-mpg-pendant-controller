@@ -13,7 +13,7 @@ class SafetyStateMachine:
         self.state = state
 
     def inhibit_reason(self, require_deadman=False):
-        if not getattr(self.state, "input_valid", True):
+        if getattr(self.state, "input_valid", True) is False:
             return "physical input sample unavailable"
         if self.state.estop_observed or self.state.estop_latched:
             return "E-stop inhibited"

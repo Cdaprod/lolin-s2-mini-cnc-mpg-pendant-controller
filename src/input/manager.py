@@ -172,10 +172,14 @@ class InputManager:
         previous_physical_axis = self.state.selected_physical_axis
         previous_multiplier = self.state.selected_multiplier
         previous_selectors_valid = self.state.selectors_valid
-        previous_input_valid = getattr(self.state, "input_valid", True)
-        self.state.input_valid = bool(sample.valid)
-        self.state.input_error = (sample.valid_reason
-                                  if not sample.valid else None)
+        input_backend_configured = bool(
+            getattr(self.adapter, "configured", True))
+        previous_input_valid = getattr(self.state, "input_valid", None)
+        self.state.input_valid = (bool(sample.valid)
+                                  if input_backend_configured else None)
+        self.state.input_error = (
+            sample.valid_reason if input_backend_configured and not sample.valid
+            else None)
         input_valid_changed = previous_input_valid != self.state.input_valid
         self._update_selectors(sample)
         selector_changed = previous_physical_axis != self.state.selected_physical_axis

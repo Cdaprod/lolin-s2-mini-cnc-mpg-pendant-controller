@@ -658,7 +658,7 @@ class UIManager:
             self.state.machine_state in ("idle", "jog") and
             self.state.selected_axis is not None and
             getattr(self.state, "selectors_valid", True) and
-            getattr(self.state, "input_valid", True) and
+            getattr(self.state, "input_valid", True) is not False and
             self.state.deadman_enabled and not self.state.estop_latched and
             self.state.alarm is None)
         model = {
@@ -671,7 +671,7 @@ class UIManager:
                 self.state.selected_multiplier
                 if getattr(self.state, "selectors_valid", True) else "INVALID"),
             "selectors_valid": getattr(self.state, "selectors_valid", True),
-            "input_valid": getattr(self.state, "input_valid", True),
+            "input_valid": getattr(self.state, "input_valid", None),
             "input_error": getattr(self.state, "input_error", None),
             "selector_error": getattr(self.state, "selector_error", None),
             "jog_hold": bool(self.state.deadman_enabled),

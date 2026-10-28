@@ -21,7 +21,9 @@ class PendantState:
         self.selector_function = "OFF"
         self.selectors_valid = True
         self.selector_error = None
-        self.input_valid = True
+        # None means no physical input backend is configured; it is not a
+        # positive hardware-health claim. False means a configured read failed.
+        self.input_valid = None
         self.input_error = None
         self.active_page = "OPERATIONAL"
         self.selected_multiplier = "X1"
