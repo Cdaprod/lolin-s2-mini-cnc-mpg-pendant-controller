@@ -280,6 +280,7 @@ class SyntheticInputAdapter:
 
     def __init__(self):
         self.configured = True
+        self.deadman_configured = True
         self.snapshot = InputSnapshot()
 
     def read(self):

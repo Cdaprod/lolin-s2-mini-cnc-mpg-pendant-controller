@@ -407,6 +407,23 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(runtime.kwargs["increment"], "X10")
             self.assertEqual(runtime.kwargs["deadman"], "active")
 
+    def test_runtime_reports_unconfigured_deadman_as_unavailable(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            adapter.deadman_configured = False
+            adapter.set(deadman=False)
+            app.poll()
+            clock.advance(10)
+            with patch("src.app.emit") as emit:
+                app.poll()
+            runtime = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "runtime")
+            self.assertEqual(runtime.kwargs["input_validity"], "valid")
+            self.assertEqual(runtime.kwargs["selector_validity"], "valid")
+            self.assertEqual(runtime.kwargs["deadman"], "unavailable")
+            self.assertFalse(app.state.deadman_enabled)
+
     def test_input_diagnostics_separate_logical_axis_from_selector_position(self):
         with tempfile.TemporaryDirectory() as root:
             app, adapter, clock = self.make_app(root)

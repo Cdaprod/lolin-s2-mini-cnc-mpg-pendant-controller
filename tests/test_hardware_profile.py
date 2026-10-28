@@ -15,6 +15,11 @@ from src.input.mcp23017 import (MCP23017InputBank, parse_virtual_pin,
 
 
 class HardwareProfileTests(unittest.TestCase):
+    def test_circuitpython_adapter_exposes_deadman_configuration(self):
+        self.assertFalse(CircuitPythonInputAdapter({}, {}, {}, {}).deadman_configured)
+        self.assertTrue(CircuitPythonInputAdapter(
+            {}, {}, {}, {}, deadman_input=object()).deadman_configured)
+
     def test_example_config_maps_selector_four_to_a_axis(self):
         template = Path(__file__).resolve().parents[1] / "settings.toml.example"
         values = {}

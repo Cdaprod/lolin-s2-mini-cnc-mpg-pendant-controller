@@ -24,6 +24,7 @@ class CircuitPythonInputAdapter:
         self.button_active_low = bool(button_active_low)
         self.estop_active_low = bool(estop_active_low)
         self.deadman_input = deadman_input
+        self.deadman_configured = deadman_input is not None
         self.deadman_active_low = bool(deadman_active_low)
         self.encoder = encoder
         self.encoder_position = encoder.position if encoder is not None else 0
