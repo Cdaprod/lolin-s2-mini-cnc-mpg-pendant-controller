@@ -498,6 +498,13 @@ class PendantApplication:
             self.state.mpg_activity = 0
             self.state.mpg_activity_timestamp = None
             self._diag_encoder_delta = 0
+        if sample.encoder_overrun:
+            self.state.mpg_activity = 0
+            self.state.mpg_activity_timestamp = None
+            self._diag_encoder_delta = 0
+            emit("encoder_overrun", delta=sample.encoder_overrun_delta,
+                 max_detents=getattr(self.input_manager,
+                                     "MAX_ENCODER_DETENTS_PER_POLL", 4))
         if (self._diag_last_selectors_valid is None or
                 self._diag_last_selectors_valid != self.state.selectors_valid):
             emit("input_validity", domain="selectors",

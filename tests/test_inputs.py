@@ -85,6 +85,24 @@ class MPGTests(unittest.TestCase):
         adapter.set(mpg_delta=2)
         self.assertEqual(manager.poll(4).events, [ROTATE_CW])
 
+    def test_encoder_overrun_does_not_replay_backlogged_detents(self):
+        state = PendantState()
+        adapter = SyntheticInputAdapter()
+        manager = InputManager(state, adapter, counts_per_detent=4)
+        adapter.set(axes=("X",), multipliers=("X1",), mpg_delta=0)
+        manager.poll(0)
+
+        adapter.set(mpg_delta=100)
+        overrun = manager.poll(1)
+        self.assertEqual(overrun.events, [])
+        self.assertTrue(overrun.encoder_overrun)
+        self.assertEqual(manager.hardware_accumulator, 0)
+
+        adapter.set(mpg_delta=0)
+        settled = manager.poll(2)
+        self.assertEqual(settled.events, [])
+        self.assertEqual(manager.hardware_accumulator, 0)
+
     def test_selector_transition_resets_partial_quadrature_detent(self):
         state = PendantState()
         adapter = SyntheticInputAdapter()

@@ -41,7 +41,8 @@ class InputPollResult:
     def __init__(self, events, estop, estop_changed, deadman_changed,
                  selector_changed, multiplier_changed=False, mpg_activity=0,
                  selector_direction=0, multiplier_direction=0,
-                 button_states=None, selectors_valid_changed=False):
+                 button_states=None, selectors_valid_changed=False,
+                 encoder_overrun=False, encoder_overrun_delta=0):
         self.events = events
         self.estop = estop
         self.estop_changed = estop_changed
@@ -53,12 +54,15 @@ class InputPollResult:
         self.multiplier_direction = int(multiplier_direction)
         self.button_states = dict(button_states or {})
         self.selectors_valid_changed = bool(selectors_valid_changed)
+        self.encoder_overrun = bool(encoder_overrun)
+        self.encoder_overrun_delta = int(encoder_overrun_delta)
 
 
 class InputManager:
     """One MPG stream plus selectors/buttons; never communicates with GRBL."""
 
     MAX_EVENTS = 16
+    MAX_ENCODER_DETENTS_PER_POLL = 4
 
     def __init__(self, state, adapter=None, counts_per_detent=4, direction=1,
                  debounce=0.03, long_press=0.8, axis_map=None):
@@ -158,6 +162,8 @@ class InputManager:
         if getattr(self.adapter, "configured", True):
             self.state.deadman_enabled = sample.deadman
         activity = 0
+        encoder_overrun = False
+        encoder_overrun_delta = 0
         if (selector_changed or multiplier_changed or selectors_valid_changed or
                 self._discard_next_encoder_sample):
             # A detent sampled with a selector transition has ambiguous
@@ -177,16 +183,26 @@ class InputManager:
                     self._emit(ROTATE_CCW)
                     activity -= 1
             else:
-                signed_delta = sample.mpg_delta * self.decoder.direction
-                activity += signed_delta
-                self.hardware_accumulator += signed_delta
+                signed_delta = int(sample.mpg_delta) * self.decoder.direction
                 threshold = self.decoder.counts_per_detent
-                while abs(self.hardware_accumulator) >= threshold:
-                    direction = 1 if self.hardware_accumulator > 0 else -1
-                    self._emit(ROTATE_CW if direction > 0 else ROTATE_CCW)
-                    self.hardware_accumulator -= direction * threshold
-                    if len(self.events) >= self.MAX_EVENTS:
-                        break
+                max_counts = threshold * self.MAX_ENCODER_DETENTS_PER_POLL
+                if abs(signed_delta) > max_counts:
+                    # A large position jump can follow a stalled polling loop.
+                    # Discard the entire sample and partial detent so the
+                    # backlog cannot become a burst of later jog requests.
+                    encoder_overrun = True
+                    encoder_overrun_delta = signed_delta
+                    self.hardware_accumulator = 0
+                    self.decoder.reset(sample.mpg_a, sample.mpg_b)
+                else:
+                    activity += signed_delta
+                    self.hardware_accumulator += signed_delta
+                    while abs(self.hardware_accumulator) >= threshold:
+                        direction = 1 if self.hardware_accumulator > 0 else -1
+                        self._emit(ROTATE_CW if direction > 0 else ROTATE_CCW)
+                        self.hardware_accumulator -= direction * threshold
+                        if len(self.events) >= self.MAX_EVENTS:
+                            break
         for name, button in self.buttons.items():
             generated = button.update(bool(sample.buttons.get(name, False)), now)
             if ((name in ("BACK", "CANCEL") and "press" in generated) or
@@ -207,7 +223,7 @@ class InputManager:
             events, sample.estop, estop_changed, deadman_changed,
             selector_changed, multiplier_changed, activity,
             axis_direction, multiplier_direction, sample.buttons,
-            selectors_valid_changed
+            selectors_valid_changed, encoder_overrun, encoder_overrun_delta
         )
 
     @staticmethod
