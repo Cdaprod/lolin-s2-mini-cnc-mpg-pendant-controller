@@ -166,13 +166,14 @@ class WirelessTests(unittest.TestCase):
         self.assertEqual(sent_kinds.count(proto.MPG_STOP), 1)
         self.assertFalse(self.ctrl.queue_jog("X", 0.01, 200))
 
-        # The receiver must also supply a fresh post-reconnect GRBL report;
-        # cached pre-loss Idle state cannot restore controller readiness.
-        self.status("<Idle|MPos:0,0,0|FS:0,0>")
         self.ctrl.transport.events.append(
             (proto.MPG_STOP_ACK, self.ctrl._stop_seq, b"\x01"))
         self.ctrl.poll()
         self.assertFalse(self.ctrl._stop_pending)
+        # The receiver must also supply a fresh post-reconnect GRBL report;
+        # cached pre-loss Idle state cannot restore controller readiness.
+        self.assertFalse(self.ctrl.queue_jog("X", 0.01, 200))
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
         self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
 
     def test_deadman_rejection_and_fourth_axis_a_packet(self):
