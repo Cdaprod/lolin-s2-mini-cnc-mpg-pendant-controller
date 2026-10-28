@@ -719,6 +719,17 @@ class PendantApplication:
             selector_health = (
                 "unknown" if not input_backend_configured else
                 ("valid" if self.state.selectors_valid else "invalid"))
+            if not input_backend_configured or self.state.input_valid is None:
+                axis_state = increment_state = deadman_state = "unknown"
+            elif self.state.input_valid is False:
+                axis_state = increment_state = deadman_state = "unavailable"
+            else:
+                axis_state = (self.state.selected_physical_axis or "OFF"
+                              if self.state.selectors_valid else "invalid")
+                increment_state = (self.state.selected_multiplier
+                                   if self.state.selectors_valid else "invalid")
+                deadman_state = ("active" if self.state.deadman_enabled
+                                 else "inactive")
             if self._diag_encoder_delta:
                 emit("encoder_delta", delta=self._diag_encoder_delta,
                      axis=self.state.selected_physical_axis or "OFF",
@@ -743,6 +754,9 @@ class PendantApplication:
                                 else "disabled"),
                  input_validity=input_health,
                  selector_validity=selector_health,
+                 axis=axis_state,
+                 increment=increment_state,
+                 deadman=deadman_state,
                  wifi=self.state.wifi_state,
                  controller=self.state.connection_state)
             self._diag_last_heartbeat = finished

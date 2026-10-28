@@ -385,6 +385,42 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(runtime.kwargs["input_backend"], "disabled")
             self.assertEqual(runtime.kwargs["input_validity"], "unknown")
             self.assertEqual(runtime.kwargs["selector_validity"], "unknown")
+            self.assertEqual(runtime.kwargs["axis"], "unknown")
+            self.assertEqual(runtime.kwargs["increment"], "unknown")
+            self.assertEqual(runtime.kwargs["deadman"], "unknown")
+
+    def test_runtime_reports_current_valid_physical_input_state(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, _, clock = self.make_app(root)
+            clock.advance(10)
+            with patch("src.app.emit") as emit:
+                app.poll()
+            runtime = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "runtime")
+            self.assertEqual(runtime.kwargs["input_backend"], "configured")
+            self.assertEqual(runtime.kwargs["input_validity"], "valid")
+            self.assertEqual(runtime.kwargs["selector_validity"], "valid")
+            self.assertEqual(runtime.kwargs["axis"], "X")
+            self.assertEqual(runtime.kwargs["increment"], "X10")
+            self.assertEqual(runtime.kwargs["deadman"], "active")
+
+    def test_runtime_marks_controls_unavailable_after_failed_input_sample(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            adapter.set(valid=False, valid_reason="mcp23017_read_failed")
+            clock.advance(10)
+            with patch("src.app.emit") as emit:
+                app.poll()
+            runtime = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "runtime")
+            self.assertEqual(runtime.kwargs["input_backend"], "configured")
+            self.assertEqual(runtime.kwargs["input_validity"], "invalid")
+            self.assertEqual(runtime.kwargs["selector_validity"], "invalid")
+            self.assertEqual(runtime.kwargs["axis"], "unavailable")
+            self.assertEqual(runtime.kwargs["increment"], "unavailable")
+            self.assertEqual(runtime.kwargs["deadman"], "unavailable")
 
     def rotate_cw(self, app, adapter, clock):
         for a, b in ((0, 0), (0, 1), (1, 1), (1, 0), (0, 0)):
