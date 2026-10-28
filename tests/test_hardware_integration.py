@@ -525,6 +525,28 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(
                 sum(b"$J=" in data for data in app.transport.writes), baseline)
 
+    def test_invalid_physical_sample_revokes_queued_jog(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            app.state.jog_active = True
+            self.assertTrue(app.controller.queue_command("$J=G91 G21 X0.010 F500", "jog"))
+            adapter.set(valid=False, valid_reason="mcp23017_read_failed",
+                        deadman=True, estop=True, mpg_delta=4)
+            clock.advance(0.01)
+            with patch("src.app.emit") as emit:
+                app.poll()
+            self.assertFalse(app.state.input_valid)
+            self.assertFalse(app.state.deadman_enabled)
+            self.assertTrue(app.state.estop_observed)
+            self.assertTrue(app.state.estop_latched)
+            self.assertFalse(app.state.jog_active)
+            self.assertFalse(any(kind == "jog" for _, kind in app.controller.queue))
+            self.assertIn(b"\x85", app.transport.writes)
+            self.assertFalse(any(b"$J=" in data for data in app.transport.writes))
+            self.assertFalse(app.ui.view_model()["motion_available"])
+            emit.assert_any_call("input_validity", domain="hardware",
+                                 valid=False, reason="mcp23017_read_failed")
+
     def test_link_loss_clears_partial_encoder_counts_before_recovery(self):
         with tempfile.TemporaryDirectory() as root:
             app, adapter, clock = self.make_app(root)

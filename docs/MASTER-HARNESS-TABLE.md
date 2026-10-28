@@ -290,7 +290,11 @@ are reported as invalid and inhibit jogging until a stable valid state returns.
 The encoder drops and reports a sample larger than four detents per application
 poll, clearing partial counts so a stalled-loop backlog cannot replay as later
 jog requests. These safeguards are host-tested; physical validation remains
-pending the connected harness.
+pending the connected harness. A failed MCP23017 I2C snapshot invalidates
+all selector/button/deadman state, inhibits commands, clears encoder counts,
+and revokes any active/queued jog; recovery does not replay counts. If an
+observed E-stop contact is on that bus, the failed sample asserts it and
+requires the normal explicit E-stop recovery path.
 
 
 ===============================================================================

@@ -19,7 +19,8 @@ class InputSnapshot:
     """Normalized sample supplied by hardware or a host-side fake adapter."""
 
     def __init__(self, mpg_a=False, mpg_b=False, axes=None, multipliers=None,
-                 buttons=None, estop=False, deadman=False, mpg_delta=None):
+                 buttons=None, estop=False, deadman=False, mpg_delta=None,
+                 valid=True, valid_reason=None):
         self.mpg_a = bool(mpg_a)
         self.mpg_b = bool(mpg_b)
         self.axes = tuple(axes or ())
@@ -28,6 +29,8 @@ class InputSnapshot:
         self.estop = bool(estop)
         self.deadman = bool(deadman)
         self.mpg_delta = mpg_delta
+        self.valid = bool(valid)
+        self.valid_reason = valid_reason
 
 
 class NullInputAdapter:
@@ -42,7 +45,8 @@ class InputPollResult:
                  selector_changed, multiplier_changed=False, mpg_activity=0,
                  selector_direction=0, multiplier_direction=0,
                  button_states=None, selectors_valid_changed=False,
-                 encoder_overrun=False, encoder_overrun_delta=0):
+                 encoder_overrun=False, encoder_overrun_delta=0,
+                 input_valid_changed=False):
         self.events = events
         self.estop = estop
         self.estop_changed = estop_changed
@@ -56,6 +60,7 @@ class InputPollResult:
         self.selectors_valid_changed = bool(selectors_valid_changed)
         self.encoder_overrun = bool(encoder_overrun)
         self.encoder_overrun_delta = int(encoder_overrun_delta)
+        self.input_valid_changed = bool(input_valid_changed)
 
 
 class InputManager:
@@ -99,6 +104,16 @@ class InputManager:
         if not getattr(self.adapter, "configured", True):
             return
         axes = sample.axes
+        if not sample.valid:
+            self.last_axes = axes
+            self.last_multipliers = sample.multipliers
+            if self.state.selected_physical_axis != "OFF":
+                self.selectors.select_axis("OFF")
+            reason = sample.valid_reason or "input_sample_unavailable"
+            self.state.selectors_valid = False
+            self.state.selector_error = reason
+            self.state.error = reason
+            return
         multipliers = sample.multipliers
         previous_selector_error = self.state.selector_error
         valid = True
@@ -149,22 +164,29 @@ class InputManager:
         estop_changed = (self.last_estop is None or
                          sample.estop != self.last_estop)
         self.last_estop = sample.estop
+        deadman = bool(sample.deadman and sample.valid)
         deadman_changed = (self.last_deadman is None or
-                           sample.deadman != self.last_deadman)
-        self.last_deadman = sample.deadman
+                           deadman != self.last_deadman)
+        self.last_deadman = deadman
         previous_physical_axis = self.state.selected_physical_axis
         previous_multiplier = self.state.selected_multiplier
         previous_selectors_valid = self.state.selectors_valid
+        previous_input_valid = getattr(self.state, "input_valid", True)
+        self.state.input_valid = bool(sample.valid)
+        self.state.input_error = (sample.valid_reason
+                                  if not sample.valid else None)
+        input_valid_changed = previous_input_valid != self.state.input_valid
         self._update_selectors(sample)
         selector_changed = previous_physical_axis != self.state.selected_physical_axis
         multiplier_changed = previous_multiplier != self.state.selected_multiplier
         selectors_valid_changed = previous_selectors_valid != self.state.selectors_valid
         if getattr(self.adapter, "configured", True):
-            self.state.deadman_enabled = sample.deadman
+            self.state.deadman_enabled = deadman
         activity = 0
         encoder_overrun = False
         encoder_overrun_delta = 0
         if (selector_changed or multiplier_changed or selectors_valid_changed or
+                input_valid_changed or not sample.valid or
                 self._discard_next_encoder_sample):
             # A detent sampled with a selector transition has ambiguous
             # ownership. Drop it and partial counts instead of applying it
@@ -203,8 +225,9 @@ class InputManager:
                         self.hardware_accumulator -= direction * threshold
                         if len(self.events) >= self.MAX_EVENTS:
                             break
+        button_states = sample.buttons if sample.valid else {}
         for name, button in self.buttons.items():
-            generated = button.update(bool(sample.buttons.get(name, False)), now)
+            generated = button.update(bool(button_states.get(name, False)), now)
             if ((name in ("BACK", "CANCEL") and "press" in generated) or
                     (name in ("SELECT", "FN") and "short" in generated)):
                 self._emit(BUTTON_EVENTS[name][0])
@@ -222,8 +245,9 @@ class InputManager:
         return InputPollResult(
             events, sample.estop, estop_changed, deadman_changed,
             selector_changed, multiplier_changed, activity,
-            axis_direction, multiplier_direction, sample.buttons,
-            selectors_valid_changed, encoder_overrun, encoder_overrun_delta
+            axis_direction, multiplier_direction, button_states,
+            selectors_valid_changed, encoder_overrun, encoder_overrun_delta,
+            input_valid_changed
         )
 
     @staticmethod
@@ -252,6 +276,7 @@ class SyntheticInputAdapter:
             "buttons": current.buttons, "estop": current.estop,
             "deadman": current.deadman,
             "mpg_delta": current.mpg_delta,
+            "valid": current.valid, "valid_reason": current.valid_reason,
         }
         data.update(values)
         self.snapshot = InputSnapshot(**data)

@@ -21,6 +21,8 @@ class PendantState:
         self.selector_function = "OFF"
         self.selectors_valid = True
         self.selector_error = None
+        self.input_valid = True
+        self.input_error = None
         self.active_page = "OPERATIONAL"
         self.selected_multiplier = "X1"
         self.base_increment = float(base_increment)
