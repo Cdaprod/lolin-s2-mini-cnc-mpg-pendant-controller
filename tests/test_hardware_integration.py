@@ -386,6 +386,7 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(runtime.kwargs["input_validity"], "unknown")
             self.assertEqual(runtime.kwargs["selector_validity"], "unknown")
             self.assertEqual(runtime.kwargs["axis"], "unknown")
+            self.assertEqual(runtime.kwargs["selector_position"], "unknown")
             self.assertEqual(runtime.kwargs["increment"], "unknown")
             self.assertEqual(runtime.kwargs["deadman"], "unknown")
 
@@ -402,6 +403,7 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(runtime.kwargs["input_validity"], "valid")
             self.assertEqual(runtime.kwargs["selector_validity"], "valid")
             self.assertEqual(runtime.kwargs["axis"], "X")
+            self.assertEqual(runtime.kwargs["selector_position"], "X")
             self.assertEqual(runtime.kwargs["increment"], "X10")
             self.assertEqual(runtime.kwargs["deadman"], "active")
 
@@ -419,6 +421,7 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(runtime.kwargs["input_validity"], "invalid")
             self.assertEqual(runtime.kwargs["selector_validity"], "invalid")
             self.assertEqual(runtime.kwargs["axis"], "unavailable")
+            self.assertEqual(runtime.kwargs["selector_position"], "unavailable")
             self.assertEqual(runtime.kwargs["increment"], "unavailable")
             self.assertEqual(runtime.kwargs["deadman"], "unavailable")
 
