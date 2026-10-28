@@ -134,8 +134,16 @@ CIRCUITPY=/Volumes/CIRCUITPY ./deploy.sh
 
 To observe first boot, connect USB, identify the CDC port with
 `ls /dev/cu.usbmodem*`, then run `screen /dev/cu.usbmodemXXXX 115200` (exit with
-Ctrl-A, then `k`, then `y`). The structured boot lines report display, storage,
-SD, inputs, Wi-Fi, and controller independently.
+Ctrl-A, then `k`, then `y`). CircuitPython `print()` output is available on its
+USB CDC console; the application does not disable or redirect that interface.
+Boot and subsystem messages are emitted during startup and are not replayed to
+a monitor attached later. Runtime diagnostics now emit bounded `[event]`
+records for normalized encoder movement, selector/button/E-stop/deadman state,
+touch gestures and errors, Wi-Fi/controller transitions, render/loop/heap
+summaries, and ESP-NOW packet/session/sequence activity. The runtime summary
+is emitted every ten seconds; fast encoder movement is aggregated into that
+summary to avoid slowing the cooperative input loop. Disabled/unplugged input
+backends remain reported as disabled and do not fabricate physical readings.
 
 ## Configuration
 

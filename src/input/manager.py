@@ -40,7 +40,8 @@ class NullInputAdapter:
 class InputPollResult:
     def __init__(self, events, estop, estop_changed, deadman_changed,
                  selector_changed, multiplier_changed=False, mpg_activity=0,
-                 selector_direction=0, multiplier_direction=0):
+                 selector_direction=0, multiplier_direction=0,
+                 button_states=None):
         self.events = events
         self.estop = estop
         self.estop_changed = estop_changed
@@ -50,6 +51,7 @@ class InputPollResult:
         self.mpg_activity = int(mpg_activity)
         self.selector_direction = int(selector_direction)
         self.multiplier_direction = int(multiplier_direction)
+        self.button_states = dict(button_states or {})
 
 
 class InputManager:
@@ -161,7 +163,7 @@ class InputManager:
             events, sample.estop, estop_changed, deadman_changed,
             previous_physical_axis != self.state.selected_physical_axis,
             previous_multiplier != self.state.selected_multiplier, activity,
-            axis_direction, multiplier_direction
+            axis_direction, multiplier_direction, sample.buttons
         )
 
     @staticmethod

@@ -49,6 +49,22 @@ class C3PairingBench:
         self.pair_ack_session_mismatch = 0
         self._last_diag = None
 
+    def _packet_diag(self, direction, kind, sequence, peer, session=None,
+                     result=None):
+        names = {
+            proto.PAIR: "pair", proto.PAIR_ACK: "pair_ack",
+            proto.HEARTBEAT: "heartbeat", proto.HEARTBEAT_ACK: "heartbeat_ack",
+            proto.SENSOR_ASSIGNMENT: "sensor_assignment",
+            proto.MPG_JOG: "mpg_jog", proto.MPG_STOP: "mpg_stop",
+            proto.MPG_JOG_ACK: "mpg_jog_ack", proto.MPG_STOP_ACK: "mpg_stop_ack",
+            proto.UART_RESPONSE: "uart_response",
+        }
+        print("[event] event=espnow_{} packet_type={} session={} seq={} peer={} result={} uptime_ms={}".format(
+            direction, names.get(kind, "0x{:02x}".format(kind)),
+            self.session if session is None else session, sequence,
+            ":".join("%02x" % byte for byte in peer) if peer else "broadcast",
+            result or "driver_accepted_not_ota_ack", int(self.now() * 1000)))
+
     def start(self):
         if not self.radio.enabled:
             raise RuntimeError("Wi-Fi disabled")
@@ -67,6 +83,7 @@ class C3PairingBench:
         if target is None or bytes(target.mac) != mac:
             raise RuntimeError("ESP-NOW peer not registered")
         self.esp.send(packet, peer=target)
+        self._packet_diag("tx", kind, sequence, mac)
         if kind == proto.PAIR:
             self.tx_pair_requests += 1
         elif kind == proto.HEARTBEAT:
@@ -82,6 +99,7 @@ class C3PairingBench:
         if self.unicast_peer is None or bytes(self.unicast_peer.mac) != self.peer:
             raise RuntimeError("ESP-NOW peer not registered")
         self.esp.send(packet, peer=self.unicast_peer)
+        self._packet_diag("tx", proto.MPG_JOG, seq, self.peer)
         return seq
 
     def send_mpg_stop(self):
@@ -92,10 +110,14 @@ class C3PairingBench:
     def poll(self):
         current = self.now()
         if self.last_rx is not None and current - self.last_rx > 5:
+            old_peer = self.peer
             self.paired = False
             self.peer = None
             self.last_rx = None
             self.last_heartbeat = None
+            print("[event] event=espnow_link state=lost reason=heartbeat_timeout peer={} uptime_ms={}".format(
+                ":".join("%02x" % byte for byte in old_peer) if old_peer else "unknown",
+                int(current * 1000)))
             # Retain registered peer object; re-registering stale MACs can
             # overflow the fixed CircuitPython ESP-NOW peer table.
         for _ in range(4):
@@ -132,7 +154,11 @@ class C3PairingBench:
                     self.last_heartbeat = None
                     self.last_rx = current
                     self.good += 1
-                    print("[espnow] PAIR_ACK accepted from", ":".join("%02x" % x for x in sender))
+                    self._packet_diag("rx", kind, seq, sender, session,
+                                      "accepted_function_{}".format(assigned_function))
+                    print("[event] event=espnow_link state=paired session={} peer={} assigned_function={} uptime_ms={}".format(
+                        self.session, ":".join("%02x" % x for x in sender),
+                        assigned_function, int(current * 1000)))
                 elif (self.paired and sender == self.peer and
                       session == self.session and
                       kind == proto.SENSOR_ASSIGNMENT):
@@ -142,6 +168,7 @@ class C3PairingBench:
                     self.assigned_function = payload[0]
                     self.last_rx = current
                     self.good += 1
+                    self._packet_diag("rx", kind, seq, sender, session, "accepted")
                 elif self.paired and sender == self.peer and kind in (
                         proto.HEARTBEAT, proto.HEARTBEAT_ACK):
                     if session not in (0, self.session) or payload:
@@ -150,6 +177,8 @@ class C3PairingBench:
                     self.good += 1
                     if kind == proto.HEARTBEAT:
                         self._send(self.peer, proto.HEARTBEAT_ACK)
+                    self._packet_diag("rx", kind, seq, sender, session,
+                                      "accepted")
                 elif (self.paired and sender == self.peer and
                       session == self.session and kind in
                       (proto.MPG_JOG_ACK, proto.MPG_STOP_ACK, proto.UART_RESPONSE)):
@@ -159,12 +188,18 @@ class C3PairingBench:
                         self.events.pop(0)
                     self.events.append((kind, seq, payload))
                     self.good += 1
+                    self._packet_diag("rx", kind, seq, sender, session,
+                                      "accepted_payload_{}".format(len(payload)))
                 else:
                     self.bad += 1
+                    self._packet_diag("rx", kind, seq, sender, session,
+                                      "rejected_unpaired_or_unexpected")
             except (ValueError, TypeError) as exc:
                 self.bad += 1
                 self.last_rx_error = repr(exc)
-                print("[espnow] RX rejected:", self.last_rx_error)
+                print("[event] event=espnow_rx_rejected peer={} reason={} uptime_ms={}".format(
+                    ":".join("%02x" % x for x in sender),
+                    type(exc).__name__, int(current * 1000)))
         if self._last_diag is None or current - self._last_diag >= 10:
             self._last_diag = current
             print("[espnow] paired=%s pair_tx=%d heartbeat_tx=%d rx=%d pair_acks=%d good=%d bad=%d last_error=%s" % (
