@@ -44,6 +44,14 @@ class DebouncedButton:
         self.pressed_at = None
         self.long_sent = False
 
+    def reset(self, now=0.0):
+        """Forget held state without synthesizing a release/short action."""
+        self.raw = False
+        self.stable = False
+        self.changed_at = float(now)
+        self.pressed_at = None
+        self.long_sent = False
+
     def update(self, active, now):
         """Return `press`, `short`, `release`, or one-shot `long` events."""
         active = bool(active)

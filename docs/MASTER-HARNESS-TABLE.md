@@ -294,7 +294,9 @@ pending the connected harness. A failed MCP23017 I2C snapshot invalidates
 all selector/button/deadman state, inhibits commands, clears encoder counts,
 and revokes any active/queued jog; recovery does not replay counts. If an
 observed E-stop contact is on that bus, the failed sample asserts it and
-requires the normal explicit E-stop recovery path.
+requires the normal explicit E-stop recovery path. Button debounce state is reset
+without synthesizing release/short/long actions; after recovery all buttons must
+be released before new button events are accepted.
 
 
 ===============================================================================

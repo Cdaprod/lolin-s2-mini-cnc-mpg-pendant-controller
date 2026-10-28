@@ -6,7 +6,7 @@ from src.input.manager import InputManager, SyntheticInputAdapter
 from src.input.selectors import SelectorError, SelectorModel
 from src.state import PendantState
 from src.input.touch import TouchInput
-from src.display.ui import ROTATE_CW, TouchEvent
+from src.display.ui import ROTATE_CW, SELECT, TouchEvent
 
 
 class MPGTests(unittest.TestCase):
@@ -108,8 +108,9 @@ class MPGTests(unittest.TestCase):
         adapter = SyntheticInputAdapter()
         manager = InputManager(state, adapter, counts_per_detent=4)
         adapter.set(axes=("X",), multipliers=("X10",), deadman=True,
-                    mpg_delta=0)
+                    buttons={"SELECT": True}, mpg_delta=0)
         manager.poll(0)
+        manager.poll(0.04)  # Debounce SELECT into a held state.
         self.assertTrue(state.input_valid)
         self.assertTrue(state.deadman_enabled)
 
@@ -127,12 +128,21 @@ class MPGTests(unittest.TestCase):
 
         adapter.set(valid=True, valid_reason=None, axes=("X",),
                     multipliers=("X10",), deadman=True,
-                    buttons={"SELECT": False}, mpg_delta=4)
+                    buttons={"SELECT": True}, mpg_delta=4)
         recovered = manager.poll(2)
         self.assertTrue(recovered.input_valid_changed)
         self.assertEqual(recovered.events, [])
         self.assertTrue(state.input_valid)
         self.assertEqual(manager.hardware_accumulator, 0)
+
+        adapter.set(buttons={"SELECT": False}, mpg_delta=0)
+        self.assertEqual(manager.poll(2.04).events, [])
+        adapter.set(buttons={"SELECT": True})
+        self.assertEqual(manager.poll(3).events, [])
+        self.assertEqual(manager.poll(3.04).events, [])
+        adapter.set(buttons={"SELECT": False})
+        self.assertEqual(manager.poll(3.08).events, [])
+        self.assertEqual(manager.poll(3.12).events, [SELECT])
 
     def test_selector_transition_resets_partial_quadrature_detent(self):
         state = PendantState()

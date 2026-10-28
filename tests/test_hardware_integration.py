@@ -528,13 +528,20 @@ class ApplicationInputPipelineTests(unittest.TestCase):
     def test_invalid_physical_sample_revokes_queued_jog(self):
         with tempfile.TemporaryDirectory() as root:
             app, adapter, clock = self.make_app(root)
+            adapter.set(buttons={"SELECT": True}, mpg_delta=0)
+            app.poll()
+            clock.advance(0.04)
+            app.poll()  # SELECT is physically held and debounced.
             app.state.jog_active = True
             self.assertTrue(app.controller.queue_command("$J=G91 G21 X0.010 F500", "jog"))
             adapter.set(valid=False, valid_reason="mcp23017_read_failed",
-                        deadman=True, estop=True, mpg_delta=4)
+                        deadman=True, estop=True, buttons={"SELECT": True},
+                        mpg_delta=4)
             clock.advance(0.01)
-            with patch("src.app.emit") as emit:
+            with patch("src.app.emit") as emit, patch.object(
+                    app, "handle_ui_event") as handle_ui_event:
                 app.poll()
+            handle_ui_event.assert_not_called()
             self.assertFalse(app.state.input_valid)
             self.assertFalse(app.state.deadman_enabled)
             self.assertTrue(app.state.estop_observed)

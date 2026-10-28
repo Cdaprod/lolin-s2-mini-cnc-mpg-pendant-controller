@@ -85,6 +85,7 @@ class InputManager:
         self.dropped_events = 0
         self.hardware_accumulator = 0
         self._discard_next_encoder_sample = False
+        self._suppress_buttons_until_release = False
 
     def reset_encoder(self):
         """Discard a partial detent at a transport or safety boundary."""
@@ -226,7 +227,19 @@ class InputManager:
                         if len(self.events) >= self.MAX_EVENTS:
                             break
         button_states = sample.buttons if sample.valid else {}
+        if not sample.valid:
+            self._suppress_buttons_until_release = True
+        button_released_for_rearm = (
+            sample.valid and self._suppress_buttons_until_release and
+            not any(bool(button_states.get(name, False))
+                    for name in self.buttons))
+        if button_released_for_rearm:
+            self._suppress_buttons_until_release = False
         for name, button in self.buttons.items():
+            if (not sample.valid or self._suppress_buttons_until_release or
+                    button_released_for_rearm):
+                button.reset(now)
+                continue
             generated = button.update(bool(button_states.get(name, False)), now)
             if ((name in ("BACK", "CANCEL") and "press" in generated) or
                     (name in ("SELECT", "FN") and "short" in generated)):
