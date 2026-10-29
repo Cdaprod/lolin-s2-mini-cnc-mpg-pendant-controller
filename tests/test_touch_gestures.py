@@ -99,6 +99,18 @@ class GestureTests(unittest.TestCase):
         clock.t = .30
         self.assertEqual(gestures.poll(None), (("release_select", 115, 120),))
 
+    def test_tap_release_is_confirmed_within_40ms(self):
+        clock = Clock()
+        gestures = TouchGestures(clock)
+        gestures.poll((120, 120))
+        clock.t = .10
+        gestures.poll(None)
+        clock.t = .139
+        self.assertEqual(gestures.poll(None), ())
+        clock.t = .14
+        self.assertEqual(gestures.poll(None),
+                         (("release_select", 120, 120),))
+
     def test_short_contact_and_navigation_cooldown(self):
         clock = Clock()
         gestures = TouchGestures(clock)
