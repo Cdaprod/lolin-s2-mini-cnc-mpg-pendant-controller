@@ -326,8 +326,8 @@ class CurrentPendantInputTests(unittest.TestCase):
             "multiplier_pins": {"X1": "GPA6", "X10": "GPA7",
                                 "X100": "GPB0"},
             "estop_observe_pin": "GPB1",
-            "button_pins": {"SELECT": "GPB2", "BACK": "GPB3",
-                            "FN": "GPB4", "CANCEL": "GPB5"},
+            "button_pins": {"SELECT": "GPB2", "BACK": "",
+                            "FN": "", "CANCEL": ""},
             "deadman_pin": "GPB6", "selector_active_low": True,
             "button_active_low": True, "estop_active_low": True,
             "deadman_active_low": True,
@@ -355,25 +355,30 @@ class CurrentPendantInputTests(unittest.TestCase):
         adapter = from_config(self.config(), i2c)
         self.assertIs(adapter.resources[0].i2c, i2c)
         self.assertEqual(i2c.writes[0], (0x20, b"\x00\xff\xff"))
-        self.assertEqual(i2c.writes[1], (0x20, b"\x0c\xff\x7f"))
-        # Active-low GPA0 X, GPB0 x100, GPB1 remote stop, GPB2 SELECT.
-        i2c.gpio = (0xFE, 0xF8)
+        self.assertEqual(i2c.writes[1], (0x20, b"\x0c\xff\x47"))
+        # Active-low GPA0 X, GPB0 x100, GPB1 remote stop. The shared
+        # SELECT/hold-to-run switch is released: GPB2 and GPB6 are both high.
+        i2c.gpio = (0xFE, 0xFC)
         sample = adapter.read()
         self.assertEqual(sample.axes, ("X",))
         self.assertEqual(sample.multipliers, ("X100",))
         self.assertTrue(sample.estop)
-        self.assertTrue(sample.buttons["SELECT"])
+        self.assertFalse(sample.buttons["SELECT"])
         self.assertFalse(sample.deadman)
         self.assertEqual((adapter.encoder.a, adapter.encoder.b),
                          (self.board.GPIO39, self.board.GPIO40))
 
-        # GPB6 is the dedicated active-low hold-to-run input.  A held
-        # contact must be observed as active, and opening it must release
-        # motion authority on the very next coherent MCP snapshot.
-        i2c.gpio = (0xFE, 0xB8)  # Same selectors; GPB6 pulled low.
-        self.assertTrue(adapter.read().deadman)
-        i2c.gpio = (0xFE, 0xF8)  # GPB6 high through the configured pull-up.
-        self.assertFalse(adapter.read().deadman)
+        # One physical switch drives both distinct active-low MCP inputs.
+        # Pressing asserts UI SELECT and hold-to-run; release clears both on
+        # the next coherent snapshot and therefore removes motion authority.
+        i2c.gpio = (0xFE, 0xB8)  # GPB0/1/2/6 low.
+        pressed = adapter.read()
+        self.assertTrue(pressed.buttons["SELECT"])
+        self.assertTrue(pressed.deadman)
+        i2c.gpio = (0xFE, 0xFC)  # GPB2/6 return high via pull-ups.
+        released = adapter.read()
+        self.assertFalse(released.buttons["SELECT"])
+        self.assertFalse(released.deadman)
 
 
 if __name__ == "__main__":
