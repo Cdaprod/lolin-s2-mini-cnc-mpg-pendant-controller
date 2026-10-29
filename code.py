@@ -8,7 +8,7 @@ from src.app import PendantApplication
 from src.diagnostics import (emit, is_runtime_reload,
                              startup_context_fields)
 
-RUNTIME_BUILD = "round-hud-quiet-bezel-v6"
+RUNTIME_BUILD = "round-hud-balanced-bezel-v8"
 
 
 def main():
