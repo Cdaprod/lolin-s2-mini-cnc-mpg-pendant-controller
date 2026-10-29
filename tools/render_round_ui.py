@@ -16,7 +16,6 @@ from src.display.round_ui.effects import (TOUCH_BITMAP_CENTER,
                                           touch_zone)
 from src.display.round_ui.rotor import (
     BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD, bezel_segment_levels)
-from src.display.round_ui.renderer import HUD_ORBIT_RATES
 from src.display.ui import build_screens
 from src.display.navigation import menu_window_start
 
@@ -99,37 +98,6 @@ def rgb(color):
     return color
 
 
-def draw_hud_orbs(draw, colors, now=4.0, outer_angle=None):
-    """Match production marker geometry and its retained dim motion ghost."""
-    for index, (radius, rate) in enumerate(zip((109, 99), HUD_ORBIT_RATES)):
-        color = colors["accent"] if index == 0 else colors["highlight"]
-        angle = (outer_angle if index == 0 and outer_angle is not None
-                 else now * rate)
-        cx = 120 + round(radius * math.cos(angle))
-        cy = 120 + round(radius * math.sin(angle))
-        for yy in range(9):
-            for xx in range(9):
-                distance2 = (xx - 4) ** 2 + (yy - 4) ** 2
-                if distance2 <= 4:
-                    fill = color
-                elif distance2 <= 9:
-                    fill = theme.shade_color(color, 72)
-                elif distance2 <= 16:
-                    fill = theme.shade_color(color, 38)
-                else:
-                    continue
-                draw.point((cx + xx - 4, cy + yy - 4), fill=rgb(fill))
-        trail_angle = angle - rate * 0.20
-        trail_x = 118 + round(radius * math.cos(trail_angle))
-        trail_y = 118 + round(radius * math.sin(trail_angle))
-        ghost = theme.shade_color(color, 22)
-        for yy in range(5):
-            for xx in range(5):
-                if (xx - 2) ** 2 + (yy - 2) ** 2 <= 2:
-                    draw.point((trail_x + xx - 2, trail_y + yy - 2),
-                               fill=rgb(ghost))
-
-
 def draw_rotor_segments(image, colors, angle):
     """Draw fixed concentric arc tiles with the firmware's moving light wave."""
     if len(rotor_asset) != 132 * 3168 // 2:
@@ -176,10 +144,8 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
         d = ImageDraw.Draw(im)
         # Four physical top-level page positions; no pager at idle in firmware.
         page = {"EXPLORER": 1, "CONFIGURATION": 2, "PREVIEW": 3}.get(name, 0)
-        # Snapshot at t=4 s to make both counter-rotating HUD markers visible.
         draw_rotor_segments(im, c, 0.0)
         d = ImageDraw.Draw(im)
-        draw_hud_orbs(d, c)
         for i in range(4):
             x = 67 + (106 * i) // 3
             y = 120 - int(math.sqrt(108 * 108 - (x - 120) ** 2))
@@ -230,13 +196,6 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
                        fill=rgb(c["text"] if enabled else c["muted"]))
             d.text((120, 211), "BACK  ·  HOME", anchor="mm", font=small, fill=rgb(c["muted"]))
         im.save(OUT / f"{skin}-{name.lower()}.png")
-        if name == "HOME":
-            angle = 4.0 * HUD_ORBIT_RATES[0]
-            marker = (120 + round(109 * math.cos(angle)),
-                      120 + round(109 * math.sin(angle)))
-            assert im.getpixel(marker) == rgb(c["accent"]), (
-                "Pillow color conversion changed the firmware HUD color",
-                im.getpixel(marker), rgb(c["accent"]))
 
 # Match the user's photographed, disarmed HOME state as a separate visual
 # target. Connection state and motion admission are shown as distinct signals.
@@ -246,7 +205,6 @@ im = Image.alpha_composite(base, bezel_asset).convert("RGB")
 d = ImageDraw.Draw(im)
 draw_rotor_segments(im, c, 0.0)
 d = ImageDraw.Draw(im)
-draw_hud_orbs(d, c)
 for i in range(4):
     x = 67 + (106 * i) // 3
     y = 120 - int(math.sqrt(108 * 108 - (x - 120) ** 2))
@@ -312,7 +270,6 @@ for storage, primary, secondary in (
     base = Image.new("RGBA", (240, 240), rgb(c["background"]) + (255,))
     im = Image.alpha_composite(base, bezel_asset).convert("RGB")
     d = ImageDraw.Draw(im)
-    draw_hud_orbs(d, c)
     draw_rotor_segments(im, c, 0.0)
     d = ImageDraw.Draw(im)
     d.text((120, 43), "FILE EXPLORER", anchor="mm", font=title_font,
@@ -326,7 +283,7 @@ for storage, primary, secondary in (
 
 
 def state_canvas(palette_name="industrial", bezel_name=None, rotor_angle=0.0,
-                 outer_angle=None, alarm=False):
+                 alarm=False):
     colors = theme.select(palette_name)
     selected = bezel_name or ARGS.bezel
     bezel_colors = ("red_alarm" if alarm else
@@ -337,7 +294,6 @@ def state_canvas(palette_name="industrial", bezel_name=None, rotor_angle=0.0,
     draw = ImageDraw.Draw(image)
     if not alarm:
         draw_rotor_segments(image, colors, rotor_angle)
-        draw_hud_orbs(draw, colors, outer_angle=outer_angle)
     draw = ImageDraw.Draw(image)
     return image, draw, colors
 
@@ -448,7 +404,7 @@ print("Generated interactive-state previews (connected, axis, touch, encoder, al
 # Angle sweep shows the light wave moving around fixed, tangent arc geometry.
 for degrees in (0, 90, 180, 270):
     image, draw, colors = state_canvas(
-        rotor_angle=math.radians(degrees), outer_angle=math.radians(degrees))
+        rotor_angle=math.radians(degrees))
     draw.text((120, 211), "BEZEL {:03d} DEG".format(degrees), anchor="mm",
               font=small, fill=rgb(colors["muted"]))
     image.save(OUT / "bezel-angle-{:03d}.png".format(degrees))
