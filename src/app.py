@@ -70,9 +70,9 @@ class PendantApplication:
         self.indicator_output = indicator_output
         self.sd_mount = sd_mount
         self.touch_manager = touch_manager
-        # HOME's lower MENU touch target is safe navigation. Open it on
-        # contact for immediate feedback, then cancel the preview if the
-        # gesture becomes a swipe or drag. Actual row selection stays on lift.
+        # HOME touch selection opens navigation, so preview it on contact for
+        # immediate feedback. Cancel the preview if the gesture becomes a
+        # swipe or long press. Actual menu row selection stays on lift.
         self._touch_menu_preview_active = False
         self.clock = clock
         try:
@@ -693,9 +693,8 @@ class PendantApplication:
                 if contact[0] == "down":
                     touch_needs_render = True
                     if (self.ui.current_screen == "HOME" and
-                            contact[2] >= 190 and
                             self.ui.active_overlay() is None):
-                        # This hotspot only opens navigation; it cannot select
+                        # This preview only opens navigation; it cannot select
                         # a menu row or dispatch a machine command.
                         self.ui.enter("MAIN_MENU")
                         self._touch_menu_preview_active = True
