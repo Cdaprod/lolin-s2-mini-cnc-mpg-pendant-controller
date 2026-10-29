@@ -169,7 +169,15 @@ class AssetPipelineTests(unittest.TestCase):
                 self.assertLessEqual(
                     max(max((color >> 16) & 0xFF,
                             (color >> 8) & 0xFF, color & 0xFF)
-                        for color in palette[1:]), 124)
+                        for color in palette[1:]), 80)
+
+    def test_default_bezel_keeps_negative_space_inside_the_ring(self):
+        """The close-view default must not fill its center with dot noise."""
+        _, packed, _ = generate_hud_bezels.render(
+            generate_hud_bezels.THEMES[0], supersample=8)
+        # A top-center sample on the old dense inner dot track is now clear.
+        offset = 26 * 120 + 120 // 2
+        self.assertEqual(packed[offset] & 0x0F, 0)
 
     def test_development_png_matches_indexed_firmware_colors(self):
         rgba, packed, palette = generate_hud_bezels.render(
