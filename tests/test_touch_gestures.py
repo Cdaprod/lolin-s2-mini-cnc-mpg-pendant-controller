@@ -247,6 +247,18 @@ class GestureTests(unittest.TestCase):
         self.assertEqual(ui.confirmation["command"], "ACTION")
         self.assertFalse(ui.confirmation["accept"])
 
+    def test_touch_down_previews_menu_row_without_selecting(self):
+        state = PendantState()
+        ui = UIManager(state)
+        ui.complete_boot()
+        ui.enter("MAIN_MENU")
+
+        self.assertTrue(ui.preview_touch(95, 87))  # Jobs row
+        self.assertEqual(ui.focus["MAIN_MENU"], 1)
+        self.assertEqual(ui.current_screen, "MAIN_MENU")
+        self.assertIsNone(ui.confirmation)
+        self.assertFalse(ui.preview_touch(95, 87))
+
     def test_touch_does_not_resume_active_job(self):
         state = PendantState()
         ui = UIManager(state)
