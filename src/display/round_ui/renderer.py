@@ -587,7 +587,7 @@ class RoundRenderer:
                                 trail.hidden = False
                                 self._hud_dirty = True
                                 changed = True
-                    if self.rotor_tile_count == 512:
+                    if self.rotor_tile_count == 384:
                         update_bezel_segment_levels(
                             rotor_angle, self._rotor_target_levels)
                         for index in range(len(self.bezel_segments)):

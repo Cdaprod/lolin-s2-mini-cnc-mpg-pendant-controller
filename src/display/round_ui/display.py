@@ -247,11 +247,11 @@ def _load_rotor_sprite_sheet(displayio):
     """Load precomputed curved-arc orientation and subpixel phases."""
     try:
         import bitmaptools
-        bitmap = displayio.Bitmap(92, 2944, 16)
+        bitmap = displayio.Bitmap(132, 3168, 16)
         with open("/assets/round_hud/runtime/rotor_segment_phases.4bpp",
                   "rb") as source:
             bitmaptools.readinto(bitmap, source, bits_per_pixel=4)
-        return bitmap, 512
+        return bitmap, 384
     except (ImportError, OSError, RuntimeError, ValueError, AttributeError,
             MemoryError):
         return None, 0
@@ -331,7 +331,7 @@ def displayio_scene(display, colors=None, bezel_name=None):
                     colors["accent"], shade // 2)
             segment = displayio.TileGrid(
                 rotor_sheet, pixel_shader=rotor_palette, width=1, height=1,
-                tile_width=23, tile_height=23)
+                tile_width=33, tile_height=33)
             angle = 2.0 * math.pi * index / rotor_count
             center_x = 120 + 109.0 * math.cos(angle)
             center_y = 120 + 109.0 * math.sin(angle)
@@ -339,9 +339,9 @@ def displayio_scene(display, colors=None, bezel_name=None):
             phase_x = int((center_x - base_x) * 4)
             phase_y = int((center_y - base_y) * 4)
             tangent = (angle + math.pi / 2.0) % (2.0 * math.pi)
-            orientation = int(round(tangent * 32.0 / (2.0 * math.pi))) % 32
+            orientation = int(round(tangent * 24.0 / (2.0 * math.pi))) % 24
             segment[0] = orientation * 16 + phase_y * 4 + phase_x
-            segment.x, segment.y = int(base_x) - 11, int(base_y) - 11
+            segment.x, segment.y = int(base_x) - 16, int(base_y) - 16
             segment.hidden = False
             root.append(segment)
             rotor_segments.append(segment)

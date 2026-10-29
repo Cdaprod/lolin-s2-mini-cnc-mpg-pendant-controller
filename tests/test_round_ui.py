@@ -292,7 +292,7 @@ class RoundRendererTests(unittest.TestCase):
         renderer.bezel_segments = segments
         renderer.bezel_segment_palettes = [[0] + [1] * 15
                                            for _ in segments]
-        renderer.rotor_tile_count = 512
+        renderer.rotor_tile_count = 384
         renderer._rotor_brightness_levels = [-1] * len(segments)
         renderer._rotor_target_levels = [0] * len(segments)
         renderer._rotor_color = theme.CYAN
@@ -353,6 +353,15 @@ class RoundRendererTests(unittest.TestCase):
         self.assertGreater(clockwise[1], clockwise[0])
         self.assertGreater(counterclockwise[23], counterclockwise[0])
         self.assertTrue(all(1 <= value <= 15 for value in clockwise))
+
+    def test_rotor_highlight_is_one_connected_traveling_arc(self):
+        levels = bezel_segment_levels(0.0)
+        self.assertEqual(len(levels), 24)
+        self.assertEqual(levels[0], 15)
+        self.assertEqual(sum(value >= 8 for value in levels), 5)
+        self.assertTrue(all(levels[index] >= 8 for index in (22, 23, 0, 1, 2)))
+        self.assertEqual(sum(value >= 8 for value in levels[3:22]), 0)
+        self.assertEqual(levels[1], levels[-1])
 
     def test_rotor_animation_updates_a_retained_brightness_buffer(self):
         levels = [0] * 24

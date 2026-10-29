@@ -31,7 +31,7 @@ frames stay in memory. Only `.4bpp` files in
 `assets/round_hud/runtime/` are deployed. The twelve production images occupy
 345,600 bytes of filesystem storage; the selected bitmap occupies 28,800 bytes
 in RAM. The 4x4 subpixel orb atlas adds 648 bytes. The rotor arc atlas occupies
-135,424 bytes on storage and in RAM; it is loaded once at startup. The fixed
+209,088 bytes on storage and in RAM; it is loaded once at startup. The fixed
 rotor uses 24 small palettes and retained TileGrids; no animation-frame bitmap
 is allocated. A missing bezel falls
 back to the established instrument backdrop; a missing atlas falls back to
@@ -50,8 +50,8 @@ remain unchanged unless the user applies a settings update.
 ## Retained motion
 
 The bezel artwork and its radial scale do not rotate. Twenty-four antialiased
-outer arc sections stay in fixed positions and orientations. A smooth
-three-peak brightness wave travels clockwise or counterclockwise around them;
+outer arc sections stay in fixed positions and orientations. A single broad,
+smooth brightness wave travels clockwise or counterclockwise around them;
 the arc shapes never pivot or rotate on their own axes. The inner counter-orbit
 orbs remain independent. This hybrid avoids a full-screen rotated framebuffer
 and keeps labels and scale marks stationary. It uses the normalized signed MPG
@@ -77,8 +77,10 @@ interval and ease through deceleration. Encoder detent rate sets signed rotor
 speed, capped at `MPG_BEZEL_MAX_SPEED_RAD_S`; after the input becomes idle, the
 velocity blends toward the current ambient speed with `MPG_BEZEL_INERTIA_S`.
 Presentation is limited by `MPG_BEZEL_FRAME_RATE` (default 24 Hz). The fixed
-ring accents use precomputed 23x23 curved-arc tiles with 32 tangent
-orientations and 16 subpixel phases. The animation updates retained palette
+ring accents use precomputed 33x33 curved-arc tiles with 24 tangent
+orientations and 16 subpixel phases. Their longer inward-curved strokes nearly
+join at the ring spacing, so the moving light reads as one arc instead of
+separate capsule-like highlights. The animation updates retained palette
 brightness only; it does not reposition or rotate the arcs and does not
 construct bitmaps at runtime. Page swipes ease into and out of the transition while matching
 velocity at the outgoing/incoming page handoff. These settings are clamped by
