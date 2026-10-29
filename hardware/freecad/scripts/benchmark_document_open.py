@@ -92,6 +92,7 @@ def main() -> int:
     parser.add_argument('--freecadcmd', default=os.environ.get('FREECADCMD'))
     parser.add_argument('--runs', type=int, default=3)
     parser.add_argument('--timeout', type=int, default=170)
+    parser.add_argument('--json', type=Path, help='also save the benchmark record as JSON')
     args = parser.parse_args()
     if args.runs < 1 or args.runs > 10:
         parser.error('--runs must be between 1 and 10')
@@ -115,7 +116,8 @@ def main() -> int:
             results[name].append(run_one(cmd, DOCUMENTS[name], args.timeout))
     bundle_files = [DOCUMENTS['modular_assembly'], FREECAD_DIR / 'pendant-master.FCStd'] + [
         FREECAD_DIR / 'pendant-bodies' / name for name in
-        ('display-retainer.FCStd', 'usb-tethered-cover.FCStd', 'faceplate-locators.FCStd')]
+        ('display-retainer.FCStd', 'usb-tethered-cover.FCStd', 'faceplate-locators.FCStd',
+         'breakout-board.FCStd')]
     summary = {
         'runs_per_document': args.runs,
         'modular_source_bundle_bytes': sum(p.stat().st_size for p in bundle_files),
@@ -132,7 +134,11 @@ def main() -> int:
     mono = summary['documents']['monolith']['median_open_seconds']
     assembly = summary['documents']['modular_assembly']['median_open_seconds']
     summary['monolith_to_assembly_open_time_ratio'] = mono / assembly if assembly else None
-    print(json.dumps(summary, indent=2, sort_keys=True))
+    rendered = json.dumps(summary, indent=2, sort_keys=True) + '\n'
+    if args.json:
+        args.json.parent.mkdir(parents=True, exist_ok=True)
+        args.json.write_text(rendered, encoding='utf-8')
+    print(rendered, end='')
     return 0
 
 
