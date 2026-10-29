@@ -60,6 +60,8 @@ The authoritative monolith remains byte-for-byte unchanged (SHA256 `dc2aeddf7be3
 
 The earlier broad XML inventory is retained in `shell-dependency-report.md` as historical analysis, but its 331/307-style closure and “dominant active rear-Tip path” statements are superseded for Tip reachability. The corrected audit follows `Body002.Tip` through feature input properties, skips Body/Part ownership containers, distinguishes suppressed ancestry, and enumerates the remaining paths. It establishes why the Tip closure did not shrink: the seam/back/land substitutions are not in that Tip's transitive feature inputs. The sole remaining front-shell reference in full ancestry is `Binder016.Support → Body.Sketch019`, reached through suppressed Pads 020–022.
 
+The audit's feature-label and disposable activation check identifies Pads 020–021 as likely rear registration tongues for the front alignment grooves; Pad022 remains unresolved at `Pad021.?Face97`. See the audit for settings, geometry measurements, and limits of the test. No source feature history was changed.
+
 The 325-object `front-rear-shells.FCStd` remains an unvalidated disposable candidate and is not included in the assembly or commits. Its recompute/save/reopen attempts still fail because of broken face references, suppressed-feature failures, and Body-versus-Tip shape mismatches. The requested 27.0 → 27.5 → 27.0 mm shell propagation and save/reopen validation therefore did not pass. No taper or shell geometry was changed.
 
 ### Master-driven locator parameter

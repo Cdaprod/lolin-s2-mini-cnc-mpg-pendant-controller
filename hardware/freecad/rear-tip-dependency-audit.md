@@ -28,6 +28,22 @@ The first shell-boundary edge on each path is `Binder016.Support`, which referen
 
 The five relevant shape records (`Pocket015`, `Pad020`, `Pad021`, `Pad022`, `RemoveWarpProneTongues`) each report one valid solid and identical volume `38345.80616578121 mm³`, surface area `27398.84845923107 mm²`, and bounds `[-36.233262, 36.233272, -85.564273, 86.688463, -36.844984, -19.0] mm`. The checked symmetric difference between `Pocket015` and each of `Pad020` and `Pad021` was exactly zero. This supports the classification of the suppressed pads as geometry-neutral in the saved state, but does not repair or validate the unresolved `?Face97` reference.
 
+## Pad labels, source profile, and intended geometry
+
+Read-only inspection of the monolith shows that these are native features in `Body002` (`Body_RearShell`), ordered after `Pocket015 - Magnet Slot`; they were not created by the modular migration. Their internal labels are still generic for all three Pads.
+
+| Feature | Label and input | Feature settings | Saved state |
+|---|---|---|---|
+| `Pad020` | `Pad020`; base `Pocket015`; profile `Binder016.Face2`, `Binder016.Face1` | Length 0.8 mm, straight pad, along +Z | Suppressed |
+| `Pad021` | `Pad021`; base `Pad020`; profile `Binder016.Face4`, `Binder016.Face3` | Length 0.8 mm, taper −13°, along +Z | Suppressed |
+| `Pad022` | `Pad022`; base `Pad021`; profile `Pad021.?Face97` | `UpToShape`, saved length 10 mm; its selected generated face no longer resolves | Suppressed |
+
+`Binder016` is labeled `Binder016` and supports `Body.Sketch019 - Alignment Pockets` from the front shell. That sketch has 42 geometries and 124 constraints at Z = −19 mm; it is also used by front-shell `Pocket016 - Alignment Grooves`. The binder contains four planar faces (48 edges, no solids), with bounds X `−33.874…33.875`, Y `−84.394…76.985`, Z `−19 mm`. The paired face selections used by Pad020 and Pad021 therefore correspond to the front-shell alignment-groove profile. Based on the native labels and the generated feature geometry, their intended purpose is complementary rear-shell registration tongues/pads that engage those grooves. This is a well-supported interpretation of Pads 020–021; Pad022's exact intended form remains unknown because its up-to-face profile is broken.
+
+To distinguish intended geometry from the suppressed cached shape, a disposable copy of the monolith was made and only Pads 020 and 021 were unsuppressed in sequence. Pad020 recomputed as a valid one-solid shape with volume `38508.061656 mm³` (an increase of `162.255490 mm³` from Pocket015) and Z maximum `−18.2 mm`. Pad021 then recomputed as valid one-solid geometry with volume `38565.812640 mm³` (a further `57.750984 mm³`) and the same bounds, with its −13° taper. These tests confirm that the two pads would add real protrusions toward the front-side grooves. Pad022 remained suppressed and became `Touched`; its broken `?Face97` was not repaired or tested as active. The disposable test was not saved or promoted, and the monolith was not changed. FreeCAD also logged unrelated out-of-scope-link/refine warnings during the limited recompute, so this result validates the two pad shapes only, not the full document.
+
+The following active `RemoveWarpProneTongues` feature is labeled “Remove continuous thin tongues to parting plane,” has a 0.81 mm pocket length, and uses `RearSeamFlushSketch`. Its name and placement in the history indicate the author intended to trim thin tongue material at the seam after the pad branch. Because the Pads are currently suppressed and the pocket's saved shape equals its base shape, the saved model does not establish how much of the would-be tongues the pocket removes when the pads are enabled. Do not call the branch an obsolete experiment or delete it based on the present evidence: the pair's alignment function is evident, but the active design intent of Pad022 and the interaction with the seam-trimming pocket need a separate disposable test before any history edit.
+
 ## What the master substitutions changed—and why the count stayed the same
 
 The disposable candidate retains the validated frame-preserving `App::Link.LinkPlacement` setup:
