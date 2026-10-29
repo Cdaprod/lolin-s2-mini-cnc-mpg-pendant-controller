@@ -257,7 +257,26 @@ class RoundRenderer:
         if transition is not None:
             half = PAGE_SWIPE_DURATION / 2
             elapsed = max(0.0, now - transition["started"])
-            if transition["phase"] == "out":
+            if transition["phase"] == "slide":
+                progress = min(1.0, elapsed / PAGE_SWIPE_DURATION)
+                eased = progress * progress * (3.0 - 2.0 * progress)
+                offset = round(-transition["delta"] * 240 * eased)
+                old_group = transition["old_group"]
+                new_group = transition["new_group"]
+                new_offset = transition["delta"] * 240 + offset
+                if old_group.x != offset or new_group.x != new_offset:
+                    old_group.x, new_group.x = offset, new_offset
+                    self._page_transition_dirty = True
+                    changed = True
+                if progress >= 1.0:
+                    old_group.x = 0
+                    new_group.x = 0
+                    old_group.hidden = True
+                    new_group.hidden = False
+                    self._page_transition = None
+                    self._page_transition_dirty = True
+                    changed = True
+            elif transition["phase"] == "out":
                 progress = min(1.0, elapsed / half)
                 # Ease in to the handoff; the matching incoming curve begins
                 # at the same velocity, so the page swap never visibly stalls.
@@ -680,17 +699,20 @@ class RoundRenderer:
                 new_group.x = 0
                 old_group.hidden = False
                 if old_group is not new_group:
-                    new_group.hidden = True
+                    new_group.hidden = False
+                    new_group.x = int(direction) * 240
                 self._page_transition = {
-                    "phase": "out", "delta": int(direction),
+                    "phase": ("slide" if old_group is not new_group else "out"),
+                    "delta": int(direction),
                     "started": time.monotonic(), "old_group": old_group,
                     "new_group": new_group,
                 }
                 self._page_transition_dirty = True
-                self.ui.dirty = True
-                self.render_count += 1
-                self._refresh_if_manual()
-                return True
+                if old_group is new_group:
+                    self.ui.dirty = True
+                    self.render_count += 1
+                    self._refresh_if_manual()
+                    return True
         update_started = self._profile_ticks_ms()
         self.last_model_ms = max(
             0, _profile_ticks_diff(update_started, model_started))
@@ -721,10 +743,16 @@ class RoundRenderer:
             self._nav_visible = False
             nav_changed = True
         is_home = model["screen"] == "HOME"
-        if self.home_group is not None:
-            self.home_group.hidden = not is_home
-        if self.menu_group is not None:
-            self.menu_group.hidden = is_home
+        transition = self._page_transition
+        if (transition is not None and transition["phase"] == "slide" and
+                transition["old_group"] is not transition["new_group"]):
+            transition["old_group"].hidden = False
+            transition["new_group"].hidden = False
+        else:
+            if self.home_group is not None:
+                self.home_group.hidden = not is_home
+            if self.menu_group is not None:
+                self.menu_group.hidden = is_home
         self._displayed_page = model.get("active_page", "HOME")
         self._displayed_screen = model["screen"]
 
