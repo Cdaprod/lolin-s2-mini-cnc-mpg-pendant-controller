@@ -69,6 +69,17 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(state.wifi_state, "DISABLED")
         self.assertEqual(state.connection_state, "disconnected")
 
+    def test_empty_job_browser_renders_storage_status_instead_of_blank_rows(self):
+        state, ui, _, renderer = self.make_renderer()
+        state.storage_state = "unconfigured"
+        state.subsystems = {"sd": "DISABLED"}
+        ui.enter("JOB_BROWSER")
+
+        renderer.render(state)
+
+        self.assertEqual(renderer.menu[0].line.text, "SD DISABLED  -")
+        self.assertEqual(renderer.menu[1].line.text, "")
+
     def make_renderer(self):
         state = PendantState()
         state.connection_state = "connected"

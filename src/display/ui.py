@@ -296,11 +296,35 @@ class UIManager:
                     for key, value in details]
         if self.screen.dynamic:
             if self.screen.dynamic == "ssids":
-                return [MenuItem("{}  {} dBm".format(value[0], value[1]),
-                                 value=value[0])
-                        for value in self.dynamic_items["ssids"]]
-            return [MenuItem(str(value), value=value)
-                    for value in self.dynamic_items[self.screen.dynamic]]
+                values = self.dynamic_items["ssids"]
+                if values:
+                    return [MenuItem("{}  {} dBm".format(value[0], value[1]),
+                                     value=value[0]) for value in values]
+                return [_disabled("NO NETWORKS FOUND",
+                                  "Wi-Fi scan returned no networks")]
+            values = self.dynamic_items[self.screen.dynamic]
+            if values:
+                return [MenuItem(str(value), value=value) for value in values]
+            if self.screen.dynamic in ("jobs", "macros"):
+                sd_status = self.state.subsystems.get("sd", "unknown")
+                if sd_status == "DISABLED":
+                    label, reason = "SD DISABLED", "SD storage is disabled"
+                elif self.state.storage_state == "missing":
+                    label, reason = "SD CARD MISSING", "SD card is not mounted"
+                elif self.state.storage_state == "mount_error":
+                    label, reason = "SD MOUNT ERROR", (
+                        self.state.storage_error or "SD mount failed")
+                elif self.state.storage_state == "available":
+                    label, reason = (
+                        ("NO FILES FOUND", "No supported jobs on SD")
+                        if self.screen.dynamic == "jobs" else
+                        ("NO MACROS FOUND", "No macros on SD"))
+                else:
+                    label, reason = "STORAGE UNAVAILABLE", (
+                        self.state.storage_error or
+                        "SD storage is not available")
+                return [_disabled(label, reason)]
+            return []
         return self.screen.items
 
     def details(self):
