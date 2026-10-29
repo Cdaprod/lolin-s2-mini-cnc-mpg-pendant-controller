@@ -19,6 +19,8 @@ LONG_SELECT = "LONG_SELECT"
 LONG_FN = "LONG_FN"
 HOME = "HOME"
 
+_DETAILS_UNSET = object()
+
 
 class TouchEvent:
     """Normalized touch input consumed only by UIManager."""
@@ -301,8 +303,9 @@ class UIManager:
                                max(0, len(values) - 1))
         self._changed()
 
-    def items(self):
-        details = self.details()
+    def items(self, details=_DETAILS_UNSET):
+        if details is _DETAILS_UNSET:
+            details = self.details()
         if details:
             return [MenuItem("{}: {}".format(key, value))
                     for key, value in details]
@@ -758,7 +761,12 @@ class UIManager:
 
     def view_model(self):
         """Return backend-independent primitives without exposing passwords."""
-        items = self.items()
+        detail_screen = self.current_screen in (
+            "CONTROLLER_INFO", "SYSTEM_INFO", "INPUT_INFO", "NETWORK_INFO",
+            "PREVIEW",
+        )
+        details = self.details() if detail_screen else None
+        items = self.items(details) if detail_screen else self.items()
         selected = self.focus.get(self.current_screen, 0)
         motion_available = bool(
             self.current_screen == "HOME" and
@@ -809,14 +817,14 @@ class UIManager:
         }
         if self.current_screen == "CONTROLLER_INFO":
             model["title"] = self.detail_title or model["title"]
-            model["details"] = self.details()
+            model["details"] = details
         elif self.current_screen in ("SYSTEM_INFO", "INPUT_INFO"):
             model["title"] = self.detail_title or model["title"]
-            model["details"] = self.details()
+            model["details"] = details
         elif self.current_screen == "NETWORK_INFO":
-            model["details"] = self.details()
+            model["details"] = details
         elif self.current_screen == "PREVIEW":
-            model["details"] = self.details()
+            model["details"] = details
         if self.current_screen == "TEXT_ENTRY" and self.text_entry:
             model["text"] = self.text_entry.display_value()
             model["character"] = self.text_entry.selected_character

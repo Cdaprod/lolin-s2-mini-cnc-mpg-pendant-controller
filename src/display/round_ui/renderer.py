@@ -991,9 +991,6 @@ class RoundRenderer:
         # input poll; the first menu transition updates the complete layer.
         if not is_home:
             items = model.get("items", ())
-            if model.get("details"):
-                items = tuple(("{}: {}".format(key, value), True, "")
-                              for key, value in model["details"])
             # Dynamic browser screens provide a disabled explanatory item
             # when empty. Render that state in the middle of the list area,
             # rather than as a selectable row at the top of the page.
