@@ -347,8 +347,8 @@ def displayio_scene(display, colors=None, bezel_name=None):
             rotor_palettes.append(rotor_palette)
         palettes["rotor_segments"] = tuple(rotor_palettes)
 
-    # Encoder-only feedback is a retained bead and trailing point. Its angle
-    # follows physical detents, and it never represents accepted machine motion.
+    # Encoder-only feedback uses one bead and two retained afterimages. These
+    # visualize raw handwheel detents only, never accepted machine motion.
     encoder_bitmap = displayio.Bitmap(9, 9, 4)
     encoder_palette = displayio.Palette(4)
     encoder_palette[0] = 0
@@ -382,7 +382,16 @@ def displayio_scene(display, colors=None, bezel_name=None):
                                        pixel_shader=encoder_trail_palette)
     encoder_trail.hidden = True
     root.append(encoder_trail)
-    palettes["encoder"] = (encoder_palette, encoder_trail_palette)
+    encoder_far_palette = displayio.Palette(2)
+    encoder_far_palette[0] = 0
+    encoder_far_palette.make_transparent(0)
+    encoder_far_palette[1] = theme.shade_color(colors["accent"], 16)
+    encoder_far_trail = displayio.TileGrid(
+        encoder_trail_bitmap, pixel_shader=encoder_far_palette)
+    encoder_far_trail.hidden = True
+    root.append(encoder_far_trail)
+    palettes["encoder"] = (encoder_palette, encoder_trail_palette,
+                            encoder_far_palette)
 
 
     home = displayio.Group()
@@ -543,6 +552,7 @@ def displayio_scene(display, colors=None, bezel_name=None):
         "rotor_tile_count": rotor_frame_count,
         "rotor_color": colors["accent"],
         "encoder_marker": encoder_marker, "encoder_trail": encoder_trail,
+        "encoder_far_trail": encoder_far_trail,
         "encoder_palettes": palettes["encoder"],
         "nav_group": nav_group,
         "nav_dots": nav_dots,

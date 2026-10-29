@@ -141,6 +141,7 @@ class RoundRenderer:
         self.menu_group = scene.get("menu_group")
         self.encoder_marker = scene.get("encoder_marker")
         self.encoder_trail = scene.get("encoder_trail")
+        self.encoder_far_trail = scene.get("encoder_far_trail")
         self.encoder_palettes = scene.get("encoder_palettes", ())
         self._encoder_angle = -90.0
         self._encoder_seen_timestamp = None
@@ -204,6 +205,9 @@ class RoundRenderer:
                 self.encoder_palettes[0][2] = theme.shade_color(colors["accent"], 64)
                 self.encoder_palettes[0][3] = theme.shade_color(colors["accent"], 28)
                 self.encoder_palettes[1][1] = theme.shade_color(colors["accent"], 36)
+                if len(self.encoder_palettes) > 2:
+                    self.encoder_palettes[2][1] = theme.shade_color(
+                        colors["accent"], 16)
         if hasattr(self.ring.node, "colors"):
             self.ring.node.colors = colors
             self.ring.signature = None
@@ -337,12 +341,13 @@ class RoundRenderer:
             timestamp = getattr(state, "mpg_activity_timestamp", None)
             if timestamp is not None and timestamp != self._encoder_seen_timestamp:
                 self._encoder_seen_timestamp = timestamp
-                direction = 1 if state.mpg_activity > 0 else (
-                    -1 if state.mpg_activity < 0 else 0)
+                detents = int(state.mpg_activity)
+                direction = 1 if detents > 0 else (-1 if detents < 0 else 0)
                 if direction:
                     self._encoder_direction = direction
-                    self._encoder_angle = (self._encoder_angle +
-                                           direction * 22.5) % 360
+                    previous_angle = self._encoder_angle
+                    self._encoder_angle = (previous_angle +
+                                           detents * 22.5) % 360
                     angle = math.radians(self._encoder_angle)
                     x = 120 + round(101 * math.cos(angle))
                     y = 120 + round(101 * math.sin(angle))
@@ -350,14 +355,20 @@ class RoundRenderer:
                         self.encoder_marker.x = x - 4
                         self.encoder_marker.y = y - 4
                         self.encoder_marker.hidden = False
-                    trail_angle = math.radians(
-                        self._encoder_angle - direction * 12)
-                    tx = 120 + round(97 * math.cos(trail_angle))
-                    ty = 120 + round(97 * math.sin(trail_angle))
+                    trail_angle = math.radians(previous_angle)
+                    tx = 120 + round(101 * math.cos(trail_angle))
+                    ty = 120 + round(101 * math.sin(trail_angle))
                     if self.encoder_trail is not None:
                         self.encoder_trail.x = tx - 2
                         self.encoder_trail.y = ty - 2
                         self.encoder_trail.hidden = False
+                    far_angle = math.radians(previous_angle - direction * 22.5)
+                    fx = 120 + round(101 * math.cos(far_angle))
+                    fy = 120 + round(101 * math.sin(far_angle))
+                    if self.encoder_far_trail is not None:
+                        self.encoder_far_trail.x = fx - 2
+                        self.encoder_far_trail.y = fy - 2
+                        self.encoder_far_trail.hidden = False
                     self._encoder_started = now
                     self._encoder_phase = -1
                     self._encoder_dirty = True
@@ -369,6 +380,8 @@ class RoundRenderer:
                         self.encoder_marker.hidden = True
                     if self.encoder_trail is not None:
                         self.encoder_trail.hidden = True
+                    if self.encoder_far_trail is not None:
+                        self.encoder_far_trail.hidden = True
                     self._encoder_started = 0.0
                     self._encoder_dirty = True
                     changed = True
@@ -383,6 +396,9 @@ class RoundRenderer:
                             self.encoder_palettes[0][2] = theme.shade_color(accent,strength*64//100)
                             self.encoder_palettes[0][3] = theme.shade_color(accent,strength*28//100)
                             self.encoder_palettes[1][1] = theme.shade_color(accent,strength*36//100)
+                            if len(self.encoder_palettes) > 2:
+                                self.encoder_palettes[2][1] = theme.shade_color(
+                                    accent, strength * 16 // 100)
                         self._encoder_dirty = True
                         changed = True
         if self.touch_halo is not None and self._halo_visible:
