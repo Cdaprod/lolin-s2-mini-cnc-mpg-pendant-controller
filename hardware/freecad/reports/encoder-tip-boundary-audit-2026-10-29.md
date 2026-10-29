@@ -44,6 +44,18 @@ On the saved shapes, the native release shell and the faceplate Body Tip have ze
 
 The focused candidate was saved outside the repository, closed, reopened, recomputed through the pocket binder/Hole/Body, saved again, and reopened a second time. The final pocket Body stayed valid, up-to-date, and one solid; it matched the release feature's volume exactly after reopening. Candidate: `/tmp/pendant-encoder-boundary-serial-test/pocket-shell-candidate.FCStd` (SHA-256 `cedb2f27936f058079af7fad5a640640bbbec0c44e77ef9c95a1ec4091128a97`). The tracked handoff was not saved and remains SHA-256 `c20e68fcc2a17782a37aecc9eac1ae7388192e94479077532331948ac01a6d30`. The scoped binder/Hole/Body recompute returned 52 document-level errors, including known suppressed/history and cross-scope warnings, although the three target objects were valid and up-to-date. A separate exploratory full recompute on the Solid1-only variant returned 163 errors and took 219 seconds, exceeding the repository's recommended 180-second bound; do not repeat that broad recompute. The serialized candidate validates the focused boundary edit, but it is still a monolithic test copy with transitive external-Body dependencies and is not an independently editable component or assembly replacement.
 
+The corrected Tip-rooted dependency audit was run against both the tracked source and reopened scratch candidate with the same script and `Body_EncoderPocket` root:
+
+| Metric | Saved handoff | Scratch candidate |
+| --- | ---: | ---: |
+| Ordinary object closure | 147 | 143 |
+| Expanded dependency closure | 183 | 179 |
+| Active boundary crossings | 68 | 66 |
+| Sketcher external-geometry references | 29 | 29 |
+| Extraction readiness | BLOCKED (203 blockers, 19 uncertainties) | BLOCKED (199 blockers, 19 uncertainties) |
+
+The removed edge is `EncoderPocketShellM2Binder.Support → EncoderPocketSliceZ0`; the replacement is `EncoderPocketShellM2Binder.Support → EncoderPocketShellReleaseNoFaceplateRetention`. The remaining direct active boundary links still include `EncoderFaceplateRetentionKeep.Base → Body_EncoderFacePlateLandSplit` and `EncoderPocketShellRelease.Base → EncoderPocketWallM2Countersink`. Thus the candidate removes the accidental split-result dependency and reduces the graph by four expanded objects, but it does not make the shell standalone. The machine-readable comparison was generated in `/tmp/encoder-pocket-baseline-closure.json` and `/tmp/encoder-pocket-candidate-closure.json`; neither is a production manifest.
+
 The direct release feature still depends on `EncoderFaceplateRetentionKeep` (through its `Tool`) and on the existing pocket-wall hole feature (through its `Base`). The front-shell and faceplate construction paths therefore remain in the transitive dependency graph. Next, audit the exact geometry and constraints consumed by `EncoderFaceplateRetentionKeep` and confirm the pocket-wall pilot positions/diameters, then test a disposable candidate save/reopen before considering extraction. Keep the production handoff, modular assembly, master, and static interim assembly representations unchanged until those checks pass.
 
 ### Retention-keep geometry mapping
