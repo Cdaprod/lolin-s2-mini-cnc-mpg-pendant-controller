@@ -413,7 +413,7 @@ GPB2             SELECT / momentary               LOCAL Orange/Black
 GPB3             Reserved — BACK                  Future
 GPB4             Reserved — FN                    Future
 GPB5             Reserved — CANCEL                Future
-GPB6             Reserved — DEADMAN               Future
+GPB6             Dedicated hold-to-run            Planned; not connected
 GPB7             Reserved                         Future expansion
 
 
@@ -677,23 +677,22 @@ GPB2      Existing momentary SELECT button
 GPB3      Reserved BACK
 GPB4      Reserved FN
 GPB5      Reserved CANCEL
-GPB6      Reserved DEADMAN
+GPB6      Dedicated hold-to-run (not connected)
 GPB7      Reserved expansion
 
 MOTION HOLD-TO-RUN DEPENDENCY
 -----------------------------
 
-The canonical XIAO profile currently leaves `MPG_PIN_DEADMAN` blank because
-GPB6 is reserved and no dedicated hold-to-run control is part of the connected
-harness. The S3 C3-wireless controller and C3 receiver both fail closed unless
+The canonical XIAO profile assigns `MPG_PIN_DEADMAN="GPB6"` for the dedicated,
+active-low hold-to-run switch. That switch is planned but not connected yet;
+keep physical inputs disabled until the connection is wired and verified. The
+S3 C3-wireless controller and C3 receiver both fail closed unless
 the MPG packet carries an active deadman signal. Therefore the documented
 encoder and selector connections alone can validate physical input reporting,
 but every jog will remain rejected. Do not repurpose the remote E-stop
-observation as a deadman. Before any motion commissioning, either connect a
-dedicated hold-to-run control to GPB6 and configure `MPG_PIN_DEADMAN="GPB6"`
-with the documented active-low polarity, or formally revise and revalidate the
-motion safety design. Controller and motion remain disabled until that gate is
-resolved.
+observation as a deadman. Before any motion commissioning, physically connect
+and verify the dedicated hold-to-run control on GPB6 with active-low polarity.
+Controller and motion remain disabled until that gate is resolved.
 
 
 ===============================================================================
@@ -720,7 +719,7 @@ MPG_PIN_BUTTON_SELECT      GPB2
 MPG_PIN_BUTTON_BACK        GPB3     RESERVED
 MPG_PIN_BUTTON_FN          GPB4     RESERVED
 MPG_PIN_BUTTON_CANCEL      GPB5     RESERVED
-MPG_PIN_DEADMAN            GPB6     RESERVED
+MPG_PIN_DEADMAN            GPB6     PLANNED — NOT CONNECTED
 
 MPG_I2C_SDA_PIN            D4
 MPG_I2C_SCL_PIN            D5
@@ -763,7 +762,7 @@ LOGICAL ALLOCATION COMPLETE:
 [RESERVED] BACK -> GPB3
 [RESERVED] FN -> GPB4
 [RESERVED] CANCEL -> GPB5
-[RESERVED] DEADMAN -> GPB6
+[PLANNED, NOT CONNECTED] HOLD-TO-RUN -> GPB6
 [RESERVED] Expansion -> GPB7
 
 

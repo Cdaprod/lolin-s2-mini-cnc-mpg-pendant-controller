@@ -36,8 +36,9 @@ class HardwareProfileTests(unittest.TestCase):
         self.assertEqual(values["MPG_SD_ENABLED"], "false")
         self.assertEqual(values["MPG_PIN_BUTTON_SELECT"], "GPB2")
         self.assertEqual(values["MPG_PIN_ESTOP_OBSERVE"], "GPB1")
+        self.assertEqual(values["MPG_PIN_DEADMAN"], "GPB6")
         for key in ("MPG_PIN_BUTTON_BACK", "MPG_PIN_BUTTON_FN",
-                    "MPG_PIN_BUTTON_CANCEL", "MPG_PIN_DEADMAN"):
+                    "MPG_PIN_BUTTON_CANCEL"):
             self.assertEqual(values[key], "")
 
     def test_xiao_profile_and_example_match_canonical_harness_pin_map(self):
@@ -156,7 +157,7 @@ class HardwareProfileTests(unittest.TestCase):
         self.assertEqual(config["button_pins"]["BACK"], "")
         self.assertEqual(config["button_pins"]["FN"], "")
         self.assertEqual(config["button_pins"]["CANCEL"], "")
-        self.assertEqual(config["deadman_pin"], "")
+        self.assertEqual(config["deadman_pin"], "GPB6")
         self.assertEqual(config["display_driver"], "gc9a01")
         self.assertEqual(config["display_renderer"], "round")
         self.assertEqual(config["display_width"], 240)

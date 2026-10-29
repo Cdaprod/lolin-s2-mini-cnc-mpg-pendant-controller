@@ -86,9 +86,9 @@ MPG_PIN_BUTTON_CANCEL=""
 # Firmware-observed remote stop only; not a safety-rated cabinet E-stop.
 MPG_PIN_ESTOP_OBSERVE="GPB1"
 MPG_ESTOP_ACTIVE_LOW="true"
-# GPB6 is reserved for a future dedicated deadman connection. Leave blank
-# until that physical contact is wired and verified; MPG admission stays shut.
-MPG_PIN_DEADMAN=""
+# Dedicated active-low hold-to-run switch planned for GPB6. The physical
+# switch is not connected yet; keep inputs disabled until it is wired/verified.
+MPG_PIN_DEADMAN="GPB6"
 MPG_DEADMAN_ACTIVE_LOW="true"
 MPG_BUTTON_DEBOUNCE="0.03"
 MPG_BUTTON_LONG_PRESS="0.8"
