@@ -3,6 +3,8 @@
 from src.display.ui import TouchEvent
 from src.input.touch_gestures import TouchGestures
 
+TOUCH_SAMPLE_UNAVAILABLE = object()
+
 
 class TouchInput:
     """Normalize releases to UI navigation, with a tiny visual touch signal."""
@@ -49,7 +51,16 @@ class TouchInput:
         self.poll_count += 1
         self.last_contact_transition = None
         try:
-            point = self._transform(self.source.point())
+            raw_point = self.source.point()
+            if raw_point is TOUCH_SAMPLE_UNAVAILABLE:
+                # A skipped shared-I2C read says nothing about contact state.
+                # Restart any pending release debounce instead of counting
+                # time during which the sensor could not be sampled.
+                self.gestures.defer_release()
+                self.last_error = None
+                self.consecutive_errors = 0
+                return ()
+            point = self._transform(raw_point)
             self.last_error = None
             self.consecutive_errors = 0
         except (OSError, RuntimeError, ValueError) as exc:
@@ -140,7 +151,7 @@ class CHSC6XTouchSource:
         if not self.i2c.try_lock():
             # No new touch sample while other shared-I2C clients are busy.
             self.bus_busy_count += 1
-            return None
+            return TOUCH_SAMPLE_UNAVAILABLE
         try:
             self.i2c.readfrom_into(self.ADDRESS, self.buffer)
             self.read_count += 1

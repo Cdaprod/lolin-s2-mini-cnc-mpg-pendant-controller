@@ -100,3 +100,8 @@ class TouchGestures:
             return ()
         return ((kind, x1 if kind == "release_select" else x0,
                  y1 if kind == "release_select" else y0),)
+
+    def defer_release(self):
+        """Exclude an unavailable sensor interval from release debounce."""
+        if self.active and self.missing_since is not None:
+            self.missing_since = self.clock()
