@@ -10,6 +10,9 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from PIL import Image, ImageDraw, ImageFont
 from src.display.round_ui import bezel_palette, theme
+from src.display.round_ui.effects import (TOUCH_BITMAP_CENTER,
+                                          TOUCH_BITMAP_SIZE, touch_level,
+                                          touch_zone)
 from src.display.round_ui.rotor import bezel_segment_levels
 from src.display.round_ui.renderer import HUD_ORBIT_RATES
 from src.display.ui import build_screens
@@ -380,38 +383,24 @@ encoder_preview.convert("RGB").save(OUT / "encoder-motion.png")
 
 def touch_palette(progress, accent):
     """Match the four preallocated firmware touch-ring palette zones."""
-    progress = max(0.0, min(1.0, float(progress)))
-    core = int(100 * max(0.0, 1.0 - progress / 0.48))
-    inner = int(84 * max(0.0, 1.0 - abs(progress - 0.10) / 0.40))
-    middle = 14 + int(78 * max(
-        0.0, 1.0 - abs(progress - 0.48) / 0.46))
-    outer = 12 + int(88 * max(
-        0.0, 1.0 - abs(progress - 0.78) / 0.78))
-    return (outer, middle, inner, core)
+    return tuple(touch_level(index, progress) for index in range(1, 5))
 
 
 def draw_touch_sprite(image, center, progress, accent):
-    """Draw the exact 41px bitmap zones and current firmware color phase."""
+    """Draw the exact shared bitmap zones and current firmware color phase."""
     colors = [rgb(theme.shade_color(accent, strength))
               for strength in touch_palette(progress, accent)]
     draw = ImageDraw.Draw(image)
     cx, cy = center
-    for y in range(41):
-        for x in range(41):
-            radius2 = (x - 20) ** 2 + (y - 20) ** 2
-            if radius2 <= 9:
-                zone = 3
-            elif 36 <= radius2 <= 64:
-                zone = 2
-            elif 144 <= radius2 <= 196:
-                zone = 1
-            elif 324 <= radius2 <= 400:
-                zone = 0
-            else:
+    for y in range(TOUCH_BITMAP_SIZE):
+        for x in range(TOUCH_BITMAP_SIZE):
+            zone = touch_zone(x, y)
+            if not zone:
                 continue
-            color = colors[zone]
+            color = colors[zone - 1]
             if color != (0, 0, 0):
-                draw.point((cx + x - 15, cy + y - 15), fill=color)
+                draw.point((cx + x - TOUCH_BITMAP_CENTER,
+                            cy + y - TOUCH_BITMAP_CENTER), fill=color)
 
 
 touch_base = Image.open(OUT / "ice-configuration.png").convert("RGB")

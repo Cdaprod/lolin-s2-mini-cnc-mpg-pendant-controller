@@ -3,6 +3,7 @@
 import math
 
 from . import bezel_palette, theme
+from .effects import TOUCH_BITMAP_CENTER, TOUCH_BITMAP_SIZE, touch_zone
 from .renderer import RoundRenderer
 
 _BACKLIGHT_OUTPUT = None
@@ -395,23 +396,15 @@ def displayio_scene(display, colors=None, bezel_name=None):
 
     # Build the retained touch pulse once; its layer is moved above ordinary
     # labels below so the contact response remains visible on a direct tap.
-    halo = displayio.Bitmap(41, 41, 5)
+    halo = displayio.Bitmap(TOUCH_BITMAP_SIZE, TOUCH_BITMAP_SIZE, 5)
     halo_palette = displayio.Palette(5)
     halo_palette[0] = 0x000000
     halo_palette.make_transparent(0)
     for index in range(1, 5):
         halo_palette[index] = theme.shade_color(colors["accent"], 0)
-    for hy in range(41):
-        for hx in range(41):
-            radius2 = (hx - 20) ** 2 + (hy - 20) ** 2
-            if radius2 <= 9:
-                halo[hx, hy] = 4
-            elif 36 <= radius2 <= 64:
-                halo[hx, hy] = 3
-            elif 144 <= radius2 <= 196:
-                halo[hx, hy] = 2
-            elif 324 <= radius2 <= 400:
-                halo[hx, hy] = 1
+    for hy in range(TOUCH_BITMAP_SIZE):
+        for hx in range(TOUCH_BITMAP_SIZE):
+            halo[hx, hy] = touch_zone(hx, hy)
     palettes["halo"] = halo_palette
     halo_node = displayio.TileGrid(halo, pixel_shader=halo_palette)
     halo_node.hidden = True
