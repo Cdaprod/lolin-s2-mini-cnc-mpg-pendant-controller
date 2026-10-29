@@ -18,7 +18,9 @@ from .rotor import (BEZEL_SEGMENT_OFFSET_RAD, BezelRotor,
 # retained marker radii. Integer DisplayIO coordinates then produce a regular
 # one-pixel cadence instead of the visible multi-pixel jumps from faster rates.
 HUD_ORBIT_RATES = (0.22, -0.20)
-NONHOME_MODEL_INTERVAL_MS = 33
+# Detail screens refresh state at 20 Hz; user actions, safety transitions,
+# page swipes, and retained animation frames bypass this model cadence.
+NONHOME_MODEL_INTERVAL_MS = 50
 # Keep the page handoff fluid while making the destination feel immediate.
 # At the current retained-layer refresh cadence this gives roughly 8–9 frames.
 PAGE_SWIPE_DURATION = 0.36
