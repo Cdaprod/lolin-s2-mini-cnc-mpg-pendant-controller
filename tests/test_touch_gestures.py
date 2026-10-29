@@ -180,10 +180,10 @@ class GestureTests(unittest.TestCase):
         source.current = TOUCH_SAMPLE_UNAVAILABLE
         self.assertEqual(touch.poll(), ())
         self.assertTrue(touch.gestures.active)
-        clock.t = .189
+        clock.t = .169
         source.current = None
         self.assertEqual(touch.poll(), ())
-        clock.t = .191
+        clock.t = .171
         self.assertEqual(touch.poll()[0].kind, "release_select")
 
     def test_tap_release_is_confirmed_after_stable_60ms(self):
