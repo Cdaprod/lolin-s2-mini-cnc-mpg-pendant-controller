@@ -70,6 +70,13 @@ class TouchInput:
                 self.last_contact_transition = (
                     "down" if is_active else "up",
                     int(transition_point[0]), int(transition_point[1]))
+                if is_active:
+                    # Acknowledge contact immediately with the retained halo.
+                    # Navigation remains release-gated by TouchGestures.
+                    self.last_feedback = (
+                        int(transition_point[0]), int(transition_point[1]),
+                        "contact")
+                    self.feedback_until = self.clock() + 0.20
         if not events:
             return ()
         kind, x, y = events[0]

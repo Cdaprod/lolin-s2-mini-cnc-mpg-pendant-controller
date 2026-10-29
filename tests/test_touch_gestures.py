@@ -35,6 +35,18 @@ class FlakySource(Source):
 
 
 class GestureTests(unittest.TestCase):
+    def test_contact_down_shows_feedback_without_dispatching_navigation(self):
+        clock = Clock()
+        source = Source()
+        touch = TouchInput(source, clock)
+        source.current = (90, 65)
+
+        self.assertEqual(touch.poll(), ())
+        self.assertEqual(touch.last_contact_transition, ("down", 90, 65))
+        self.assertEqual(touch.last_feedback, (90, 65, "contact"))
+        self.assertAlmostEqual(touch.feedback_until, 0.20)
+        self.assertTrue(touch.gestures.active)
+
     def test_touch_contact_diagnostics_report_coordinates_and_ignore_read_errors(self):
         clock = Clock()
         source = FlakySource()
