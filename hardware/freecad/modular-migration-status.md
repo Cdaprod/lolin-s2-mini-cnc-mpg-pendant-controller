@@ -58,14 +58,9 @@ The authoritative monolith remains byte-for-byte unchanged (SHA256 `dc2aeddf7be3
 
 ### Shell dependency report
 
-`shell-dependency-report.md` was generated from the saved FreeCAD object/dependency graph before making any shell geometry change. It records 26 direct cross-Body links involving `Body` / `Body002` and their construction Bodies, plus the key top-level construction links that do not belong to a PartDesign Body. The taper references are real but are not the only or primary dependency path:
+The earlier broad XML inventory is retained in `shell-dependency-report.md` as historical analysis, but its 331/307-style closure and “dominant active rear-Tip path” statements are superseded for Tip reachability. The corrected audit follows `Body002.Tip` through feature input properties, skips Body/Part ownership containers, distinguishes suppressed ancestry, and enumerates the remaining paths. It establishes why the Tip closure did not shrink: the seam/back/land substitutions are not in that Tip's transitive feature inputs. The sole remaining front-shell reference in full ancestry is `Binder016.Support → Body.Sketch019`, reached through suppressed Pads 020–022.
 
-- Rear seam-envelope construction consumes `Body.AdditiveLoft` through `Binder007`, and all 16 selected edges of `Body.Sketch006` / 10 edges of `Body.Sketch005` through `Binder008` and `Binder009`.
-- `Binder016` and `Binder017` reference front `Sketch019` / `Sketch020` for separate screw/alignment construction.
-- The dominant active rear-Tip dependency path goes through `RearFullLandTransfer → Body002FullLandTransferTool → Body002FullWidthSeat` and imports `SmallHangerPocketBody` from the front shell. The front active Tip also depends on the mating receiver chain (`RearFullWidthReceiver → FrontFullWidthReceiver`).
-- A graph-only counterfactual removing the three taper binder links reduces the rear active-Tip closure by zero objects (331 → 331). Removing the five front-supported rear binders plus the rear land-transfer link reduces that graph closure from 331 to 185. This is a dependency-graph estimate, not a modified or validated CAD candidate.
-
-The 325-object `front-rear-shells.FCStd` remains an unvalidated disposable candidate and is not included in the assembly or commits. Its recompute/save/reopen attempts still fail because of broken face references, suppressed-feature failures, and Body-versus-Tip shape mismatches. The requested 27.0 → 27.5 → 27.0 mm shell propagation and save/reopen validation therefore did not pass. No taper or shell geometry was changed. The next shell attempt must address the mating-land transfer path as well as the taper, using limited fixed master geometry rather than freezing either shell Body.
+The 325-object `front-rear-shells.FCStd` remains an unvalidated disposable candidate and is not included in the assembly or commits. Its recompute/save/reopen attempts still fail because of broken face references, suppressed-feature failures, and Body-versus-Tip shape mismatches. The requested 27.0 → 27.5 → 27.0 mm shell propagation and save/reopen validation therefore did not pass. No taper or shell geometry was changed.
 
 ### Master-driven locator parameter
 
@@ -91,7 +86,7 @@ The shared/local split now has one validated local component parameter in additi
 
 The display-retainer local-parameter attempt was not promoted. Driving the early base Pad caused the existing downstream junction Fillet to report invalid edge references on recompute, while a terminal clearance-pocket depth change did not measurably change its output. The original display-retainer document remains untouched. Continue identifying local parameters only where an actual edit produces a valid, measurable, recoverable geometry change.
 
-The rear transfer-reference experiment and its dependency-graph comparison are recorded in `shell-dependency-report.md`. It replaced the direct `RearFullLandTransfer.Base` edge only in a disposable copy; the rear closure did not shrink because other front-supported dependencies still reach `SmallHangerPocketBody`. The experiment was therefore not added to the production master or assembly.
+The rear transfer-reference and frame-preserving profile experiments are recorded in `shell-dependency-report.md`. The Tip-rooted follow-up showed that `RearFullLandTransfer.Base`, `Binder008.Support`, and `Binder009.Support` are outside the active rear Tip dependency closure, so changing them cannot reduce its count. Their successful candidate substitutions were not promoted to the production master or assembly.
 
 ### Targeted dependency and fragile-reference audit (2026-10-29)
 

@@ -1,5 +1,7 @@
 # Front/rear shell cross-Body dependency report
 
+> **Tip-rooted correction:** The later [rear Tip dependency audit](rear-tip-dependency-audit.md) shows that the 331/307-style figures and several paths below are not a reliable measure of the active rear Tip's transitive feature inputs. In the saved frame-preserving candidate, `Binder008`, `Binder009`, and `RearFullLandTransfer` are outside `Body002.Tip`'s 51-object feature closure. The only remaining front-shell subelement reference in the full closure is `Binder016.Support → Body.Sketch019`, reached through suppressed historical Pads 020–022. Use the later audit for current Tip-rooted reachability; retain this report as the earlier broad dependency inventory.
+
 Source: `pendant.FCStd` saved document XML; no geometry modified for this audit. The report distinguishes explicit object-property links from FreeCAD’s serialized `ObjectDeps` fallback.
 
 ## Counts
