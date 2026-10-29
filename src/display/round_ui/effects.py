@@ -16,7 +16,7 @@ def touch_zone(x, y):
     dx = int(x) - TOUCH_BITMAP_CENTER
     dy = int(y) - TOUCH_BITMAP_CENTER
     radius2 = dx * dx + dy * dy
-    if radius2 <= 9:
+    if radius2 <= 4:
         return TOUCH_CORE
     if 36 <= radius2 <= 64:
         return TOUCH_INNER
