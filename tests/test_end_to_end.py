@@ -11,7 +11,7 @@ from src.display.ui import TouchEvent
 
 
 class EndToEndTests(unittest.TestCase):
-    def test_home_menu_opens_on_contact_and_release_does_not_select_a_row(self):
+    def test_home_menu_opens_on_release_after_immediate_contact_feedback(self):
         class TouchManager:
             last_contact_transition = ("down", 130, 102)
             last_feedback = (130, 102, "contact")
@@ -31,17 +31,15 @@ class EndToEndTests(unittest.TestCase):
             touch_manager=touch, clock=lambda: 1.0)
 
         app.poll()
-        self.assertEqual(app.ui.current_screen, "MAIN_MENU")
-        self.assertTrue(app._touch_menu_preview_active)
+        self.assertEqual(app.ui.current_screen, "HOME")
 
         touch.last_contact_transition = ("up", 130, 102)
         touch.events = (TouchEvent("release_select", 130, 102),)
         app.poll()
         self.assertEqual(app.ui.current_screen, "MAIN_MENU")
-        self.assertFalse(app._touch_menu_preview_active)
         self.assertFalse(app.state.controller_enabled)
 
-    def test_home_menu_contact_preview_cancels_before_horizontal_page_swipe(self):
+    def test_home_menu_stays_closed_during_contact_and_swipe_navigates(self):
         class TouchManager:
             last_contact_transition = ("down", 130, 102)
             last_feedback = (130, 102, "contact")
@@ -60,7 +58,7 @@ class EndToEndTests(unittest.TestCase):
             display=ConsoleDisplay(lambda frame: None),
             touch_manager=touch, clock=lambda: 1.0)
         app.poll()
-        self.assertEqual(app.ui.current_screen, "MAIN_MENU")
+        self.assertEqual(app.ui.current_screen, "HOME")
 
         touch.last_contact_transition = None
         touch.gestures.axis_lock = "horizontal"
@@ -69,9 +67,8 @@ class EndToEndTests(unittest.TestCase):
 
         self.assertEqual(app.ui.current_screen, "EXPLORER")
         self.assertEqual(app.state.active_page, "EXPLORER")
-        self.assertFalse(app._touch_menu_preview_active)
 
-    def test_home_menu_contact_preview_cancels_on_long_press(self):
+    def test_home_menu_stays_closed_on_contact_and_long_press(self):
         class TouchManager:
             last_contact_transition = ("down", 130, 102)
             last_feedback = (130, 102, "contact")
@@ -90,14 +87,13 @@ class EndToEndTests(unittest.TestCase):
             display=ConsoleDisplay(lambda frame: None),
             touch_manager=touch, clock=lambda: 1.0)
         app.poll()
-        self.assertEqual(app.ui.current_screen, "MAIN_MENU")
+        self.assertEqual(app.ui.current_screen, "HOME")
 
         touch.last_contact_transition = None
         touch.events = (TouchEvent("long_press", 130, 102),)
         app.poll()
 
         self.assertEqual(app.ui.current_screen, "HOME")
-        self.assertFalse(app._touch_menu_preview_active)
         self.assertFalse(app.state.controller_enabled)
 
     def test_touch_preview_renders_before_wifi_service(self):
@@ -129,7 +125,7 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(app.ui.focus["MAIN_MENU"], 1)
         self.assertLess(order.index("render"), order.index("wifi"))
 
-    def test_home_contact_opens_safe_menu_and_shows_touch_feedback(self):
+    def test_home_contact_shows_touch_feedback_without_opening_menu(self):
         feedback = []
 
         class TouchManager:
@@ -154,7 +150,7 @@ class EndToEndTests(unittest.TestCase):
         app.poll()
 
         self.assertEqual(feedback, [((90, 65), 1.2)])
-        self.assertEqual(app.ui.current_screen, "MAIN_MENU")
+        self.assertEqual(app.ui.current_screen, "HOME")
         self.assertFalse(app.state.controller_enabled)
 
     def test_touch_contact_precedes_released_gesture_in_diagnostics(self):
