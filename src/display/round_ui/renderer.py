@@ -14,6 +14,7 @@ from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
 # retained marker radii. Integer DisplayIO coordinates then produce a regular
 # one-pixel cadence instead of the visible multi-pixel jumps from faster rates.
 HUD_ORBIT_RATES = (0.20, -0.16)
+NONHOME_MODEL_INTERVAL_MS = 33
 _PROFILE_TICKS_MASK = (1 << 29) - 1
 _PROFILE_TICKS_HALF = 1 << 28
 
@@ -58,6 +59,8 @@ class RoundRenderer:
         self.hud_markers = scene.get("hud_markers", ())
         self._hud_phase = -1
         self._hud_dirty = False
+        self._last_nonhome_model_ticks = None
+        self._last_nonhome_safety_signature = None
         self.palettes = scene.get("palettes", {})
         self.themed_text = scene.get("themed_text", ())
         self.active_theme = None
@@ -256,6 +259,46 @@ class RoundRenderer:
                     0, _profile_ticks_diff(
                         self._profile_ticks_ms(), refresh_started))
                 return True
+        if self.ui.current_screen != "HOME":
+            now_ticks = self._profile_ticks_ms()
+            last_ticks = self._last_nonhome_model_ticks
+            safety_signature = (
+                state.estop_observed, state.estop_latched, state.alarm,
+                state.sd_job_state, self.ui.active_overlay())
+            safety_changed = (
+                safety_signature != self._last_nonhome_safety_signature)
+            if (not self.ui.dirty and not safety_changed and
+                    last_ticks is not None and
+                    _profile_ticks_diff(now_ticks, last_ticks) <
+                    NONHOME_MODEL_INTERVAL_MS):
+                # Input, touch, and safety processing stay at the app's full
+                # poll rate. Only menu/detail view-model work is capped;
+                # event-driven UI dirtiness above this branch renders now.
+                transient_dirty = (self._halo_dirty or self._nav_dirty or
+                                   self._hud_dirty)
+                if transient_dirty:
+                    refresh_started = self._profile_ticks_ms()
+                    self.render_count += 1
+                    try:
+                        self._refresh_if_manual()
+                    except (AttributeError, RuntimeError):
+                        pass
+                    self._halo_dirty = False
+                    self._nav_dirty = False
+                    self._hud_dirty = False
+                    self.last_model_ms = 0
+                    self.last_update_ms = 0
+                    self.last_refresh_ms = max(
+                        0, _profile_ticks_diff(
+                            self._profile_ticks_ms(), refresh_started))
+                    return True
+                self.skipped_count += 1
+                self.last_model_ms = 0
+                self.last_update_ms = 0
+                self.last_refresh_ms = 0
+                return False
+            self._last_nonhome_model_ticks = now_ticks
+            self._last_nonhome_safety_signature = safety_signature
         model_started = self._profile_ticks_ms()
         model = self.ui.view_model()
         update_started = self._profile_ticks_ms()
