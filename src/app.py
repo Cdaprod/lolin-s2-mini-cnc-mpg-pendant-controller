@@ -70,9 +70,8 @@ class PendantApplication:
         self.indicator_output = indicator_output
         self.sd_mount = sd_mount
         self.touch_manager = touch_manager
-        # HOME touch selection opens navigation, so preview it on contact for
-        # immediate feedback. Cancel the preview if the gesture becomes a
-        # swipe or long press. Actual menu row selection stays on lift.
+        # Touch contact feedback is visual only. Navigation actions remain
+        # release-gated; non-HOME menu rows may preview while dragging.
         self.clock = clock
         try:
             import supervisor

@@ -55,11 +55,12 @@ twelve native outer arcs in the generated bezel artwork. They are longer than
 the former accents but retain clear gaps, avoiding the doubled, interleaved
 strokes seen when 24 accents were layered over the 12-arc artwork. A single
 broad, smooth brightness wave travels clockwise or counterclockwise around them;
-the arc shapes never pivot or rotate on their own axes. The inner counter-orbit
-orbs remain independent. This hybrid avoids a full-screen rotated framebuffer
-and keeps labels and scale marks stationary. It uses the normalized signed MPG
-activity already maintained by the app; it never reads the encoder, changes
-counts, modifies jog state, or sends commands.
+the arc shapes never pivot or rotate on their own axes. The renderer adds no
+continuous orbital beads or afterimages, so there is no secondary moving layer
+to leave stale marks around the dial. The hybrid avoids a full-screen rotated
+framebuffer and keeps labels and scale marks stationary. It uses the normalized
+signed MPG activity already maintained by the app; it never reads the encoder,
+changes counts, modifies jog state, or sends commands.
 
 The fixed arcs and selected bezel artwork use the active top-level page's
 palette as well as the moving brightness wave. Home uses industrial cyan,
