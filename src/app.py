@@ -659,6 +659,7 @@ class PendantApplication:
             self._diag_max_input_ms = input_duration_ms
         self._diag_total_input_ms += input_duration_ms
         touch_started = self._diag_ticks_ms()
+        touch_needs_render = False
         if self.touch_manager is not None:
             touch_events = self.touch_manager.poll()
             contact = getattr(self.touch_manager,
@@ -667,13 +668,17 @@ class PendantApplication:
                 emit("touch_contact", state=contact[0],
                      x=contact[1], y=contact[2])
                 if contact[0] == "down":
+                    touch_needs_render = True
                     # Preview menu focus on contact in this same render pass.
                     # The later release event remains the only path that can
                     # select a row or dispatch its command.
                     preview = getattr(self.ui, "preview_touch", None)
                     if preview is not None:
-                        preview(contact[1], contact[2])
+                        touch_needs_render = (
+                            preview(contact[1], contact[2]) or
+                            touch_needs_render)
             for event in touch_events:
+                touch_needs_render = True
                 emit("touch_gesture", kind=event.kind, x=event.x, y=event.y)
                 try:
                     self.handle_ui_event(event)
@@ -707,6 +712,25 @@ class PendantApplication:
         self._diag_total_touch_ms += touch_duration_ms
         if hasattr(self.display, "animate"):
             self.display.animate(started)
+        if touch_needs_render:
+            # A touch response must not wait behind Wi-Fi association or other
+            # lower-priority services later in this loop. Render only on touch
+            # activity, then let the normal end-of-loop pass pick up any later
+            # telemetry changes.
+            touch_display_started = self._diag_ticks_ms()
+            self._update_indicator()
+            self.display.render(self.state)
+            touch_display_duration_ms = max(
+                0, _diag_ticks_diff_ms(
+                    self._diag_ticks_ms(), touch_display_started))
+            self._diag_total_display_model_ms += getattr(
+                self.display, "last_model_ms", 0)
+            self._diag_total_display_update_ms += getattr(
+                self.display, "last_update_ms", 0)
+            self._diag_total_display_refresh_ms += getattr(
+                self.display, "last_refresh_ms", 0)
+        else:
+            touch_display_duration_ms = 0
         if getattr(self.network_service, "scanning", False):
             if self.network_service.poll_scan():
                 self.ui.set_dynamic_items(
@@ -801,7 +825,7 @@ class PendantApplication:
             self.display, "last_update_ms", 0)
         self._diag_total_display_refresh_ms += getattr(
             self.display, "last_refresh_ms", 0)
-        display_duration_ms = max(
+        display_duration_ms = touch_display_duration_ms + max(
             0, _diag_ticks_diff_ms(self._diag_ticks_ms(), display_started))
         if display_duration_ms > self._diag_max_display_ms:
             self._diag_max_display_ms = display_duration_ms
