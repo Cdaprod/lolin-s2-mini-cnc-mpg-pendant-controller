@@ -313,6 +313,37 @@ class RoundRendererTests(unittest.TestCase):
         renderer.animate(0.2)
         self.assertTrue(all(item.hidden for item in segments))
 
+    def test_alarm_hides_rotor_when_decorative_animation_is_disabled(self):
+        _, _, _, renderer = self.make_renderer()
+        renderer.animations = False
+        marker, trail = Node(), Node()
+        renderer.hud_markers = ((marker, 109, None),)
+        renderer.hud_trails = ((trail, 109, None),)
+        segment = Node()
+        segment.hidden = False
+        segment.x, segment.y = 109, 120
+        renderer.bezel_segments = [segment]
+        overlay = [None]
+        renderer.ui.active_overlay = lambda: overlay[0]
+
+        renderer.animate(0.1)
+        self.assertFalse(segment.hidden)
+        self.assertTrue(marker.hidden)
+        self.assertTrue(trail.hidden)
+
+        overlay[0] = ("ALARM", "test alarm")
+        renderer.animate(0.2)
+        self.assertTrue(segment.hidden)
+        self.assertTrue(marker.hidden)
+        self.assertTrue(trail.hidden)
+
+        overlay[0] = None
+        renderer.animate(0.3)
+        self.assertFalse(segment.hidden)
+        self.assertTrue(marker.hidden)
+        self.assertTrue(trail.hidden)
+        self.assertEqual((segment.x, segment.y), (109, 120))
+
     def test_rotor_brightness_wave_follows_clockwise_and_counterclockwise(self):
         still = bezel_segment_levels(0.0, 24)
         clockwise = bezel_segment_levels(0.30, 24)

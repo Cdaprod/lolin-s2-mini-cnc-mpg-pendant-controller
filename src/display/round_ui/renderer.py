@@ -458,7 +458,7 @@ class RoundRenderer:
                 self._nav_visible = False
                 self._nav_dirty = True
                 changed = True
-        if self.animations and self.hud_markers:
+        if self.hud_markers or self.bezel_segments:
             overlay = self.ui.active_overlay() if self.ui else None
             unsafe = bool(overlay and overlay[0] in ("E-STOP", "ALARM"))
             if unsafe:
@@ -475,6 +475,22 @@ class RoundRenderer:
                 for sprite in self.bezel_segments:
                     if not sprite.hidden:
                         sprite.hidden = True
+                        self._hud_dirty = True
+                        changed = True
+            elif not self.animations:
+                for sprite, _, _ in self.hud_markers:
+                    if not sprite.hidden:
+                        sprite.hidden = True
+                        self._hud_dirty = True
+                        changed = True
+                for sprite, _, _ in self.hud_trails:
+                    if not sprite.hidden:
+                        sprite.hidden = True
+                        self._hud_dirty = True
+                        changed = True
+                for sprite in self.bezel_segments:
+                    if sprite.hidden:
+                        sprite.hidden = False
                         self._hud_dirty = True
                         changed = True
             else:
