@@ -349,7 +349,7 @@ class RoundRendererTests(unittest.TestCase):
         self.assertFalse(renderer.home_group.hidden)
         self.assertTrue(renderer.menu_group.hidden)
 
-    def test_top_page_swipe_slides_retained_groups_out_then_in(self):
+    def test_top_page_swipe_moves_retained_groups_together(self):
         state, ui, _, renderer = self.make_renderer()
         renderer.home_group = Node()
         renderer.menu_group = Node()
@@ -362,25 +362,45 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer.render(state))
         transition = renderer._page_transition
         start = transition["started"]
-        self.assertEqual(transition["phase"], "out")
-        self.assertTrue(renderer.animate(start + 0.12))
-        self.assertEqual(renderer.home_group.x, -60)
-        self.assertTrue(renderer.render(state))
-        self.assertTrue(renderer.animate(start + 0.241))
-        self.assertEqual(renderer.home_group.x, -240)
+        self.assertEqual(transition["phase"], "slide")
+        self.assertFalse(renderer.home_group.hidden)
         self.assertFalse(renderer.menu_group.hidden)
+        self.assertEqual(renderer.home_group.x, 0)
         self.assertEqual(renderer.menu_group.x, 240)
+        self.assertTrue(renderer.animate(start + 0.12))
+        self.assertEqual(renderer.home_group.x, -37)
+        self.assertEqual(renderer.menu_group.x, 203)
+        self.assertEqual(renderer.menu_group.x - renderer.home_group.x, 240)
+        self.assertTrue(renderer.render(state))
+        self.assertTrue(renderer.animate(start + 0.24))
+        self.assertEqual(renderer.home_group.x, -120)
+        self.assertEqual(renderer.menu_group.x, 120)
         self.assertTrue(renderer.render(state))
         self.assertEqual(renderer.menu_title.value, "FILE EXPLORER")
-
-        incoming = renderer._page_transition["started"]
-        self.assertTrue(renderer.animate(incoming + 0.12))
-        self.assertEqual(renderer.menu_group.x, 60)
-        renderer.render(state)
-        self.assertTrue(renderer.animate(incoming + 0.241))
+        self.assertTrue(renderer.animate(start + 0.50))
         self.assertEqual(renderer.menu_group.x, 0)
+        self.assertEqual(renderer.home_group.x, 0)
+        self.assertTrue(renderer.home_group.hidden)
+        self.assertFalse(renderer.menu_group.hidden)
         renderer.render(state)
         self.assertIsNone(renderer._page_transition)
+
+    def test_same_group_menu_page_swipe_keeps_safe_single_group_transition(self):
+        state, ui, _, renderer = self.make_renderer()
+        renderer.home_group = Node()
+        renderer.menu_group = Node()
+        renderer.menu_group.hidden = True
+        state.active_page = "EXPLORER"
+        ui.apply_selector_context()
+        renderer.render(state)
+        self.assertFalse(renderer.menu_group.hidden)
+        ui.page_swipe_direction = 1
+        state.active_page = "CONFIGURATION"
+        ui.apply_selector_context()
+
+        self.assertTrue(renderer.render(state))
+        self.assertEqual(renderer._page_transition["phase"], "out")
+        self.assertTrue(renderer.menu_group.hidden is False)
 
     def test_alarm_interrupts_page_swipe_transition(self):
         state, ui, _, renderer = self.make_renderer()
