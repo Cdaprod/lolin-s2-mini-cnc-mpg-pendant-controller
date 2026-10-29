@@ -901,6 +901,7 @@ class RoundRendererTests(unittest.TestCase):
                         renderer._halo_progress == TOUCH_HOLD_PROGRESS)
         self.assertEqual(renderer._halo_progress, TOUCH_HOLD_PROGRESS)
         self.assertGreater(palette[2], 0)
+        self.assertGreater(palette[3], 0)  # Compact inner contour aids visibility.
         self.assertEqual(palette[4], 0)
         self.assertEqual(palette[1], 0)
         held_ring = palette[2]

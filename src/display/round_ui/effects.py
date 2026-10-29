@@ -9,9 +9,10 @@ TOUCH_OUTER = 1
 TOUCH_MIDDLE = 2
 TOUCH_INNER = 3
 TOUCH_CORE = 4
-# Hold a single mid-radius ring under contact: larger than the tiny center dot,
-# but compact enough to avoid covering neighboring menu rows.
-TOUCH_HOLD_PROGRESS = 0.48
+# Hold a compact two-ring contact mark under the finger. The inner contour
+# keeps the acknowledgment visible when the fingertip covers the center, while
+# the 25px sprite stays clear of neighboring menu rows.
+TOUCH_HOLD_PROGRESS = 0.34
 
 
 def touch_zone(x, y):
@@ -34,7 +35,10 @@ def touch_level(index, progress):
     """Brightness percentage for a touch ripple palette index."""
     progress = max(0.0, min(1.0, float(progress)))
     if index == TOUCH_CORE:
-        return int(100 * max(0.0, 1.0 - progress / 0.42))
+        # Let the one-pixel contact core disappear before the compact held
+        # phase; otherwise the center point reads as a fixed cursor under the
+        # two contour rings.
+        return int(100 * max(0.0, 1.0 - progress / 0.30))
     if index == TOUCH_INNER:
         return int(78 * max(0.0, 1.0 - abs(progress - 0.12) / 0.42))
     if index == TOUCH_MIDDLE:
