@@ -131,6 +131,33 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer.menu[4].line.text, "SD CARD READY")
         self.assertTrue(renderer.menu_highlight.node.hidden)
 
+    def test_unverified_and_active_remote_stop_have_semantic_color(self):
+        state, ui, _, renderer = self.make_renderer()
+        state.active_page = "PREVIEW"
+        ui.enter("PREVIEW")
+        ui.refresh_context()
+        renderer.render(state)
+        self.assertEqual(renderer.menu[5].value, "Remote stop: UNKNOWN")
+        self.assertEqual(renderer.menu[5].line.color,
+                         theme.for_page("PREVIEW")["warning"])
+
+        state.estop_input_configured = True
+        state.input_valid = True
+        ui.refresh_context()
+        ui.dirty = True
+        renderer.render(state)
+        self.assertEqual(renderer.menu[5].value, "Remote stop: CLEAR")
+        self.assertEqual(renderer.menu[5].line.color,
+                         theme.for_page("PREVIEW")["success"])
+
+        state.estop_observed = True
+        ui.refresh_context()
+        ui.dirty = True
+        renderer.render(state)
+        self.assertEqual(renderer.menu[5].value, "Remote stop: ACTIVE")
+        self.assertEqual(renderer.menu[5].line.color,
+                         theme.for_page("PREVIEW")["danger"])
+
     def test_menu_rules_only_separate_visible_rows(self):
         state, ui, _, renderer = self.make_renderer()
         ui.enter("CONFIGURATION")

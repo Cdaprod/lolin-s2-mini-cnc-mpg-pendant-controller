@@ -25,6 +25,38 @@ def _profile_ticks_diff(newer, older):
         _PROFILE_TICKS_HALF
 
 
+def _detail_status_color(label, value, colors):
+    """Use restrained semantic colors for safety and hardware diagnostics."""
+    key = str(label).strip().lower()
+    state = str(value).strip().upper()
+    if key == "remote stop":
+        if state == "CLEAR":
+            return colors["success"]
+        if state == "ACTIVE":
+            return colors["danger"]
+        if state in ("UNKNOWN", "UNAVAILABLE", "RECOVERY_REQUIRED"):
+            return colors["warning"]
+    elif key == "hold-to-run":
+        if state == "ACTIVE":
+            return colors["accent"]
+        if state in ("INACTIVE", "UNKNOWN", "UNAVAILABLE", "UNCONFIGURED"):
+            return colors["warning"]
+    elif key in ("input sample", "selector sample"):
+        if state == "VALID":
+            return colors["success"]
+        if state in ("INVALID", "UNAVAILABLE"):
+            return colors["danger"]
+        if state in ("UNKNOWN", "UNCONFIGURED"):
+            return colors["warning"]
+    elif key in ("input error", "selector error"):
+        if state in ("NONE", ""):
+            return colors["success"]
+        return colors["danger"]
+    elif key == "mcp23017" and state in ("NOT DETECTED", "UNAVAILABLE"):
+        return colors["warning"]
+    return None
+
+
 class RoundRenderer:
     """Mutate a small persistent scene; never issue controller operations."""
 
@@ -554,6 +586,14 @@ class RoundRenderer:
                                  self.menu_colors[1])
                 elif not visible_items:
                     row_color = self.menu_colors[1]
+                if model.get("details") and index < len(visible_items):
+                    detail_index = window_start + index
+                    if detail_index < len(model["details"]):
+                        label, value = model["details"][detail_index]
+                        semantic_color = _detail_status_color(
+                            label, value, colors)
+                        if semantic_color is not None:
+                            row_color = semantic_color
                 changed = component.set_color(row_color) or changed
             changed = self.menu_highlight.set(
                 selected - window_start, bool(visible_items),
