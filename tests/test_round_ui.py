@@ -392,9 +392,10 @@ class RoundRendererTests(unittest.TestCase):
         self.assertAlmostEqual(marker.x, 120 + round(101 * math.cos(
             math.radians(-22.5))) - 4)
         self.assertAlmostEqual(trail.y, 120 + round(101 * math.sin(
-            math.radians(-90))) - 2)
+            math.radians(335.5))) - 2)
         self.assertAlmostEqual(far_trail.y, 120 + round(101 * math.sin(
-            math.radians(-112.5))) - 2)
+            math.radians(333.5))) - 2)
+        self.assertGreater(trail.x, far_trail.x)
 
     def test_home_and_menu_groups_are_mutually_exclusive(self):
         state, ui, _, renderer = self.make_renderer()

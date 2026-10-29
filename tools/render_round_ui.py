@@ -364,9 +364,15 @@ preview_home("encoder-motion.png", "CONNECTED", "X", "X10",
 encoder_preview = Image.open(OUT / "encoder-motion.png").convert("RGBA")
 encoder_draw = ImageDraw.Draw(encoder_preview)
 encoder_color = rgb(theme.select("industrial")["accent"])
-encoder_draw.ellipse((149, 14, 162, 27), fill=encoder_color+(45,))
-encoder_draw.ellipse((153, 18, 160, 25), fill=encoder_color+(230,))
-encoder_draw.ellipse((140, 10, 146, 16), fill=encoder_color+(80,))
+# Match runtime: a bead and short arc of two progressively dimmer afterimages.
+for degrees, radius, alpha in ((-71.5, 2, 26), (-69.5, 2, 80),
+                               (-67.5, 4, 225)):
+    radians = math.radians(degrees)
+    cx = 120 + round(101 * math.cos(radians))
+    cy = 120 + round(101 * math.sin(radians))
+    encoder_draw.ellipse((cx-radius, cy-radius, cx+radius, cy+radius),
+                         fill=encoder_color+(alpha,))
+encoder_draw.ellipse((158, 26, 161, 29), fill=(220, 252, 255, 240))
 encoder_preview.convert("RGB").save(OUT / "encoder-motion.png")
 
 touch_preview = Image.open(OUT / "amber-configuration.png").convert("RGBA")

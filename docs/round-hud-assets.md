@@ -59,8 +59,8 @@ counts, modifies jog state, or sends commands.
 Encoder activity produces a retained cyan bead with two progressively dimmer
 afterimages. The bead advances by the signed detent delta, so a batched encoder
 sample is represented by the same angular displacement rather than a fixed
-one-step jump. The afterimages follow the prior handwheel path and fade over
-240 ms; they are visual input feedback only and do not imply that a jog was
+one-step jump. The two afterimages sit 2 and 4 degrees behind the bead along the
+current direction and fade over 240 ms; they are visual input feedback only and do not imply that a jog was
 admitted or executed.
 
 `MPG_BEZEL_ROTATION_ENABLED` controls the outer rotor. Ambient speed defaults
