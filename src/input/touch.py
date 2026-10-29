@@ -21,6 +21,7 @@ class TouchInput:
         self.sample_count = 0
         self.event_count = 0
         self.last_point = None
+        self.last_contact_transition = None
         self.last_error = None
         self.consecutive_errors = 0
 
@@ -46,6 +47,7 @@ class TouchInput:
 
     def poll(self):
         self.poll_count += 1
+        self.last_contact_transition = None
         try:
             point = self._transform(self.source.point())
             self.last_error = None
@@ -54,10 +56,20 @@ class TouchInput:
             self.last_error = type(exc).__name__
             self.consecutive_errors += 1
             return ()
+        was_active = self.gestures.active
+        previous_point = self.gestures.last or self.last_point
         self.last_point = point
         if point is not None:
             self.sample_count += 1
         events = self.gestures.poll(point)
+        is_active = self.gestures.active
+        if was_active != is_active:
+            transition_point = (point if is_active else
+                                previous_point or self.gestures.start)
+            if transition_point is not None:
+                self.last_contact_transition = (
+                    "down" if is_active else "up",
+                    int(transition_point[0]), int(transition_point[1]))
         if not events:
             return ()
         kind, x, y = events[0]
