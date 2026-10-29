@@ -932,6 +932,8 @@ class PendantApplication:
                  selector_position=selector_position_state,
                  increment=increment_state,
                  deadman=deadman_state,
+                 screen=self.ui.current_screen,
+                 page=self.state.active_page,
                  wifi=self.state.wifi_state,
                  controller=self.state.connection_state)
             self._diag_loop_overruns = 0

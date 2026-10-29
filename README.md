@@ -325,12 +325,14 @@ line reports the initialization error category. Runtime I2C poll failures are
 reported under System Info after three consecutive errors. Touch is not
 assumed healthy merely because the SPI display works. Motion stays gated.
 
-For improved large-label font rendering, the round renderer optionally uses
-`/fonts/DejaVuSans-14.bdf` with `adafruit_bitmap_font` installed in `/lib`.
-Without both, the old scaled terminal font is retained. This is a fallback,
-not an included new font file or guaranteed antialiased rendering.
-The normal UI only redraws on state or navigation changes; an idle offline
-screen is intentionally stable, not evidence that its loop is stopped.
+The round renderer ships native-size DejaVu Sans BDF fonts and the
+CircuitPython bitmap-font dependency. It uses 10 px compact status labels,
+12 px body text, 14 px bold headings, and 24 px bold primary readouts, avoiding the jagged enlarged
+terminal glyphs and clipped long titles visible in earlier builds. See
+`fonts/README.md` for licensing and regeneration. A terminal-font fallback is
+kept for recovery if the optional bitmap-font dependency cannot load. The
+normal UI only redraws on state or navigation changes; an idle offline screen
+is intentionally stable, not evidence that its loop is stopped.
 
 ### Round Display microSD commissioning
 

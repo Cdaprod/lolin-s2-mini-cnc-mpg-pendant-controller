@@ -64,7 +64,20 @@ class Font:
         self.atlas[2, 1] = 1
 
     def get_glyph(self, codepoint):
+        if codepoint == ord(" "):
+            return GlyphWithNoBitmap()
         return Glyph(self.atlas, 0 if codepoint == ord("A") else 1)
+
+
+class GlyphWithNoBitmap:
+    width = 3
+    height = 0
+    shift_x = 3
+    tile_index = 0
+
+    @property
+    def bitmap(self):
+        raise AssertionError("blank glyph bitmap must not be accessed")
 
 
 class DisplayIO:
@@ -120,6 +133,15 @@ class DisplayIOTextLineTests(unittest.TestCase):
         line.set_text("A")
         self.assertEqual(line.bitmap.pixels,
                          [[1, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0]])
+
+    def test_zero_height_space_uses_advance_without_reading_bitmap(self):
+        module = types.SimpleNamespace(blit=bitmaptools_blit)
+        with patch.dict(sys.modules, {"bitmaptools": module}):
+            line = _DisplayIOTextLine(8, 2, Font(), DisplayIO)
+        line.set_text("A A")
+        self.assertEqual(line.bitmap.pixels,
+                         [[1, 0, 0, 0, 0, 1, 0, 0],
+                          [0, 1, 0, 0, 0, 0, 1, 0]])
 
 
 if __name__ == "__main__":

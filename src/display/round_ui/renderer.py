@@ -13,7 +13,7 @@ from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
 # At 24 updates/s, keep tangential motion below one pixel per update at the
 # retained marker radii. Integer DisplayIO coordinates then produce a regular
 # one-pixel cadence instead of the visible multi-pixel jumps from faster rates.
-HUD_ORBIT_RATES = (0.20, -0.16)
+HUD_ORBIT_RATES = (0.22, -0.20)
 NONHOME_MODEL_INTERVAL_MS = 33
 _PROFILE_TICKS_MASK = (1 << 29) - 1
 _PROFILE_TICKS_HALF = 1 << 28
@@ -111,7 +111,8 @@ class RoundRenderer:
             for index, palette in enumerate(self.palettes.get("hud_markers", ())):
                 color = colors["accent"] if index == 0 else colors["highlight"]
                 palette[1] = color
-                palette[2] = ((color & 0xFEFEFE) >> 1)
+                palette[2] = theme.shade_color(color, 72)
+                palette[3] = theme.shade_color(color, 38)
         if hasattr(self.ring.node, "colors"):
             self.ring.node.colors = colors
             self.ring.signature = None
@@ -172,8 +173,8 @@ class RoundRenderer:
                     self._hud_phase = frame
                     for index, (sprite, radius, _) in enumerate(self.hud_markers):
                         angle = float(now) * HUD_ORBIT_RATES[index]
-                        x = 117 + round(radius * math.cos(angle))
-                        y = 117 + round(radius * math.sin(angle))
+                        x = 116 + round(radius * math.cos(angle))
+                        y = 116 + round(radius * math.sin(angle))
                         if sprite.x != x or sprite.y != y or sprite.hidden:
                             sprite.x, sprite.y = x, y
                             sprite.hidden = False
@@ -226,6 +227,35 @@ class RoundRenderer:
         self._nav_until = time.monotonic() + 1.6
         self._nav_dirty = True
         return True
+
+    @staticmethod
+    def _empty_state(model, storage_state):
+        """Explain empty browse pages instead of presenting blank rows."""
+        screen = model.get("screen")
+        if screen in ("JOBS", "JOB_BROWSER", "EXPLORER"):
+            items = model.get("items", ())
+            if len(items) == 1 and not items[0][1]:
+                label = str(items[0][0])
+                labels = {
+                    "SD DISABLED": ("SD CARD DISABLED", "ENABLE IN SETTINGS"),
+                    "SD CARD MISSING": ("SD CARD NOT FOUND", "INSERT SD CARD"),
+                    "SD MOUNT ERROR": ("SD CARD ERROR", "CHECK SYSTEM STATUS"),
+                    "NO FILES FOUND": ("NO FILES FOUND", "SD CARD READY"),
+                }
+                if label in labels:
+                    return labels[label]
+            messages = {
+                "available": ("NO FILES FOUND", "SD CARD READY"),
+                "disabled": ("SD CARD DISABLED", "ENABLE IN SETTINGS"),
+                "missing": ("SD CARD NOT FOUND", "INSERT SD CARD"),
+                "mount_error": ("SD CARD ERROR", "CHECK SYSTEM STATUS"),
+            }
+            return messages.get(
+                str(storage_state).lower(),
+                ("FILES UNAVAILABLE", "CHECK SYSTEM STATUS"))
+        if screen in ("MACROS", "MACRO_BROWSER"):
+            return "NO MACROS FOUND", ""
+        return "NO ITEMS AVAILABLE", ""
 
     def render(self, state):
         if self.ui is None:
@@ -382,20 +412,41 @@ class RoundRenderer:
             if model.get("details"):
                 items = tuple(("{}: {}".format(key, value), True, "")
                               for key, value in model["details"])
+            # Dynamic browser screens provide a disabled explanatory item
+            # when empty. Render that state in the middle of the list area,
+            # rather than as a selectable row at the top of the page.
+            empty_browser = (
+                model.get("screen") in ("JOBS", "JOB_BROWSER", "EXPLORER")
+                and len(items) == 1 and not items[0][1]
+            )
+            if empty_browser:
+                items = ()
             selected = min(model.get("selected", 0), max(0, len(items) - 1))
             window_start = menu_window_start(
                 selected, len(items), len(self.menu))
             visible_items = items[window_start:window_start + len(self.menu)]
             changed = self.menu_title.set(model["title"]) or changed
+            empty_state = (self._empty_state(model, state.storage_state)
+                           if not visible_items else ("", ""))
             for index, component in enumerate(self.menu):
                 text = ""
                 if index < len(visible_items):
                     text = visible_items[index][0]
                     if not visible_items[index][1]:
                         text += "  -"
+                elif not visible_items and index == len(self.menu) // 2:
+                    text = empty_state[0]
+                elif not visible_items and index == len(self.menu) // 2 + 1:
+                    text = empty_state[1]
                 changed = component.set(text) or changed
                 row_color = self.menu_colors[0]
                 if index < len(visible_items) and not visible_items[index][1]:
+                    row_color = self.menu_colors[1]
+                elif empty_browser:
+                    row_color = (self.menu_colors[0]
+                                 if index == len(self.menu) // 2 else
+                                 self.menu_colors[1])
+                elif not visible_items:
                     row_color = self.menu_colors[1]
                 changed = component.set_color(row_color) or changed
             changed = self.menu_highlight.set(

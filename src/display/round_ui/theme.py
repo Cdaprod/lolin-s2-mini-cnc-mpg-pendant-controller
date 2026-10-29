@@ -43,6 +43,14 @@ def for_page(page):
     return select(PAGE_THEMES.get(str(page or "HOME").upper(), "industrial"))
 
 
+def shade_color(color, numerator, denominator=100):
+    """Scale an RGB888 color for a compact antialiased HUD sprite."""
+    red = ((color >> 16) & 0xFF) * numerator // denominator
+    green = ((color >> 8) & 0xFF) * numerator // denominator
+    blue = (color & 0xFF) * numerator // denominator
+    return (red << 16) | (green << 8) | blue
+
+
 def select(name):
     """Return immutable-by-convention palette mapping, falling back safely."""
     return THEMES.get(str(name or "industrial").lower(), THEMES["industrial"])

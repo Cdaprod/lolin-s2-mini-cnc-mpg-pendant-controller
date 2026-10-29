@@ -6,6 +6,23 @@ from . import theme
 from .renderer import RoundRenderer
 
 _BACKLIGHT_OUTPUT = None
+_BITMAP_FONT_CACHE = {}
+_BITMAP_FONT_FILES = {(1, 10): "DejaVuSans-10.bdf",
+                      (1, 12): "DejaVuSans-12.bdf",
+                      (1, 14): "DejaVuSans-12.bdf",
+                      (2, 20): "DejaVuSans-Bold-14.bdf",
+                      (2, 28): "DejaVuSans-Bold-14.bdf",
+                      (3, 30): "DejaVuSans-Bold-24.bdf"}
+_ASCII_GLYPHS = tuple(range(32, 127))
+_COMMON_GLYPHS = _ASCII_GLYPHS + (0x2014, 0x2026, 0x00B0)
+_BITMAP_FONT_GLYPHS = {
+    (1, 10): _ASCII_GLYPHS,
+    (1, 12): _COMMON_GLYPHS,
+    (1, 14): _COMMON_GLYPHS,
+    (2, 20): _ASCII_GLYPHS,
+    (2, 28): _ASCII_GLYPHS,
+    (3, 30): tuple(ord(character) for character in " 0123456789+-.XYZABCOFF"),
+}
 
 
 def release_existing_displays():
@@ -67,18 +84,32 @@ def _line(displayio, terminalio, width, height, x, y, color=theme.TEXT,
     from src.display.displayio_backend import _DisplayIOTextLine
     source_width = max(1, width // scale)
     source_height = max(1, height // scale)
-    # Prefer a native-size bitmap font for enlarged text; scaling terminalio
-    # pixels creates harsh 2x/3x square edges. Optional file, safe fallback.
+    # Render fonts at their actual pixel sizes. Scaling the tiny terminal font
+    # makes headings jagged and can clip long labels such as CONFIGURATION.
     font = terminalio.FONT
-    if scale > 1:
-        try:
-            from adafruit_bitmap_font import bitmap_font
-            font = bitmap_font.load_font("/fonts/DejaVuSans-14.bdf")
+    font_key = ((1, 10) if scale == 1 and height <= 10 else
+                (scale, height))
+    font_path = _BITMAP_FONT_FILES.get(font_key)
+    if font_path:
+        # Several text boxes use the same BDF strike with different bounds.
+        # Share the loaded font and its glyph cache by asset path.
+        if font_path not in _BITMAP_FONT_CACHE:
+            try:
+                from adafruit_bitmap_font import bitmap_font
+                loaded_font = bitmap_font.load_font("/fonts/" + font_path)
+                # The BDF reader lazily scans the complete file for each
+                # uncached character. Prime the small UI alphabet once so
+                # live input and first-frame timing never pay per-glyph file
+                # scans in the application loop.
+                loaded_font.load_glyphs(_BITMAP_FONT_GLYPHS[font_key])
+                _BITMAP_FONT_CACHE[font_path] = loaded_font
+            except (ImportError, OSError, ValueError):
+                _BITMAP_FONT_CACHE[font_path] = None
+        if _BITMAP_FONT_CACHE[font_path] is not None:
+            font = _BITMAP_FONT_CACHE[font_path]
             scale = 1
             source_width = width
             source_height = height
-        except (ImportError, OSError, ValueError):
-            pass
     line = _DisplayIOTextLine(source_width, source_height, font,
                               displayio, color, centered)
     if scale == 1:
@@ -176,25 +207,29 @@ def displayio_scene(display, colors=None):
     bitmap, palette = _instrument_bitmap(displayio, colors)
     root.append(displayio.TileGrid(bitmap, pixel_shader=palette))
     palettes = {"dial": palette}
-    # Small retained 7x7 discs: a dim edge softens pixel stair-steps.
+    # Small retained 9x9 multi-tone discs soften pixel stair-steps while
+    # keeping the orbit indicators distinct at native 240x240 resolution.
     # Only sprite positions change per frame; no bitmap rebuilds.
     hud_markers = []
     for radius, color in ((109, colors["accent"]), (99, colors["highlight"])):
-        pixels = displayio.Bitmap(7, 7, 3)
-        marker_palette = displayio.Palette(3)
+        pixels = displayio.Bitmap(9, 9, 4)
+        marker_palette = displayio.Palette(4)
         marker_palette[0] = 0
         marker_palette.make_transparent(0)
         marker_palette[1] = color
-        marker_palette[2] = ((color & 0xFEFEFE) >> 1)
-        for yy in range(7):
-            for xx in range(7):
-                distance2 = (xx - 3) ** 2 + (yy - 3) ** 2
-                if distance2 <= 6:
+        marker_palette[2] = theme.shade_color(color, 72)
+        marker_palette[3] = theme.shade_color(color, 38)
+        for yy in range(9):
+            for xx in range(9):
+                distance2 = (xx - 4) ** 2 + (yy - 4) ** 2
+                if distance2 <= 4:
                     pixels[xx, yy] = 1
-                elif distance2 <= 10:
+                elif distance2 <= 9:
                     pixels[xx, yy] = 2
+                elif distance2 <= 16:
+                    pixels[xx, yy] = 3
         sprite = displayio.TileGrid(pixels, pixel_shader=marker_palette)
-        sprite.x, sprite.y = 117 + radius, 117
+        sprite.x, sprite.y = 116 + radius, 116
         root.append(sprite)
         hud_markers.append((sprite, radius, marker_palette))
     palettes["hud_markers"] = tuple(item[2] for item in hud_markers)
