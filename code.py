@@ -8,7 +8,7 @@ from src.app import PendantApplication
 from src.diagnostics import (emit, is_runtime_reload,
                              startup_context_fields)
 
-RUNTIME_BUILD = "round-hud-page-accent-rotor-v12"
+RUNTIME_BUILD = "round-hud-alarm-rotor-precedence-v13"
 
 
 def main():
