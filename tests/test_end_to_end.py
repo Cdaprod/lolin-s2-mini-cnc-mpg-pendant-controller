@@ -1,5 +1,6 @@
 import unittest
 from unittest.mock import patch
+from types import SimpleNamespace
 
 from src.app import PendantApplication
 from src.display.console import ConsoleDisplay
@@ -10,6 +11,66 @@ from src.display.ui import TouchEvent
 
 
 class EndToEndTests(unittest.TestCase):
+    def test_home_menu_opens_on_contact_and_release_does_not_select_a_row(self):
+        class TouchManager:
+            last_contact_transition = ("down", 130, 205)
+            last_feedback = (130, 205, "contact")
+            feedback_until = 1.2
+            consecutive_errors = 0
+            last_error = None
+            gestures = SimpleNamespace(axis_lock=None)
+            events = ()
+
+            def poll(self):
+                return self.events
+
+        touch = TouchManager()
+        app = PendantApplication.from_config(
+            {"controller_mode": "disabled"},
+            display=ConsoleDisplay(lambda frame: None),
+            touch_manager=touch, clock=lambda: 1.0)
+
+        app.poll()
+        self.assertEqual(app.ui.current_screen, "MAIN_MENU")
+        self.assertTrue(app._touch_menu_preview_active)
+
+        touch.last_contact_transition = ("up", 130, 205)
+        touch.events = (TouchEvent("tap", 130, 205),)
+        app.poll()
+        self.assertEqual(app.ui.current_screen, "MAIN_MENU")
+        self.assertFalse(app._touch_menu_preview_active)
+        self.assertFalse(app.state.controller_enabled)
+
+    def test_home_menu_contact_preview_cancels_before_horizontal_page_swipe(self):
+        class TouchManager:
+            last_contact_transition = ("down", 130, 205)
+            last_feedback = (130, 205, "contact")
+            feedback_until = 1.2
+            consecutive_errors = 0
+            last_error = None
+            gestures = SimpleNamespace(axis_lock=None)
+            events = ()
+
+            def poll(self):
+                return self.events
+
+        touch = TouchManager()
+        app = PendantApplication.from_config(
+            {"controller_mode": "disabled"},
+            display=ConsoleDisplay(lambda frame: None),
+            touch_manager=touch, clock=lambda: 1.0)
+        app.poll()
+        self.assertEqual(app.ui.current_screen, "MAIN_MENU")
+
+        touch.last_contact_transition = None
+        touch.gestures.axis_lock = "horizontal"
+        touch.events = (TouchEvent("swipe_left", 130, 205),)
+        app.poll()
+
+        self.assertEqual(app.ui.current_screen, "EXPLORER")
+        self.assertEqual(app.state.active_page, "EXPLORER")
+        self.assertFalse(app._touch_menu_preview_active)
+
     def test_touch_preview_renders_before_wifi_service(self):
         order = []
 

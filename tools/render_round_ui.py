@@ -413,7 +413,7 @@ for filename, progress in (("touch-contact.png", 0.0),
     touch_preview.save(OUT / filename)
 
 # A deterministic contact → wave → held → release preview. The phase samples
-# follow the runtime's 240 ms expansion and 0.86 held-ring plateau.
+# follow the runtime's 170 ms expansion and 0.86 held-ring plateau.
 touch_frames = []
 for frame in range(6):
     progress = min(0.86, frame / 5.0)
@@ -425,7 +425,7 @@ for _ in range(8):
     draw_touch_sprite(image, (79, 94), 0.86, touch_accent)
     touch_frames.append(image.convert("P", palette=Image.Palette.ADAPTIVE))
 for frame in range(1, 6):
-    progress = (frame / 5.0) * (0.20 / 0.24)
+    progress = (frame / 5.0) * (0.15 / 0.17)
     image = touch_base.copy()
     draw_touch_sprite(image, (79, 94), progress, touch_accent)
     touch_frames.append(image.convert("P", palette=Image.Palette.ADAPTIVE))

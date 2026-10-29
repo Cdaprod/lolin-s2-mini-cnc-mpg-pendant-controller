@@ -70,6 +70,10 @@ class PendantApplication:
         self.indicator_output = indicator_output
         self.sd_mount = sd_mount
         self.touch_manager = touch_manager
+        # HOME's lower MENU touch target is safe navigation. Open it on
+        # contact for immediate feedback, then cancel the preview if the
+        # gesture becomes a swipe or drag. Actual row selection stays on lift.
+        self._touch_menu_preview_active = False
         self.clock = clock
         try:
             import supervisor
@@ -441,6 +445,17 @@ class PendantApplication:
                 pass
             self.i2c_bus = None
 
+    def _cancel_touch_menu_preview(self):
+        """Undo an uncommitted HOME menu preview without dispatching input."""
+        if not self._touch_menu_preview_active:
+            return False
+        self._touch_menu_preview_active = False
+        if (self.ui.current_screen == "MAIN_MENU" and
+                len(self.ui.stack) > 1 and self.ui.stack[-2] == "HOME"):
+            self.ui.back()
+            return True
+        return False
+
     def handle_ui_event(self, event):
         """Route a normalized UI event and execute only its semantic result."""
         if self.ui.current_screen in ("JOBS", "JOB_BROWSER", "EXPLORER"):
@@ -666,23 +681,47 @@ class PendantApplication:
             touch_events = self.touch_manager.poll()
             contact = getattr(self.touch_manager,
                               "last_contact_transition", None)
+            gestures = getattr(self.touch_manager, "gestures", None)
+            if (self._touch_menu_preview_active and gestures is not None and
+                    getattr(gestures, "axis_lock", None) is not None):
+                self._cancel_touch_menu_preview()
+                touch_needs_render = True
             if contact is not None:
                 # USB CDC output can block. Defer diagnostic writes until the
                 # immediate contact redraw has reached the display.
                 touch_contact_log = contact
                 if contact[0] == "down":
                     touch_needs_render = True
-                    # Preview menu focus on contact in this same render pass.
-                    # The later release event remains the only path that can
-                    # select a row or dispatch its command.
-                    preview = getattr(self.ui, "preview_touch", None)
-                    if preview is not None:
-                        touch_needs_render = (
-                            preview(contact[1], contact[2]) or
-                            touch_needs_render)
+                    if (self.ui.current_screen == "HOME" and
+                            contact[2] >= 190 and
+                            self.ui.active_overlay() is None):
+                        # This hotspot only opens navigation; it cannot select
+                        # a menu row or dispatch a machine command.
+                        self.ui.enter("MAIN_MENU")
+                        self._touch_menu_preview_active = True
+                    else:
+                        # Menu focus previews on contact; selection remains
+                        # release-gated in the normal UI event path.
+                        preview = getattr(self.ui, "preview_touch", None)
+                        if preview is not None:
+                            touch_needs_render = (
+                                preview(contact[1], contact[2]) or
+                                touch_needs_render)
+            if (self._touch_menu_preview_active and contact is not None and
+                    contact[0] == "up" and not touch_events):
+                # A sub-minimum contact is not a tap; undo its visual preview.
+                self._cancel_touch_menu_preview()
+                touch_needs_render = True
             for event in touch_events:
                 touch_needs_render = True
                 touch_gesture_log = (event.kind, event.x, event.y)
+                if self._touch_menu_preview_active:
+                    if event.kind in ("tap", "release_select"):
+                        # Keep the already-open menu. The release belongs to
+                        # the same contact and must not select its first row.
+                        self._touch_menu_preview_active = False
+                        continue
+                    self._cancel_touch_menu_preview()
                 try:
                     self.handle_ui_event(event)
                 except SafetyError as exc:
