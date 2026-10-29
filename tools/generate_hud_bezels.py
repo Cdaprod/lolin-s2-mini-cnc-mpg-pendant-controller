@@ -23,7 +23,10 @@ LEVELS = (0.012, 0.035, 0.075, 0.15, 0.28, 0.5, 0.78)
 # desktop sRGB previews. Keep decorative bezel luminance below status text so
 # the readout remains the visual focal point; the separate status palettes
 # retain their full brightness.
-BEZEL_LUMINANCE = 0.48
+# The GC9A01 is viewed at close range behind a glossy lens. Keep decorative
+# strokes well below text luminance; phone-camera exposure otherwise merges
+# the carefully separated 4-bit colors into a broad, noisy white annulus.
+BEZEL_LUMINANCE = 0.28
 THEMES = (
     ("cyan_reactor", "Cyan segmented reactor", (28,221,255), (2,95,168), "segments"),
     ("green_instrument", "Green illuminated instrumentation", (68,255,158), (11,125,84), "ticks"),
@@ -144,10 +147,14 @@ def _geometry(kind, a, b, scale):
             # A short inner echo makes each illuminated segment read as a unit.
             arc(d2,radius-7,c-extent/2+3,c+extent/2-3,.65)
     if kind == "segments":
-        blocks(8,113,27,2.1)
-        ticks(d2,64,101,104,8)
-        for i in range(32): dot(d2,94,-90+i*11.25,1.25 if i%4==0 else .7)
-        for i in range(8): arc(d1,98,-87+i*45,-78+i*45,.8)
+        # The physical lens magnifies the dense reference design. Use a precise
+        # two-track instrument ring with generous negative space: eight short
+        # outer light bars, sparse inner graduations, and no dotted noise field.
+        for i in range(8):
+            c=-90+i*45
+            arc(d1,113,c-8,c+8,1.35)
+            arc(d2,101,c-4,c+4,.42)
+        ticks(d2,40,104,107,5)
     elif kind == "ticks":
         arc(d1,114,-155,155,.8); arc(d2,107,-160,160,.45)
         ticks(d2,120,96,101,10); ticks(d1,60,93,104,10)
