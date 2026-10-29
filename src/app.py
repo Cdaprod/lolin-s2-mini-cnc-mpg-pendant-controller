@@ -28,6 +28,7 @@ from src.diagnostics import emit
 # CircuitPython peripheral objects are interpreter-owned singletons. Track
 # composition in sys.modules so re-importing src.app cannot bypass the guard.
 _CIRCUITPY_COMPOSITION_KEY = "_cdaprod_circuitpython_app_composition"
+_WIFI_SERVICE_POLL_INTERVAL = 0.05
 _DIAG_TICKS_PERIOD = 1 << 29
 _DIAG_TICKS_MASK = _DIAG_TICKS_PERIOD - 1
 _DIAG_TICKS_HALFPERIOD = _DIAG_TICKS_PERIOD >> 1
@@ -78,6 +79,7 @@ class PendantApplication:
         self.mirror = None
         self._last_heap_warning = None
         self._diag_last_heartbeat = None
+        self._diag_last_network_poll = None
         self._diag_encoder_delta = 0
         self._diag_loop_overruns = 0
         self._diag_loop_work_ms = 0
@@ -716,21 +718,25 @@ class PendantApplication:
         # Do not let a reconnect or setup-portal submission pause pendant
         # servicing while a jog or job has authority on the machine.
         wifi_started = self._diag_ticks_ms()
-        if not self._machine_activity_blocks_network_association():
-            self.network_service.poll()
-        info = self.network_service.info()
-        self.state.wifi_state = info.get("state", "DISABLED")
-        self.state.wifi_ssid = info.get("ssid")
-        self.state.wifi_ip = info.get("ipv4_address")
-        self.state.wifi_rssi = info.get("rssi")
-        self.state.hostname = info.get("hostname")
-        self.state.network_error = info.get("last_error")
-        self.state.subsystems["wifi"] = self.state.wifi_state
-        if self.state.wifi_state != self._diag_last_wifi_state:
-            emit("wifi_state", state=self.state.wifi_state,
-                 connected=bool(info.get("connected", False)),
-                 ip=info.get("ipv4_address"))
-            self._diag_last_wifi_state = self.state.wifi_state
+        if (self._diag_last_network_poll is None or
+                started - self._diag_last_network_poll >=
+                _WIFI_SERVICE_POLL_INTERVAL):
+            if not self._machine_activity_blocks_network_association():
+                self.network_service.poll()
+            info = self.network_service.info()
+            self.state.wifi_state = info.get("state", "DISABLED")
+            self.state.wifi_ssid = info.get("ssid")
+            self.state.wifi_ip = info.get("ipv4_address")
+            self.state.wifi_rssi = info.get("rssi")
+            self.state.hostname = info.get("hostname")
+            self.state.network_error = info.get("last_error")
+            self.state.subsystems["wifi"] = self.state.wifi_state
+            if self.state.wifi_state != self._diag_last_wifi_state:
+                emit("wifi_state", state=self.state.wifi_state,
+                     connected=bool(info.get("connected", False)),
+                     ip=info.get("ipv4_address"))
+                self._diag_last_wifi_state = self.state.wifi_state
+            self._diag_last_network_poll = started
         self.state.subsystems["controller"] = (
             "DISABLED" if not self.state.controller_enabled else
             "CONNECTED" if self.state.connection_state == "connected" else
