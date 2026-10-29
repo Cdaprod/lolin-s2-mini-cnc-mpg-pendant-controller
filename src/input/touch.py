@@ -56,20 +56,26 @@ class TouchInput:
             y = 239 - y
         return x, y
 
-    def poll(self):
+    def poll_due(self, now=None):
+        """Advance the phase-aligned sample clock without catching up bursts."""
+        if not self.poll_interval:
+            return True
+        now = self.clock() if now is None else float(now)
+        if self._next_poll_time is not None and now < self._next_poll_time:
+            return False
+        if self._next_poll_time is None:
+            self._next_poll_time = now + self.poll_interval
+        else:
+            self._next_poll_time += self.poll_interval
+            if self._next_poll_time <= now:
+                self._next_poll_time = now + self.poll_interval
+        return True
+
+    def poll(self, due=False):
         self.last_contact_transition = None
         self.last_feedback = None
-        now = self.clock()
-        if (self.poll_interval and self._next_poll_time is not None and
-                now < self._next_poll_time):
+        if not due and not self.poll_due():
             return ()
-        if self.poll_interval:
-            if self._next_poll_time is None:
-                self._next_poll_time = now + self.poll_interval
-            else:
-                self._next_poll_time += self.poll_interval
-                if self._next_poll_time <= now:
-                    self._next_poll_time = now + self.poll_interval
         self.poll_count += 1
         try:
             raw_point = self.source.point()

@@ -167,6 +167,47 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(app.ui.current_screen, "HOME")
         self.assertFalse(app.state.controller_enabled)
 
+    def test_touch_sample_gate_skips_idle_handling_until_next_sample(self):
+        class TouchManager:
+            last_contact_transition = ("down", 90, 65)
+            last_feedback = (90, 65, "contact")
+            feedback_until = 1.2
+            feedback_active = True
+            consecutive_errors = 0
+            last_error = None
+            poll_calls = 0
+            due = False
+
+            def poll_due(self, now):
+                return self.due
+
+            def poll(self, due=False):
+                self.poll_calls += 1
+                return ()
+
+        feedback = []
+        touch = TouchManager()
+
+        class Display(ConsoleDisplay):
+            def touch_feedback(self, point, until):
+                feedback.append((point, until))
+
+        app = PendantApplication.from_config(
+            {"controller_mode": "disabled"},
+            display=Display(lambda frame: None), touch_manager=touch,
+            clock=lambda: 1.0)
+
+        app.poll()
+
+        self.assertEqual(touch.poll_calls, 0)
+        self.assertEqual(feedback, [])
+        self.assertEqual(app.ui.current_screen, "HOME")
+
+        touch.due = True
+        app.poll()
+        self.assertEqual(touch.poll_calls, 1)
+        self.assertEqual(feedback, [((90, 65), 1.2)])
+
     def test_touch_contact_precedes_released_gesture_in_diagnostics(self):
         class TouchManager:
             last_contact_transition = ("up", 90, 65)

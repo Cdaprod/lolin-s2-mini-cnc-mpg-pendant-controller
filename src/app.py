@@ -662,12 +662,22 @@ class PendantApplication:
         if input_duration_ms > self._diag_max_input_ms:
             self._diag_max_input_ms = input_duration_ms
         self._diag_total_input_ms += input_duration_ms
-        touch_started = self._diag_ticks_ms()
+        touch_poll_due = None
+        touch_sample_due = self.touch_manager is not None
+        if touch_sample_due:
+            touch_poll_due = getattr(self.touch_manager, "poll_due", None)
+            if callable(touch_poll_due):
+                touch_sample_due = touch_poll_due(started)
+            else:
+                touch_poll_due = None
+        touch_started = (self._diag_ticks_ms() if touch_sample_due else None)
         touch_needs_render = False
         touch_contact_log = None
         touch_gesture_log = None
-        if self.touch_manager is not None:
-            touch_events = self.touch_manager.poll()
+        if self.touch_manager is not None and touch_sample_due:
+            touch_events = (self.touch_manager.poll(due=True)
+                            if touch_poll_due is not None else
+                            self.touch_manager.poll())
             contact = getattr(self.touch_manager,
                               "last_contact_transition", None)
             if contact is not None:
@@ -744,8 +754,9 @@ class PendantApplication:
             touch_display_duration_ms = 0
         # This measures the physical touch sample through its first visible
         # update, excluding the optional USB diagnostic writes below.
-        touch_duration_ms = max(
+        touch_duration_ms = (max(
             0, _diag_ticks_diff_ms(self._diag_ticks_ms(), touch_started))
+            if touch_started is not None else 0)
         if touch_duration_ms > self._diag_max_touch_ms:
             self._diag_max_touch_ms = touch_duration_ms
         self._diag_total_touch_ms += touch_duration_ms
