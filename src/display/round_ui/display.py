@@ -2,7 +2,7 @@
 
 import math
 
-from . import theme
+from . import bezel_palette, theme
 from .renderer import RoundRenderer
 
 _BACKLIGHT_OUTPUT = None
@@ -167,7 +167,7 @@ class _HighlightNode:
         self.node.y = value
 
 
-def _instrument_bitmap(displayio, colors):
+def _instrument_bitmap(displayio, colors, legacy_bezel=True):
     """Build one indexed backdrop with directional arcs and subtle dial ticks."""
     bitmap = displayio.Bitmap(240, 240, 6)
     palette = displayio.Palette(6)
@@ -177,6 +177,9 @@ def _instrument_bitmap(displayio, colors):
     palette[3] = colors["panel"]
     palette[4] = colors["panel"]
     palette[5] = colors["panel"]
+    if not legacy_bezel:
+        bitmap.fill(0)
+        return bitmap, palette
     for y in range(240):
         dy = y - 120
         for x in range(240):
@@ -197,15 +200,40 @@ def _instrument_bitmap(displayio, colors):
     return bitmap, palette
 
 
-def displayio_scene(display, colors=None):
+def _load_bezel(displayio, name):
+    """Load one compact indexed bezel once; return None for safe fallback."""
+    if name not in bezel_palette.PALETTES:
+        return None, None
+    try:
+        import bitmaptools
+        bitmap = displayio.Bitmap(240, 240, 16)
+        with open("/assets/round_hud/runtime/{}.4bpp".format(name), "rb") as source:
+            bitmaptools.readinto(bitmap, source, bits_per_pixel=4)
+        palette = displayio.Palette(16)
+        for index, color in enumerate(bezel_palette.PALETTES[name]):
+            palette[index] = color
+        palette.make_transparent(0)
+        return bitmap, palette
+    except (ImportError, OSError, RuntimeError, ValueError, AttributeError,
+            MemoryError):
+        return None, None
+
+
+def displayio_scene(display, colors=None, bezel_name=None):
     """Create a bounded retained scene optimized for a 240px circular panel."""
     import displayio
     import terminalio
     colors = colors or theme.select("industrial")
 
     root = displayio.Group()
-    bitmap, palette = _instrument_bitmap(displayio, colors)
+    bezel_name = bezel_name or bezel_palette.DEFAULT_BEZEL
+    bezel_bitmap, bezel_colors = _load_bezel(displayio, bezel_name)
+    bitmap, palette = _instrument_bitmap(
+        displayio, colors, legacy_bezel=bezel_bitmap is None)
     root.append(displayio.TileGrid(bitmap, pixel_shader=palette))
+    if bezel_bitmap is not None:
+        # Decorative light stays beneath all readouts, feedback, and alarms.
+        root.append(displayio.TileGrid(bezel_bitmap, pixel_shader=bezel_colors))
     palettes = {"dial": palette}
     # Small retained 9x9 multi-tone discs soften pixel stair-steps while
     # keeping the orbit indicators distinct at native 240x240 resolution.
@@ -251,6 +279,43 @@ def displayio_scene(display, colors=None):
         hud_trails.append((trail, radius, trail_palette))
     palettes["hud_markers"] = tuple(item[2] for item in hud_markers)
     palettes["hud_trails"] = tuple(item[2] for item in hud_trails)
+
+    # Encoder-only feedback is a retained bead and trailing point. Its angle
+    # follows physical detents, and it never represents accepted machine motion.
+    encoder_bitmap = displayio.Bitmap(9, 9, 4)
+    encoder_palette = displayio.Palette(4)
+    encoder_palette[0] = 0
+    encoder_palette.make_transparent(0)
+    encoder_palette[1] = colors["accent"]
+    encoder_palette[2] = theme.shade_color(colors["accent"], 64)
+    encoder_palette[3] = theme.shade_color(colors["accent"], 28)
+    for ey in range(9):
+        for ex in range(9):
+            distance = (ex-4)**2 + (ey-4)**2
+            if distance <= 2:
+                encoder_bitmap[ex, ey] = 1
+            elif distance <= 8:
+                encoder_bitmap[ex, ey] = 2
+            elif distance <= 16:
+                encoder_bitmap[ex, ey] = 3
+    encoder_marker = displayio.TileGrid(encoder_bitmap,
+                                        pixel_shader=encoder_palette)
+    encoder_marker.hidden = True
+    root.append(encoder_marker)
+    encoder_trail_bitmap = displayio.Bitmap(5, 5, 2)
+    encoder_trail_palette = displayio.Palette(2)
+    encoder_trail_palette[0] = 0
+    encoder_trail_palette.make_transparent(0)
+    encoder_trail_palette[1] = theme.shade_color(colors["accent"], 36)
+    for ey in range(5):
+        for ex in range(5):
+            if (ex-2)**2 + (ey-2)**2 <= 2:
+                encoder_trail_bitmap[ex, ey] = 1
+    encoder_trail = displayio.TileGrid(encoder_trail_bitmap,
+                                       pixel_shader=encoder_trail_palette)
+    encoder_trail.hidden = True
+    root.append(encoder_trail)
+    palettes["encoder"] = (encoder_palette, encoder_trail_palette)
 
 
     home = displayio.Group()
@@ -394,6 +459,7 @@ def displayio_scene(display, colors=None):
 
     return {
         "root": root, "ring": _InstrumentRingNode(palette, colors),
+        "bezel_name": bezel_name if bezel_bitmap is not None else None,
         "palettes": palettes,
         "themed_text": ((axis_feedback, "accent"), (step_feedback, "warning"),
                         (state_label, "success"), (axis, "accent"),
@@ -404,6 +470,8 @@ def displayio_scene(display, colors=None):
                         (overlay_detail, "text")),
         "touch_halo": halo_node, "hud_markers": tuple(hud_markers),
         "hud_trails": tuple(hud_trails),
+        "encoder_marker": encoder_marker, "encoder_trail": encoder_trail,
+        "encoder_palettes": palettes["encoder"],
         "nav_group": nav_group,
         "nav_dots": nav_dots,
         "home_group": home, "state_label": state_label,
@@ -430,5 +498,16 @@ def from_config(config, shared_spi=None):
         raise ValueError("round renderer requires a supported display driver")
     colors = theme.select(config.get("ui_theme", "industrial"))
     return RoundRenderer(
-        display, lambda d: displayio_scene(d, colors),
-        animations=config.get("ui_animations", True))
+        display, lambda d: displayio_scene(
+            d, colors, config.get("ui_bezel", bezel_palette.DEFAULT_BEZEL)),
+        animations=config.get("ui_animations", True),
+        bezel_rotation_enabled=config.get("bezel_rotation_enabled", True),
+        bezel_ambient_period_s=config.get("bezel_ambient_period_s", 54.0),
+        bezel_encoder_gain=config.get("bezel_encoder_gain", 0.04),
+        bezel_max_speed_rad_s=config.get("bezel_max_speed_rad_s", 0.35),
+        bezel_inertia_s=config.get("bezel_inertia_s", 0.9),
+        bezel_direction_change_min_s=config.get(
+            "bezel_direction_change_min_s", 20.0),
+        bezel_direction_change_max_s=config.get(
+            "bezel_direction_change_max_s", 40.0),
+        bezel_frame_rate=config.get("bezel_frame_rate", 24))

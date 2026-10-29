@@ -298,6 +298,12 @@ def runtime_files(root=ROOT):
     if fonts.exists():
         paths.extend(path.relative_to(root) for path in sorted(fonts.glob("*.bdf"))
                      if path.is_file())
+    # Deploy only compact, generated 4bpp bezels. Development images remain
+    # on the host and never consume CircuitPython heap or flash.
+    bezels = root / "assets" / "round_hud" / "runtime"
+    if bezels.exists():
+        paths.extend(path.relative_to(root) for path in sorted(bezels.glob("*.4bpp"))
+                     if path.is_file())
     return [str(path) for path in paths]
 
 
@@ -374,6 +380,9 @@ def managed_path(relative):
         return False
     return (relative in ("code.py", "patterns.py") or
             (path.parts and path.parts[0] in ("src", "lib")) or
+            (len(path.parts) == 4 and path.parts[:3] ==
+             ("assets", "round_hud", "runtime") and
+             path.suffix == ".4bpp") or
             (len(path.parts) == 2 and path.parts[0] == "fonts" and
              path.suffix.lower() == ".bdf"))
 

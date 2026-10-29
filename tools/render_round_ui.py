@@ -17,8 +17,16 @@ from src.display.navigation import menu_window_start
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--output", type=Path, default=Path("reports/round-ui"),
                     help="snapshot directory (default: reports/round-ui)")
-OUT = parser.parse_args().output
+parser.add_argument("--bezel", default="cyan_reactor",
+                    help="generated bezel name to composite into previews")
+ARGS = parser.parse_args()
+OUT = ARGS.output
 OUT.mkdir(parents=True, exist_ok=True)
+BEZEL_PATH = (Path(__file__).resolve().parents[1] / "assets" / "round_hud" /
+              "development" / (ARGS.bezel + ".png"))
+if not BEZEL_PATH.is_file():
+    raise SystemExit("generated bezel not found: {}".format(BEZEL_PATH))
+bezel_asset = Image.open(BEZEL_PATH).convert("RGBA")
 screens = build_screens()
 names = ["HOME", "MAIN_MENU", "MACHINE", "JOBS", "JOB_BROWSER",
          "ACTIVE_JOB", "EXPLORER", "CONFIGURATION", "CONTROLLER",
@@ -51,11 +59,12 @@ def rgb(color):
     return color
 
 
-def draw_hud_orbs(draw, colors, now=4.0):
+def draw_hud_orbs(draw, colors, now=4.0, outer_angle=None):
     """Match production marker geometry and its retained dim motion ghost."""
     for index, (radius, rate) in enumerate(zip((109, 99), HUD_ORBIT_RATES)):
         color = colors["accent"] if index == 0 else colors["highlight"]
-        angle = now * rate
+        angle = (outer_angle if index == 0 and outer_angle is not None
+                 else now * rate)
         cx = 120 + round(radius * math.cos(angle))
         cy = 120 + round(radius * math.sin(angle))
         for yy in range(9):
@@ -87,9 +96,9 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
     c = theme.select(skin)
     for name in names:
         screen = screens[name]
-        im = Image.new("RGB", (240, 240), rgb(c["background"]))
+        base = Image.new("RGBA", (240, 240), rgb(c["background"]) + (255,))
+        im = Image.alpha_composite(base, bezel_asset).convert("RGB")
         d = ImageDraw.Draw(im)
-        d.ellipse((9, 9, 231, 231), outline=rgb(c["panel"]), width=4)
         # Four physical top-level page positions; no pager at idle in firmware.
         page = {"EXPLORER": 1, "CONFIGURATION": 2, "PREVIEW": 3}.get(name, 0)
         # Snapshot at t=4 s to make both counter-rotating HUD markers visible.
@@ -155,9 +164,9 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
 # Match the user's photographed, disarmed HOME state as a separate visual
 # target. Connection state and motion admission are shown as distinct signals.
 c = theme.select("industrial")
-im = Image.new("RGB", (240, 240), rgb(c["background"]))
+base = Image.new("RGBA", (240, 240), rgb(c["background"]) + (255,))
+im = Image.alpha_composite(base, bezel_asset).convert("RGB")
 d = ImageDraw.Draw(im)
-d.ellipse((9, 9, 231, 231), outline=rgb(c["panel"]), width=4)
 draw_hud_orbs(d, c)
 for i in range(4):
     x = 67 + (106 * i) // 3
@@ -221,9 +230,9 @@ for storage, primary, secondary in (
         ("disabled", "SD CARD DISABLED", "ENABLE IN SETTINGS"),
         ("available", "NO FILES FOUND", "SD CARD READY")):
     c = theme.select("amber")
-    im = Image.new("RGB", (240, 240), rgb(c["background"]))
+    base = Image.new("RGBA", (240, 240), rgb(c["background"]) + (255,))
+    im = Image.alpha_composite(base, bezel_asset).convert("RGB")
     d = ImageDraw.Draw(im)
-    d.ellipse((9, 9, 231, 231), outline=rgb(c["panel"]), width=4)
     draw_hud_orbs(d, c)
     d.text((120, 43), "FILE EXPLORER", anchor="mm", font=title_font,
            fill=rgb(c["text"]))
@@ -233,3 +242,85 @@ for storage, primary, secondary in (
     d.text((120, 211), "-  BACK  |  HOME", anchor="mm", font=small,
            fill=rgb(c["muted"]))
     im.save(OUT / f"explorer-empty-{storage}.png")
+
+
+def state_canvas(palette_name="industrial", bezel_name=None):
+    colors = theme.select(palette_name)
+    selected = bezel_name or ARGS.bezel
+    art = Image.open(BEZEL_PATH.parent / (selected + ".png")).convert("RGBA")
+    base = Image.new("RGBA", (240, 240), rgb(colors["background"])+(255,))
+    image = Image.alpha_composite(base, art).convert("RGB")
+    draw = ImageDraw.Draw(image)
+    draw_hud_orbs(draw, colors)
+    return image, draw, colors
+
+
+def preview_home(filename, status, axis, step, position, safety, *,
+                 palette_name="industrial", bezel_name=None):
+    image, draw, colors = state_canvas(palette_name, bezel_name)
+    draw.text((120, 38), status, anchor="mm", font=font,
+              fill=rgb(colors["success"] if status == "CONNECTED" else colors["muted"]))
+    draw.text((79, 55), "AXIS " + axis, anchor="mm", font=small,
+              fill=rgb(colors["accent"]))
+    draw.text((161, 55), "STEP " + step, anchor="mm", font=small,
+              fill=rgb(colors["warning"]))
+    draw.text((120, 82), position, anchor="mm", font=large,
+              fill=rgb(colors["accent"]))
+    draw.text((120, 118), "WPOS  mm", anchor="mm", font=font,
+              fill=rgb(colors["muted"]))
+    draw.text((120, 151), step, anchor="mm", font=large,
+              fill=rgb(colors["warning"]))
+    draw.text((120, 187), safety, anchor="mm", font=small,
+              fill=rgb(colors["text"] if status == "CONNECTED" else colors["warning"]))
+    draw.text((120, 211), "NET+  SD-  MENU", anchor="mm", font=small,
+              fill=rgb(colors["muted"]))
+    image.save(OUT / filename)
+
+
+# These compositions reuse the photographed home layout and the actual
+# retained status text placement; effects are previews, not device captures.
+preview_home("home-connected.png", "CONNECTED", "X", "X10",
+             "+124.520", "HOLD TO JOG")
+preview_home("axis-selection.png", "CONNECTED", "Y", "X1",
+             "+002.750", "AXIS SELECTED")
+preview_home("encoder-motion.png", "CONNECTED", "X", "X10",
+             "+124.520", "MPG INPUT +1")
+encoder_preview = Image.open(OUT / "encoder-motion.png").convert("RGBA")
+encoder_draw = ImageDraw.Draw(encoder_preview)
+encoder_color = rgb(theme.select("industrial")["accent"])
+encoder_draw.ellipse((149, 14, 162, 27), fill=encoder_color+(45,))
+encoder_draw.ellipse((153, 18, 160, 25), fill=encoder_color+(230,))
+encoder_draw.ellipse((140, 10, 146, 16), fill=encoder_color+(80,))
+encoder_preview.convert("RGB").save(OUT / "encoder-motion.png")
+
+touch_preview = Image.open(OUT / "amber-configuration.png").convert("RGBA")
+touch_layer = Image.new("RGBA", (240, 240), (0, 0, 0, 0))
+touch_draw = ImageDraw.Draw(touch_layer)
+touch_color = rgb(theme.select("ice")["accent"])
+for radius, alpha in ((5, 190), (12, 120), (21, 60)):
+    touch_draw.ellipse((79-radius, 94-radius, 79+radius, 94+radius),
+                       outline=touch_color+(alpha,), width=1)
+touch_preview = Image.alpha_composite(touch_preview, touch_layer)
+touch_preview.convert("RGB").save(OUT / "touch-ripple.png")
+
+alarm_image, alarm_draw, alarm_colors = state_canvas(
+    "industrial", "red_alarm")
+alarm_draw.rounded_rectangle((34, 76, 206, 164), radius=12,
+                             fill=(20, 5, 12), outline=(255, 73, 85), width=1)
+alarm_draw.text((120, 101), "ALARM", anchor="mm", font=large,
+                fill=(255, 69, 82))
+alarm_draw.text((120, 132), "MOTION INHIBITED", anchor="mm", font=small,
+                fill=(245, 239, 242))
+alarm_image.save(OUT / "alarm-critical.png")
+
+print("Generated interactive-state previews (connected, axis, touch, encoder, alarm)")
+
+# Angle sweep isolates the retained outer rotor bead over identical HUD content.
+# It demonstrates spatial continuity; the physical renderer interpolates
+# between these positions at its configured frame ceiling.
+for degrees in (0, 90, 180, 270):
+    image, draw, colors = state_canvas()
+    draw_hud_orbs(draw, colors, outer_angle=math.radians(degrees))
+    draw.text((120, 211), "BEZEL {:03d} DEG".format(degrees), anchor="mm",
+              font=small, fill=rgb(colors["muted"]))
+    image.save(OUT / "bezel-angle-{:03d}.png".format(degrees))

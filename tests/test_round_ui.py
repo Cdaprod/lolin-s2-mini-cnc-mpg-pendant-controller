@@ -15,6 +15,7 @@ class Node:
         self.color = 0
         self.hidden = False
         self.y = 0
+        self.x = 0
 
     def update(self, state, activity, armed, axis_transition,
                increment_transition):
@@ -204,6 +205,21 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer.animate(0.70))
         self.assertFalse(first.hidden)
 
+    def test_bezel_rotation_is_disabled_without_mutating_encoder_state(self):
+        state, _, _, renderer = self.make_renderer()
+        renderer.bezel_rotation_enabled = False
+        marker, trail = Node(), Node()
+        marker.hidden = trail.hidden = False
+        renderer.hud_markers = ((marker, 109, None), (Node(), 99, None))
+        renderer.hud_trails = ((trail, 109, None), (Node(), 99, None))
+        state.mpg_activity = -2
+        state.mpg_activity_timestamp = 1.0
+        before = (state.mpg_activity, state.mpg_activity_timestamp)
+        renderer.animate(1.0)
+        self.assertTrue(marker.hidden)
+        self.assertTrue(trail.hidden)
+        self.assertEqual((state.mpg_activity, state.mpg_activity_timestamp), before)
+
     def test_hud_markers_move_at_most_one_pixel_per_24hz_frame(self):
         _, _, _, renderer = self.make_renderer()
         markers = []
@@ -258,6 +274,33 @@ class RoundRendererTests(unittest.TestCase):
         renderer.animate(0.75)
         self.assertTrue(all(trail.hidden for trail in trails))
 
+    def test_encoder_feedback_tracks_detent_direction_and_fades(self):
+        state, _, _, renderer = self.make_renderer()
+        marker, trail = Node(), Node()
+        marker.hidden = trail.hidden = True
+        palettes = ([0, 0, 0, 0], [0, 0])
+        renderer.encoder_marker = marker
+        renderer.encoder_trail = trail
+        renderer.encoder_palettes = palettes
+        state.mpg_activity = 1
+        state.mpg_activity_timestamp = 1.0
+
+        self.assertTrue(renderer.animate(1.0))
+        self.assertFalse(marker.hidden)
+        self.assertFalse(trail.hidden)
+        clockwise_angle = renderer._encoder_angle
+        self.assertGreater(marker.x, 120)
+        self.assertTrue(renderer.animate(1.12))
+        self.assertNotEqual(palettes[0][1], 0)
+
+        state.mpg_activity = -1
+        state.mpg_activity_timestamp = 1.13
+        self.assertTrue(renderer.animate(1.13))
+        self.assertLess(renderer._encoder_angle, clockwise_angle)
+        self.assertTrue(renderer.animate(1.38))
+        self.assertTrue(marker.hidden)
+        self.assertTrue(trail.hidden)
+
     def test_home_and_menu_groups_are_mutually_exclusive(self):
         state, ui, _, renderer = self.make_renderer()
         renderer.home_group = Node()
@@ -276,6 +319,58 @@ class RoundRendererTests(unittest.TestCase):
         renderer.render(state)
         self.assertFalse(renderer.home_group.hidden)
         self.assertTrue(renderer.menu_group.hidden)
+
+    def test_top_page_swipe_slides_retained_groups_out_then_in(self):
+        state, ui, _, renderer = self.make_renderer()
+        renderer.home_group = Node()
+        renderer.menu_group = Node()
+        renderer.menu_group.hidden = True
+        renderer.render(state)
+        ui.page_swipe_direction = 1
+        state.active_page = "EXPLORER"
+        ui.apply_selector_context()
+
+        self.assertTrue(renderer.render(state))
+        transition = renderer._page_transition
+        start = transition["started"]
+        self.assertEqual(transition["phase"], "out")
+        self.assertTrue(renderer.animate(start + 0.12))
+        self.assertEqual(renderer.home_group.x, -120)
+        self.assertTrue(renderer.render(state))
+        self.assertTrue(renderer.animate(start + 0.241))
+        self.assertEqual(renderer.home_group.x, -240)
+        self.assertFalse(renderer.menu_group.hidden)
+        self.assertEqual(renderer.menu_group.x, 240)
+        self.assertTrue(renderer.render(state))
+        self.assertEqual(renderer.menu_title.value, "FILE EXPLORER")
+
+        incoming = renderer._page_transition["started"]
+        self.assertTrue(renderer.animate(incoming + 0.12))
+        self.assertEqual(renderer.menu_group.x, 120)
+        renderer.render(state)
+        self.assertTrue(renderer.animate(incoming + 0.241))
+        self.assertEqual(renderer.menu_group.x, 0)
+        renderer.render(state)
+        self.assertIsNone(renderer._page_transition)
+
+    def test_alarm_interrupts_page_swipe_transition(self):
+        state, ui, _, renderer = self.make_renderer()
+        renderer.home_group = Node()
+        renderer.menu_group = Node()
+        renderer.menu_group.hidden = True
+        renderer.render(state)
+        ui.page_swipe_direction = 1
+        state.active_page = "EXPLORER"
+        ui.apply_selector_context()
+        renderer.render(state)
+        state.estop_latched = True
+
+        renderer.render(state)
+
+        self.assertIsNone(renderer._page_transition)
+        self.assertEqual(renderer.home_group.x, 0)
+        self.assertEqual(renderer.menu_group.x, 0)
+        self.assertFalse(renderer.overlay.group.hidden)
 
     def test_maps_home_state_and_updates_only_changed_component(self):
         state, _, display, renderer = self.make_renderer()
