@@ -6,6 +6,8 @@ from src.display.round_ui.components import MenuHighlight
 from src.display.round_ui.bootstrap import apply_mock_state
 from src.display.round_ui.geometry import RoundLayout
 from src.display.round_ui import bezel_palette, theme
+from src.display.round_ui.rotor import (bezel_segment_levels,
+                                        update_bezel_segment_levels)
 from src.display.ui import ROTATE_CCW, ROTATE_CW, SELECT, UIManager
 from src.state import PendantState
 
@@ -284,24 +286,48 @@ class RoundRendererTests(unittest.TestCase):
     def test_rotating_bezel_segments_follow_rotor_and_yield_to_alarm(self):
         state, _, _, renderer = self.make_renderer()
         renderer.hud_markers = ((Node(), 109, None), (Node(), 99, None))
-        segments = [Node() for _ in range(3)]
+        segments = [Node() for _ in range(24)]
         renderer.bezel_segments = segments
-        renderer.rotor_frame_count = 512
-        renderer._rotor_tile_indexes = [-1, -1, -1]
+        renderer.bezel_segment_palettes = [[0] + [1] * 15
+                                           for _ in segments]
+        renderer.rotor_tile_count = 512
+        renderer._rotor_brightness_levels = [-1] * len(segments)
+        renderer._rotor_target_levels = [0] * len(segments)
+        renderer._rotor_color = theme.CYAN
+        geometry = tuple((item.x, item.y, item.tile_index) for item in segments)
 
         self.assertTrue(renderer.animate(0.0))
-        initial = tuple((item.x, item.y, item.tile_index) for item in segments)
+        initial_levels = tuple(renderer._rotor_brightness_levels)
         self.assertTrue(all(not item.hidden for item in segments))
 
         state.mpg_activity = 2
         state.mpg_activity_timestamp = 0.1
         self.assertTrue(renderer.animate(0.1))
-        advanced = tuple((item.x, item.y, item.tile_index) for item in segments)
-        self.assertNotEqual(advanced, initial)
+        self.assertNotEqual(tuple(renderer._rotor_brightness_levels),
+                            initial_levels)
+        self.assertEqual(tuple((item.x, item.y, item.tile_index)
+                               for item in segments), geometry)
 
         renderer.ui.active_overlay = lambda: ("E-STOP", "test")
         renderer.animate(0.2)
         self.assertTrue(all(item.hidden for item in segments))
+
+    def test_rotor_brightness_wave_follows_clockwise_and_counterclockwise(self):
+        still = bezel_segment_levels(0.0, 24)
+        clockwise = bezel_segment_levels(0.30, 24)
+        counterclockwise = bezel_segment_levels(-0.30, 24)
+        self.assertEqual(max(still), 15)
+        self.assertGreater(clockwise[1], clockwise[0])
+        self.assertGreater(counterclockwise[23], counterclockwise[0])
+        self.assertTrue(all(1 <= value <= 15 for value in clockwise))
+
+    def test_rotor_animation_updates_a_retained_brightness_buffer(self):
+        levels = [0] * 24
+        identity = id(levels)
+        update_bezel_segment_levels(0.3, levels)
+        expected = bezel_segment_levels(0.3, 24)
+        self.assertEqual(tuple(levels), expected)
+        self.assertEqual(id(levels), identity)
 
     def test_critical_alarm_tints_bezel_red_and_restores_selected_theme(self):
         _, _, _, renderer = self.make_renderer()

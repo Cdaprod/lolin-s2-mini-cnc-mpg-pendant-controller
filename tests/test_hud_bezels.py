@@ -57,6 +57,11 @@ class AssetPipelineTests(unittest.TestCase):
         self.assertGreaterEqual(int(xx.max() - xx.min()), 16)
         self.assertGreaterEqual(int(yy.max() - yy.min()), 3)
         self.assertLessEqual(int(horizontal_arc.max()), 15)
+        # With the generator's tangent basis, positive y is inward for the
+        # orientation-zero arc. Its end points must bow inward, not outward.
+        ends = horizontal_arc[:, 3:9].sum() + horizontal_arc[:, 15:21].sum()
+        middle = horizontal_arc[:, 9:15].sum()
+        self.assertGreater(int(ends), int(middle))
 
     def test_precomputed_orb_sheet_loads_without_runtime_geometry_sampling(self):
         calls = []

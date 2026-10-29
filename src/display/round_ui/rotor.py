@@ -3,6 +3,38 @@
 import math
 
 
+def bezel_segment_levels(angle, count=24, minimum=1, maximum=15):
+    """Brightness envelope for fixed concentric arcs, sweeping clockwise.
+
+    Geometry stays tangent to the bezel; only each retained segment's palette
+    intensity changes. Three soft highlights are spaced around the ring.
+    Positive angle follows increasing screen-space theta (clockwise).
+    """
+    count = max(1, int(count))
+    period = 2.0 * math.pi / 3.0
+    levels = []
+    for index in range(count):
+        theta = 2.0 * math.pi * index / count
+        delta = ((theta - float(angle) + period * 0.5) % period) - period * 0.5
+        envelope = max(0.0, math.cos(delta * 1.5)) ** 4
+        levels.append(int(round(minimum + (maximum - minimum) * envelope)))
+    return tuple(levels)
+
+
+def update_bezel_segment_levels(angle, levels, minimum=1, maximum=15):
+    """Update a retained level buffer without allocating animation state."""
+    count = len(levels)
+    if count < 1:
+        return
+    period = 2.0 * math.pi / 3.0
+    angle = float(angle)
+    for index in range(count):
+        theta = 2.0 * math.pi * index / count
+        delta = ((theta - angle + period * 0.5) % period) - period * 0.5
+        envelope = max(0.0, math.cos(delta * 1.5)) ** 4
+        levels[index] = int(round(minimum + (maximum - minimum) * envelope))
+
+
 class BezelRotor:
     """Integrate ambient and MPG-follow rotation without touching machine state.
 

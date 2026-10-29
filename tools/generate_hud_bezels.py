@@ -75,12 +75,12 @@ def orbit_phase_data():
 
 
 def rotor_segment_data():
-    """Return a supersampled curved-arc atlas for the moving outer rotor.
+    """Return a supersampled curved-arc atlas for the fixed outer rotor.
 
     Each 23px tile is a bright, ~17px arc following a 109px circular track.
-    The atlas precomputes 32 tangent orientations and 16 subpixel positions;
-    runtime only selects a retained TileGrid tile and moves it. No bitmap is
-    allocated or rotated while animating.
+    The atlas precomputes 32 tangent orientations and 16 subpixel positions.
+    Firmware places these tiles once and animates their palette brightness;
+    no bitmap is allocated or rotated while animating.
     """
     tile, phases, orientations, samples = 23, 4, 32, 8
     track_radius, half_length = 109.0, 8.5
@@ -102,7 +102,7 @@ def rotor_segment_data():
                 # In tangent coordinates a circle curves inward by s²/(2R).
                 # Bake that gentle curvature into each tile so the accents
                 # read as ring arcs instead of bars spinning on their axes.
-                arc_inward = -(along * along) / (2.0 * track_radius)
+                arc_inward = (along * along) / (2.0 * track_radius)
                 cap = np.maximum(np.abs(along) - half_length, 0.0)
                 distance = np.hypot(cap, across - arc_inward)
                 light = np.zeros(distance.shape, dtype=np.float32)
