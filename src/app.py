@@ -646,17 +646,18 @@ class PendantApplication:
         self._diag_total_input_ms += input_duration_ms
         touch_started = self._diag_ticks_ms()
         if self.touch_manager is not None:
-            for event in self.touch_manager.poll():
-                emit("touch_gesture", kind=event.kind, x=event.x, y=event.y)
-                try:
-                    self.handle_ui_event(event)
-                except SafetyError as exc:
-                    self.ui.toast = str(exc)
+            touch_events = self.touch_manager.poll()
             contact = getattr(self.touch_manager,
                               "last_contact_transition", None)
             if contact is not None:
                 emit("touch_contact", state=contact[0],
                      x=contact[1], y=contact[2])
+            for event in touch_events:
+                emit("touch_gesture", kind=event.kind, x=event.x, y=event.y)
+                try:
+                    self.handle_ui_event(event)
+                except SafetyError as exc:
+                    self.ui.toast = str(exc)
             if getattr(self.touch_manager, "consecutive_errors", 0) >= 3:
                 self.state.touch_error = "touch polling failed: " + self.touch_manager.last_error
                 self.state.subsystems["touch"] = "ERROR"

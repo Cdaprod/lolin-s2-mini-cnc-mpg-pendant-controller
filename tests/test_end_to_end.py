@@ -1,13 +1,37 @@
 import unittest
+from unittest.mock import patch
 
 from src.app import PendantApplication
 from src.display.console import ConsoleDisplay
 from src.input.mpg import MPGDecoder
 from src.input.selectors import SelectorModel
 from src.transport.mock import MockGRBLTransport, MockTransport
+from src.display.ui import TouchEvent
 
 
 class EndToEndTests(unittest.TestCase):
+    def test_touch_contact_precedes_released_gesture_in_diagnostics(self):
+        class TouchManager:
+            last_contact_transition = ("up", 90, 65)
+            last_feedback = None
+            consecutive_errors = 0
+            last_error = None
+            feedback_until = 0
+
+            def poll(self):
+                return (TouchEvent("release_select", 90, 65),)
+
+        app = PendantApplication.from_config(
+            {"controller_mode": "disabled"},
+            display=ConsoleDisplay(lambda frame: None),
+            touch_manager=TouchManager(), clock=lambda: 1.0)
+        events = []
+        with patch("src.app.emit",
+                   side_effect=lambda event, **fields: events.append(event)):
+            app.poll()
+        self.assertLess(events.index("touch_contact"),
+                        events.index("touch_gesture"))
+
     def test_estop_immediately_discards_jog_and_inhibits_stream(self):
         transport = MockTransport()
         app = PendantApplication.from_config(
