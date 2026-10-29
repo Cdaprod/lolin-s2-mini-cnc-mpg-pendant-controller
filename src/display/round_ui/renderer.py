@@ -308,11 +308,23 @@ class RoundRenderer:
         self._halo_dirty = True
 
     def touch_hold(self, until):
-        """Keep the outer contact ring softly lit without restarting its wave."""
+        """Hold a compact contact glow in place without advancing its wave."""
         if not self.animations or self.touch_halo is None or not self._halo_visible:
             return
         self._halo_until = max(self._halo_until, float(until))
         self._halo_held = True
+
+    def touch_release(self, now):
+        """Fade the held contact glow quickly; do not restart a large ripple."""
+        if not self.animations or self.touch_halo is None or not self._halo_visible:
+            return
+        now = float(now)
+        # Start the final few pixels of the outward wave at the moment of lift.
+        # Its 30 ms tail is perceptible but doesn't delay the release action.
+        self._halo_held = False
+        self._halo_started = now - self._halo_duration * 0.70
+        self._halo_until = now + 0.04
+        self._halo_phase = -1
 
     def _update_halo_palette(self, progress):
         if self._halo_palette is None:
@@ -471,7 +483,10 @@ class RoundRenderer:
                     duration = self._halo_duration
                     progress = (now - self._halo_started) / duration
                     if self._halo_held:
-                        progress = min(0.86, progress)
+                        # Keep the bright core and inner halo under the finger.
+                        # Advancing to the outer ring made contact appear dim
+                        # during longer touches and read as a slow worm/ripple.
+                        progress = min(0.10, progress)
                     self._halo_progress = max(0.0, min(1.0, progress))
                     if self._update_halo_palette(self._halo_progress):
                         self._halo_dirty = True
