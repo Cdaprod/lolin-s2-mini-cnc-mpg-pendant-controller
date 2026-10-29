@@ -100,7 +100,7 @@ class RoundRenderer:
         self._halo_palette = None
         self._halo_progress = 1.0
         self._halo_phase = -1
-        self._halo_duration = 0.20
+        self._halo_duration = 0.17
         self._halo_held = False
         self._halo_accent = theme.TEXT
         self._last_animation_now = None
@@ -296,12 +296,12 @@ class RoundRenderer:
         self._halo_until = float(until)
         self._halo_started = (
             self._last_animation_now if self._last_animation_now is not None
-            else max(0.0, self._halo_until - 0.20)
+            else max(0.0, self._halo_until - 0.17)
         )
         self._halo_progress = 0.0
         # Keep wave duration independent from the short lease that marks an
         # active contact; TouchInput renews that lease while a finger is down.
-        self._halo_duration = 0.24
+        self._halo_duration = 0.17
         self._halo_held = False
         self._halo_phase = -1
         self._update_halo_palette(0.0)
