@@ -22,7 +22,7 @@ from src.state import PendantState
 from src.network import MockWiFiService, WiFiService
 from src.transport.mock import MockGRBLTransport, MockTransport
 from src.transport.uart import UARTTransport
-from src.diagnostics import emit
+from src.diagnostics import emit, input_configuration_fields
 
 
 # CircuitPython peripheral objects are interpreter-owned singletons. Track
@@ -327,13 +327,9 @@ class PendantApplication:
             emit("subsystem", name=name, status=state.subsystems[name])
         input_adapter_configured = bool(
             getattr(getattr(input_manager, "adapter", None), "configured", False))
-        emit("input_configuration",
-             selector_backend=state.selector_backend,
-             inputs_enabled=config.get("inputs_enabled", False),
-             adapter_configured=input_adapter_configured,
-             mcp23017_detected=state.mcp23017_detected,
-             mcp23017_address=("0x{:02x}".format(state.mcp23017_address)
-                               if state.mcp23017_address is not None else "none"))
+        emit("input_configuration", **input_configuration_fields(
+            config, input_adapter_configured, state.mcp23017_detected,
+            state.mcp23017_address))
         state.free_heap = gc.mem_free() if hasattr(gc, "mem_free") else None
         if state.free_heap is not None:
             print("runtime heap:", state.free_heap)
