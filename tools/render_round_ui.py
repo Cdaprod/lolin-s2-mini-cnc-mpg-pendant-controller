@@ -126,7 +126,7 @@ def draw_hud_orbs(draw, colors, now=4.0, outer_angle=None):
 
 def draw_rotor_segments(image, colors, angle):
     """Composite the same compact phase tiles used by the firmware renderer."""
-    if len(rotor_asset) != 36 * 576 // 2:
+    if len(rotor_asset) != 92 * 2944 // 2:
         return
     pixels = image.load()
     for segment in range(3):
@@ -137,16 +137,18 @@ def draw_rotor_segments(image, colors, angle):
         phase_x = int((center_x - base_x) * 4)
         phase_y = int((center_y - base_y) * 4)
         tangent = (theta + math.pi / 2.0) % (2.0 * math.pi)
-        orientation = int(round(tangent * 16.0 / (2.0 * math.pi))) % 16
+        orientation = int(round(tangent * 32.0 / (2.0 * math.pi))) % 32
         tile_x, tile_y = phase_x, orientation * 4 + phase_y
-        for y in range(9):
-            for x in range(9):
-                atlas_x, atlas_y = tile_x * 9 + x, tile_y * 9 + y
-                byte = rotor_asset[atlas_y * 18 + atlas_x // 2]
+        for y in range(23):
+            for x in range(23):
+                atlas_x, atlas_y = tile_x * 23 + x, tile_y * 23 + y
+                byte = rotor_asset[atlas_y * 46 + atlas_x // 2]
                 value = (byte & 0x0F) if atlas_x % 2 == 0 else byte >> 4
                 if value:
                     color = theme.shade_color(colors["accent"], value * 100 // 15)
-                    pixels[int(base_x) + x - 4, int(base_y) + y - 4] = rgb(color)
+                    px, py = int(base_x) + x - 11, int(base_y) + y - 11
+                    if 0 <= px < 240 and 0 <= py < 240:
+                        pixels[px, py] = rgb(color)
 
 
 for skin in ("industrial", "ice", "amber", "spectrum"):

@@ -286,7 +286,7 @@ class RoundRendererTests(unittest.TestCase):
         renderer.hud_markers = ((Node(), 109, None), (Node(), 99, None))
         segments = [Node() for _ in range(3)]
         renderer.bezel_segments = segments
-        renderer.rotor_frame_count = 256
+        renderer.rotor_frame_count = 512
         renderer._rotor_tile_indexes = [-1, -1, -1]
 
         self.assertTrue(renderer.animate(0.0))

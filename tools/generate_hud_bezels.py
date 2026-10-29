@@ -75,13 +75,15 @@ def orbit_phase_data():
 
 
 def rotor_segment_data():
-    """Return a compact atlas for a tangential segment at 16×16 phases.
+    """Return a supersampled curved-arc atlas for the moving outer rotor.
 
-    Each tile is a 9px capsule, supersampled before quantization. The atlas
-    has 16 tangent orientations and 16 subpixel center positions, allowing
-    small retained TileGrids to orbit without rotating a full-screen bitmap.
+    Each 23px tile is a bright, ~17px arc following a 109px circular track.
+    The atlas precomputes 32 tangent orientations and 16 subpixel positions;
+    runtime only selects a retained TileGrid tile and moves it. No bitmap is
+    allocated or rotated while animating.
     """
-    tile, phases, orientations, samples = 9, 4, 16, 8
+    tile, phases, orientations, samples = 23, 4, 32, 8
+    track_radius, half_length = 109.0, 8.5
     atlas = np.zeros((tile * orientations * phases, tile * phases),
                      dtype=np.uint8)
     grid = (np.arange(tile * samples, dtype=np.float32) + .5) / samples
@@ -91,20 +93,24 @@ def rotor_segment_data():
         ux, uy = math.cos(angle), math.sin(angle)
         vx, vy = -uy, ux
         for phase_y in range(phases):
-            center_y = 4.0 + phase_y / float(phases)
+            center_y = 11.0 + phase_y / float(phases)
             for phase_x in range(phases):
-                center_x = 4.0 + phase_x / float(phases)
+                center_x = 11.0 + phase_x / float(phases)
                 dx, dy = xx - center_x, yy - center_y
                 along = dx * ux + dy * uy
                 across = dx * vx + dy * vy
-                cap = np.maximum(np.abs(along) - 3.0, 0.0)
-                distance = np.hypot(cap, across)
+                # In tangent coordinates a circle curves inward by s²/(2R).
+                # Bake that gentle curvature into each tile so the accents
+                # read as ring arcs instead of bars spinning on their axes.
+                arc_inward = -(along * along) / (2.0 * track_radius)
+                cap = np.maximum(np.abs(along) - half_length, 0.0)
+                distance = np.hypot(cap, across - arc_inward)
                 light = np.zeros(distance.shape, dtype=np.float32)
                 light[distance <= .85] = 1.0
                 soft = (distance > .85) & (distance < 1.8)
                 light[soft] = .72 + .28 * (1.8-distance[soft])/.95
-                glow = (distance >= 1.8) & (distance < 3.0)
-                light[glow] = .22 * (3.0-distance[glow])/1.2
+                glow = (distance >= 1.8) & (distance < 3.2)
+                light[glow] = .20 * (3.2-distance[glow])/1.4
                 coverage = light.reshape(tile, samples, tile, samples).mean(
                     axis=(1, 3))
                 y0 = (orientation * phases + phase_y) * tile
@@ -357,7 +363,7 @@ def generate(output,supersample=8,overrides=None):
                         "bytes":len(data)})
     _write_palette_module(palettes,ROOT/"src/display/round_ui/bezel_palette.py")
     _contact_sheet(dev,output/"contact-sheet.png")
-    manifest={"generator":"tools/generate_hud_bezels.py","generator_version":3,"target":[SIZE,SIZE],
+    manifest={"generator":"tools/generate_hud_bezels.py","generator_version":4,"target":[SIZE,SIZE],
               "supersampling":supersample,"palette_entries":16,
               "bezel_palette_luminance":BEZEL_LUMINANCE,
               "default":"cyan_reactor","themes":entries,
@@ -365,8 +371,8 @@ def generate(output,supersample=8,overrides=None):
                                 "width":36,"height":36,"tile_size":9,"tiles":16,
                                 "palette_entries":16,"transparent_index":0,"bytes":len(orbit_data)},
                                {"name":"rotor_segment_phases","file":"assets/round_hud/runtime/rotor_segment_phases.4bpp",
-                                "width":36,"height":576,"tile_size":9,"tiles":256,
-                                "orientations":16,"subpixel_phases":16,
+                                "width":92,"height":2944,"tile_size":23,"tiles":512,
+                                "orientations":32,"subpixel_phases":16,
                                 "palette_entries":16,"transparent_index":0,"bytes":len(rotor_data)}],
               "generation_seconds":round(time.perf_counter()-start,3)}
     (output/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n",encoding="utf-8")

@@ -243,14 +243,14 @@ def _load_orb_sprite_sheet(displayio):
 
 
 def _load_rotor_sprite_sheet(displayio):
-    """Load 16 oriented and 16 subpixel capsule phases for outer ring motion."""
+    """Load precomputed curved-arc orientation and subpixel phases."""
     try:
         import bitmaptools
-        bitmap = displayio.Bitmap(36, 576, 16)
+        bitmap = displayio.Bitmap(92, 2944, 16)
         with open("/assets/round_hud/runtime/rotor_segment_phases.4bpp",
                   "rb") as source:
             bitmaptools.readinto(bitmap, source, bits_per_pixel=4)
-        return bitmap, 256
+        return bitmap, 512
     except (ImportError, OSError, RuntimeError, ValueError, AttributeError,
             MemoryError):
         return None, 0
@@ -329,7 +329,7 @@ def displayio_scene(display, colors=None, bezel_name=None):
         for _ in range(3):
             segment = displayio.TileGrid(
                 rotor_sheet, pixel_shader=rotor_palette, width=1, height=1,
-                tile_width=9, tile_height=9)
+                tile_width=23, tile_height=23)
             segment.hidden = True
             root.append(segment)
             rotor_segments.append(segment)
