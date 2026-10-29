@@ -45,3 +45,21 @@ On the saved shapes, the native release shell and the faceplate Body Tip have ze
 The candidate was not saved, extracted, or integrated. Its scoped binder/Hole/Body recompute returned 52 document-level errors, including known suppressed/history and cross-scope warnings, although the three targeted objects were valid and up-to-date. A separate exploratory full recompute on the Solid1-only variant returned 163 errors and took 219 seconds, exceeding the repository's recommended 180-second bound; do not repeat that broad recompute. No save/reopen test was performed for the changed candidate. Therefore the candidate does not pass the migration promotion gate.
 
 The direct release feature still depends on `EncoderFaceplateRetentionKeep` (through its `Tool`) and on the existing pocket-wall hole feature (through its `Base`). The front-shell and faceplate construction paths therefore remain in the transitive dependency graph. Next, audit the exact geometry and constraints consumed by `EncoderFaceplateRetentionKeep` and confirm the pocket-wall pilot positions/diameters, then test a disposable candidate save/reopen before considering extraction. Keep the production handoff, modular assembly, master, and static interim assembly representations unchanged until those checks pass.
+
+### Retention-keep geometry mapping
+
+A read-only runtime inspection mapped the remaining shell-retention dependency:
+
+```text
+EncoderPocketShellReleaseNoFaceplateRetention
+  Base  <- EncoderPocketShellRelease
+  Tool  <- EncoderFaceplateRetentionKeep
+              Base <- Body_EncoderFacePlateLandSplit (300.1436 mm³, 1 solid)
+              Tool <- EncoderCaptureLipTransfer (13.0788 mm³, 4 solids)
+                         Base <- EncoderCaptureLedge
+                         Tool <- EncoderCrownGlassBackClearance
+```
+
+`EncoderFaceplateRetentionKeep` itself is a valid 5-solid, 313.2627 mm³ compound. Its common volume with the pre-retention shell is 256.0989 mm³, matching the material removed by the `EncoderPocketShellReleaseNoFaceplateRetention` cut within about 0.000004 mm³. Another 56.8806 mm³ of the keepout lies outside the base shell shape. This confirms the tool is a real geometric interface input (receiver land plus capture-lip clearance), not an inert history reference. The capture lip and crown-clearance chain reaches the upper-faceplate construction, so replacing the split selector alone cannot make the pocket shell standalone.
+
+The prior candidate result therefore remains a useful component-boundary hypothesis: use the native shell release output for the pocket shell and retain the faceplate Body's complementary residual. The next candidate must preserve the 256.10 mm³ retention cut and its capture-lip geometry, and must account for its faceplate/upper-faceplate upstream links. No simplification or geometry replacement has been attempted.
