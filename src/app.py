@@ -652,6 +652,11 @@ class PendantApplication:
                     self.handle_ui_event(event)
                 except SafetyError as exc:
                     self.ui.toast = str(exc)
+            contact = getattr(self.touch_manager,
+                              "last_contact_transition", None)
+            if contact is not None:
+                emit("touch_contact", state=contact[0],
+                     x=contact[1], y=contact[2])
             if getattr(self.touch_manager, "consecutive_errors", 0) >= 3:
                 self.state.touch_error = "touch polling failed: " + self.touch_manager.last_error
                 self.state.subsystems["touch"] = "ERROR"

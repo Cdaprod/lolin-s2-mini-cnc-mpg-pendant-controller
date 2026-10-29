@@ -23,7 +23,44 @@ class Source:
         return self.current
 
 
+class FlakySource(Source):
+    def __init__(self):
+        super().__init__()
+        self.fail = False
+
+    def point(self):
+        if self.fail:
+            raise OSError("temporary I2C read failure")
+        return self.current
+
+
 class GestureTests(unittest.TestCase):
+    def test_touch_contact_diagnostics_report_coordinates_and_ignore_read_errors(self):
+        clock = Clock()
+        source = FlakySource()
+        touch = TouchInput(source, clock)
+
+        source.current = (90, 65)
+        self.assertEqual(touch.poll(), ())
+        self.assertEqual(touch.last_contact_transition, ("down", 90, 65))
+
+        clock.t = .04
+        source.fail = True
+        self.assertEqual(touch.poll(), ())
+        self.assertIsNone(touch.last_contact_transition)
+        self.assertTrue(touch.gestures.active)
+
+        source.fail = False
+        source.current = None
+        clock.t = .05
+        self.assertEqual(touch.poll(), ())
+        self.assertIsNone(touch.last_contact_transition)
+        clock.t = .13
+        event = touch.poll()[0]
+        self.assertEqual((event.kind, event.x, event.y),
+                         ("release_select", 90, 65))
+        self.assertEqual(touch.last_contact_transition, ("up", 90, 65))
+
     def test_tap_and_hold(self):
         clock = Clock()
         gestures = TouchGestures(clock)
