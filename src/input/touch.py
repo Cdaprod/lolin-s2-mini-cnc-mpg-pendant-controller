@@ -26,7 +26,7 @@ class TouchInput:
         self.feedback_until = 0
         self.clock = clock
         self.poll_interval = max(0.0, float(poll_interval))
-        self._last_poll_time = None
+        self._next_poll_time = None
         self.poll_count = 0
         self.sample_count = 0
         self.event_count = 0
@@ -60,10 +60,16 @@ class TouchInput:
         self.last_contact_transition = None
         self.last_feedback = None
         now = self.clock()
-        if (self.poll_interval and self._last_poll_time is not None and
-                now - self._last_poll_time < self.poll_interval):
+        if (self.poll_interval and self._next_poll_time is not None and
+                now < self._next_poll_time):
             return ()
-        self._last_poll_time = now
+        if self.poll_interval:
+            if self._next_poll_time is None:
+                self._next_poll_time = now + self.poll_interval
+            else:
+                self._next_poll_time += self.poll_interval
+                if self._next_poll_time <= now:
+                    self._next_poll_time = now + self.poll_interval
         self.poll_count += 1
         try:
             raw_point = self.source.point()
