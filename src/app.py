@@ -29,7 +29,12 @@ from src.diagnostics import (emit, input_configuration_fields,
 # CircuitPython peripheral objects are interpreter-owned singletons. Track
 # composition in sys.modules so re-importing src.app cannot bypass the guard.
 _CIRCUITPY_COMPOSITION_KEY = "_cdaprod_circuitpython_app_composition"
-_WIFI_SERVICE_POLL_INTERVAL = 0.05
+# Keep Wi-Fi state/service work off the 115 Hz input loop. The measured S3
+# runtime showed this phase dominating its periodic background work; 10 Hz is
+# ample for link/portal state while limiting added status-detection latency to
+# 100 ms. Input, touch, controller transport, watchdog, and rendering remain
+# serviced on every main-loop pass.
+_WIFI_SERVICE_POLL_INTERVAL = 0.1
 _DIAG_TICKS_PERIOD = 1 << 29
 _DIAG_TICKS_MASK = _DIAG_TICKS_PERIOD - 1
 _DIAG_TICKS_HALFPERIOD = _DIAG_TICKS_PERIOD >> 1
