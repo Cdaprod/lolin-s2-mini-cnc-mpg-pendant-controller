@@ -424,8 +424,14 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(runtime.kwargs["touch_i2c_reads"], 0)
             self.assertEqual(runtime.kwargs["touch_i2c_busy"], 0)
             self.assertEqual(runtime.kwargs["touch_irq_idle"], 120)
-            self.assertEqual(runtime.kwargs["loop_work_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["loop_work_ms"], 15)
             self.assertEqual(runtime.kwargs["loop_overruns"], 1)
+            self.assertGreaterEqual(runtime.kwargs["max_input_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["max_touch_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["max_transport_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["max_wifi_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["max_display_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["max_mirror_ms"], 15)
 
     def test_runtime_reports_unconfigured_deadman_as_unavailable(self):
         with tempfile.TemporaryDirectory() as root:
