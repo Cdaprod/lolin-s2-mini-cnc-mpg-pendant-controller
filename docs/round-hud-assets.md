@@ -79,6 +79,12 @@ pixel-exact device captures. Physical frame pacing, heap stability, the
 continuous page slide, and the visual response to a connected handwheel must be
 checked on the S3.
 
+Critical `ALARM` and `E-STOP` overlays retint the existing bezel palette to the
+dim red alarm palette while preserving its geometry and transparent index. The
+change is a bounded palette update on the normal UI render path; motion markers
+and rotor segments remain hidden while the critical overlay is active. Clearing
+the overlay restores the selected bezel's original palette.
+
 ## Validation
 
 ```sh

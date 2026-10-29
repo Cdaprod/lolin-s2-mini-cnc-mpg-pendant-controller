@@ -4,7 +4,7 @@ import math
 import time
 
 from ..navigation import menu_window_start
-from . import theme
+from . import bezel_palette, theme
 
 from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
@@ -127,6 +127,10 @@ class RoundRenderer:
         self._last_nonhome_model_ticks = None
         self._last_nonhome_safety_signature = None
         self.palettes = scene.get("palettes", {})
+        self._bezel_palette = self.palettes.get("bezel")
+        self._bezel_base_palette = bezel_palette.PALETTES.get(
+            scene.get("bezel_name") or bezel_palette.DEFAULT_BEZEL)
+        self._bezel_alarm_active = False
         self._halo_palette = self.palettes.get("halo")
         self.themed_text = scene.get("themed_text", ())
         self.active_theme = None
@@ -208,6 +212,23 @@ class RoundRenderer:
 
     def bind_ui(self, ui):
         self.ui = ui
+
+    def _set_bezel_alarm(self, overlay):
+        """Retint only the retained bezel palette for a critical alarm."""
+        active = bool(overlay and overlay[0] in ("E-STOP", "ALARM"))
+        if active == self._bezel_alarm_active or self._bezel_palette is None:
+            return False
+        colors = (bezel_palette.PALETTES["red_alarm"] if active else
+                  self._bezel_base_palette)
+        if colors is None:
+            return False
+        changed = False
+        for index in range(1, min(16, len(colors))):
+            if self._bezel_palette[index] != colors[index]:
+                self._bezel_palette[index] = colors[index]
+                changed = True
+        self._bezel_alarm_active = active
+        return changed
 
     def touch_feedback(self, point, until):
         """Show a preallocated, temporary touch target; never dispatch actions."""
@@ -680,6 +701,7 @@ class RoundRenderer:
             self._last_nonhome_safety_signature = safety_signature
         model_started = self._profile_ticks_ms()
         model = self.ui.view_model()
+        self._set_bezel_alarm(model.get("overlay"))
         if self._page_transition is not None and \
                 self._page_transition["phase"] == "commit":
             self._page_transition["phase"] = "in"

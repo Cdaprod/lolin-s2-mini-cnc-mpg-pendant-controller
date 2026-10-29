@@ -272,6 +272,8 @@ def displayio_scene(display, colors=None, bezel_name=None):
         # Decorative light stays beneath all readouts, feedback, and alarms.
         root.append(displayio.TileGrid(bezel_bitmap, pixel_shader=bezel_colors))
     palettes = {"dial": palette}
+    if bezel_colors is not None:
+        palettes["bezel"] = bezel_colors
     # One shared sprite sheet supplies 16 precomputed subpixel phases. Separate
     # palettes keep the two counter-rotating indicators visually distinct.
     hud_markers = []
