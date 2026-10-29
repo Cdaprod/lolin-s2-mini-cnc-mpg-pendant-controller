@@ -10,6 +10,33 @@ from src.display.ui import TouchEvent
 
 
 class EndToEndTests(unittest.TestCase):
+    def test_contact_down_feedback_reaches_display_without_ui_dispatch(self):
+        feedback = []
+
+        class TouchManager:
+            last_contact_transition = ("down", 90, 65)
+            last_feedback = (90, 65, "contact")
+            feedback_until = 1.2
+            consecutive_errors = 0
+            last_error = None
+
+            def poll(self):
+                return ()
+
+        class Display(ConsoleDisplay):
+            def touch_feedback(self, point, until):
+                feedback.append((point, until))
+
+        app = PendantApplication.from_config(
+            {"controller_mode": "disabled"},
+            display=Display(lambda frame: None),
+            touch_manager=TouchManager(), clock=lambda: 1.0)
+
+        app.poll()
+
+        self.assertEqual(feedback, [((90, 65), 1.2)])
+        self.assertEqual(app.ui.current_screen, "HOME")
+
     def test_touch_contact_precedes_released_gesture_in_diagnostics(self):
         class TouchManager:
             last_contact_transition = ("up", 90, 65)
