@@ -16,6 +16,13 @@ class Node:
         self.hidden = False
         self.y = 0
         self.x = 0
+        self.tile_index = 0
+
+    def __getitem__(self, index):
+        return self.tile_index
+
+    def __setitem__(self, index, value):
+        self.tile_index = value
 
     def update(self, state, activity, armed, axis_transition,
                increment_transition):
@@ -273,6 +280,28 @@ class RoundRendererTests(unittest.TestCase):
         renderer.ui.active_overlay = lambda: ("E-STOP", "test")
         renderer.animate(0.75)
         self.assertTrue(all(trail.hidden for trail in trails))
+
+    def test_rotating_bezel_segments_follow_rotor_and_yield_to_alarm(self):
+        state, _, _, renderer = self.make_renderer()
+        renderer.hud_markers = ((Node(), 109, None), (Node(), 99, None))
+        segments = [Node() for _ in range(3)]
+        renderer.bezel_segments = segments
+        renderer.rotor_frame_count = 256
+        renderer._rotor_tile_indexes = [-1, -1, -1]
+
+        self.assertTrue(renderer.animate(0.0))
+        initial = tuple((item.x, item.y, item.tile_index) for item in segments)
+        self.assertTrue(all(not item.hidden for item in segments))
+
+        state.mpg_activity = 2
+        state.mpg_activity_timestamp = 0.1
+        self.assertTrue(renderer.animate(0.1))
+        advanced = tuple((item.x, item.y, item.tile_index) for item in segments)
+        self.assertNotEqual(advanced, initial)
+
+        renderer.ui.active_overlay = lambda: ("E-STOP", "test")
+        renderer.animate(0.2)
+        self.assertTrue(all(item.hidden for item in segments))
 
     def test_encoder_feedback_tracks_detent_direction_and_fades(self):
         state, _, _, renderer = self.make_renderer()

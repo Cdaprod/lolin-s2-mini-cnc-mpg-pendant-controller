@@ -66,6 +66,47 @@ def orbit_phase_data():
     return packed.tobytes()
 
 
+def rotor_segment_data():
+    """Return a compact atlas for a tangential segment at 16×16 phases.
+
+    Each tile is a 9px capsule, supersampled before quantization. The atlas
+    has 16 tangent orientations and 16 subpixel center positions, allowing
+    small retained TileGrids to orbit without rotating a full-screen bitmap.
+    """
+    tile, phases, orientations, samples = 9, 4, 16, 8
+    atlas = np.zeros((tile * orientations * phases, tile * phases),
+                     dtype=np.uint8)
+    grid = (np.arange(tile * samples, dtype=np.float32) + .5) / samples
+    xx, yy = np.meshgrid(grid, grid)
+    for orientation in range(orientations):
+        angle = 2.0 * math.pi * orientation / orientations
+        ux, uy = math.cos(angle), math.sin(angle)
+        vx, vy = -uy, ux
+        for phase_y in range(phases):
+            center_y = 4.0 + phase_y / float(phases)
+            for phase_x in range(phases):
+                center_x = 4.0 + phase_x / float(phases)
+                dx, dy = xx - center_x, yy - center_y
+                along = dx * ux + dy * uy
+                across = dx * vx + dy * vy
+                cap = np.maximum(np.abs(along) - 3.0, 0.0)
+                distance = np.hypot(cap, across)
+                light = np.zeros(distance.shape, dtype=np.float32)
+                light[distance <= .85] = 1.0
+                soft = (distance > .85) & (distance < 1.8)
+                light[soft] = .72 + .28 * (1.8-distance[soft])/.95
+                glow = (distance >= 1.8) & (distance < 3.0)
+                light[glow] = .22 * (3.0-distance[glow])/1.2
+                coverage = light.reshape(tile, samples, tile, samples).mean(
+                    axis=(1, 3))
+                y0 = (orientation * phases + phase_y) * tile
+                x0 = phase_x * tile
+                atlas[y0:y0+tile, x0:x0+tile] = np.rint(
+                    coverage * 15).astype(np.uint8)
+    packed = (atlas[:, 0::2] | (atlas[:, 1::2] << 4)).astype(np.uint8)
+    return packed.tobytes()
+
+
 def _point(r, a, scale):
     theta = math.radians(a)
     return (round((CENTER + r*math.cos(theta))*scale),
@@ -266,6 +307,9 @@ def generate(output,supersample=8,overrides=None):
     orbit_file = runtime / "orbit_phases.4bpp"
     orbit_data = orbit_phase_data()
     orbit_file.write_bytes(orbit_data)
+    rotor_file = runtime / "rotor_segment_phases.4bpp"
+    rotor_data = rotor_segment_data()
+    rotor_file.write_bytes(rotor_data)
     for item in THEMES:
         name,label,primary,secondary,kind=item
         if overrides and name in overrides:
@@ -282,11 +326,15 @@ def generate(output,supersample=8,overrides=None):
                         "bytes":len(data)})
     _write_palette_module(palettes,ROOT/"src/display/round_ui/bezel_palette.py")
     _contact_sheet(dev,output/"contact-sheet.png")
-    manifest={"generator":"tools/generate_hud_bezels.py","generator_version":1,"target":[SIZE,SIZE],
+    manifest={"generator":"tools/generate_hud_bezels.py","generator_version":2,"target":[SIZE,SIZE],
               "supersampling":supersample,"palette_entries":16,"default":"cyan_reactor","themes":entries,
               "sprite_assets":[{"name":"orbit_phases","file":"assets/round_hud/runtime/orbit_phases.4bpp",
                                 "width":36,"height":36,"tile_size":9,"tiles":16,
-                                "palette_entries":16,"transparent_index":0,"bytes":len(orbit_data)}],
+                                "palette_entries":16,"transparent_index":0,"bytes":len(orbit_data)},
+                               {"name":"rotor_segment_phases","file":"assets/round_hud/runtime/rotor_segment_phases.4bpp",
+                                "width":36,"height":576,"tile_size":9,"tiles":256,
+                                "orientations":16,"subpixel_phases":16,
+                                "palette_entries":16,"transparent_index":0,"bytes":len(rotor_data)}],
               "generation_seconds":round(time.perf_counter()-start,3)}
     (output/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n",encoding="utf-8")
     return manifest

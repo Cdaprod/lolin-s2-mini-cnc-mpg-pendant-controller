@@ -27,6 +27,9 @@ BEZEL_PATH = (Path(__file__).resolve().parents[1] / "assets" / "round_hud" /
 if not BEZEL_PATH.is_file():
     raise SystemExit("generated bezel not found: {}".format(BEZEL_PATH))
 bezel_asset = Image.open(BEZEL_PATH).convert("RGBA")
+ROTOR_ASSET = (BEZEL_PATH.parents[1] / "runtime" /
+               "rotor_segment_phases.4bpp")
+rotor_asset = ROTOR_ASSET.read_bytes() if ROTOR_ASSET.is_file() else b""
 screens = build_screens()
 names = ["HOME", "MAIN_MENU", "MACHINE", "JOBS", "JOB_BROWSER",
          "ACTIVE_JOB", "EXPLORER", "CONFIGURATION", "CONTROLLER",
@@ -90,6 +93,31 @@ def draw_hud_orbs(draw, colors, now=4.0, outer_angle=None):
                                fill=rgb(ghost))
 
 
+def draw_rotor_segments(image, colors, angle):
+    """Composite the same compact phase tiles used by the firmware renderer."""
+    if len(rotor_asset) != 36 * 576 // 2:
+        return
+    pixels = image.load()
+    for segment in range(3):
+        theta = angle + segment * (2.0 * math.pi / 3.0)
+        center_x = 120 + 113.0 * math.cos(theta)
+        center_y = 120 + 113.0 * math.sin(theta)
+        base_x, base_y = math.floor(center_x), math.floor(center_y)
+        phase_x = int((center_x - base_x) * 4)
+        phase_y = int((center_y - base_y) * 4)
+        tangent = (theta + math.pi / 2.0) % (2.0 * math.pi)
+        orientation = int(round(tangent * 16.0 / (2.0 * math.pi))) % 16
+        tile_x, tile_y = phase_x, orientation * 4 + phase_y
+        for y in range(9):
+            for x in range(9):
+                atlas_x, atlas_y = tile_x * 9 + x, tile_y * 9 + y
+                byte = rotor_asset[atlas_y * 18 + atlas_x // 2]
+                value = (byte & 0x0F) if atlas_x % 2 == 0 else byte >> 4
+                if value:
+                    color = theme.shade_color(colors["accent"], value * 100 // 15)
+                    pixels[int(base_x) + x - 4, int(base_y) + y - 4] = rgb(color)
+
+
 for skin in ("industrial", "ice", "amber", "spectrum"):
     # Retain per-theme previews for color regression; also publish a page-
     # accurate composite showing the palette chosen by physical selector.
@@ -103,6 +131,8 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
         page = {"EXPLORER": 1, "CONFIGURATION": 2, "PREVIEW": 3}.get(name, 0)
         # Snapshot at t=4 s to make both counter-rotating HUD markers visible.
         draw_hud_orbs(d, c)
+        draw_rotor_segments(im, c, 0.0)
+        d = ImageDraw.Draw(im)
         for i in range(4):
             x = 67 + (106 * i) // 3
             y = 120 - int(math.sqrt(108 * 108 - (x - 120) ** 2))
@@ -168,6 +198,8 @@ base = Image.new("RGBA", (240, 240), rgb(c["background"]) + (255,))
 im = Image.alpha_composite(base, bezel_asset).convert("RGB")
 d = ImageDraw.Draw(im)
 draw_hud_orbs(d, c)
+draw_rotor_segments(im, c, 0.0)
+d = ImageDraw.Draw(im)
 for i in range(4):
     x = 67 + (106 * i) // 3
     y = 120 - int(math.sqrt(108 * 108 - (x - 120) ** 2))
@@ -234,6 +266,8 @@ for storage, primary, secondary in (
     im = Image.alpha_composite(base, bezel_asset).convert("RGB")
     d = ImageDraw.Draw(im)
     draw_hud_orbs(d, c)
+    draw_rotor_segments(im, c, 0.0)
+    d = ImageDraw.Draw(im)
     d.text((120, 43), "FILE EXPLORER", anchor="mm", font=title_font,
            fill=rgb(c["text"]))
     d.line((44, 55, 196, 55), fill=rgb(c["separator"]), width=1)
@@ -244,14 +278,17 @@ for storage, primary, secondary in (
     im.save(OUT / f"explorer-empty-{storage}.png")
 
 
-def state_canvas(palette_name="industrial", bezel_name=None):
+def state_canvas(palette_name="industrial", bezel_name=None, rotor_angle=0.0,
+                 outer_angle=None):
     colors = theme.select(palette_name)
     selected = bezel_name or ARGS.bezel
     art = Image.open(BEZEL_PATH.parent / (selected + ".png")).convert("RGBA")
     base = Image.new("RGBA", (240, 240), rgb(colors["background"])+(255,))
     image = Image.alpha_composite(base, art).convert("RGB")
     draw = ImageDraw.Draw(image)
-    draw_hud_orbs(draw, colors)
+    draw_hud_orbs(draw, colors, outer_angle=outer_angle)
+    draw_rotor_segments(image, colors, rotor_angle)
+    draw = ImageDraw.Draw(image)
     return image, draw, colors
 
 
@@ -319,8 +356,8 @@ print("Generated interactive-state previews (connected, axis, touch, encoder, al
 # It demonstrates spatial continuity; the physical renderer interpolates
 # between these positions at its configured frame ceiling.
 for degrees in (0, 90, 180, 270):
-    image, draw, colors = state_canvas()
-    draw_hud_orbs(draw, colors, outer_angle=math.radians(degrees))
+    image, draw, colors = state_canvas(
+        rotor_angle=math.radians(degrees), outer_angle=math.radians(degrees))
     draw.text((120, 211), "BEZEL {:03d} DEG".format(degrees), anchor="mm",
               font=small, fill=rgb(colors["muted"]))
     image.save(OUT / "bezel-angle-{:03d}.png".format(degrees))
