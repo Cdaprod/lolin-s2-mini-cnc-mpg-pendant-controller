@@ -88,6 +88,36 @@ class EndToEndTests(unittest.TestCase):
         self.assertLess(events.index("touch_contact"),
                         events.index("touch_gesture"))
 
+    def test_touch_diagnostics_do_not_precede_contact_redraw(self):
+        order = []
+
+        class TouchManager:
+            last_contact_transition = ("down", 90, 65)
+            last_feedback = (90, 65, "contact")
+            feedback_until = 1.2
+            consecutive_errors = 0
+            last_error = None
+
+            def poll(self):
+                return ()
+
+        class Display(ConsoleDisplay):
+            def render(self, state):
+                order.append("render")
+                return super().render(state)
+
+        app = PendantApplication.from_config(
+            {"controller_mode": "disabled"},
+            display=Display(lambda frame: None),
+            touch_manager=TouchManager(), clock=lambda: 1.0)
+        with patch("src.app.emit",
+                   side_effect=lambda event, **fields:
+                   order.append("event:" + event)):
+            app.poll()
+
+        self.assertLess(order.index("render"),
+                        order.index("event:touch_contact"))
+
     def test_estop_immediately_discards_jog_and_inhibits_stream(self):
         transport = MockTransport()
         app = PendantApplication.from_config(
