@@ -336,6 +336,20 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer.motion.text.value, "CW  >>")
         self.assertEqual(renderer.ring.node.activity, 2)
 
+    def test_home_separates_disconnect_status_from_motion_safety_state(self):
+        state, _, _, renderer = self.make_renderer()
+        state.connection_state = "disconnected"
+        state.machine_state = "disconnected"
+        renderer.render(state)
+        self.assertEqual(renderer.state_label.value, "DISCONNECTED")
+        self.assertEqual(renderer.motion.text.value, "MOTION DISARMED")
+
+        state.transport = "c3-espnow"
+        state.link_state = "PAIRED_NO_GRBL"
+        renderer.render(state)
+        self.assertEqual(renderer.state_label.value, "ESP-NOW LINKED")
+        self.assertEqual(renderer.motion.text.value, "GRBL OFFLINE")
+
     def test_existing_ui_navigation_and_overlay_drive_round_components(self):
         state, ui, _, renderer = self.make_renderer()
         self.assertTrue(renderer.overlay.group.hidden)
@@ -376,7 +390,7 @@ class RoundRendererTests(unittest.TestCase):
         state.connection_state = "disconnected"
         ui.refresh_context()
         renderer.render(state)
-        self.assertEqual(renderer.motion.text.value, "CONTROLLER OFFLINE")
+        self.assertEqual(renderer.motion.text.value, "MOTION DISARMED")
 
         state.set_estop(True)
         ui.refresh_context()

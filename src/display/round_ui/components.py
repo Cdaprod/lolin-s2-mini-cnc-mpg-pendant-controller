@@ -90,7 +90,7 @@ class MotionPrompt:
         activity = int(activity)
         if not controller:
             value = ("GRBL OFFLINE" if link_state == "PAIRED_NO_GRBL" else
-                     "CONTROLLER OFFLINE")
+                     "MOTION DISARMED")
         elif not hold:
             value = "HOLD TO JOG"
         elif not armed:
