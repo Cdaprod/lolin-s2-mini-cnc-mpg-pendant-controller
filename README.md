@@ -86,8 +86,15 @@ keys, and tracked defaults fill the remaining schema:
 ```bash
 CIRCUITPY=/path/to/CIRCUITPY ./deploy.sh --dry-run
 CIRCUITPY=/path/to/CIRCUITPY ./deploy.sh
+CIRCUITPY=/path/to/CIRCUITPY ./deploy.sh --runtime-only
 CIRCUITPY=/path/to/CIRCUITPY ./deploy.sh --verify
 ```
+
+Use `--runtime-only` for firmware updates that must leave the device's
+`settings.toml` byte-for-byte unchanged. It requires an existing valid device
+settings file, deploys managed runtime files and the deployment manifest, and
+cannot be combined with local settings overrides. Normal deployment continues
+to add missing tracked defaults to the settings schema.
 
 `--apply-local-settings` intentionally replaces existing non-secret values from
 the ignored local file. `--apply-local-secrets` separately authorizes protected

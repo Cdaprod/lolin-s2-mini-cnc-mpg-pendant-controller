@@ -2,6 +2,7 @@
 """Reconcile settings and deploy managed CircuitPython runtime files.
 
 Example: CIRCUITPY=/Volumes/CIRCUITPY ./deploy.sh --apply-local-settings
+Runtime-only update: CIRCUITPY=/Volumes/CIRCUITPY ./deploy.sh --runtime-only
 """
 
 import argparse
@@ -463,6 +464,10 @@ def atomic_write(path, content, backup=False):
 def deploy(args):
     target = Path(os.environ.get("CIRCUITPY", "/Volumes/CIRCUITPY"))
     validate_target(target)
+    if args.runtime_only and (args.apply_local_settings or
+                              args.apply_local_secrets):
+        raise DeployError(
+            "--runtime-only cannot be combined with settings overrides")
     if not args.dry_run and not target_is_writable(target):
         raise DeployError(
             "CIRCUITPY is mounted read-only; deployment cannot write to the target"
@@ -470,9 +475,14 @@ def deploy(args):
     template = ROOT / "settings.toml.example"
     local = ROOT / "settings.toml"
     device = target / "settings.toml"
-    settings, order, actions = reconcile(
-        template, local, device, args.apply_local_settings,
-        args.apply_local_secrets)
+    if args.runtime_only:
+        settings, order = parse_settings(device, required=True)
+        actions = []
+    else:
+        settings, order, actions = reconcile(
+            template, local, device, args.apply_local_settings,
+            args.apply_local_secrets)
+    validate_profiles(settings)
     inspect_boot(target, settings)
     files = runtime_files()
     previous = read_manifest(target)
@@ -481,6 +491,8 @@ def deploy(args):
     for action, key in actions:
         print("settings: {:13} {}={}".format(
             action, key, "<redacted>" if is_secret(key) else settings[key]))
+    if args.runtime_only:
+        print("settings: preserve     settings.toml (runtime-only deployment)")
     files_to_write = set(changed_runtime_files(files, target))
     for relative in files:
         destination = target / relative
@@ -497,7 +509,8 @@ def deploy(args):
     if args.dry_run:
         print("Dry run complete; no files changed.")
         return
-    rendered = render_settings(template, settings, order)
+    rendered = (None if args.runtime_only else
+                render_settings(template, settings, order))
     for relative in files_to_write:
         destination = target / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
@@ -513,7 +526,9 @@ def deploy(args):
         deployed = target / relative
         if deployed.is_file():
             deployed.unlink()
-    if not device.exists() or device.read_text(encoding="utf-8") != rendered:
+    if rendered is not None and (
+            not device.exists() or
+            device.read_text(encoding="utf-8") != rendered):
         atomic_write(device, rendered, backup=True)
     manifest = {
         "format": 1,
@@ -539,6 +554,8 @@ def parser():
                         help="show changes without writing to CIRCUITPY")
     result.add_argument("--verify", action="store_true",
                         help="verify the mounted deployment without changing it")
+    result.add_argument("--runtime-only", action="store_true",
+                        help="deploy managed runtime files and manifest without modifying settings.toml")
     result.add_argument("--apply-local-settings", action="store_true",
                         help="override device non-secret values from ./settings.toml")
     result.add_argument("--apply-local-secrets", action="store_true",
