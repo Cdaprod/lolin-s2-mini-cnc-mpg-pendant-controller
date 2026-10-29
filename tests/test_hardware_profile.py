@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from src.config import load_config
+from src.config import load_config, validate_input_config
 from src.hardware_profiles import (BOARD_PROFILES, LOLIN_S2_MINI_V1, SEEED_ROUND_240,
                                    XIAO_ESP32S3, apply_hardware_profile)
 from src.input.circuitpython import (CircuitPythonInputAdapter, from_config,
@@ -16,6 +16,16 @@ from src.input.mcp23017 import (MCP23017InputBank, parse_virtual_pin,
 
 
 class HardwareProfileTests(unittest.TestCase):
+    def test_select_and_deadman_cannot_share_the_same_mcp23017_pin(self):
+        config = {
+            "selector_backend": "mcp23017",
+            "axis_pins": {}, "multiplier_pins": {},
+            "button_pins": {"SELECT": "GPB2"},
+            "deadman_pin": "GPB2",
+        }
+        with self.assertRaisesRegex(ValueError, "duplicate MCP23017"):
+            validate_input_config(config)
+
     def test_circuitpython_adapter_exposes_deadman_configuration(self):
         self.assertFalse(CircuitPythonInputAdapter({}, {}, {}, {}).deadman_configured)
         self.assertTrue(CircuitPythonInputAdapter(
