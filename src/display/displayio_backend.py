@@ -19,6 +19,13 @@ class _DisplayIOTextLine:
         palette.make_transparent(0)
         self.node = displayio.TileGrid(self.bitmap, pixel_shader=palette)
         self.text = None
+        try:
+            import bitmaptools
+            self._bitmap_blit = getattr(bitmaptools, "blit", None)
+        except ImportError:
+            # Keep the renderer usable on older CircuitPython builds and on
+            # host-side test doubles that do not provide bitmaptools.
+            self._bitmap_blit = None
 
     def set_color(self, color):
         """Recolor existing glyph pixels in place without bitmap rewriting."""
@@ -40,7 +47,8 @@ class _DisplayIOTextLine:
                 glyph = self.font.get_glyph(ord(character))
                 if glyph is not None:
                     text_width += max(1, glyph.shift_x)
-        cursor = max(0, (self.width - text_width) // 2)
+        cursor = (max(0, (self.width - text_width) // 2)
+                  if self.centered else 0)
         for character in text:
             glyph = self.font.get_glyph(ord(character))
             if glyph is None:
@@ -51,12 +59,26 @@ class _DisplayIOTextLine:
             columns = max(1, source.width // max(1, glyph.width))
             source_x = (glyph.tile_index % columns) * glyph.width
             source_y = (glyph.tile_index // columns) * glyph.height
-            for y in range(min(glyph.height, self.height)):
-                for x in range(glyph.width):
-                    if source[source_x + x, source_y + y]:
-                        target_x = cursor + x
-                        if target_x < self.width:
-                            self.bitmap[target_x, y] = 1
+            glyph_height = min(glyph.height, self.height)
+            if self._bitmap_blit is not None:
+                # bitmaptools copies the glyph rectangle in native code.
+                # The text bitmap was cleared above, so skipping the atlas's
+                # transparent index preserves the prior pixel result while
+                # avoiding thousands of Python-level pixel accesses on the
+                # first render and on screen changes.
+                self._bitmap_blit(
+                    self.bitmap, source, cursor, 0,
+                    x1=source_x, y1=source_y,
+                    x2=source_x + glyph.width, y2=source_y + glyph_height,
+                    skip_source_index=0,
+                )
+            else:
+                for y in range(glyph_height):
+                    for x in range(glyph.width):
+                        if source[source_x + x, source_y + y]:
+                            target_x = cursor + x
+                            if target_x < self.width:
+                                self.bitmap[target_x, y] = 1
             cursor += max(1, glyph.shift_x)
         return True
 
