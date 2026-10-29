@@ -130,7 +130,7 @@ def draw_hud_orbs(draw, colors, now=4.0, outer_angle=None):
 
 def draw_rotor_segments(image, colors, angle):
     """Draw fixed concentric arc tiles with the firmware's moving light wave."""
-    if len(rotor_asset) != 92 * 2944 // 2:
+    if len(rotor_asset) != 132 * 3168 // 2:
         return
     pixels = image.load()
     levels = bezel_segment_levels(angle, 24)
@@ -142,18 +142,18 @@ def draw_rotor_segments(image, colors, angle):
         phase_x = int((center_x - base_x) * 4)
         phase_y = int((center_y - base_y) * 4)
         tangent = (theta + math.pi / 2.0) % (2.0 * math.pi)
-        orientation = int(round(tangent * 32.0 / (2.0 * math.pi))) % 32
+        orientation = int(round(tangent * 24.0 / (2.0 * math.pi))) % 24
         tile_x, tile_y = phase_x, orientation * 4 + phase_y
         brightness = level / 15.0
-        for y in range(23):
-            for x in range(23):
-                atlas_x, atlas_y = tile_x * 23 + x, tile_y * 23 + y
-                byte = rotor_asset[atlas_y * 46 + atlas_x // 2]
+        for y in range(33):
+            for x in range(33):
+                atlas_x, atlas_y = tile_x * 33 + x, tile_y * 33 + y
+                byte = rotor_asset[atlas_y * 66 + atlas_x // 2]
                 value = (byte & 0x0F) if atlas_x % 2 == 0 else byte >> 4
                 if value:
                     color = theme.shade_color(
                         colors["accent"], int(value * brightness * 100 // 15))
-                    px, py = int(base_x) + x - 11, int(base_y) + y - 11
+                    px, py = int(base_x) + x - 16, int(base_y) + y - 16
                     if 0 <= px < 240 and 0 <= py < 240:
                         pixels[px, py] = rgb(color)
 
