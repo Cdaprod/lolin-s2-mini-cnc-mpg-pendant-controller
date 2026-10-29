@@ -7,7 +7,8 @@ from ..navigation import menu_window_start
 from . import bezel_palette, theme
 from .effects import (TOUCH_BITMAP_CENTER, TOUCH_HOLD_PROGRESS,
                       TOUCH_HOLD_PULSE_AMPLITUDE,
-                      TOUCH_HOLD_PULSE_PERIOD_S, touch_level)
+                      TOUCH_HOLD_PULSE_PERIOD_S, TOUCH_PALETTE_SIZE,
+                      touch_level)
 
 from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
@@ -397,7 +398,7 @@ class RoundRenderer:
         progress = max(0.0, min(1.0, float(progress)))
         fade = max(0, min(100, int(fade)))
         changed = False
-        for index in range(1, 5):
+        for index in range(1, TOUCH_PALETTE_SIZE):
             strength = touch_level(index, progress) * fade // 100
             color = theme.shade_color(self._halo_accent, strength)
             if self._halo_palette[index] != color:

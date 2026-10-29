@@ -12,7 +12,10 @@ from PIL import Image, ImageDraw, ImageFont
 from src.display.round_ui import bezel_palette, theme
 from src.display.round_ui.effects import (TOUCH_BITMAP_CENTER,
                                           TOUCH_BITMAP_SIZE,
-                                          TOUCH_HOLD_PROGRESS, touch_level,
+                                          TOUCH_HOLD_PROGRESS,
+                                          TOUCH_HOLD_PULSE_AMPLITUDE,
+                                          TOUCH_HOLD_PULSE_PERIOD_S,
+                                          TOUCH_PALETTE_SIZE, touch_level,
                                           touch_zone)
 from src.display.round_ui.rotor import (
     BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD, bezel_segment_levels)
@@ -344,8 +347,9 @@ encoder_draw.ellipse((158, 26, 161, 29), fill=(220, 252, 255, 240))
 encoder_preview.convert("RGB").save(OUT / "encoder-motion.png")
 
 def touch_palette(progress, accent):
-    """Match the four preallocated firmware touch-ring palette zones."""
-    return tuple(touch_level(index, progress) for index in range(1, 5))
+    """Match every edge/core index in the retained firmware touch palette."""
+    return tuple(touch_level(index, progress)
+                 for index in range(1, TOUCH_PALETTE_SIZE))
 
 
 def draw_touch_sprite(image, center, progress, accent, fade=100):
@@ -374,21 +378,25 @@ for filename, progress in (("touch-contact.png", 0.0),
     draw_touch_sprite(touch_preview, (79, 94), progress, touch_accent)
     touch_preview.save(OUT / filename)
 
-# A deterministic contact → compact hold → same-position release fade preview.
+# A deterministic contact → breathing hold → same-position release fade.
 touch_frames = []
-for _ in range(4):
+for frame in range(8):
+    phase = 2.0 * math.pi * frame / 8
+    progress = (TOUCH_HOLD_PROGRESS + TOUCH_HOLD_PULSE_AMPLITUDE *
+                math.sin(phase))
     image = touch_base.copy()
-    draw_touch_sprite(image, (79, 94), TOUCH_HOLD_PROGRESS, touch_accent)
+    draw_touch_sprite(image, (79, 94), progress, touch_accent)
     touch_frames.append(image.convert("P", palette=Image.Palette.ADAPTIVE))
 for fade in (80, 55, 30, 8, 0):
     image = touch_base.copy()
-    draw_touch_sprite(image, (79, 94), TOUCH_HOLD_PROGRESS,
+    draw_touch_sprite(image, (79, 94), progress,
                       touch_accent, fade)
     touch_frames.append(image.convert("P", palette=Image.Palette.ADAPTIVE))
 touch_frames.append(touch_base.convert("P", palette=Image.Palette.ADAPTIVE))
 touch_frames[0].save(
     OUT / "touch-contact-sequence.gif", save_all=True,
-    append_images=touch_frames[1:], duration=30, loop=0, disposal=2)
+    append_images=touch_frames[1:], duration=([112] * 8) + ([16] * 6),
+    loop=0, disposal=2)
 
 # Show the retained contact glow tracking a held finger along a slow curved
 # path. Each frame uses the production hold palette and the exact sprite size;
@@ -398,9 +406,12 @@ follow_path = (
     (75, 78), (82, 83), (91, 89), (101, 95), (112, 99), (124, 101),
     (136, 100), (147, 96), (157, 90), (166, 83), (173, 77),
 )
-for center in follow_path:
+for frame, center in enumerate(follow_path):
+    phase = 2.0 * math.pi * frame / 30 / TOUCH_HOLD_PULSE_PERIOD_S
+    progress = (TOUCH_HOLD_PROGRESS + TOUCH_HOLD_PULSE_AMPLITUDE *
+                math.sin(phase))
     image = touch_base.copy()
-    draw_touch_sprite(image, center, TOUCH_HOLD_PROGRESS, touch_accent)
+    draw_touch_sprite(image, center, progress, touch_accent)
     follow_frames.append(image.convert("P", palette=Image.Palette.ADAPTIVE))
 follow_frames[0].save(
     OUT / "touch-held-follow.gif", save_all=True,

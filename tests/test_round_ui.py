@@ -8,7 +8,7 @@ from src.display.round_ui.bootstrap import apply_mock_state
 from src.display.round_ui.geometry import RoundLayout
 from src.display.round_ui.effects import (
     TOUCH_BITMAP_CENTER, TOUCH_HOLD_PROGRESS,
-    TOUCH_HOLD_PULSE_AMPLITUDE)
+    TOUCH_HOLD_PULSE_AMPLITUDE, TOUCH_PALETTE_SIZE)
 from src.display.round_ui import bezel_palette, theme
 from src.display.round_ui.rotor import (
     BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD, bezel_segment_levels,
@@ -869,7 +869,7 @@ class RoundRendererTests(unittest.TestCase):
         class Palette(list):
             pass
 
-        palette = Palette([0, 0, 0, 0, 0])
+        palette = Palette([0] * TOUCH_PALETTE_SIZE)
         renderer._halo_palette = palette
         renderer.touch_halo = Node()
         renderer.touch_halo.hidden = True
@@ -877,16 +877,17 @@ class RoundRendererTests(unittest.TestCase):
         initial = tuple(palette)
         self.assertEqual(palette[1], 0)  # Broad ring waits for the outward wave.
         self.assertEqual(palette[2], 0)
-        self.assertGreater(palette[3], 0)  # Inner ring is visible immediately.
-        self.assertGreater(palette[4], palette[3])  # Bright contact core.
+        self.assertGreater(palette[5], 0)  # Inner ring is visible immediately.
+        self.assertGreater(palette[6], palette[5])
+        self.assertGreater(palette[8], palette[7])  # Bright contact core.
         self.assertTrue(renderer.animate(1.1))
         self.assertNotEqual(tuple(palette), initial)
         self.assertTrue(renderer._update_halo_palette(0.82))
-        self.assertGreater(palette[1], palette[2])  # Light travels outward.
+        self.assertGreater(palette[2], palette[4])  # Light travels outward.
 
     def test_touch_hold_keeps_compact_contact_glow_without_restarting_wave(self):
         _, _, _, renderer = self.make_renderer()
-        palette = [0, 0, 0, 0, 0]
+        palette = [0] * TOUCH_PALETTE_SIZE
         renderer._halo_palette = palette
         renderer.touch_halo = Node()
         renderer.touch_halo.hidden = True
@@ -902,14 +903,17 @@ class RoundRendererTests(unittest.TestCase):
         self.assertLessEqual(
             abs(renderer._halo_progress - TOUCH_HOLD_PROGRESS),
             TOUCH_HOLD_PULSE_AMPLITUDE)
-        self.assertGreater(palette[2], 0)
-        self.assertGreater(palette[3], 0)  # Compact inner contour aids visibility.
-        self.assertEqual(palette[4], 0)
+        self.assertGreater(palette[4], 0)
+        self.assertGreater(palette[6], 0)  # Both compact contours stay visible.
+        self.assertLess(palette[3], palette[4])
+        self.assertLess(palette[5], palette[6])
+        self.assertEqual(palette[7], 0)
+        self.assertEqual(palette[8], 0)
         self.assertEqual(palette[1], 0)
-        held_ring = palette[2]
+        held_ring = palette[4]
 
         self.assertTrue(renderer.animate(1.45))
-        self.assertNotEqual(palette[2], held_ring)  # Gentle in-place pulse.
+        self.assertNotEqual(palette[4], held_ring)  # Gentle in-place pulse.
         release_progress = renderer._halo_progress
         renderer.touch_release(1.45)
         self.assertFalse(renderer._halo_held)
@@ -918,10 +922,10 @@ class RoundRendererTests(unittest.TestCase):
                          release_progress)
         self.assertTrue(renderer.animate(1.46))
         self.assertEqual(palette[1], 0)  # Release fades the same inner halo.
-        self.assertLess(palette[2], held_ring)
-        self.assertGreater(palette[2], 0)
+        self.assertLess(palette[4], held_ring)
+        self.assertGreater(palette[4], 0)
         self.assertTrue(renderer.animate(1.50))
-        self.assertLess(palette[2], held_ring)
+        self.assertLess(palette[4], held_ring)
         renderer.animate(1.54)
         self.assertTrue(renderer.touch_halo.hidden)
         self.assertFalse(renderer._halo_releasing)

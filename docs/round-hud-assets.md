@@ -77,14 +77,16 @@ one-step jump. The two afterimages sit 2 and 4 degrees behind the bead along the
 current direction and fade over 240 ms; they are visual input feedback only and do not imply that a jog was
 admitted or executed.
 
-The touchscreen uses one retained 25px sprite. Contact immediately selects a
-compact pair of crisp contours and keeps them beneath the moving finger while
-pressed; the sprite repositions at up to 30 Hz without restarting the ripple.
-It does not expand into a large ripple while pressed. On release, the same
-contours fade in place over 80 ms. Gesture recognition and menu activation
-remain release-gated, so the visual acknowledgment does not dispatch an early
-action. The contact-sequence and held-follow previews use the same palette
-phases and sprite geometry as the firmware.
+The touchscreen uses one retained 25px, 4-bit sprite. Paired dim-edge and
+bright-core palette entries soften the compact rings without alpha blending or
+per-frame bitmap edits. Contact immediately selects the contours and holds
+them beneath the moving finger; the sprite repositions at up to 30 Hz, while a
+subtle 0.9-second brightness pulse gives the acknowledgment life without
+growing into a large ripple. On release, those same contours fade in place
+over 80 ms. Gesture recognition and menu activation remain release-gated, so
+the visual acknowledgment does not dispatch an early action. The
+contact-sequence and held-follow previews use the same palette phases and
+sprite geometry as the firmware.
 The touch sampler runs at 120 Hz and release selection requires 40 ms of stable
 no-contact samples. This bounds idle polling while filtering brief
 touch-controller gaps, with press feedback appearing on the first sampled
