@@ -159,6 +159,26 @@ class MPGTests(unittest.TestCase):
         self.assertEqual(manager.poll(3.08).events, [])
         self.assertEqual(manager.poll(3.12).events, [SELECT])
 
+    def test_shared_select_hold_to_run_button_asserts_and_releases_both_roles(self):
+        state = PendantState()
+        adapter = SyntheticInputAdapter()
+        manager = InputManager(state, adapter)
+
+        # The configured harness uses two MCP23017 pins for one physical
+        # contact. The input boundary exposes that contact as both roles.
+        adapter.set(deadman=True, buttons={"SELECT": True})
+        self.assertEqual(manager.poll(0.0).events, [])
+        pressed = manager.poll(0.04)
+        self.assertTrue(state.deadman_enabled)
+        self.assertEqual(pressed.button_states, {"SELECT": True})
+        self.assertEqual(pressed.events, [])
+
+        adapter.set(deadman=False, buttons={"SELECT": False})
+        self.assertEqual(manager.poll(0.08).events, [])
+        released = manager.poll(0.12)
+        self.assertFalse(state.deadman_enabled)
+        self.assertEqual(released.events, [SELECT])
+
     def test_selector_transition_resets_partial_quadrature_detent(self):
         state = PendantState()
         adapter = SyntheticInputAdapter()

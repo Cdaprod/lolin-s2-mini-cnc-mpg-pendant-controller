@@ -38,9 +38,11 @@ BOARD_PROFILES = {
                       "4": "GPA3", "5": "GPA4", "6": "GPA5"},
         "multiplier_pins": {"X1": "GPA6", "X10": "GPA7",
                             "X100": "GPB0"},
-        # The documented harness assigns a dedicated, active-low hold-to-run
-        # switch to GPB6. The switch is not connected yet; inputs remain
-        # disabled by default, and an absent/floating input must fail closed.
+        # User-confirmed wiring intent: the existing momentary SELECT contact
+        # is wired to both GPB2 (UI SELECT) and GPB6 (hold-to-run). These are
+        # separate MCP inputs with active-low pull-ups, but share one actuator;
+        # this is not an independent safety control. Inputs remain disabled
+        # until the wiring is connected and verified.
         "button_pins": {"SELECT": "GPB2", "BACK": "",
                         "FN": "", "CANCEL": ""},
         "estop_observe_pin": "GPB1", "deadman_pin": "GPB6",
