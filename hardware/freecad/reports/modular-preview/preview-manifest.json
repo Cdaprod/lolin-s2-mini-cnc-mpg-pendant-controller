@@ -1,0 +1,13 @@
+{
+  "assembly": "pendant-modular-assembly.FCStd",
+  "freecadcmd_export_seconds": 7.25,
+  "deflection_mm": 0.2,
+  "link_count": 4,
+  "static_interim_count": 6,
+  "validated_shapes": 10,
+  "images": [
+    "pendant-modular-assembly-bottom.png",
+    "pendant-modular-assembly-top.png",
+    "static-interim-components-bottom.png"
+  ]
+}
