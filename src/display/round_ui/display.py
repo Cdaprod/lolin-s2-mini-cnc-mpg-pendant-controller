@@ -242,6 +242,20 @@ def _load_orb_sprite_sheet(displayio):
         return bitmap, 0
 
 
+def _load_rotor_sprite_sheet(displayio):
+    """Load 16 oriented and 16 subpixel capsule phases for outer ring motion."""
+    try:
+        import bitmaptools
+        bitmap = displayio.Bitmap(36, 576, 16)
+        with open("/assets/round_hud/runtime/rotor_segment_phases.4bpp",
+                  "rb") as source:
+            bitmaptools.readinto(bitmap, source, bits_per_pixel=4)
+        return bitmap, 256
+    except (ImportError, OSError, RuntimeError, ValueError, AttributeError,
+            MemoryError):
+        return None, 0
+
+
 def displayio_scene(display, colors=None, bezel_name=None):
     """Create a bounded retained scene optimized for a 240px circular panel."""
     import displayio
@@ -297,6 +311,27 @@ def displayio_scene(display, colors=None, bezel_name=None):
         hud_trails.append((trail, radius, trail_palette))
     palettes["hud_markers"] = tuple(item[2] for item in hud_markers)
     palettes["hud_trails"] = tuple(item[2] for item in hud_trails)
+
+    # Three small tangential light segments form a moving outer rotor over
+    # the static bezel artwork. They are separate from the counter-orbiting
+    # HUD orbs and remain underneath every readout and critical overlay.
+    rotor_segments = []
+    rotor_sheet, rotor_frame_count = _load_rotor_sprite_sheet(displayio)
+    if rotor_sheet is not None:
+        rotor_palette = displayio.Palette(16)
+        rotor_palette[0] = 0
+        rotor_palette.make_transparent(0)
+        for shade in range(1, 16):
+            rotor_palette[shade] = theme.shade_color(
+                colors["accent"], shade * 100 // 15)
+        for _ in range(3):
+            segment = displayio.TileGrid(
+                rotor_sheet, pixel_shader=rotor_palette, width=1, height=1,
+                tile_width=9, tile_height=9)
+            segment.hidden = True
+            root.append(segment)
+            rotor_segments.append(segment)
+        palettes["rotor_segment"] = rotor_palette
 
     # Encoder-only feedback is a retained bead and trailing point. Its angle
     # follows physical detents, and it never represents accepted machine motion.
@@ -489,6 +524,8 @@ def displayio_scene(display, colors=None, bezel_name=None):
         "touch_halo": halo_node, "hud_markers": tuple(hud_markers),
         "hud_trails": tuple(hud_trails),
         "hud_frame_count": hud_frame_count,
+        "rotor_segments": tuple(rotor_segments),
+        "rotor_frame_count": rotor_frame_count,
         "encoder_marker": encoder_marker, "encoder_trail": encoder_trail,
         "encoder_palettes": palettes["encoder"],
         "nav_group": nav_group,
