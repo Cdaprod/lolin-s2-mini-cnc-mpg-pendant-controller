@@ -6,7 +6,8 @@ import time
 from ..navigation import menu_window_start
 from . import bezel_palette, theme
 from .effects import (TOUCH_BITMAP_CENTER, TOUCH_HOLD_PROGRESS,
-                      touch_level)
+                      TOUCH_HOLD_PULSE_AMPLITUDE,
+                      TOUCH_HOLD_PULSE_PERIOD_S, touch_level)
 
 from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
@@ -555,8 +556,16 @@ class RoundRenderer:
                         duration = self._halo_duration
                         progress = (now - self._halo_started) / duration
                         if self._halo_held:
-                            # Hold one crisp, compact ring at a stable radius.
-                            progress = TOUCH_HOLD_PROGRESS
+                            # Keep the two compact contours anchored to the
+                            # sampled finger position and breathe their light
+                            # gently in place. This reads as a live touch
+                            # ripple without expanding across nearby controls.
+                            pulse_phase = (
+                                (now - self._halo_started) * 2.0 * math.pi /
+                                TOUCH_HOLD_PULSE_PERIOD_S)
+                            progress = (TOUCH_HOLD_PROGRESS +
+                                        TOUCH_HOLD_PULSE_AMPLITUDE *
+                                        math.sin(pulse_phase))
                         self._halo_progress = max(0.0, min(1.0, progress))
                         fade = 100
                     if self._update_halo_palette(progress, fade):
