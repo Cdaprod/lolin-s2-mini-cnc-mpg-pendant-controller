@@ -53,3 +53,22 @@ def input_configuration_fields(config, adapter_configured,
         "mcp23017_address": ("0x{:02x}".format(mcp23017_address)
                              if mcp23017_address is not None else "none"),
     }
+
+
+def loop_timing_fields(loop_count, poll_duration_ms, window_ms,
+                       profiled_phase_ms):
+    """Summarize observed poll rate and execution time using integer fields."""
+    count = max(0, int(loop_count))
+    window = max(0, int(window_ms))
+    duration_us = max(0, int(float(poll_duration_ms) * 1000 + 0.5))
+    profiled_us = max(0, int(profiled_phase_ms)) * 1000
+    if count == 0 or window == 0:
+        return {"loop_hz": 0, "poll_avg_us": 0,
+                "unprofiled_avg_us": 0, "loop_window_ms": window}
+    return {
+        "loop_hz": int((count * 1000 + window // 2) // window),
+        "poll_avg_us": int((duration_us + count // 2) // count),
+        "unprofiled_avg_us": int((max(0, duration_us - profiled_us) +
+                                   count // 2) // count),
+        "loop_window_ms": window,
+    }
