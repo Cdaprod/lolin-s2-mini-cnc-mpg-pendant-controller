@@ -286,19 +286,25 @@ def displayio_scene(display, colors=None, bezel_name=None):
     # Fixed concentric arcs form the outer rotor. Their brightness wave turns
     # around the ring; the arcs themselves never spin or change orientation.
     rotor_segments = []
-    rotor_palettes = []
+    rotor_palette_bank = []
     rotor_sheet, rotor_frame_count = _load_rotor_sprite_sheet(displayio)
     if rotor_sheet is not None:
         rotor_count = 24
-        for index in range(rotor_count):
+        # Palette entries for each intensity are built once. Animation swaps a
+        # TileGrid's existing shader instead of writing up to 360 colors/frame.
+        for level in range(16):
             rotor_palette = displayio.Palette(16)
             rotor_palette[0] = 0
             rotor_palette.make_transparent(0)
+            percent = level * 100 // 15
             for shade in range(1, 16):
                 rotor_palette[shade] = theme.shade_color(
-                    colors["accent"], shade // 2)
+                    colors["accent"], shade * percent // 15)
+            rotor_palette_bank.append(rotor_palette)
+        for index in range(rotor_count):
             segment = displayio.TileGrid(
-                rotor_sheet, pixel_shader=rotor_palette, width=1, height=1,
+                rotor_sheet, pixel_shader=rotor_palette_bank[1],
+                width=1, height=1,
                 tile_width=33, tile_height=33)
             angle = 2.0 * math.pi * index / rotor_count
             center_x = 120 + 109.0 * math.cos(angle)
@@ -313,8 +319,6 @@ def displayio_scene(display, colors=None, bezel_name=None):
             segment.hidden = False
             root.append(segment)
             rotor_segments.append(segment)
-            rotor_palettes.append(rotor_palette)
-        palettes["rotor_segments"] = tuple(rotor_palettes)
 
     # Encoder-only feedback uses one bead and two retained afterimages. These
     # visualize raw handwheel detents only, never accepted machine motion.
@@ -514,7 +518,7 @@ def displayio_scene(display, colors=None, bezel_name=None):
         "hud_trails": tuple(hud_trails),
         "hud_frame_count": hud_frame_count,
         "rotor_segments": tuple(rotor_segments),
-        "rotor_palettes": tuple(rotor_palettes),
+        "rotor_palette_bank": tuple(rotor_palette_bank),
         "rotor_tile_count": rotor_frame_count,
         "rotor_color": colors["accent"],
         "encoder_marker": encoder_marker, "encoder_trail": encoder_trail,

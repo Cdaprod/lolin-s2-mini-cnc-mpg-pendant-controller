@@ -22,6 +22,7 @@ class Node:
         self.y = 0
         self.x = 0
         self.tile_index = 0
+        self.pixel_shader = None
 
     def __getitem__(self, index):
         return self.tile_index
@@ -314,6 +315,42 @@ class RoundRendererTests(unittest.TestCase):
         renderer.ui.active_overlay = lambda: ("E-STOP", "test")
         renderer.animate(0.2)
         self.assertTrue(all(item.hidden for item in segments))
+
+    def test_rotor_palette_bank_avoids_per_frame_palette_rewrites(self):
+        class Palette(list):
+            def __init__(self):
+                super().__init__([0] * 16)
+                self.writes = 0
+
+            def __setitem__(self, index, value):
+                self.writes += 1
+                super().__setitem__(index, value)
+
+        _, _, _, renderer = self.make_renderer()
+        renderer.bezel_segments = [Node() for _ in range(24)]
+        renderer.bezel_palette_bank = [Palette() for _ in range(16)]
+        renderer.rotor_tile_count = 384
+        renderer._rotor_brightness_levels = [-1] * 24
+        renderer._rotor_target_levels = [0] * 24
+
+        renderer._apply_rotor_color(theme.CYAN)
+        self.assertTrue(all(
+            segment.pixel_shader is renderer.bezel_palette_bank[level]
+            for segment, level in zip(
+                renderer.bezel_segments, renderer._rotor_brightness_levels)))
+        writes_after_theme_setup = tuple(
+            palette.writes for palette in renderer.bezel_palette_bank)
+
+        renderer.animate(0.0)
+        renderer.animate(0.1)
+
+        self.assertEqual(tuple(palette.writes
+                               for palette in renderer.bezel_palette_bank),
+                         writes_after_theme_setup)
+        self.assertTrue(all(
+            segment.pixel_shader is renderer.bezel_palette_bank[level]
+            for segment, level in zip(
+                renderer.bezel_segments, renderer._rotor_brightness_levels)))
 
     def test_alarm_hides_rotor_when_decorative_animation_is_disabled(self):
         _, _, _, renderer = self.make_renderer()
