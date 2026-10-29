@@ -335,16 +335,20 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             os.mkdir(jobs)
             os.mkdir(macros)
             network = CountingWiFiService()
+            clock = MutableClock()
             app = PendantApplication.from_config(
                 {"controller_mode": "disabled", "jobs_path": jobs,
                  "macros_path": macros},
                 display=ConsoleDisplay(lambda value: None),
-                network_service=network)
+                network_service=network, clock=clock)
             app.state.deadman_enabled = True
             app.poll()
             self.assertEqual(network.poll_count, 0)
             app.state.deadman_enabled = False
             app.state.machine_state = "idle"
+            app.poll()
+            self.assertEqual(network.poll_count, 0)
+            clock.advance(0.05)
             app.poll()
             self.assertEqual(network.poll_count, 1)
 
