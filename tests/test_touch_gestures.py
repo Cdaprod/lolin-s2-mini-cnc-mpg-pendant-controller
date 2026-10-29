@@ -2,7 +2,8 @@
 
 import unittest
 from src.input.touch_gestures import TouchGestures
-from src.input.touch import TouchInput, CHSC6XTouchSource
+from src.input.touch import (TouchInput, CHSC6XTouchSource,
+                             TOUCH_SAMPLE_UNAVAILABLE)
 from src.display.ui import TouchEvent, UIManager
 from src.state import PendantState
 
@@ -110,6 +111,24 @@ class GestureTests(unittest.TestCase):
         self.assertEqual(gestures.poll(None), ())
         clock.t = .30
         self.assertEqual(gestures.poll(None), (("release_select", 115, 120),))
+
+    def test_unavailable_shared_bus_sample_does_not_advance_release(self):
+        clock, source = Clock(), Source()
+        touch = TouchInput(source, clock)
+        source.current = (120, 120)
+        touch.poll()
+        clock.t = .10
+        source.current = None
+        self.assertEqual(touch.poll(), ())
+        clock.t = .13
+        source.current = TOUCH_SAMPLE_UNAVAILABLE
+        self.assertEqual(touch.poll(), ())
+        self.assertTrue(touch.gestures.active)
+        clock.t = .169
+        source.current = None
+        self.assertEqual(touch.poll(), ())
+        clock.t = .17
+        self.assertEqual(touch.poll()[0].kind, "release_select")
 
     def test_tap_release_is_confirmed_within_40ms(self):
         clock = Clock()
@@ -344,7 +363,7 @@ class GestureTests(unittest.TestCase):
         bus.data = bytes((1, 0, 250, 0, 100))
         self.assertIsNone(touch.point())
         bus.locked = True
-        self.assertIsNone(touch.point())
+        self.assertIs(touch.point(), TOUCH_SAMPLE_UNAVAILABLE)
         self.assertEqual(touch.read_count, 3)
         self.assertEqual(touch.bus_busy_count, 1)
 
