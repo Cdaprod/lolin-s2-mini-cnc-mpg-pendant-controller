@@ -860,5 +860,28 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer.active_theme, "spectrum")
         self.assertEqual(palettes[0][1], theme.select("spectrum")["accent"])
 
+    def test_page_theme_recolors_retained_rotor_tiles(self):
+        _, _, _, renderer = self.make_renderer()
+        renderer.palettes = {"dial": [0] * 6, "focus": [0] * 3,
+                             "separator": [0], "hud_markers": (),
+                             "hud_trails": ()}
+        renderer.bezel_segments = [Node() for _ in range(24)]
+        renderer.bezel_segment_palettes = [[0] + [0] * 15
+                                           for _ in renderer.bezel_segments]
+        renderer._rotor_brightness_levels = [-1] * 24
+        renderer._rotor_target_levels = [0] * 24
+        renderer.active_theme = None
+
+        renderer._apply_page_theme("EXPLORER")
+
+        self.assertEqual(renderer._rotor_color,
+                         theme.select("amber")["accent"])
+        self.assertEqual(renderer._rotor_brightness_levels,
+                         renderer._rotor_target_levels)
+        expected_level = renderer._rotor_target_levels[0]
+        self.assertEqual(renderer.bezel_segment_palettes[0][15],
+                         theme.shade_color(theme.select("amber")["accent"],
+                                           expected_level * 100 // 15))
+
 if __name__ == "__main__":
     unittest.main()
