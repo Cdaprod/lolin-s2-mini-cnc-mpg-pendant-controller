@@ -5,7 +5,7 @@ from src.display.round_ui.renderer import RoundRenderer, _profile_ticks_diff
 from src.display.round_ui.components import MenuHighlight
 from src.display.round_ui.bootstrap import apply_mock_state
 from src.display.round_ui.geometry import RoundLayout
-from src.display.round_ui import theme
+from src.display.round_ui import bezel_palette, theme
 from src.display.ui import ROTATE_CCW, ROTATE_CW, SELECT, UIManager
 from src.state import PendantState
 
@@ -302,6 +302,23 @@ class RoundRendererTests(unittest.TestCase):
         renderer.ui.active_overlay = lambda: ("E-STOP", "test")
         renderer.animate(0.2)
         self.assertTrue(all(item.hidden for item in segments))
+
+    def test_critical_alarm_tints_bezel_red_and_restores_selected_theme(self):
+        _, _, _, renderer = self.make_renderer()
+        renderer._bezel_palette = list(bezel_palette.PALETTES["cyan_reactor"])
+        renderer._bezel_base_palette = bezel_palette.PALETTES["cyan_reactor"]
+        renderer._bezel_alarm_active = False
+        transparent = renderer._bezel_palette[0]
+
+        self.assertTrue(renderer._set_bezel_alarm(("E-STOP", "LATCHED")))
+        self.assertEqual(renderer._bezel_palette[0], transparent)
+        self.assertEqual(renderer._bezel_palette[7],
+                         bezel_palette.PALETTES["red_alarm"][7])
+        self.assertFalse(renderer._set_bezel_alarm(("E-STOP", "LATCHED")))
+
+        self.assertTrue(renderer._set_bezel_alarm(None))
+        self.assertEqual(renderer._bezel_palette,
+                         list(bezel_palette.PALETTES["cyan_reactor"]))
 
     def test_encoder_feedback_tracks_detent_direction_and_fades(self):
         state, _, _, renderer = self.make_renderer()

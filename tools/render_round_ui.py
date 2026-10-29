@@ -28,7 +28,7 @@ if ARGS.bezel not in bezel_palette.PALETTES or not BEZEL_PATH.is_file():
     raise SystemExit("generated runtime bezel not found: {}".format(BEZEL_PATH))
 
 
-def load_runtime_bezel(name):
+def load_runtime_bezel(name, palette_name=None):
     """Decode the exact LSB-first 4bpp asset and palette used by firmware."""
     path = ASSET_ROOT / "runtime" / (name + ".4bpp")
     if name not in bezel_palette.PALETTES or not path.is_file():
@@ -40,7 +40,7 @@ def load_runtime_bezel(name):
     for offset, value in enumerate(data):
         indices[offset * 2] = value & 0x0F
         indices[offset * 2 + 1] = value >> 4
-    colors = bezel_palette.PALETTES[name]
+    colors = bezel_palette.PALETTES[palette_name or name]
     # Approximate the panel's RGB565 color conversion in the preview. Keep
     # index zero transparent, matching Palette.make_transparent(0).
     rgba_palette = []
@@ -310,15 +310,17 @@ for storage, primary, secondary in (
 
 
 def state_canvas(palette_name="industrial", bezel_name=None, rotor_angle=0.0,
-                 outer_angle=None):
+                 outer_angle=None, alarm=False):
     colors = theme.select(palette_name)
     selected = bezel_name or ARGS.bezel
-    art = load_runtime_bezel(selected)
+    art = load_runtime_bezel(selected,
+                             "red_alarm" if alarm else selected)
     base = Image.new("RGBA", (240, 240), rgb(colors["background"])+(255,))
     image = Image.alpha_composite(base, art).convert("RGB")
     draw = ImageDraw.Draw(image)
-    draw_hud_orbs(draw, colors, outer_angle=outer_angle)
-    draw_rotor_segments(image, colors, rotor_angle)
+    if not alarm:
+        draw_hud_orbs(draw, colors, outer_angle=outer_angle)
+        draw_rotor_segments(image, colors, rotor_angle)
     draw = ImageDraw.Draw(image)
     return image, draw, colors
 
@@ -372,7 +374,7 @@ touch_preview = Image.alpha_composite(touch_preview, touch_layer)
 touch_preview.convert("RGB").save(OUT / "touch-ripple.png")
 
 alarm_image, alarm_draw, alarm_colors = state_canvas(
-    "industrial", "red_alarm")
+    "industrial", alarm=True)
 alarm_draw.rounded_rectangle((34, 76, 206, 164), radius=12,
                              fill=(20, 5, 12), outline=(255, 73, 85), width=1)
 alarm_draw.text((120, 101), "ALARM", anchor="mm", font=large,
