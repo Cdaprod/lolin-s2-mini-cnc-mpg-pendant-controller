@@ -154,9 +154,15 @@ class CHSC6XTouchSource:
         self.irq_idle_count = 0
         self.bus_busy_count = 0
         self.read_count = 0
+        self.contact_active = False
 
     def point(self):
-        if self.irq is not None and self.irq.value:
+        # IRQ is an idle-read hint, not the contact state. Some CHSC6X
+        # revisions pulse IRQ instead of holding it low for the full press.
+        # Once a contact is observed, keep sampling the pressed marker until
+        # the controller itself reports release.
+        if (self.irq is not None and self.irq.value and
+                not self.contact_active):
             self.irq_idle_count += 1
             return None
         if not self.i2c.try_lock():
@@ -169,9 +175,15 @@ class CHSC6XTouchSource:
         finally:
             self.i2c.unlock()
         if self.buffer[0] != 1:
+            self.contact_active = False
             return None
+        self.contact_active = True
         x, y = self.buffer[2], self.buffer[4]
-        return (x, y) if x < 240 and y < 240 else None
+        if x < 240 and y < 240:
+            return (x, y)
+        # A pressed marker with malformed coordinates is not evidence of a
+        # release; keep the gesture active until a valid sample or release.
+        return TOUCH_SAMPLE_UNAVAILABLE
 
     def deinit(self):
         if self.irq is not None:

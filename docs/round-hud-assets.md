@@ -78,7 +78,9 @@ fades in place over 80 ms. Gesture recognition and menu activation remain
 release-gated, so the visual acknowledgment does not dispatch an early action.
 The contact-sequence preview uses the same palette phases as the firmware.
 Release selection requires 60 ms of stable no-contact samples, filtering brief
-touch-controller gaps while a finger remains down.
+touch-controller gaps while a finger remains down. During an active contact,
+the CHSC6X pressed marker remains authoritative even if its IRQ line pulses
+high; IRQ is used only to skip idle bus reads.
 
 `MPG_BEZEL_ROTATION_ENABLED` controls the outer rotor. Ambient speed defaults
 to one turn per 54 seconds; direction changes use a deterministic 20–40 second

@@ -404,13 +404,21 @@ class GestureTests(unittest.TestCase):
         irq.value = False
         self.assertEqual(touch.point(), (101, 193))
         self.assertEqual(bus.address, 0x2E)
+        # IRQ may return high during a press; the pressed marker, not IRQ,
+        # owns contact state until the driver reports marker=0.
+        irq.value = True
+        self.assertEqual(touch.point(), (101, 193))
+        self.assertTrue(touch.contact_active)
         bus.data = bytes((0, 0, 101, 0, 193))
         self.assertIsNone(touch.point())
+        self.assertFalse(touch.contact_active)
+        irq.value = False
         bus.data = bytes((1, 0, 250, 0, 100))
-        self.assertIsNone(touch.point())
+        self.assertIs(touch.point(), TOUCH_SAMPLE_UNAVAILABLE)
+        self.assertTrue(touch.contact_active)
         bus.locked = True
         self.assertIs(touch.point(), TOUCH_SAMPLE_UNAVAILABLE)
-        self.assertEqual(touch.read_count, 3)
+        self.assertEqual(touch.read_count, 4)
         self.assertEqual(touch.bus_busy_count, 1)
 
     def test_touch_never_recovers_estop(self):
