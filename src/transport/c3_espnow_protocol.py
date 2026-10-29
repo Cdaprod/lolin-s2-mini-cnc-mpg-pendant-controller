@@ -20,6 +20,8 @@ MPG_JOG = 0x30
 MPG_JOG_ACK = 0x31
 MPG_STOP = 0x32
 MPG_STOP_ACK = 0x33
+MPG_FEED_HOLD = 0x34
+MPG_FEED_HOLD_ACK = 0x35
 RESULT_ERROR = 0
 RESULT_OK = 1
 # STOP accepted by the C3 software lease, with physical UART cancel suppressed
@@ -109,3 +111,12 @@ def encode_mpg_jog(session, sequence, axis, distance_microns, feed_mm_min,
 
 def encode_mpg_stop(session, sequence):
     return encode(MPG_STOP, session, sequence)
+
+
+def encode_mpg_feed_hold(session, sequence):
+    """Request GRBL's feed-hold realtime byte through the C3.
+
+    This differs from MPG_STOP, which only cancels an active jog. The C3
+    remains responsible for authorization and UART ownership.
+    """
+    return encode(MPG_FEED_HOLD, session, sequence)

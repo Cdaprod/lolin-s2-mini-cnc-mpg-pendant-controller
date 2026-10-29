@@ -63,6 +63,15 @@ class WirelessTests(unittest.TestCase):
             (proto.UART_RESPONSE, 0, line.encode("ascii") + b"\n"))
         self.ctrl.poll()
 
+    def test_feed_hold_reports_unpaired_transport_failure(self):
+        self.ctrl.transport.paired = False
+        actions = ActionDispatcher(
+            self.state, self.ctrl, SafetyStateMachine(self.state))
+        self.assertFalse(actions.dispatch("FEED_HOLD"))
+        self.assertEqual(self.state.error,
+                         "C3 is not paired; feed hold was not sent")
+        self.assertEqual(self.esp.sent, [])
+
     def test_peer_change_invalidates_partial_and_stale_controller_status(self):
         self.status("<Idle|MPos:1,2,3>")
         self.ctrl._partial.extend(b"<Hold|MPos:4,")
@@ -180,6 +189,44 @@ class WirelessTests(unittest.TestCase):
         # The next request still passes through normal readiness, deadman,
         # selector, session, and C3 admission checks.
         self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
+
+    def test_feed_hold_uses_distinct_grbl_realtime_packet(self):
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        self.assertTrue(self.ctrl.realtime("hold"))
+        frame, peer = self.esp.sent[-1]
+        kind, session, sequence, payload = proto.decode(frame)
+        self.assertEqual((kind, session, peer, payload),
+                         (proto.MPG_FEED_HOLD, 123,
+                          self.ctrl.transport.peer, b""))
+        self.assertEqual(sequence, self.ctrl._hold_seq)
+        self.assertTrue(self.ctrl._hold_pending)
+        self.ctrl.transport.events.append((proto.MPG_FEED_HOLD_ACK, sequence,
+            bytes((proto.RESULT_STOP_SUPPRESSED,))))
+        self.ctrl.poll()
+        self.assertFalse(self.ctrl._hold_pending)
+        self.assertEqual(self.state.error,
+                         "C3 feed hold proposed only (dry-run)")
+        # Jog-cancel remains a separate protocol operation.
+        self.assertTrue(self.ctrl.cancel_jog())
+        self.assertEqual(proto.decode(self.esp.sent[-1][0])[0], proto.MPG_STOP)
+
+    def test_feed_hold_retries_and_does_not_replay_after_peer_change(self):
+        self.assertTrue(self.ctrl.realtime("hold"))
+        first = self.ctrl._hold_seq
+        self.time[0] += .081
+        self.ctrl.poll()
+        self.assertTrue(self.ctrl._hold_pending)
+        self.assertNotEqual(self.ctrl._hold_seq, first)
+        replacement = bytes.fromhex("112233445566")
+        pair_ack = proto.encode(proto.PAIR_ACK, 123, payload=bytes((1, 1)) +
+                                Radio.mac_address + bytes((255,)))
+        self.esp.incoming.append(Packet(replacement, pair_ack))
+        self.ctrl.poll()
+        self.assertFalse(self.ctrl._hold_pending)
+        self.assertEqual(self.state.error,
+                         "C3 feed hold interrupted by peer change")
+        self.assertNotEqual(proto.decode(self.esp.sent[-1][0])[0],
+                            proto.MPG_FEED_HOLD)
 
     def test_unknown_stop_ack_result_stays_inhibited_and_retries(self):
         self.state.deadman_enabled = True

@@ -57,7 +57,7 @@ class ActionSafetyTests(unittest.TestCase):
         self.controller.queue = []
         self.assertTrue(self.actions.dispatch("HOME"))
         self.assertEqual(self.controller.queue[-1][0], "$H")
-        self.actions.dispatch("FEED_HOLD")
+        self.assertTrue(self.actions.dispatch("FEED_HOLD"))
         self.assertEqual(self.transport.writes[-1], b"!")
 
     def test_unlock_is_allowed_from_alarm_but_not_estop(self):

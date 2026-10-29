@@ -39,8 +39,10 @@ class ActionDispatcher:
             self.controller.cancel_jog()
             return True
         if action == "FEED_HOLD":
-            self.controller.realtime("hold")
-            return True
+            # Wireless controllers can reject or defer a hold request. Let
+            # the caller reflect that result instead of reporting success
+            # merely because the button action was dispatched.
+            return self.controller.realtime("hold")
         if action == "START_RESUME":
             if self.safety.inhibit_reason():
                 raise SafetyError(self.safety.inhibit_reason())
