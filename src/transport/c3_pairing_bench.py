@@ -57,6 +57,8 @@ class C3PairingBench:
             proto.SENSOR_ASSIGNMENT: "sensor_assignment",
             proto.MPG_JOG: "mpg_jog", proto.MPG_STOP: "mpg_stop",
             proto.MPG_JOG_ACK: "mpg_jog_ack", proto.MPG_STOP_ACK: "mpg_stop_ack",
+            proto.MPG_FEED_HOLD: "mpg_feed_hold",
+            proto.MPG_FEED_HOLD_ACK: "mpg_feed_hold_ack",
             proto.UART_RESPONSE: "uart_response",
         }
         print("[event] event=espnow_{} packet_type={} session={} seq={} peer={} result={} uptime_ms={}".format(
@@ -106,6 +108,11 @@ class C3PairingBench:
         if not self.paired or self.peer is None:
             return None
         return self._send(self.peer, proto.MPG_STOP)
+
+    def send_mpg_feed_hold(self):
+        if not self.paired or self.peer is None:
+            return None
+        return self._send(self.peer, proto.MPG_FEED_HOLD)
 
     def poll(self):
         current = self.now()
@@ -189,8 +196,10 @@ class C3PairingBench:
                                       "accepted")
                 elif (self.paired and sender == self.peer and
                       session == self.session and kind in
-                      (proto.MPG_JOG_ACK, proto.MPG_STOP_ACK, proto.UART_RESPONSE)):
-                    if kind in (proto.MPG_JOG_ACK, proto.MPG_STOP_ACK) and len(payload) != 1:
+                      (proto.MPG_JOG_ACK, proto.MPG_STOP_ACK,
+                       proto.MPG_FEED_HOLD_ACK, proto.UART_RESPONSE)):
+                    if kind in (proto.MPG_JOG_ACK, proto.MPG_STOP_ACK,
+                                proto.MPG_FEED_HOLD_ACK) and len(payload) != 1:
                         raise ValueError("invalid MPG result")
                     if len(self.events) >= 16:
                         self.events.pop(0)

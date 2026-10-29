@@ -13,6 +13,10 @@ class MPGWireTests(unittest.TestCase):
                           bytes.fromhex("5801f6fffffffa00")))
         stop = proto.encode_mpg_stop(1, 2)
         self.assertEqual(proto.decode(stop), (proto.MPG_STOP, 1, 2, b""))
+        hold = proto.encode_mpg_feed_hold(1, 3)
+        self.assertEqual(hold, bytes.fromhex("01340100000003000000"))
+        self.assertEqual(proto.decode(hold),
+                         (proto.MPG_FEED_HOLD, 1, 3, b""))
 
     def test_invalid_jogs_do_not_encode(self):
         for axis, distance, feed, deadman in (

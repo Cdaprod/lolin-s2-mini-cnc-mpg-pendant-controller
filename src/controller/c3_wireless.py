@@ -28,6 +28,10 @@ class C3WirelessController:
         self._stop_seq = None
         self._stop_at = None
         self._stop_attempts = 0
+        self._hold_pending = False
+        self._hold_seq = None
+        self._hold_at = None
+        self._hold_attempts = 0
         state.transport = "c3-espnow"
         state.connection_state = "disconnected"
         state.machine_state = "disconnected"
@@ -52,7 +56,7 @@ class C3WirelessController:
                 getattr(self.state, "input_valid", True) is not True or
                 not self.state.deadman_enabled or self.state.estop_observed or
                 self.state.estop_latched or self._pending_seq is not None or
-                self._stop_pending):
+                self._stop_pending or self._hold_pending):
             return False
         if axis not in ("X", "Y", "Z", "A") or not isinstance(distance, (float, int)):
             return False
@@ -114,9 +118,51 @@ class C3WirelessController:
         return True
 
     def realtime(self, name):
-        if name in ("jog_cancel", "hold"):
+        if name == "jog_cancel":
             return self.cancel_jog()
+        if name == "hold":
+            return self.request_feed_hold()
+        # Resume and soft reset can cause machine motion/state changes. This
+        # adapter deliberately has no remote implementation for either.
+        if name in ("start", "soft_reset"):
+            self.state.error = "C3 {} is not enabled".format(
+                "resume" if name == "start" else "soft reset")
         return False
+
+    def request_feed_hold(self):
+        """Request GRBL feed hold, distinct from the MPG jog-cancel byte."""
+        if not self.transport.paired:
+            self.state.error = "C3 is not paired; feed hold was not sent"
+            return False
+        if self._hold_pending:
+            return False
+        # A realtime feed hold supersedes any pending jog/STOP ownership. The
+        # C3 revokes its lease when it processes this newer sequenced packet.
+        self._pending_seq = None
+        self._pending_at = None
+        self._stop_pending = False
+        self._stop_seq = None
+        self._stop_at = None
+        self._stop_attempts = 0
+        self.state.jog_active = False
+        self._hold_pending = True
+        self._hold_attempts = 0
+        return self._send_feed_hold()
+
+    def _send_feed_hold(self):
+        if not self.transport.paired:
+            return False
+        self._hold_attempts += 1
+        self._hold_at = self.clock()
+        self._hold_seq = None
+        try:
+            sequence = self.transport.send_mpg_feed_hold()
+        except (OSError, RuntimeError, ValueError):
+            return False
+        if sequence is None:
+            return False
+        self._hold_seq = sequence
+        return True
 
     def _consume_uart(self, payload):
         # C3 UART_RESPONSE can split status lines at arbitrary byte boundaries.
@@ -143,6 +189,11 @@ class C3WirelessController:
         except (OSError, RuntimeError, ValueError):
             self.state.connection_state = "disconnected"
             self.state.link_state = "LINK_LOST" if self.transport.paired else "PAIRING"
+            if self._hold_pending:
+                self._hold_pending = False
+                self._hold_seq = None
+                self._hold_at = None
+                self.state.error = "C3 feed hold interrupted by link loss"
             self.cancel_jog()
             return
         if self.transport.peer != previous_peer:
@@ -152,6 +203,11 @@ class C3WirelessController:
             self._partial = bytearray()
             self._last_status = None
             self._status_peer = None
+            if self._hold_pending:
+                self._hold_pending = False
+                self._hold_seq = None
+                self._hold_at = None
+                self.state.error = "C3 feed hold interrupted by peer change"
         while self.transport.events:
             kind, seq, payload = self.transport.events.pop(0)
             if kind == proto.UART_RESPONSE:
@@ -170,6 +226,17 @@ class C3WirelessController:
                     self._stop_pending = False
                     self._stop_seq = None
                     self._stop_at = None
+            elif kind == proto.MPG_FEED_HOLD_ACK and seq == self._hold_seq:
+                self._hold_pending = False
+                self._hold_seq = None
+                self._hold_at = None
+                if payload == bytes((proto.RESULT_STOP_SUPPRESSED,)):
+                    self.state.error = "C3 feed hold proposed only (dry-run)"
+                elif payload == bytes((proto.RESULT_OK,)):
+                    if self.state.error == "C3 feed hold proposed only (dry-run)":
+                        self.state.error = None
+                else:
+                    self.state.error = "C3 rejected feed hold"
         if self.transport.paired:
             self._had_pair = True
         fresh = (self._last_status is not None and
@@ -198,6 +265,20 @@ class C3WirelessController:
                 self._pending_at is None or current - self._pending_at > 0.2):
             self.cancel_jog()
             self.state.error = "C3 jog acknowledgment timeout"
+        if self._hold_pending and self._hold_at is not None and (
+                current - self._hold_at >= 0.08):
+            if not self.transport.paired:
+                self._hold_pending = False
+                self._hold_seq = None
+                self._hold_at = None
+                self.state.error = "C3 feed hold interrupted by link loss"
+            elif self._hold_attempts < 4:
+                self._send_feed_hold()
+            else:
+                self._hold_pending = False
+                self._hold_seq = None
+                self._hold_at = None
+                self.state.error = "C3 feed hold acknowledgment missing"
         if not online:
             self.state.machine_state = "disconnected"
             if self.state.jog_active:
