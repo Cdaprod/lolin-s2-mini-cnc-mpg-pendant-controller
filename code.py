@@ -8,7 +8,7 @@ from src.app import PendantApplication
 from src.diagnostics import (emit, is_runtime_reload,
                              startup_context_fields)
 
-RUNTIME_BUILD = "round-hud-touch-soft-edge-v28"
+RUNTIME_BUILD = "round-hud-touch-follow-pulse-v29"
 
 
 def main():

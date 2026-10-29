@@ -912,6 +912,11 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(palette[1], 0)
         held_ring = palette[4]
 
+        pulse_progress = renderer._halo_progress
+        pulse_palette = tuple(palette)
+        renderer.touch_hold(1.35)  # Real input renews this lease every poll.
+        self.assertEqual(renderer._halo_progress, pulse_progress)
+        self.assertEqual(tuple(palette), pulse_palette)
         self.assertTrue(renderer.animate(1.45))
         self.assertNotEqual(palette[4], held_ring)  # Gentle in-place pulse.
         release_progress = renderer._halo_progress
