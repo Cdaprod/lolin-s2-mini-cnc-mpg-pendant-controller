@@ -489,17 +489,17 @@ class RoundRendererTests(unittest.TestCase):
         self.assertFalse(renderer.menu_group.hidden)
         self.assertEqual(renderer.home_group.x, 0)
         self.assertEqual(renderer.menu_group.x, 240)
-        self.assertTrue(renderer.animate(start + 0.12))
+        self.assertTrue(renderer.animate(start + 0.09))
         self.assertIn(renderer.home_group.x, (-37, -38))
         self.assertIn(renderer.menu_group.x, (202, 203))
         self.assertEqual(renderer.menu_group.x - renderer.home_group.x, 240)
         self.assertTrue(renderer.render(state))
-        self.assertTrue(renderer.animate(start + 0.24))
+        self.assertTrue(renderer.animate(start + 0.18))
         self.assertEqual(renderer.home_group.x, -120)
         self.assertEqual(renderer.menu_group.x, 120)
         self.assertTrue(renderer.render(state))
         self.assertEqual(renderer.menu_title.value, "FILE EXPLORER")
-        self.assertTrue(renderer.animate(start + 0.50))
+        self.assertTrue(renderer.animate(start + 0.37))
         self.assertEqual(renderer.menu_group.x, 0)
         self.assertEqual(renderer.home_group.x, 0)
         self.assertTrue(renderer.home_group.hidden)
@@ -525,21 +525,21 @@ class RoundRendererTests(unittest.TestCase):
         self.assertFalse(renderer.menu_group.hidden)
         self.assertEqual(renderer.menu_title.value, "FILE EXPLORER")
         start = renderer._page_transition["started"]
-        self.assertTrue(renderer.animate(start + 0.12))
+        self.assertTrue(renderer.animate(start + 0.09))
         self.assertEqual(renderer.menu_group.x, -60)
         self.assertEqual(renderer.menu_title.value, "FILE EXPLORER")
         renderer.render(state)
 
-        self.assertTrue(renderer.animate(start + 0.25))
+        self.assertTrue(renderer.animate(start + 0.181))
         self.assertEqual(renderer.menu_group.x, 240)
         renderer.render(state)
         self.assertEqual(renderer._page_transition["phase"], "in")
         self.assertEqual(renderer.menu_title.value, "CONFIGURATION")
         incoming = renderer._page_transition["started"]
-        self.assertTrue(renderer.animate(incoming + 0.12))
+        self.assertTrue(renderer.animate(incoming + 0.09))
         self.assertEqual(renderer.menu_group.x, 60)
         renderer.render(state)
-        self.assertTrue(renderer.animate(incoming + 0.25))
+        self.assertTrue(renderer.animate(incoming + 0.181))
         self.assertEqual(renderer.menu_group.x, 0)
         renderer.render(state)
         self.assertIsNone(renderer._page_transition)
@@ -791,6 +791,8 @@ class RoundRendererTests(unittest.TestCase):
         initial = display.refreshes
         renderer.touch_feedback((120, 120), 1.2)
         self.assertFalse(renderer.touch_halo.hidden)
+        self.assertEqual((renderer.touch_halo.x, renderer.touch_halo.y),
+                         (105, 105))
         self.assertFalse(renderer.animate(1.1))
         self.assertTrue(renderer.render(state))
         self.assertEqual(display.refreshes, initial + 1)
@@ -805,14 +807,41 @@ class RoundRendererTests(unittest.TestCase):
         class Palette(list):
             pass
 
-        palette = Palette([0, 0, 0, 0])
+        palette = Palette([0, 0, 0, 0, 0])
         renderer._halo_palette = palette
         renderer.touch_halo = Node()
         renderer.touch_halo.hidden = True
         renderer.touch_feedback((120, 120), 1.2)
         initial = tuple(palette)
+        self.assertGreater(palette[3], 0)  # Inner ring is visible immediately.
+        self.assertGreater(palette[4], palette[3])  # Bright contact core.
         self.assertTrue(renderer.animate(1.1))
         self.assertNotEqual(tuple(palette), initial)
+        self.assertTrue(renderer._update_halo_palette(0.76))
+        self.assertGreater(palette[1], palette[4])  # Light travels outward.
+
+    def test_touch_hold_keeps_outer_contact_ring_without_restarting_wave(self):
+        _, _, _, renderer = self.make_renderer()
+        palette = [0, 0, 0, 0, 0]
+        renderer._halo_palette = palette
+        renderer.touch_halo = Node()
+        renderer.touch_halo.hidden = True
+        renderer._last_animation_now = 1.0
+        renderer.touch_feedback((120, 120), 1.50)
+        started = renderer._halo_started
+
+        renderer.touch_hold(1.10)
+        self.assertTrue(renderer._halo_held)
+        self.assertEqual(renderer._halo_started, started)
+        self.assertTrue(renderer.animate(1.30) or
+                        renderer._halo_progress >= 0.86)
+        self.assertLessEqual(renderer._halo_progress, 0.86)
+        self.assertGreater(palette[1], 0)
+
+        renderer._halo_held = False
+        renderer._halo_until = 1.50
+        self.assertTrue(renderer.animate(1.51))
+        self.assertTrue(renderer.touch_halo.hidden)
 
     def test_layout_regions_are_inside_round_safe_area(self):
         for region in RoundLayout.content_rows().values():

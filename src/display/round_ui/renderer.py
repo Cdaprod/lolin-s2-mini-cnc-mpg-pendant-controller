@@ -16,7 +16,9 @@ from .rotor import BezelRotor, update_bezel_segment_levels
 # one-pixel cadence instead of the visible multi-pixel jumps from faster rates.
 HUD_ORBIT_RATES = (0.22, -0.20)
 NONHOME_MODEL_INTERVAL_MS = 33
-PAGE_SWIPE_DURATION = 0.48
+# Keep the page handoff fluid while making the destination feel immediate.
+# At the current retained-layer refresh cadence this gives roughly 8–9 frames.
+PAGE_SWIPE_DURATION = 0.36
 _PROFILE_TICKS_MASK = (1 << 29) - 1
 _PROFILE_TICKS_HALF = 1 << 28
 
@@ -97,6 +99,8 @@ class RoundRenderer:
         self._halo_palette = None
         self._halo_progress = 1.0
         self._halo_phase = -1
+        self._halo_duration = 0.20
+        self._halo_held = False
         self._halo_accent = theme.TEXT
         self._last_animation_now = None
         self._highlight_dirty = False
@@ -282,10 +286,10 @@ class RoundRenderer:
         if point is None:
             return
         x, y = int(point[0]), int(point[1])
-        if not (7 <= x <= 232 and 7 <= y <= 232):
+        if not (0 <= x < 240 and 0 <= y < 240):
             return
-        self.touch_halo.x = x - 6
-        self.touch_halo.y = y - 6
+        self.touch_halo.x = x - 15
+        self.touch_halo.y = y - 15
         self.touch_halo.hidden = False
         self._halo_visible = True
         self._halo_until = float(until)
@@ -294,18 +298,30 @@ class RoundRenderer:
             else max(0.0, self._halo_until - 0.20)
         )
         self._halo_progress = 0.0
+        # Keep wave duration independent from the short lease that marks an
+        # active contact; TouchInput renews that lease while a finger is down.
+        self._halo_duration = 0.24
+        self._halo_held = False
         self._halo_phase = -1
         self._update_halo_palette(0.0)
         self._halo_dirty = True
+
+    def touch_hold(self, until):
+        """Keep the outer contact ring softly lit without restarting its wave."""
+        if not self.animations or self.touch_halo is None or not self._halo_visible:
+            return
+        self._halo_until = max(self._halo_until, float(until))
+        self._halo_held = True
 
     def _update_halo_palette(self, progress):
         if self._halo_palette is None:
             return False
         progress = max(0.0, min(1.0, float(progress)))
-        core = int(100 * (1.0 - progress))
-        inner = int(70 * max(0.0, 1.0 - abs(progress - 0.25) / 0.25))
-        outer = int(48 * max(0.0, 1.0 - abs(progress - 0.60) / 0.40))
-        shades = (outer, inner, core)
+        core = int(100 * max(0.0, 1.0 - progress / 0.55))
+        inner = int(68 * max(0.0, 1.0 - abs(progress - 0.22) / 0.36))
+        middle = int(78 * max(0.0, 1.0 - abs(progress - 0.50) / 0.42))
+        outer = int(88 * max(0.0, 1.0 - abs(progress - 0.76) / 0.38))
+        shades = (outer, middle, inner, core)
         changed = False
         for index, strength in enumerate(shades, start=1):
             color = theme.shade_color(self._halo_accent, strength)
@@ -455,9 +471,10 @@ class RoundRenderer:
                 frame = int(now * 24)
                 if frame != self._halo_phase:
                     self._halo_phase = frame
-                    duration = max(0.001, self._halo_until -
-                                   self._halo_started)
+                    duration = self._halo_duration
                     progress = (now - self._halo_started) / duration
+                    if self._halo_held:
+                        progress = min(0.86, progress)
                     self._halo_progress = max(0.0, min(1.0, progress))
                     if self._update_halo_palette(self._halo_progress):
                         self._halo_dirty = True
