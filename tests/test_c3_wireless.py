@@ -158,6 +158,21 @@ class WirelessTests(unittest.TestCase):
         # selector, session, and C3 admission checks.
         self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
 
+    def test_unknown_stop_ack_result_stays_inhibited_and_retries(self):
+        self.state.deadman_enabled = True
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        self.assertTrue(self.ctrl.cancel_jog())
+        first_seq = self.ctrl._stop_seq
+        self.ctrl.transport.events.append(
+            (proto.MPG_STOP_ACK, first_seq, b"\x03"))
+        self.ctrl.poll()
+        self.assertTrue(self.ctrl._stop_pending)
+        self.assertFalse(self.ctrl.queue_jog("X", 0.01, 200))
+        self.time[0] += 0.09
+        self.ctrl.poll()
+        self.assertNotEqual(self.ctrl._stop_seq, first_seq)
+        self.assertTrue(self.ctrl._stop_pending)
+
     def test_link_loss_retries_unsent_stop_before_rearming_after_repair(self):
         self.state.deadman_enabled = True
         self.status("<Idle|MPos:0,0,0|FS:0,0>")
