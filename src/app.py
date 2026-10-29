@@ -669,7 +669,6 @@ class PendantApplication:
             touch_events = self.touch_manager.poll()
             contact = getattr(self.touch_manager,
                               "last_contact_transition", None)
-            gestures = getattr(self.touch_manager, "gestures", None)
             if contact is not None:
                 # USB CDC output can block. Defer diagnostic writes until the
                 # immediate contact redraw has reached the display.
@@ -684,6 +683,11 @@ class PendantApplication:
                             touch_needs_render = (
                                 preview(contact[1], contact[2]) or
                                 touch_needs_render)
+                elif contact[0] == "up":
+                    release_feedback = getattr(self.display,
+                                               "touch_release", None)
+                    if release_feedback is not None:
+                        release_feedback(started)
             for event in touch_events:
                 touch_needs_render = True
                 touch_gesture_log = (event.kind, event.x, event.y)
@@ -708,7 +712,8 @@ class PendantApplication:
             # except through the existing safety-checked UI action dispatcher.
             feedback = self.touch_manager.last_feedback
             if feedback is not None:
-                if hasattr(self.display, "touch_feedback"):
+                if (feedback[2] == "contact" and
+                        hasattr(self.display, "touch_feedback")):
                     self.display.touch_feedback(
                         feedback[:2], self.touch_manager.feedback_until)
                 self.touch_manager.last_feedback = None

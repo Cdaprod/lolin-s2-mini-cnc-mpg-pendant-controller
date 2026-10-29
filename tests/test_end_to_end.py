@@ -12,6 +12,8 @@ from src.display.ui import TouchEvent
 
 class EndToEndTests(unittest.TestCase):
     def test_home_menu_opens_on_release_after_immediate_contact_feedback(self):
+        feedback_calls = []
+
         class TouchManager:
             last_contact_transition = ("down", 130, 102)
             last_feedback = (130, 102, "contact")
@@ -25,18 +27,30 @@ class EndToEndTests(unittest.TestCase):
                 return self.events
 
         touch = TouchManager()
+        class Display(ConsoleDisplay):
+            def touch_feedback(self, point, until):
+                feedback_calls.append(("down", point, until))
+
+            def touch_release(self, now):
+                feedback_calls.append(("up", now))
+
         app = PendantApplication.from_config(
             {"controller_mode": "disabled"},
-            display=ConsoleDisplay(lambda frame: None),
+            display=Display(lambda frame: None),
             touch_manager=touch, clock=lambda: 1.0)
 
         app.poll()
         self.assertEqual(app.ui.current_screen, "HOME")
+        self.assertEqual(len(feedback_calls), 1)
+        self.assertEqual(feedback_calls[0][0], "down")
 
         touch.last_contact_transition = ("up", 130, 102)
         touch.events = (TouchEvent("release_select", 130, 102),)
+        touch.last_feedback = (130, 102, "release_select")
         app.poll()
         self.assertEqual(app.ui.current_screen, "MAIN_MENU")
+        self.assertEqual(len(feedback_calls), 2)
+        self.assertEqual(feedback_calls[1][0], "up")
         self.assertFalse(app.state.controller_enabled)
 
     def test_home_menu_stays_closed_during_contact_and_swipe_navigates(self):

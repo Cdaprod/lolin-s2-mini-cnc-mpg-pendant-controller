@@ -825,7 +825,7 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer._update_halo_palette(0.82))
         self.assertGreater(palette[1], palette[2])  # Light travels outward.
 
-    def test_touch_hold_keeps_outer_contact_ring_without_restarting_wave(self):
+    def test_touch_hold_keeps_compact_contact_glow_without_restarting_wave(self):
         _, _, _, renderer = self.make_renderer()
         palette = [0, 0, 0, 0, 0]
         renderer._halo_palette = palette
@@ -839,13 +839,16 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer._halo_held)
         self.assertEqual(renderer._halo_started, started)
         self.assertTrue(renderer.animate(1.30) or
-                        renderer._halo_progress >= 0.86)
-        self.assertLessEqual(renderer._halo_progress, 0.86)
-        self.assertGreater(palette[1], 0)
+                        renderer._halo_progress >= 0.10)
+        self.assertLessEqual(renderer._halo_progress, 0.10)
+        self.assertGreater(palette[4], 0)
+        self.assertEqual(palette[1], 0)
 
-        renderer._halo_held = False
-        renderer._halo_until = 1.50
-        self.assertTrue(renderer.animate(1.51))
+        renderer.touch_release(1.30)
+        self.assertFalse(renderer._halo_held)
+        self.assertTrue(renderer.animate(1.31))
+        self.assertGreater(palette[1], 0)
+        self.assertTrue(renderer.animate(1.35))
         self.assertTrue(renderer.touch_halo.hidden)
 
     def test_layout_regions_are_inside_round_safe_area(self):
