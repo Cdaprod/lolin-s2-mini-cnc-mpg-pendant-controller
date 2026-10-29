@@ -2,23 +2,28 @@
 
 import math
 
+_WAVE_BINS = 2160  # 90 angular samples per 24-segment ring step.
+_WAVE_HALF_BINS = _WAVE_BINS // 2
+_WAVE_SIGMA = 0.58
+_NORMALIZED_WAVE = bytes(
+    int(round(255.0 * math.exp(-0.5 * (
+        (math.pi * index / _WAVE_HALF_BINS) / _WAVE_SIGMA) ** 2)))
+    for index in range(_WAVE_HALF_BINS + 1)
+)
+
 
 def bezel_segment_levels(angle, count=24, minimum=1, maximum=15):
     """Brightness envelope for fixed tangent arcs, sweeping clockwise.
 
     A single compact light wave travels around the ring. The arcs never rotate
-    or change orientation; their broad, curved strokes remain attached to the
-    bezel while their palette intensity changes. Positive angle follows
-    increasing screen-space theta (clockwise).
+    or change orientation; their curved strokes remain attached to the bezel
+    while their palette intensity changes. Positive angle follows increasing
+    screen-space theta (clockwise). A precomputed angular lookup avoids repeated
+    exponentials in the embedded animation loop.
     """
     count = max(1, int(count))
-    period = 2.0 * math.pi
-    levels = []
-    for index in range(count):
-        theta = 2.0 * math.pi * index / count
-        delta = ((theta - float(angle) + period * 0.5) % period) - period * 0.5
-        envelope = math.exp(-0.5 * (delta / 0.58) ** 2)
-        levels.append(int(round(minimum + (maximum - minimum) * envelope)))
+    levels = [0] * count
+    update_bezel_segment_levels(angle, levels, minimum, maximum)
     return tuple(levels)
 
 
@@ -27,13 +32,16 @@ def update_bezel_segment_levels(angle, levels, minimum=1, maximum=15):
     count = len(levels)
     if count < 1:
         return
-    period = 2.0 * math.pi
-    angle = float(angle)
+    phase = int((float(angle) % (2.0 * math.pi)) *
+                (_WAVE_BINS / (2.0 * math.pi))) % _WAVE_BINS
+    span = maximum - minimum
     for index in range(count):
-        theta = 2.0 * math.pi * index / count
-        delta = ((theta - angle + period * 0.5) % period) - period * 0.5
-        envelope = math.exp(-0.5 * (delta / 0.58) ** 2)
-        levels[index] = int(round(minimum + (maximum - minimum) * envelope))
+        center = (index * _WAVE_BINS + count // 2) // count
+        delta = (center - phase) % _WAVE_BINS
+        if delta > _WAVE_HALF_BINS:
+            delta = _WAVE_BINS - delta
+        envelope = _NORMALIZED_WAVE[delta]
+        levels[index] = minimum + (span * envelope + 127) // 255
 
 
 class BezelRotor:
