@@ -25,6 +25,8 @@ Authoritative source retained unchanged: `pendant.FCStd`
 
 `pendant-bodies/usb-tethered-cover.FCStd` contains the editable `Body_USBTetheredCover` plus the hidden envelope/press-fit dependency Bodies recursively required by its history. Its manufacturing Body tip is `USBPlugLeadIn`; the helper Bodies remain hidden. It was recomputed, saved, closed, reopened, and recomputed again.
 
+`pendant-bodies/faceplate-locators.FCStd` contains the two Bodies in the source's `Faceplate Locators` group. Both six-feature histories were recomputed and reopened successfully as one valid solid each, with volumes and bounding boxes matching the source. They have no links back to the monolith.
+
 - Manufacturing Body baseline: one valid solid, source volume `665.2206904482824 mm^3`, reopened destination `665.220690448208 mm^3` (difference about `7.4e-11 mm^3`); bounding box matches source.
 - No dependency link points back to the source document. The extracted helper group contains seven valid single-solid Bodies; those helper solids are construction/dependency geometry and are not separate manufactured parts.
 
@@ -36,11 +38,15 @@ A disposable `Part::Box` test verified an external expression using the internal
 
 `hardware/freecad/scripts/update_modular_project.py` loads the master first, then recomputes, validates, and saves component documents. It can also refresh an explicitly supplied assembly candidate. The worker has a 300-second default timeout and process-group TERM/KILL cleanup. Its first full run successfully refreshed the master and both extracted component files; all reported Bodies were valid single solids. It does not open or save the untouched authoritative assembly.
 
-## Not yet migrated
+## Still in the authoritative monolith
 
-- Front shell, rear shell, upper faceplate, encoder faceplate, and encoder pocket: retain in `pendant.FCStd`. The baseline shows cross-Body binders, shared parameter expressions, transfer tools, and interdependent split geometry. Extract them only as complete dependency groups and only after candidate tests.
-- Archived/display-retainer v1 and helper/cutter/envelope Bodies: not physical component sources; retained in the original document.
-- The linked top-level assembly has not been created. `pendant.FCStd` remains the unchanged monolithic source, not an assembly candidate.
+- Front/rear shells: recursive copy required 325 objects, including both physical shells and 11 helper Bodies. All 130 shared expressions redirected to the master evaluated in memory and the Tips matched. After save/reopen, however, the containing Body shapes reported different bounds from their unchanged Tips. The candidate was discarded because that mismatch fails geometry acceptance.
+- Upper faceplate: recursive copy required 326 objects and included the front shell and ten helper Bodies, so it is not yet an independent component source.
+- Encoder faceplate and pocket: copying both together required 288 objects and ten Bodies. The 60 redirected expressions initially resolved, but perturbing `FaceplateThickness` from 2.5 to 2.6 mm split the encoder-pocket Body into two solids; restoring the parameter did not return it to its original one-solid shape. The candidate was discarded.
+- Breakout board: its Binder pulls in the front shell and 235 additional objects, so it is not currently independent.
+- These failed or oversized candidates were disposable and have been closed/discarded; no shell, encoder, upper-faceplate, or breakout-board candidate was promoted. Their authoritative source geometry remains in `pendant.FCStd`.
+- Archived/display-retainer v1 and helper/cutter/envelope Bodies are not independent manufacturing files and remain in the original document.
+- The linked top-level assembly and portability test have not been completed. `pendant.FCStd` remains the unchanged monolithic source, not an assembly candidate.
 
 ## Recovery and execution rules
 
