@@ -297,6 +297,41 @@ class DeploymentCLITests(unittest.TestCase):
             verified = self.run_cli(target, "--verify")
             self.assertEqual(verified.returncode, 0, verified.stderr)
 
+    def test_runtime_only_deploy_preserves_settings_byte_for_byte(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.mark_circuitpython(target)
+            settings = target / "settings.toml"
+            settings.write_bytes(
+                b'# user-owned settings\nMPG_INPUTS_ENABLED="false"\n'
+                b'MPG_CONTROLLER_MODE="disabled"\nMPG_SD_ENABLED="false"\n'
+                b'CIRCUITPY_WIFI_PASSWORD="private-value"\n')
+            before = settings.read_bytes()
+            result = self.run_cli(target, "--runtime-only")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(settings.read_bytes(), before)
+            self.assertFalse((target / "settings.toml.bak").exists())
+            self.assertNotIn("private-value", result.stdout)
+            self.assertIn("preserve     settings.toml", result.stdout)
+            verified = self.run_cli(target, "--verify")
+            self.assertEqual(verified.returncode, 0, verified.stderr)
+
+    def test_runtime_only_requires_existing_settings_and_rejects_overrides(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            self.mark_circuitpython(target)
+            missing = self.run_cli(target, "--runtime-only")
+            self.assertNotEqual(missing.returncode, 0)
+            self.assertIn("settings file not found", missing.stderr)
+            (target / "settings.toml").write_text(
+                'MPG_INPUTS_ENABLED="false"\n', encoding="utf-8")
+            before = (target / "settings.toml").read_bytes()
+            override = self.run_cli(target, "--runtime-only",
+                                    "--apply-local-settings")
+            self.assertNotEqual(override.returncode, 0)
+            self.assertIn("cannot be combined", override.stderr)
+            self.assertEqual((target / "settings.toml").read_bytes(), before)
+
     def test_read_only_preflight_refuses_before_any_write(self):
         with tempfile.TemporaryDirectory() as directory:
             target = Path(directory)
