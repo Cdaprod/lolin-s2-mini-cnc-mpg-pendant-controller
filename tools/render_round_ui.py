@@ -165,7 +165,7 @@ for i in range(4):
     d.ellipse((x-3, y-3, x+3, y+3),
               fill=rgb(0xFFFFFF if i == 0 else 0x667176))
 d.text((120, 38), "DISCONNECTED", anchor="mm", font=font,
-       fill=rgb(c["success"]))
+       fill=rgb(c["muted"]))
 d.text((79, 55), "AXIS OFF", anchor="mm", font=small,
        fill=rgb(c["accent"]))
 d.text((161, 55), "STEP X1", anchor="mm", font=small,
@@ -179,7 +179,7 @@ d.text((120, 137), "WPOS  mm", anchor="mm", font=font,
 d.text((120, 157), "X1", anchor="mm", font=large,
        fill=rgb(c["warning"]))
 d.text((120, 187), "MOTION DISARMED", anchor="mm", font=small,
-       fill=rgb(c["accent"]))
+       fill=rgb(c["warning"]))
 d.text((120, 211), "NET-  SD-  MENU", anchor="mm", font=small,
        fill=rgb(c["muted"]))
 im.save(OUT / "home-disconnected.png")
