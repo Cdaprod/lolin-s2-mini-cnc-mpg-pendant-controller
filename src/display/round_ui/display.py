@@ -393,6 +393,29 @@ def displayio_scene(display, colors=None, bezel_name=None):
     palettes["encoder"] = (encoder_palette, encoder_trail_palette,
                             encoder_far_palette)
 
+    # Place touch feedback below readable text and controls, but above the
+    # bezel. This lets a tap remain visible without washing out a label.
+    halo = displayio.Bitmap(41, 41, 5)
+    halo_palette = displayio.Palette(5)
+    halo_palette[0] = 0x000000
+    halo_palette.make_transparent(0)
+    for index in range(1, 5):
+        halo_palette[index] = theme.shade_color(colors["accent"], 0)
+    for hy in range(41):
+        for hx in range(41):
+            radius2 = (hx - 20) ** 2 + (hy - 20) ** 2
+            if radius2 <= 9:
+                halo[hx, hy] = 4
+            elif 36 <= radius2 <= 64:
+                halo[hx, hy] = 3
+            elif 144 <= radius2 <= 196:
+                halo[hx, hy] = 2
+            elif 324 <= radius2 <= 400:
+                halo[hx, hy] = 1
+    palettes["halo"] = halo_palette
+    halo_node = displayio.TileGrid(halo, pixel_shader=halo_palette)
+    halo_node.hidden = True
+    root.append(halo_node)
 
     home = displayio.Group()
     root.append(home)
@@ -506,33 +529,7 @@ def displayio_scene(display, colors=None, bezel_name=None):
     overlay_group.append(overlay_detail.node)
     root.append(overlay_group)
 
-    # Retained 31px touch ripple. Four concentric palette zones animate with
-    # a short glow/fade; the bitmap is built once and never rewritten.
-    # Critical alarm overlay stays above this feedback layer.
-    halo = displayio.Bitmap(31, 31, 5)
-    halo_palette = displayio.Palette(5)
-    halo_palette[0] = 0x000000
-    halo_palette.make_transparent(0)
-    halo_palette[1] = theme.shade_color(colors["accent"], 0)
-    halo_palette[2] = theme.shade_color(colors["accent"], 0)
-    halo_palette[3] = theme.shade_color(colors["accent"], 0)
-    halo_palette[4] = theme.shade_color(colors["accent"], 0)
-    for hy in range(31):
-        for hx in range(31):
-            radius2 = (hx - 15) ** 2 + (hy - 15) ** 2
-            if radius2 <= 4:
-                halo[hx, hy] = 4
-            elif 16 <= radius2 <= 25:
-                halo[hx, hy] = 3
-            elif 64 <= radius2 <= 81:
-                halo[hx, hy] = 2
-            elif 144 <= radius2 <= 169:
-                halo[hx, hy] = 1
-    palettes["halo"] = halo_palette
-    halo_node = displayio.TileGrid(halo, pixel_shader=halo_palette)
-    halo_node.hidden = True
-    root.append(halo_node)
-    # Keep the high-priority overlay above the touch indicator.
+    # Critical modal/alarm rendering stays above the touch feedback layer.
     root.remove(overlay_group)
     root.append(overlay_group)
 
