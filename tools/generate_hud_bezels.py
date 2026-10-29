@@ -19,6 +19,11 @@ SCALE = 8
 CENTER = 120.0
 INNER, OUTER = 87.0, 119.0
 LEVELS = (0.012, 0.035, 0.075, 0.15, 0.28, 0.5, 0.78)
+# A tiny GC9A01 photographed or viewed at close range blooms brighter than
+# desktop sRGB previews. Keep decorative bezel luminance below status text so
+# the readout remains the visual focal point; the separate status palettes
+# retain their full brightness.
+BEZEL_LUMINANCE = 0.48
 THEMES = (
     ("cyan_reactor", "Cyan segmented reactor", (28,221,255), (2,95,168), "segments"),
     ("green_instrument", "Green illuminated instrumentation", (68,255,158), (11,125,84), "ticks"),
@@ -206,8 +211,10 @@ def _geometry(kind, a, b, scale):
 def _palette(primary, secondary):
     out=[0]
     for color in (primary,secondary):
-        out.extend(_rgb(tuple(round(x*k) for x in color)) for k in LEVELS)
-    out.append(0xF4FCFF)
+        out.extend(_rgb(tuple(round(x*k*BEZEL_LUMINANCE) for x in color))
+                   for k in LEVELS)
+    out.append(_rgb(tuple(round(x * BEZEL_LUMINANCE)
+                          for x in (244, 252, 255))))
     return out
 
 
@@ -252,7 +259,10 @@ def render(theme, supersample=8):
     # int16 wrapped negative values and selected unrelated palette entries,
     # which rendered the hardware bezel as noisy white/multicolor pixels.
     pal=np.array([((v>>16)&255,(v>>8)&255,v&255) for v in palette[1:]],dtype=np.int32)
-    pixels=np.asarray(rgb,dtype=np.int32)
+    # Keep the pixel values in the same luminance range as the deliberately
+    # dimmed device palette; otherwise nearest-color selection can collapse
+    # saturated cyan toward the pale neutral entry.
+    pixels=(np.asarray(rgb,dtype=np.float32) * BEZEL_LUMINANCE).astype(np.int32)
     # Avoid materializing a 240x240x15x3 intermediate array.
     chosen=np.ones((SIZE,SIZE),dtype=np.uint8)
     # Initialize with first palette distance.
@@ -264,6 +274,16 @@ def render(theme, supersample=8):
     mask=(rs>=INNER)&(rs<=OUTER)&(np.asarray(alpha)>=3)
     chosen[~mask]=0
     packed=(chosen[:,0::2] | (chosen[:,1::2]<<4)).astype(np.uint8).tobytes()
+    # Development PNGs and contact sheets must represent the selected
+    # firmware palette, not a higher-luminance intermediate that the device
+    # never displays.
+    palette_rgb=np.array([((v>>16)&255,(v>>8)&255,v&255)
+                          for v in palette],dtype=np.uint8)
+    device_rgb=palette_rgb[chosen]
+    device_rgba=np.empty((SIZE,SIZE,4),dtype=np.uint8)
+    device_rgba[:,:,:3]=device_rgb
+    device_rgba[:,:,3]=np.where(chosen==0,0,255)
+    rgba=Image.fromarray(device_rgba,"RGBA")
     return rgba,packed,palette
 
 
@@ -326,8 +346,10 @@ def generate(output,supersample=8,overrides=None):
                         "bytes":len(data)})
     _write_palette_module(palettes,ROOT/"src/display/round_ui/bezel_palette.py")
     _contact_sheet(dev,output/"contact-sheet.png")
-    manifest={"generator":"tools/generate_hud_bezels.py","generator_version":2,"target":[SIZE,SIZE],
-              "supersampling":supersample,"palette_entries":16,"default":"cyan_reactor","themes":entries,
+    manifest={"generator":"tools/generate_hud_bezels.py","generator_version":3,"target":[SIZE,SIZE],
+              "supersampling":supersample,"palette_entries":16,
+              "bezel_palette_luminance":BEZEL_LUMINANCE,
+              "default":"cyan_reactor","themes":entries,
               "sprite_assets":[{"name":"orbit_phases","file":"assets/round_hud/runtime/orbit_phases.4bpp",
                                 "width":36,"height":36,"tile_size":9,"tiles":16,
                                 "palette_entries":16,"transparent_index":0,"bytes":len(orbit_data)},

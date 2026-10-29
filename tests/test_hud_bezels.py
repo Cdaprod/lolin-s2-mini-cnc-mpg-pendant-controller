@@ -154,12 +154,34 @@ class AssetPipelineTests(unittest.TestCase):
         byte = packed[7 * 120 + 120 // 2]
         index = byte & 0x0F
         core = palette[index]
-        primary = generate_hud_bezels.THEMES[0][2]
+        primary = tuple(round(channel * 0.78 *
+                              generate_hud_bezels.BEZEL_LUMINANCE)
+                        for channel in generate_hud_bezels.THEMES[0][2])
         distance = sum(
             (channel - expected) ** 2
             for channel, expected in zip(
                 ((core >> 16) & 255, (core >> 8) & 255, core & 255), primary))
-        self.assertLess(distance, 80 ** 2)
+        self.assertLess(distance, 22 ** 2)
+
+    def test_decorative_palettes_stay_below_status_text_luminance(self):
+        for name, palette in bezel_palette.PALETTES.items():
+            with self.subTest(theme=name):
+                self.assertLessEqual(
+                    max(max((color >> 16) & 0xFF,
+                            (color >> 8) & 0xFF, color & 0xFF)
+                        for color in palette[1:]), 124)
+
+    def test_development_png_matches_indexed_firmware_colors(self):
+        rgba, packed, palette = generate_hud_bezels.render(
+            generate_hud_bezels.THEMES[0], supersample=4)
+        pixels = rgba.load()
+        for y, x in ((0, 0), (7, 120), (120, 120), (120, 8), (232, 120)):
+            byte = packed[y * 120 + x // 2]
+            index = (byte & 0x0F) if x % 2 == 0 else (byte >> 4)
+            color = palette[index]
+            expected = ((color >> 16) & 0xFF, (color >> 8) & 0xFF,
+                        color & 0xFF, 0 if index == 0 else 255)
+            self.assertEqual(pixels[x, y], expected)
 
     def test_runtime_deployment_includes_only_generated_bitmap_assets(self):
         files = deploy.runtime_files()
