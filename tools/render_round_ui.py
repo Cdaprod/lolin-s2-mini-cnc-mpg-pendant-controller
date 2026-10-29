@@ -9,7 +9,7 @@ import math
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from PIL import Image, ImageDraw, ImageFont
-from src.display.round_ui import theme
+from src.display.round_ui import bezel_palette, theme
 from src.display.round_ui.renderer import HUD_ORBIT_RATES
 from src.display.ui import build_screens
 from src.display.navigation import menu_window_start
@@ -22,13 +22,44 @@ parser.add_argument("--bezel", default="cyan_reactor",
 ARGS = parser.parse_args()
 OUT = ARGS.output
 OUT.mkdir(parents=True, exist_ok=True)
-BEZEL_PATH = (Path(__file__).resolve().parents[1] / "assets" / "round_hud" /
-              "development" / (ARGS.bezel + ".png"))
-if not BEZEL_PATH.is_file():
-    raise SystemExit("generated bezel not found: {}".format(BEZEL_PATH))
-bezel_asset = Image.open(BEZEL_PATH).convert("RGBA")
-ROTOR_ASSET = (BEZEL_PATH.parents[1] / "runtime" /
-               "rotor_segment_phases.4bpp")
+ASSET_ROOT = Path(__file__).resolve().parents[1] / "assets" / "round_hud"
+BEZEL_PATH = ASSET_ROOT / "runtime" / (ARGS.bezel + ".4bpp")
+if ARGS.bezel not in bezel_palette.PALETTES or not BEZEL_PATH.is_file():
+    raise SystemExit("generated runtime bezel not found: {}".format(BEZEL_PATH))
+
+
+def load_runtime_bezel(name):
+    """Decode the exact LSB-first 4bpp asset and palette used by firmware."""
+    path = ASSET_ROOT / "runtime" / (name + ".4bpp")
+    if name not in bezel_palette.PALETTES or not path.is_file():
+        raise SystemExit("generated runtime bezel not found: {}".format(path))
+    data = path.read_bytes()
+    if len(data) != 240 * 240 // 2:
+        raise SystemExit("invalid runtime bezel size: {}".format(path))
+    indices = bytearray(240 * 240)
+    for offset, value in enumerate(data):
+        indices[offset * 2] = value & 0x0F
+        indices[offset * 2 + 1] = value >> 4
+    colors = bezel_palette.PALETTES[name]
+    # Approximate the panel's RGB565 color conversion in the preview. Keep
+    # index zero transparent, matching Palette.make_transparent(0).
+    rgba_palette = []
+    for color in colors:
+        red = (color >> 16) & 0xFF
+        green = (color >> 8) & 0xFF
+        blue = color & 0xFF
+        red = (red >> 3) * 255 // 31
+        green = (green >> 2) * 255 // 63
+        blue = (blue >> 3) * 255 // 31
+        rgba_palette.extend((red, green, blue, 0 if color == colors[0] else 255))
+    image = Image.new("RGBA", (240, 240))
+    image.putdata([tuple(rgba_palette[index * 4:index * 4 + 4])
+                   for index in indices])
+    return image
+
+
+bezel_asset = load_runtime_bezel(ARGS.bezel)
+ROTOR_ASSET = ASSET_ROOT / "runtime" / "rotor_segment_phases.4bpp"
 rotor_asset = ROTOR_ASSET.read_bytes() if ROTOR_ASSET.is_file() else b""
 screens = build_screens()
 names = ["HOME", "MAIN_MENU", "MACHINE", "JOBS", "JOB_BROWSER",
@@ -282,7 +313,7 @@ def state_canvas(palette_name="industrial", bezel_name=None, rotor_angle=0.0,
                  outer_angle=None):
     colors = theme.select(palette_name)
     selected = bezel_name or ARGS.bezel
-    art = Image.open(BEZEL_PATH.parent / (selected + ".png")).convert("RGBA")
+    art = load_runtime_bezel(selected)
     base = Image.new("RGBA", (240, 240), rgb(colors["background"])+(255,))
     image = Image.alpha_composite(base, art).convert("RGB")
     draw = ImageDraw.Draw(image)

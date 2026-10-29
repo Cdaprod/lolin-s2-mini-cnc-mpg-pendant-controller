@@ -18,9 +18,12 @@ python3 tools/render_round_ui.py --output assets/round_hud/previews
 ```
 
 The generator also accepts `--supersample 4` and `--palette-json PATH`. It
-deterministically writes 240 x 240 transparent RGBA previews, row-major 4-bpp
-runtime bitmaps, CircuitPython palette constants, a manifest, and contact
-sheets. Intermediate supersampled frames stay in memory. Only `.4bpp` files in
+deterministically writes 240 x 240 transparent RGBA previews decoded from the
+same indexed colors used by the device, row-major 4-bpp runtime bitmaps,
+CircuitPython palette constants, a manifest, and contact sheets. The
+decorative palette is limited to 48% of the source accent luminance, keeping
+the bezel subordinate to telemetry on the GC9A01; text and safety colors are
+unchanged. Intermediate supersampled frames stay in memory. Only `.4bpp` files in
 `assets/round_hud/runtime/` are deployed. The twelve production images occupy
 345,600 bytes of filesystem storage; the selected bitmap occupies 28,800 bytes
 in RAM. The 4x4 subpixel orb atlas adds 648 bytes and the 16-orientation rotor
@@ -67,7 +70,9 @@ bounded out/in transition while that group changes content; duplicating all
 menu text and controls solely to cross-slide them would increase retained
 DisplayIO memory. Critical safety overlays cancel either transition immediately.
 
-The renderer preview script emits the normal screen snapshots plus
+The renderer preview script decodes the exact runtime 4-bpp bezel data and
+approximates the GC9A01's RGB565 color conversion; typography and the retained
+scene are still host approximations. It emits the normal screen snapshots plus
 `bezel-angle-000.png`, `bezel-angle-090.png`, `bezel-angle-180.png`, and
 `bezel-angle-270.png` to inspect the marker path. Previews are layout aids, not
 pixel-exact device captures. Physical frame pacing, heap stability, the
