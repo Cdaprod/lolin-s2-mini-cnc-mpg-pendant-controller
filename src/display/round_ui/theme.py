@@ -37,6 +37,16 @@ PAGE_THEMES = {
     "PREVIEW": "spectrum",
 }
 
+# Color variants for the retained bezel bitmap. The selected MPG_UI_BEZEL
+# continues to choose its geometry; these palettes give the bezel the same
+# visual identity as the active page. Critical alarms always use red_alarm.
+PAGE_BEZEL_PALETTES = {
+    "industrial": "cyan_reactor",
+    "amber": "amber_precision",
+    "ice": "ice_optical",
+    "spectrum": "spectral",
+}
+
 
 def for_page(page):
     """Resolve a physical top-level page to its visual palette."""

@@ -159,10 +159,12 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
     # Retain per-theme previews for color regression; also publish a page-
     # accurate composite showing the palette chosen by physical selector.
     c = theme.select(skin)
+    page_bezel = load_runtime_bezel(
+        ARGS.bezel, theme.PAGE_BEZEL_PALETTES[skin])
     for name in names:
         screen = screens[name]
         base = Image.new("RGBA", (240, 240), rgb(c["background"]) + (255,))
-        im = Image.alpha_composite(base, bezel_asset).convert("RGB")
+        im = Image.alpha_composite(base, page_bezel).convert("RGB")
         d = ImageDraw.Draw(im)
         # Four physical top-level page positions; no pager at idle in firmware.
         page = {"EXPLORER": 1, "CONFIGURATION": 2, "PREVIEW": 3}.get(name, 0)
@@ -319,8 +321,9 @@ def state_canvas(palette_name="industrial", bezel_name=None, rotor_angle=0.0,
                  outer_angle=None, alarm=False):
     colors = theme.select(palette_name)
     selected = bezel_name or ARGS.bezel
-    art = load_runtime_bezel(selected,
-                             "red_alarm" if alarm else selected)
+    bezel_colors = ("red_alarm" if alarm else
+                    theme.PAGE_BEZEL_PALETTES.get(palette_name, selected))
+    art = load_runtime_bezel(selected, bezel_colors)
     base = Image.new("RGBA", (240, 240), rgb(colors["background"])+(255,))
     image = Image.alpha_composite(base, art).convert("RGB")
     draw = ImageDraw.Draw(image)
