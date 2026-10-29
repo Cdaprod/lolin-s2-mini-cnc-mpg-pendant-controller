@@ -47,6 +47,12 @@ def startup_context_fields(supervisor_module=None,
     cpu = getattr(microcontroller_module, "cpu", None)
     if cpu is not None:
         try:
+            frequency = cpu.frequency
+        except (AttributeError, NotImplementedError, RuntimeError):
+            frequency = None
+        if frequency is not None:
+            fields["cpu_frequency_hz"] = int(frequency)
+        try:
             value = cpu.reset_reason
         except (AttributeError, NotImplementedError, RuntimeError):
             value = None

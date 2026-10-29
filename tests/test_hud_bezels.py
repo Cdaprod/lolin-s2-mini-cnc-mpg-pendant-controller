@@ -133,14 +133,17 @@ class AssetPipelineTests(unittest.TestCase):
         import math
         image = Image.open(ASSETS / "development" / "cyan_reactor.png")
         alpha = image.getchannel("A")
-        # At the 22.5 degree midpoint between the first two major arcs,
-        # nothing should fill the gap at the outer ring radius.
-        x = round(120 + 113 * math.cos(math.radians(-67.5)))
-        y = round(120 + 113 * math.sin(math.radians(-67.5)))
+        # At the midpoint between neighboring 12-sector bars, the outer
+        # track stays open even though the subtler guide ring remains visible.
+        x = round(120 + 113 * math.cos(math.radians(-75)))
+        y = round(120 + 113 * math.sin(math.radians(-75)))
         self.assertLessEqual(alpha.getpixel((x, y)), 8)
-        # A corresponding arc core remains bright, proving the test catches
+        # Every illuminated sector remains visible, proving the test catches
         # over-broad illumination without accepting a blank asset.
-        self.assertGreaterEqual(alpha.getpixel((120, 7)), 180)
+        for angle in range(-90, 270, 30):
+            x = round(120 + 113 * math.cos(math.radians(angle)))
+            y = round(120 + 113 * math.sin(math.radians(angle)))
+            self.assertGreaterEqual(alpha.getpixel((x, y)), 180)
 
     def test_firmware_bitmap_palette_matches_the_generated_bezel_core(self):
         """Catch host arithmetic that corrupts the indexed device bitmap."""
@@ -169,7 +172,7 @@ class AssetPipelineTests(unittest.TestCase):
                 self.assertLessEqual(
                     max(max((color >> 16) & 0xFF,
                             (color >> 8) & 0xFF, color & 0xFF)
-                        for color in palette[1:]), 80)
+                        for color in palette[1:]), 150)
 
     def test_default_bezel_keeps_negative_space_inside_the_ring(self):
         """The close-view default must not fill its center with dot noise."""

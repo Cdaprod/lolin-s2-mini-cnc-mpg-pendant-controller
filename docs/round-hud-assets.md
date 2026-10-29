@@ -21,9 +21,13 @@ The generator also accepts `--supersample 4` and `--palette-json PATH`. It
 deterministically writes 240 x 240 transparent RGBA previews decoded from the
 same indexed colors used by the device, row-major 4-bpp runtime bitmaps,
 CircuitPython palette constants, a manifest, and contact sheets. The
-decorative palette is limited to 48% of the source accent luminance, keeping
-the bezel subordinate to telemetry on the GC9A01; text and safety colors are
-unchanged. Intermediate supersampled frames stay in memory. Only `.4bpp` files in
+decorative palette is limited to 55% of the source accent luminance, keeping
+the bezel visible while subordinate to telemetry on the GC9A01; text and safety
+colors are unchanged. The default cyan theme uses a thin circular guide, twelve
+illuminated outer sectors, alternating inner echoes, and sparse radial ticks.
+This keeps the circular instrument silhouette legible without filling the
+center or merging the sectors into a bright annulus. Intermediate supersampled
+frames stay in memory. Only `.4bpp` files in
 `assets/round_hud/runtime/` are deployed. The twelve production images occupy
 345,600 bytes of filesystem storage; the selected bitmap occupies 28,800 bytes
 in RAM. The 4x4 subpixel orb atlas adds 648 bytes and the 16-orientation rotor

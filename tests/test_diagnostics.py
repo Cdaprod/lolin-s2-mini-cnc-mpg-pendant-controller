@@ -25,6 +25,7 @@ class DiagnosticsTests(unittest.TestCase):
             serial_connected = True
 
         class CPU:
+            frequency = 240000000
             reset_reason = "POWER_ON"
 
         class Supervisor:
@@ -37,6 +38,7 @@ class DiagnosticsTests(unittest.TestCase):
             "run_reason": "REPL_RELOAD",
             "safe_mode_reason": "NONE",
             "serial_connected": True,
+            "cpu_frequency_hz": 240000000,
             "reset_reason": "POWER_ON",
         })
 
