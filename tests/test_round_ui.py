@@ -179,6 +179,14 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer.axis.axis.line.updates, axis_updates)
         self.assertEqual(renderer.axis.value.line.updates, value_updates + 1)
 
+    def test_auto_refresh_display_uses_nonblocking_background_refresh(self):
+        state, _, display, renderer = self.make_renderer()
+        display.auto_refresh = True
+        self.assertTrue(renderer.render(state))
+        renderer._hud_dirty = True
+        self.assertTrue(renderer.render(state))
+        self.assertEqual(display.refreshes, 0)
+
     def test_renderer_timing_delta_handles_tick_wrap(self):
         period = 1 << 29
         self.assertEqual(_profile_ticks_diff(4, period - 3), 7)

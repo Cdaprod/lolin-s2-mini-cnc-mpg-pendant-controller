@@ -117,6 +117,12 @@ class DisplayIOBackend:
         self.overlay_group.append(self.overlay.node)
         self.display.root_group = self.root
 
+    def _refresh_if_manual(self):
+        """Let the DisplayIO background task refresh auto-refresh displays."""
+        if getattr(self.display, "auto_refresh", None) is True:
+            return
+        self.display.refresh(minimum_frames_per_second=0)
+
     def bind_ui(self, ui):
         self.ui = ui
 
@@ -178,7 +184,7 @@ class DisplayIOBackend:
         self.overlay.set_text(overlay)
         self.render_count += 1
         try:
-            self.display.refresh(minimum_frames_per_second=0)
+            self._refresh_if_manual()
         except (AttributeError, RuntimeError):
             # Auto-refresh displays need no explicit refresh; a busy display is
             # retried on a later cooperative poll rather than blocking.

@@ -80,6 +80,11 @@ class RoundRenderer:
                                scene["overlay_detail"])
         self.display.root_group = self.root
 
+    def _refresh_if_manual(self):
+        """Avoid synchronous transfers when DisplayIO already auto-refreshes."""
+        if getattr(self.display, "auto_refresh", None) is True:
+            return
+        self.display.refresh(minimum_frames_per_second=0)
 
     def _apply_page_theme(self, active_page):
         """Recolor retained DisplayIO objects without rebuilding the screen."""
@@ -239,7 +244,7 @@ class RoundRenderer:
                 refresh_started = self._profile_ticks_ms()
                 self.render_count += 1
                 try:
-                    self.display.refresh(minimum_frames_per_second=0)
+                    self._refresh_if_manual()
                 except (AttributeError, RuntimeError):
                     pass
                 self._halo_dirty = False
@@ -370,7 +375,7 @@ class RoundRenderer:
             return False
         self.render_count += 1
         try:
-            self.display.refresh(minimum_frames_per_second=0)
+            self._refresh_if_manual()
         except (AttributeError, RuntimeError):
             pass
         self.last_refresh_ms = max(
