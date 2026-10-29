@@ -59,11 +59,20 @@ runtime. Page swipes ease into and out of the transition while matching
 velocity at the outgoing/incoming page handoff. These settings are clamped by
 the rotor model and do not affect UI polling or communication loops.
 
+HOME-to-menu and menu-to-HOME page swipes move the two retained page groups
+together over 0.48 seconds with a smoothstep curve. Their separation stays one
+screen width, so the incoming page follows the outgoing page without a blank
+handoff. Menu-to-menu pages share one retained menu group and use the existing
+bounded out/in transition while that group changes content; duplicating all
+menu text and controls solely to cross-slide them would increase retained
+DisplayIO memory. Critical safety overlays cancel either transition immediately.
+
 The renderer preview script emits the normal screen snapshots plus
 `bezel-angle-000.png`, `bezel-angle-090.png`, `bezel-angle-180.png`, and
 `bezel-angle-270.png` to inspect the marker path. Previews are layout aids, not
-pixel-exact device captures. Physical frame pacing, heap stability, and the
-visual response to a connected handwheel must be checked on the S3.
+pixel-exact device captures. Physical frame pacing, heap stability, the
+continuous page slide, and the visual response to a connected handwheel must be
+checked on the S3.
 
 ## Validation
 
