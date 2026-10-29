@@ -6,7 +6,7 @@ CircuitPython imports so touch behaviors are testable on a development host.
 
 class TouchGestures:
     def __init__(self, clock, long_press=0.75, swipe_distance=58,
-                 movement_tolerance=16, size=240, release_delay=0.04,
+                 movement_tolerance=16, size=240, release_delay=0.02,
                  cooldown=0.22, min_duration=0.05):
         self.clock = clock
         self.long_press = float(long_press)

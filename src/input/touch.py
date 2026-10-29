@@ -10,9 +10,14 @@ class TouchInput:
     """Normalize releases to UI navigation, with a tiny visual touch signal."""
 
     def __init__(self, source, clock, long_press=0.8, swipe_distance=58,
-                 rotation=0, invert_x=False, invert_y=False):
+                 rotation=0, invert_x=False, invert_y=False,
+                 release_delay=0.02):
         self.source = source
-        self.gestures = TouchGestures(clock, long_press, swipe_distance)
+        # The touch loop runs much faster than a human tap. A 20 ms confirmed
+        # release keeps accidental I2C dropouts from activating controls while
+        # removing the sluggish tail users can feel after lifting a finger.
+        self.gestures = TouchGestures(
+            clock, long_press, swipe_distance, release_delay=release_delay)
         self.rotation = int(rotation) % 360
         self.invert_x = bool(invert_x)
         self.invert_y = bool(invert_y)

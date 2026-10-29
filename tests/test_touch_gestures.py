@@ -124,21 +124,21 @@ class GestureTests(unittest.TestCase):
         source.current = TOUCH_SAMPLE_UNAVAILABLE
         self.assertEqual(touch.poll(), ())
         self.assertTrue(touch.gestures.active)
-        clock.t = .169
+        clock.t = .149
         source.current = None
         self.assertEqual(touch.poll(), ())
-        clock.t = .17
+        clock.t = .151
         self.assertEqual(touch.poll()[0].kind, "release_select")
 
-    def test_tap_release_is_confirmed_within_40ms(self):
+    def test_tap_release_is_confirmed_within_20ms(self):
         clock = Clock()
         gestures = TouchGestures(clock)
         gestures.poll((120, 120))
         clock.t = .10
         gestures.poll(None)
-        clock.t = .139
+        clock.t = .119
         self.assertEqual(gestures.poll(None), ())
-        clock.t = .14
+        clock.t = .121
         self.assertEqual(gestures.poll(None),
                          (("release_select", 120, 120),))
 
