@@ -819,8 +819,16 @@ class RoundRendererTests(unittest.TestCase):
 
     def test_theme_changes_only_when_physical_page_changes(self):
         state, ui, display, renderer = self.make_renderer()
+        palettes = ([0, 0, 0, 0], [0, 0], [0, 0])
+        renderer.encoder_palettes = palettes
+        renderer.palettes = {"dial": [0] * 6, "focus": [0] * 3,
+                             "separator": [0], "hud_markers": (),
+                             "hud_trails": ()}
+        renderer.active_theme = None
+        renderer._last_render_signature = None
         renderer.render(state)
         self.assertEqual(renderer.active_theme, "industrial")
+        self.assertEqual(palettes[0][1], theme.select("industrial")["accent"])
         ui.enter("MAIN_MENU")
         renderer.render(state)
         self.assertEqual(renderer.active_theme, "industrial")
@@ -828,6 +836,9 @@ class RoundRendererTests(unittest.TestCase):
         ui.apply_selector_context()
         renderer.render(state)
         self.assertEqual(renderer.active_theme, "amber")
+        self.assertEqual(palettes[0][1], theme.select("amber")["accent"])
+        self.assertEqual(palettes[1][1], theme.shade_color(
+            theme.select("amber")["accent"], 36))
         ui.enter("MAIN_MENU")
         renderer.render(state)
         self.assertEqual(renderer.active_theme, "amber")
@@ -839,6 +850,7 @@ class RoundRendererTests(unittest.TestCase):
         ui.apply_selector_context()
         renderer.render(state)
         self.assertEqual(renderer.active_theme, "spectrum")
+        self.assertEqual(palettes[0][1], theme.select("spectrum")["accent"])
 
 if __name__ == "__main__":
     unittest.main()
