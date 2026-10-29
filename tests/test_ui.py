@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from src.app import PendantApplication
 from src.display.console import ConsoleDisplay
@@ -27,6 +28,20 @@ def ready_ui():
 
 
 class UIStateMachineTests(unittest.TestCase):
+    def test_detail_rows_are_built_from_one_details_snapshot(self):
+        state = PendantState()
+        state.runtime_version = "10.3.1"
+        ui = UIManager(state)
+        ui.enter("SYSTEM_INFO")
+
+        with patch.object(ui, "details", wraps=ui.details) as details:
+            model = ui.view_model()
+
+        details.assert_called_once_with()
+        self.assertEqual(model["items"][0][0], "CircuitPython: 10.3.1")
+        self.assertEqual(model["items"][0][0],
+                         "{}: {}".format(*model["details"][0]))
+
     def test_unknown_physical_inputs_never_show_motion_armed(self):
         state, ui = ready_ui()
         state.input_valid = None
