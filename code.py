@@ -19,7 +19,7 @@ def main():
 
     while True:
         app.poll()
-        time.sleep(0.01)
+        time.sleep(0.001)
 
 
 if __name__ == "__main__":
