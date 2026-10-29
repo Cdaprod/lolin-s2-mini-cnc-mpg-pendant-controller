@@ -100,6 +100,12 @@ The rear full-land link is only one of several remaining paths. `Binder008`/`Bin
 
 The migrated retainer's structural junction fillet uses `DisplayRetainerHeaderPocketV2` edges `Edge57`, `Edge58`, `Edge64`, and `Edge65`, radius 0.6 mm. A 0.1 mm pocket-length perturbation passed targeted recompute in a disposable copy and left the final Tip valid and geometrically unchanged. The earlier base-Pad edit that failed therefore appears more topology-sensitive; the retainer source remains unchanged.
 
+### Suppressed alignment-history bypass test (2026-10-29)
+
+A disposable monolith copy changed only active `RemoveWarpProneTongues.BaseFeature` from suppressed `Pad022` to `Pocket015`, leaving Pads 020–022 suppressed. `RemoveWarpProneTongues` and all 16 downstream rear Tip features recomputed valid, one-solid, and up-to-date; its own shape was unchanged. The Tip's volume and bounds matched baseline, and active dependency reachability fell from 51 to 47 objects, with `Pad022` and `Binder016` no longer reachable after save/reopen/recompute. However, the final Tip had a 22.0978457 mm³ symmetric-difference volume against the original, despite equal volume and bounds. This candidate is rejected and was not promoted. The first downstream feature introducing that spatial delta remains to be localized. The production monolith, master, and assembly remain unchanged. See `rear-tip-dependency-audit.md`.
+
+The read-only saved-cache shell check found zero common volume and zero minimum distance between the front and rear Tips at their Z = −19 mm seam; this indicates local coincident contact without volumetric overlap, but does not establish contact area or tolerance clearance. `FrontFullWidthReceiver` and `Body002FullWidthSeat` likewise show zero common volume, but are still `Touched`; no recomputed acceptance claim is made.
+
 The property-level rear shell cut audit identifies three active front inputs: `RearFullLandTransfer.Base`, `Binder008.Support`, and `Binder009.Support`. A transfer-only fixed master snapshot preserved the rear Tip exactly but did not reduce the closure because the two envelope-profile paths remain; the disposable candidate was discarded. The audit and exact downstream chains are recorded in `shell-dependency-report.md`.
 
 ### Targeted rear profile reconstruction status (2026-10-29)

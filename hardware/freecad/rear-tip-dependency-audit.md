@@ -72,6 +72,24 @@ These references are present in the candidate document, and their frame-preservi
 
 Body and top-level Part membership, Body `Group` ownership, and document-container references do not contribute to the active geometry traversal. Counting those objects (or all objects in a dependency-bearing Body) yields a different set and cannot be compared with this Tip-rooted result. The prior 331/307-style closure figures should not be used as a target for this audit.
 
+## Disposable test: bypassing the suppressed tongue branch (2026-10-29)
+
+A disposable copy `/tmp/remove-warp-bypass.FCStd` tested the narrow hypothesis that the active `RemoveWarpProneTongues` Pocket can use `Pocket015` directly as its `BaseFeature`, while leaving Pads 020–022 suppressed. The source monolith, master, and modular assembly were not edited.
+
+The Pocket and all 16 downstream features through `RearBossWallRamps45` recomputed as valid, one-solid, `Up-to-date` shapes. The active Tip retained its baseline volume (`40961.35900828918 mm³`) and bounds (`[-39.909661,39.879179, -88.312349,86.688463, -36.844984,0] mm`). `RemoveWarpProneTongues` itself had zero symmetric-difference volume against its original cached shape. The Tip-rooted feature closure dropped from 51 to 47 objects; neither `Pad022` nor `Binder016` was reachable, including after saving, closing, reopening, and recomputing the downstream chain.
+
+However, the fully recomputed candidate Tip had a **22.0978457 mm³ symmetric-difference volume** against the original Tip, both before and after reopen. Equal Tip volumes and equal bounds do not establish geometric equivalence. The specific downstream feature that first introduces the spatial difference was not isolated in this experiment. Therefore the candidate is **rejected for promotion**, and this test does not establish that the old branch is safe to remove. It does establish that the branch can be disconnected without a recompute error, while also exposing a downstream topology-sensitive geometry change that requires localization before another candidate can be accepted. The temporary candidate is diagnostic only.
+
+FreeCAD emitted existing out-of-scope-link/refine warnings during recomputation, including links involving `FrontFullLandTransferRestricted` and `RearFullLandTransfer`; the affected chain objects nevertheless reported valid one-solid shapes. Those warnings are not proof that the difference is harmless.
+
+## Read-only shell mating check (saved cached shapes)
+
+In the authoritative monolith, the front Tip (`Body.Tip`) and rear Tip (`Body002.Tip`) are valid one-solid shapes in a common coordinate frame. Their cached-shape Boolean common volume is `0 mm³` and `distToShape` reports minimum separation `0 mm` with coincident points on the Z = −19 mm seam. This indicates no volumetric intersection and at least local surface contact in the saved shapes; it does not establish adequate contact area, assembly retention, or tolerance clearance.
+
+`FrontFullWidthReceiver` and `Body002FullWidthSeat` cached shapes also report `0 mm³` common volume. The intermediate receiver/seat features remain marked `Touched`, so these results are strictly read-only observations of saved caches, not recomputed acceptance results. The front Tip versus rear Tip surface contact is consistent with the common seam plane; the actual full-width mating faces and clearance envelope still require a controlled recompute and face-level inspection. No geometry was changed.
+
+The receiver hierarchy is also not a one-to-one component pair: `FrontFullWidthReceiver.BaseFeature = RearFullWidthReceiver`, and the front `FrontFullWidthReceiver` cached shape is fully contained in `RearFullWidthReceiver` (`common = 37466.592366 mm³`). Do not interpret that intermediate Boolean relationship as shell-to-shell interference.
+
 ## Outcome and next action
 
-No feature or geometry was changed in this audit, and there is no CAD change to promote. The specific remaining front-shell reference is isolated to the suppressed `Binder016` branch. Before considering its removal, the next bounded test should establish whether the live `RemoveWarpProneTongues` result can be based on a pre-branch feature without changing its shape or breaking downstream features; otherwise preserve the current history and document that this reference is dormant but retained. Do not repeat seam/back/land substitutions as a route to reducing the active rear Tip closure.
+The bypass provides a real active Tip-closure reduction (51 → 47) and removes the suppressed front-shell Binder016 path from that candidate's complete Tip-rooted dependency graph, but it fails exact geometry preservation downstream. Preserve the source history. Next, localize the first downstream feature whose recomputed shape differs, comparing shapes feature-by-feature from `RemoveWarpProneTongues` to `RearBossWallRamps45`; only then can a less topology-sensitive bypass be designed. Separately, recompute disposable copies of the receiver/seat chain and inspect the seam faces before making any mating-clearance claim. Do not promote this candidate or alter production CAD from these results.
