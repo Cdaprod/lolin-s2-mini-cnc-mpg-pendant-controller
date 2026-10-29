@@ -31,6 +31,7 @@ COMPONENTS = {
     "display-retainer.FCStd": ["Body_DisplayRetainer_EditableV2"],
     "usb-tethered-cover.FCStd": ["Body_USBTetheredCover"],
     "faceplate-locators.FCStd": ["Body_FaceplateLocator_A", "Body_FaceplateLocator_B"],
+    "breakout-board.FCStd": ["Body006"],
 }
 INTERIM = {
     "Body": "Front shell",
@@ -38,7 +39,6 @@ INTERIM = {
     "Body003": "Upper faceplate",
     "Body_EncoderFacePlate": "Encoder faceplate",
     "Body_EncoderPocket": "Encoder pocket",
-    "Body006": "Breakout board",
 }
 
 
@@ -106,7 +106,7 @@ try:
     opened.append(d.Name)
     d.saveAs(CFG['output'])
     d.addProperty('App::PropertyString','MigrationStatus','Migration')
-    d.MigrationStatus='PARTIAL: four editable Bodies are linked; six legacy Bodies are static BREP interim representations.'
+    d.MigrationStatus='PARTIAL: five editable Bodies are linked; five legacy Bodies are static BREP interim representations.'
     d.addProperty('App::PropertyString','MonolithicSource','Migration')
     d.MonolithicSource='pendant.FCStd SHA256='+CFG['source_hash']+' (retained unchanged; this candidate does not replace it)'
     d.addProperty('App::PropertyString','RefreshInstructions','Migration')
@@ -138,7 +138,7 @@ try:
             link.Label=target.Label+' — editable source link'
             link.setLink(target); link.LinkPlacement=target.Placement; editable.addObject(link)
             report['links'].append(validate_link(link)); index+=1
-    if len(report['links'])!=4 or len(report['interim'])!=6:
+    if len(report['links'])!=5 or len(report['interim'])!=5:
         raise RuntimeError('unexpected component count in assembly')
     d.recompute()
     # Validate all links again after the assembly recompute.
@@ -155,7 +155,7 @@ try:
     report['reopened_links']=[validate_link(o) for o in links]
     interim_objs=[o for o in d.Objects if o.Name.startswith('Interim_')]
     report['reopened_interim']=[{'name':o.Name,'shape':shape_info(o)} for o in interim_objs]
-    if len(links)!=4 or any(not x['shape']['valid'] for x in report['reopened_interim']):
+    if len(links)!=5 or len(interim_objs)!=5 or any(not x['shape']['valid'] for x in report['reopened_interim']):
         raise RuntimeError('assembly failed save/reopen validation')
     report['reopen_ok']=True
 except Exception as exc:

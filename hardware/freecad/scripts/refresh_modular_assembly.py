@@ -23,12 +23,13 @@ MASTER = FREECAD_DIR / 'pendant-master.FCStd'
 ASSEMBLY = FREECAD_DIR / 'pendant-modular-assembly.FCStd'
 COMPONENTS = (
     'display-retainer.FCStd', 'usb-tethered-cover.FCStd', 'faceplate-locators.FCStd',
+    'breakout-board.FCStd',
 )
 
 
-def worker_source() -> str:
+def worker_source(assembly: Path | None = None) -> str:
     cfg = json.dumps({'base': str(FREECAD_DIR), 'master': str(MASTER),
-                      'assembly': str(ASSEMBLY), 'components': COMPONENTS})
+                      'assembly': str(assembly or ASSEMBLY), 'components': COMPONENTS})
     return r'''import FreeCAD as App, json, traceback, os, shutil, time
 from pathlib import Path
 C=json.loads(@@CFG@@); report={'errors':[],'components':[],'links':[],'interim':[]}
@@ -51,6 +52,17 @@ try:
     docs={}
     for fn in C['components']: docs[fn]=open_doc(Path(C['base'])/'pendant-bodies'/fn)
     for fn,d in docs.items():
+        # External spreadsheet expressions can remain cached after reopening
+        # the master with changed values. Re-assigning each serialized
+        # cross-document expression forces FreeCAD to resolve the live source
+        # before recomputing the component.
+        refreshed_expressions=[]
+        for obj in d.Objects:
+            for expression_path, expression_text in getattr(obj,'ExpressionEngine',[]):
+                if '#<<' in expression_text:
+                    obj.touch()
+                    obj.setExpression(expression_path,expression_text)
+                    refreshed_expressions.append({'object':obj.Name,'path':expression_path})
         d.recompute()
         bodies=[o for o in d.Objects if o.TypeId=='PartDesign::Body' and getattr(o,'Tip',None)]
         if not bodies: raise RuntimeError('no tipped PartDesign Body in '+fn)
@@ -64,16 +76,23 @@ try:
         for obj in d.Objects:
             if 'Invalid' in getattr(obj,'State',[]):
                 raise RuntimeError('invalid feature state in '+fn+'/'+obj.Name+': '+obj.getStatusString())
-        # Only locator Bodies consume a master alias today. Their recomputed
-        # shape must be saved before the assembly link refresh. Other sources
-        # are edited and saved by the user; refreshing them must not rewrite
-        # their archives as a side effect.
-        if fn == 'faceplate-locators.FCStd':
+        # Master-driven component shapes must be saved before the assembly
+        # link refresh. Other sources are edited and saved by the user;
+        # refreshing them must not rewrite their archives as a side effect.
+        if fn in ('faceplate-locators.FCStd', 'breakout-board.FCStd'):
             backup(d.FileName); d.save()
         report['components'].append({'file':fn,'bodies':[{'name':b.Name,'shape':info(b)} for b in bodies],
-                                     'saved':fn == 'faceplate-locators.FCStd'})
+                                     'saved':fn in ('faceplate-locators.FCStd', 'breakout-board.FCStd'),
+                                     'refreshed_external_expressions':refreshed_expressions})
     assembly=open_doc(C['assembly']); assembly.recompute()
     links=[o for o in assembly.Objects if o.TypeId=='App::Link']
+    for link in links:
+        target=link.LinkedObject
+        # These links are generated with LinkPlacement equal to the source
+        # Body's placement. Reapply that placement after recomputing source
+        # documents so master-driven Body placement changes reach the assembly.
+        link.LinkPlacement=target.Placement
+    assembly.recompute()
     for link in links:
         target=link.LinkedObject
         a,b=info(link),info(target)
@@ -84,14 +103,22 @@ try:
     for obj in static:
         if not info(obj)['valid'] or info(obj)['solids']!=1: raise RuntimeError('invalid static interim shape '+obj.Name)
         report['interim'].append({'name':obj.Name,'shape':info(obj)})
-    if len(links)!=4 or len(static)!=6: raise RuntimeError('unexpected assembly inventory')
+    if len(links)!=5 or len(static)!=5: raise RuntimeError('unexpected assembly inventory')
     # Save only the assembly, backing it up before any overwrite.
     backup(assembly.FileName); assembly.save()
     assembly_name=assembly.Name
     App.closeDocument(assembly_name); opened.remove(assembly_name)
     assembly=App.openDocument(C['assembly']); opened.append(assembly.Name); assembly.recompute()
     again=[o for o in assembly.Objects if o.TypeId=='App::Link']
-    if len(again)!=4 or any(not info(o)['valid'] for o in again): raise RuntimeError('assembly failed save/reopen validation')
+    reopened_links=[]
+    for link in again:
+        target=link.LinkedObject
+        a,b=info(link),info(target)
+        if not a['valid'] or not b['valid'] or abs(a['volume']-b['volume'])>1e-6 or any(abs(x-y)>1e-6 for x,y in zip(a['bbox'],b['bbox'])):
+            raise RuntimeError('reopened link/source mismatch: '+link.Name)
+        reopened_links.append({'name':link.Name,'target':target.Name,'file':target.Document.FileName,'shape':a})
+    if len(again)!=5: raise RuntimeError('assembly failed save/reopen inventory validation')
+    report['reopened_links']=reopened_links
     report['reopen_ok']=True
 except Exception as e: report['errors']=[str(e),traceback.format_exc()]
 finally:
@@ -106,6 +133,8 @@ print('MODULAR_ASSEMBLY_REFRESH='+json.dumps(report))
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--freecadcmd', default=os.environ.get('FREECADCMD'))
+    p.add_argument('--assembly', type=Path, default=ASSEMBLY,
+                   help='assembly document to refresh (defaults to the production modular assembly)')
     p.add_argument('--timeout', type=int, default=170)
     a = p.parse_args()
     if not 1 <= a.timeout <= 180: p.error('--timeout must be between 1 and 180 seconds')
@@ -115,8 +144,11 @@ def main() -> int:
     ps = subprocess.run(['pgrep','-afil','FreeCAD.app/Contents/MacOS/FreeCAD'],capture_output=True,text=True)
     if ps.returncode == 0 and ps.stdout.strip():
         raise SystemExit('FreeCAD GUI process detected; close the assembly and GUI before refresh:\n'+ps.stdout.strip())
+    assembly = a.assembly.resolve()
+    if not assembly.is_file():
+        raise SystemExit(f'assembly file does not exist: {assembly}')
     with tempfile.TemporaryDirectory(prefix='pendant-assembly-refresh-') as td:
-        macro=Path(td)/'refresh.FCMacro'; macro.write_text(worker_source(),encoding='utf-8')
+        macro=Path(td)/'refresh.FCMacro'; macro.write_text(worker_source(assembly),encoding='utf-8')
         proc=subprocess.Popen([cmd,str(macro)],cwd=FREECAD_DIR,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,
                               text=True,start_new_session=True)
         try: out,_=proc.communicate(timeout=a.timeout)
