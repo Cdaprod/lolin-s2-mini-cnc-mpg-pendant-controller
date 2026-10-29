@@ -400,7 +400,27 @@ class RoundRendererTests(unittest.TestCase):
 
         self.assertTrue(renderer.render(state))
         self.assertEqual(renderer._page_transition["phase"], "out")
-        self.assertTrue(renderer.menu_group.hidden is False)
+        self.assertFalse(renderer.menu_group.hidden)
+        self.assertEqual(renderer.menu_title.value, "FILE EXPLORER")
+        start = renderer._page_transition["started"]
+        self.assertTrue(renderer.animate(start + 0.12))
+        self.assertEqual(renderer.menu_group.x, -60)
+        self.assertEqual(renderer.menu_title.value, "FILE EXPLORER")
+        renderer.render(state)
+
+        self.assertTrue(renderer.animate(start + 0.25))
+        self.assertEqual(renderer.menu_group.x, 240)
+        renderer.render(state)
+        self.assertEqual(renderer._page_transition["phase"], "in")
+        self.assertEqual(renderer.menu_title.value, "CONFIGURATION")
+        incoming = renderer._page_transition["started"]
+        self.assertTrue(renderer.animate(incoming + 0.12))
+        self.assertEqual(renderer.menu_group.x, 60)
+        renderer.render(state)
+        self.assertTrue(renderer.animate(incoming + 0.25))
+        self.assertEqual(renderer.menu_group.x, 0)
+        renderer.render(state)
+        self.assertIsNone(renderer._page_transition)
 
     def test_alarm_interrupts_page_swipe_transition(self):
         state, ui, _, renderer = self.make_renderer()
