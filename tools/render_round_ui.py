@@ -11,7 +11,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from PIL import Image, ImageDraw, ImageFont
 from src.display.round_ui import bezel_palette, theme
 from src.display.round_ui.effects import (TOUCH_BITMAP_CENTER,
-                                          TOUCH_BITMAP_SIZE, touch_level,
+                                          TOUCH_BITMAP_SIZE,
+                                          TOUCH_HOLD_PROGRESS, touch_level,
                                           touch_zone)
 from src.display.round_ui.rotor import bezel_segment_levels
 from src.display.round_ui.renderer import HUD_ORBIT_RATES
@@ -386,9 +387,9 @@ def touch_palette(progress, accent):
     return tuple(touch_level(index, progress) for index in range(1, 5))
 
 
-def draw_touch_sprite(image, center, progress, accent):
+def draw_touch_sprite(image, center, progress, accent, fade=100):
     """Draw the exact shared bitmap zones and current firmware color phase."""
-    colors = [rgb(theme.shade_color(accent, strength))
+    colors = [rgb(theme.shade_color(accent, strength * fade // 100))
               for strength in touch_palette(progress, accent)]
     draw = ImageDraw.Draw(image)
     cx, cy = center
@@ -406,33 +407,27 @@ def draw_touch_sprite(image, center, progress, accent):
 touch_base = Image.open(OUT / "ice-configuration.png").convert("RGB")
 touch_accent = theme.select("ice")["accent"]
 for filename, progress in (("touch-contact.png", 0.0),
-                           ("touch-ripple.png", 0.22),
-                           ("touch-hold.png", 0.86)):
+                           ("touch-wave.png", 0.22),
+                           ("touch-hold.png", TOUCH_HOLD_PROGRESS)):
     touch_preview = touch_base.copy()
     draw_touch_sprite(touch_preview, (79, 94), progress, touch_accent)
     touch_preview.save(OUT / filename)
 
-# A deterministic contact → wave → held → release preview. The phase samples
-# follow the runtime's 170 ms expansion and 0.86 held-ring plateau.
+# A deterministic contact → compact hold → same-position release fade preview.
 touch_frames = []
-for frame in range(6):
-    progress = min(0.86, frame / 5.0)
+for _ in range(4):
     image = touch_base.copy()
-    draw_touch_sprite(image, (79, 94), progress, touch_accent)
+    draw_touch_sprite(image, (79, 94), TOUCH_HOLD_PROGRESS, touch_accent)
     touch_frames.append(image.convert("P", palette=Image.Palette.ADAPTIVE))
-for _ in range(8):
+for fade in (80, 55, 30, 8, 0):
     image = touch_base.copy()
-    draw_touch_sprite(image, (79, 94), 0.86, touch_accent)
-    touch_frames.append(image.convert("P", palette=Image.Palette.ADAPTIVE))
-for frame in range(1, 6):
-    progress = (frame / 5.0) * (0.15 / 0.17)
-    image = touch_base.copy()
-    draw_touch_sprite(image, (79, 94), progress, touch_accent)
+    draw_touch_sprite(image, (79, 94), TOUCH_HOLD_PROGRESS,
+                      touch_accent, fade)
     touch_frames.append(image.convert("P", palette=Image.Palette.ADAPTIVE))
 touch_frames.append(touch_base.convert("P", palette=Image.Palette.ADAPTIVE))
 touch_frames[0].save(
-    OUT / "touch-ripple-sequence.gif", save_all=True,
-    append_images=touch_frames[1:], duration=42, loop=0, disposal=2)
+    OUT / "touch-contact-sequence.gif", save_all=True,
+    append_images=touch_frames[1:], duration=30, loop=0, disposal=2)
 
 alarm_image, alarm_draw, alarm_colors = state_canvas(
     "industrial", alarm=True)

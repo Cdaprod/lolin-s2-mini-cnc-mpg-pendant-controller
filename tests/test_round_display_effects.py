@@ -2,7 +2,7 @@ import unittest
 
 from src.display.round_ui.effects import (
     TOUCH_BITMAP_CENTER, TOUCH_BITMAP_SIZE, TOUCH_CORE, TOUCH_INNER,
-    TOUCH_MIDDLE, TOUCH_OUTER, touch_level, touch_zone,
+    TOUCH_HOLD_PROGRESS, TOUCH_MIDDLE, TOUCH_OUTER, touch_level, touch_zone,
 )
 
 
@@ -30,6 +30,13 @@ class TouchRippleGeometryTests(unittest.TestCase):
                            touch_level(TOUCH_INNER, 0.48))
         self.assertGreater(touch_level(TOUCH_OUTER, 0.78),
                            touch_level(TOUCH_MIDDLE, 0.78))
+
+    def test_compact_release_phase_does_not_reach_outer_ring(self):
+        held = TOUCH_HOLD_PROGRESS
+        self.assertEqual(touch_level(TOUCH_CORE, held), 0)
+        self.assertLessEqual(touch_level(TOUCH_INNER, held), 12)
+        self.assertGreater(touch_level(TOUCH_MIDDLE, held), 60)
+        self.assertEqual(touch_level(TOUCH_OUTER, held), 0)
 
     def test_wave_brightness_clamps_progress(self):
         for index in range(1, 5):

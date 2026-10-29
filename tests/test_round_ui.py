@@ -7,6 +7,7 @@ from src.display.round_ui.components import MenuHighlight
 from src.display.round_ui.bootstrap import apply_mock_state
 from src.display.round_ui.geometry import RoundLayout
 from src.display.round_ui.effects import TOUCH_BITMAP_CENTER
+from src.display.round_ui.effects import TOUCH_HOLD_PROGRESS
 from src.display.round_ui import bezel_palette, theme
 from src.display.round_ui.rotor import (bezel_segment_levels,
                                         update_bezel_segment_levels)
@@ -847,17 +848,29 @@ class RoundRendererTests(unittest.TestCase):
         renderer.touch_hold(1.10)
         self.assertTrue(renderer._halo_held)
         self.assertEqual(renderer._halo_started, started)
+        self.assertEqual(renderer._halo_progress, TOUCH_HOLD_PROGRESS)
         self.assertTrue(renderer.animate(1.30) or
-                        renderer._halo_progress >= 0.10)
-        self.assertLessEqual(renderer._halo_progress, 0.10)
-        self.assertGreater(palette[4], 0)
+                        renderer._halo_progress == TOUCH_HOLD_PROGRESS)
+        self.assertEqual(renderer._halo_progress, TOUCH_HOLD_PROGRESS)
+        self.assertGreater(palette[2], 0)
+        self.assertEqual(palette[4], 0)
         self.assertEqual(palette[1], 0)
+        held_ring = palette[2]
 
         renderer.touch_release(1.30)
         self.assertFalse(renderer._halo_held)
+        self.assertTrue(renderer._halo_releasing)
+        self.assertEqual(renderer._halo_release_progress,
+                         TOUCH_HOLD_PROGRESS)
         self.assertTrue(renderer.animate(1.31))
-        self.assertGreater(palette[1], 0)
+        self.assertEqual(palette[1], 0)  # Release fades the same inner halo.
+        self.assertLess(palette[2], held_ring)
+        self.assertGreater(palette[2], 0)
         self.assertTrue(renderer.animate(1.35))
+        self.assertLess(palette[2], held_ring)
+        renderer.animate(1.39)
+        self.assertTrue(renderer.touch_halo.hidden)
+        self.assertFalse(renderer._halo_releasing)
         self.assertTrue(renderer.touch_halo.hidden)
 
     def test_layout_regions_are_inside_round_safe_area(self):

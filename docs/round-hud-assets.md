@@ -71,6 +71,13 @@ one-step jump. The two afterimages sit 2 and 4 degrees behind the bead along the
 current direction and fade over 240 ms; they are visual input feedback only and do not imply that a jog was
 admitted or executed.
 
+The touchscreen uses one retained 25px sprite. Contact immediately selects a
+single crisp mid-radius ring and holds it stationary beneath the finger; it
+does not expand into a large ripple while pressed. On release, that same ring
+fades in place over 80 ms. Gesture recognition and menu activation remain
+release-gated, so the visual acknowledgment does not dispatch an early action.
+The contact-sequence preview uses the same palette phases as the firmware.
+
 `MPG_BEZEL_ROTATION_ENABLED` controls the outer rotor. Ambient speed defaults
 to one turn per 54 seconds; direction changes use a deterministic 20–40 second
 interval and ease through deceleration. Encoder detent rate sets signed rotor
