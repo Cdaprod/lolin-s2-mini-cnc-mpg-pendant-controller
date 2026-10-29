@@ -42,6 +42,7 @@ class RoundRenderer:
         self.last_update_ms = 0
         self.last_refresh_ms = 0
         self._last_render_signature = None
+        self._last_home_signature = None
         self._halo_until = 0
         self._halo_visible = False
         self._halo_dirty = False
@@ -172,6 +173,21 @@ class RoundRenderer:
                             changed = True
         return changed
 
+    def _home_signature(self, state):
+        axis = state.selected_axis
+        position = state.displayed_position().get(axis)
+        return (
+            state.machine_state, state.connection_state, state.transport,
+            state.link_state, axis, state.coordinate_mode, position,
+            state.selected_multiplier, state.deadman_enabled,
+            getattr(state, "input_valid", None),
+            getattr(state, "selectors_valid", True),
+            state.estop_observed, state.estop_latched, state.alarm,
+            state.mpg_activity, state.axis_transition_direction,
+            state.resolution_transition_direction, state.active_page,
+            state.wifi_state, state.storage_state, self.ui.active_overlay(),
+        )
+
     def _navigation(self, model):
         """Momentarily expose the physical page's position along the top rim."""
         if self.nav_group is None or not self.nav_dots:
@@ -206,6 +222,15 @@ class RoundRenderer:
     def render(self, state):
         if self.ui is None:
             raise RuntimeError("RoundRenderer must be bound to UIManager")
+        if (self.ui.current_screen == "HOME" and not self.ui.dirty and
+                not (self._halo_dirty or self._nav_dirty or self._hud_dirty)):
+            home_signature = self._home_signature(state)
+            if home_signature == self._last_home_signature:
+                self.skipped_count += 1
+                self.last_model_ms = 0
+                self.last_update_ms = 0
+                self.last_refresh_ms = 0
+                return False
         model_started = self._profile_ticks_ms()
         model = self.ui.view_model()
         update_started = self._profile_ticks_ms()
@@ -226,6 +251,9 @@ class RoundRenderer:
             self.last_refresh_ms = 0
             return False
         self._last_render_signature = signature
+        self._last_home_signature = (
+            self._home_signature(state)
+            if model["screen"] == "HOME" else None)
         theme_changed = self._apply_page_theme(model.get("active_page", "HOME"))
         nav_changed = self._navigation(model)
         if model.get("overlay") and self._nav_visible:
