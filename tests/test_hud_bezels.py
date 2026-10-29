@@ -1,4 +1,5 @@
 import json
+import math
 from pathlib import Path
 import tempfile
 import unittest
@@ -62,6 +63,27 @@ class AssetPipelineTests(unittest.TestCase):
         ends = horizontal_arc[:, 6:13].sum() + horizontal_arc[:, 20:27].sum()
         middle = horizontal_arc[:, 13:20].sum()
         self.assertGreater(int(ends), int(middle))
+
+    def test_live_accents_match_default_bezels_native_outer_arc_centers(self):
+        import numpy as np
+        from PIL import Image
+        from src.display.round_ui.rotor import (
+            BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD)
+
+        rgba = np.asarray(Image.open(
+            ASSETS / "development" / "cyan_reactor.png").convert("RGBA"))
+        y, x = np.indices(rgba.shape[:2])
+        radius = np.hypot(x - 120, y - 120)
+        theta = np.degrees(np.arctan2(y - 120, x - 120))
+        populated = rgba[:, :, 3] > 0
+        offset = math.degrees(BEZEL_SEGMENT_OFFSET_RAD)
+        for index in range(BEZEL_SEGMENT_COUNT):
+            center = offset + 360.0 * index / BEZEL_SEGMENT_COUNT
+            angular_error = np.abs((theta - center + 180.0) % 360.0 - 180.0)
+            native_arc = (populated & (radius >= 109.0) & (radius < 111.0) &
+                          (angular_error <= 8.0))
+            self.assertGreater(int(native_arc.sum()), 8,
+                               "no native bezel arc near {:.1f} degrees".format(center))
 
     def test_precomputed_orb_sheet_loads_without_runtime_geometry_sampling(self):
         calls = []
