@@ -46,8 +46,41 @@ A disposable `Part::Box` test verified an external expression using the internal
 - Breakout board: its Binder pulls in the front shell and 235 additional objects, so it is not currently independent.
 - These failed or oversized candidates were disposable and have been closed/discarded; no shell, encoder, upper-faceplate, or breakout-board candidate was promoted. Their authoritative source geometry remains in `pendant.FCStd`.
 - Archived/display-retainer v1 and helper/cutter/envelope Bodies are not independent manufacturing files and remain in the original document.
-- The linked top-level assembly and portability test have not been completed. `pendant.FCStd` remains the unchanged monolithic source, not an assembly candidate.
+- The linked top-level assembly is now a separate candidate at `pendant-modular-assembly.FCStd`; `pendant.FCStd` remains unchanged and is not replaced.
 
 ## Recovery and execution rules
 
 Keep `pendant.FCStd`, recovery files, and historical repair candidates untouched until the linked assembly passes acceptance tests. For each next component, use a disposable copy, preserve its complete dependency group, compare geometry in a common coordinate system, and reopen/recompute before promotion. A blocked component stays in the original document while independent components proceed.
+
+## Continued migration and shell dependency investigation
+
+The authoritative monolith remains byte-for-byte unchanged (SHA256 `dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881`). A checksum-verified backup of the monolith, master, and locator source is outside the worktree under `/Users/davidcannan/Documents/FreeCAD-Backups/modular-continuation-20261029T165650Z/`.
+
+### Shell dependency report
+
+`shell-dependency-report.md` was generated from the saved FreeCAD object/dependency graph before making any shell geometry change. It records 26 direct cross-Body links involving `Body` / `Body002` and their construction Bodies, plus the key top-level construction links that do not belong to a PartDesign Body. The taper references are real but are not the only or primary dependency path:
+
+- Rear seam-envelope construction consumes `Body.AdditiveLoft` through `Binder007`, and all 16 selected edges of `Body.Sketch006` / 10 edges of `Body.Sketch005` through `Binder008` and `Binder009`.
+- `Binder016` and `Binder017` reference front `Sketch019` / `Sketch020` for separate screw/alignment construction.
+- The dominant active rear-Tip dependency path goes through `RearFullLandTransfer → Body002FullLandTransferTool → Body002FullWidthSeat` and imports `SmallHangerPocketBody` from the front shell. The front active Tip also depends on the mating receiver chain (`RearFullWidthReceiver → FrontFullWidthReceiver`).
+- A graph-only counterfactual removing the three taper binder links reduces the rear active-Tip closure by zero objects (331 → 331). Removing the five front-supported rear binders plus the rear land-transfer link reduces that graph closure from 331 to 185. This is a dependency-graph estimate, not a modified or validated CAD candidate.
+
+The 325-object `front-rear-shells.FCStd` remains an unvalidated disposable candidate and is not included in the assembly or commits. Its recompute/save/reopen attempts still fail because of broken face references, suppressed-feature failures, and Body-versus-Tip shape mismatches. The requested 27.0 → 27.5 → 27.0 mm shell propagation and save/reopen validation therefore did not pass. No taper or shell geometry was changed. The next shell attempt must address the mating-land transfer path as well as the taper, using limited fixed master geometry rather than freezing either shell Body.
+
+### Master-driven locator parameter
+
+`pendant-master.FCStd` now adds the alias `PendantDimensions.FaceplateLocatorBodyDepth = 2.0 mm`. The two lower-taper Pad lengths in `faceplate-locators.FCStd` use `pendant_master#<<PendantDimensions>>.FaceplateLocatorBodyDepth`; no other master cells or component properties changed. The master loads before components in the refresh sequence.
+
+On a disposable relocated project, changing the alias 2.0 → 2.1 → 2.0 mm and running the refresh workflow changed Locator A volume `88.29496032374551 → 91.02502726603446 → 88.29496032374551 mm³`, moved its lower Z bound `-3.5 → -3.6 → -3.5 mm`, and returned to the exact original volume after restoration. Component and assembly were saved/reopened during refresh.
+
+### Linked assembly and refresh
+
+`pendant-modular-assembly.FCStd` is a separate top-level assembly candidate. It contains four `App::Link` objects to editable Bodies (display retainer, USB-tethered cover, and two faceplate locator Bodies) and six explicitly labeled static BREP interim components pulled from the monolith's saved shapes (front shell, rear shell, upper faceplate, encoder faceplate, encoder pocket, and breakout board). Each interim shape is valid and one solid; its volume and bounds match the saved source BREP. The links match their source Bodies' volumes and bounds. The original `pendant.FCStd` was not overwritten.
+
+The candidate saves/reopens successfully. Opening the assembly by itself automatically loads the master and its relative-path linked documents. A relocation test copied only the assembly, master, and three component files to another temporary root; all four links resolved and remained valid there.
+
+`scripts/build_modular_assembly.py` rebuilds the separate candidate from saved monolith BREP caches without recomputing the fragile monolith. `scripts/refresh_modular_assembly.py` loads the master first, recomputes and validates editable components, saves the master-driven locator Bodies with a backup, refreshes and validates assembly links/interim solids, then save/reopens the assembly. The refresh refuses to run while the FreeCAD GUI process is open, uses a bounded 170-second worker by default, and terminates its owned process group on timeout.
+
+The full edit/save/refresh/restore test passed on a disposable relocated project: `USBPlugLeadIn.Size` 0.20 → 0.25 → 0.20 mm changed the assembly link volume `665.220690448208 → 665.1743368845141 → 665.2206904482084 mm³`, then returned to baseline. The edited native component document remained separately editable.
+
+This is a useful interim assembly, not a fully modular or fully master-driven pendant: six legacy components remain static BREP representations, and the shell dependency migration is still blocked. The old monolith remains the authoritative editable source for them.
