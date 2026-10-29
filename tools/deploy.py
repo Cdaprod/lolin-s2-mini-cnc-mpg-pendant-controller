@@ -315,6 +315,11 @@ def changed_runtime_files(files, target, root=ROOT):
                     file_hash(target / relative))]
 
 
+def runtime_write_order(files):
+    """Write dependencies first so CircuitPython's entry point is last."""
+    return sorted(files, key=lambda relative: (relative == "code.py", relative))
+
+
 def dependency_problems(settings, root=ROOT, target=None):
     profile = literal_value(settings.get("MPG_DISPLAY_PROFILE", '""'))
     problems = []
@@ -511,7 +516,7 @@ def deploy(args):
         return
     rendered = (None if args.runtime_only else
                 render_settings(template, settings, order))
-    for relative in files_to_write:
+    for relative in runtime_write_order(files_to_write):
         destination = target / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         temporary = destination.with_name(destination.name + ".tmp")

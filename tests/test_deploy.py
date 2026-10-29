@@ -28,6 +28,13 @@ MPG_NEW_SETTING="default"
 
 
 class ReconciliationTests(unittest.TestCase):
+    def test_runtime_entrypoint_is_written_after_its_dependencies(self):
+        files = {"code.py", "src/diagnostics.py", "src/app.py"}
+        ordered = deploy.runtime_write_order(files)
+        self.assertEqual(ordered[-1], "code.py")
+        self.assertLess(ordered.index("src/diagnostics.py"),
+                        ordered.index("code.py"))
+
     def fixture(self, local="", device=""):
         temporary = tempfile.TemporaryDirectory()
         root = Path(temporary.name)
