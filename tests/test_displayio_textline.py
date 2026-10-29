@@ -48,6 +48,8 @@ class Glyph:
     width = 2
     height = 2
     shift_x = 2
+    dx = 0
+    dy = 0
 
     def __init__(self, bitmap, tile_index):
         self.bitmap = bitmap
@@ -142,6 +144,40 @@ class DisplayIOTextLineTests(unittest.TestCase):
         self.assertEqual(line.bitmap.pixels,
                          [[1, 0, 0, 0, 0, 1, 0, 0],
                           [0, 1, 0, 0, 0, 0, 1, 0]])
+
+    def test_bitmap_font_side_bearings_and_baselines_are_respected(self):
+        class OffsetGlyph:
+            def __init__(self, height, dx, dy):
+                self.bitmap = Bitmap(1, height, 2)
+                for y in range(height):
+                    self.bitmap[0, y] = 1
+                self.width = 1
+                self.height = height
+                self.shift_x = 2
+                self.dx = dx
+                self.dy = dy
+                self.tile_index = 0
+
+        class OffsetFont:
+            def get_bounding_box(self):
+                return 3, 4, 0, -1
+
+            def get_glyph(self, codepoint):
+                if codepoint == ord("A"):
+                    return OffsetGlyph(2, 0, 0)
+                return OffsetGlyph(3, -1, -2)
+
+        module = types.SimpleNamespace(blit=bitmaptools_blit)
+        with patch.dict(sys.modules, {"bitmaptools": module}):
+            line = _DisplayIOTextLine(4, 5, OffsetFont(), DisplayIO)
+        line.set_text("Ag")
+        self.assertEqual(line.bitmap.pixels, [
+            [0, 0, 0, 0],
+            [1, 0, 0, 0],
+            [1, 1, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 0, 0],
+        ])
 
 
 if __name__ == "__main__":
