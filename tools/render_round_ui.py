@@ -412,6 +412,28 @@ for filename, progress in (("touch-contact.png", 0.0),
     draw_touch_sprite(touch_preview, (79, 94), progress, touch_accent)
     touch_preview.save(OUT / filename)
 
+# A deterministic contact → wave → held → release preview. The phase samples
+# follow the runtime's 240 ms expansion and 0.86 held-ring plateau.
+touch_frames = []
+for frame in range(6):
+    progress = min(0.86, frame / 5.0)
+    image = touch_base.copy()
+    draw_touch_sprite(image, (79, 94), progress, touch_accent)
+    touch_frames.append(image.convert("P", palette=Image.Palette.ADAPTIVE))
+for _ in range(8):
+    image = touch_base.copy()
+    draw_touch_sprite(image, (79, 94), 0.86, touch_accent)
+    touch_frames.append(image.convert("P", palette=Image.Palette.ADAPTIVE))
+for frame in range(1, 6):
+    progress = (frame / 5.0) * (0.20 / 0.24)
+    image = touch_base.copy()
+    draw_touch_sprite(image, (79, 94), progress, touch_accent)
+    touch_frames.append(image.convert("P", palette=Image.Palette.ADAPTIVE))
+touch_frames.append(touch_base.convert("P", palette=Image.Palette.ADAPTIVE))
+touch_frames[0].save(
+    OUT / "touch-ripple-sequence.gif", save_all=True,
+    append_images=touch_frames[1:], duration=42, loop=0, disposal=2)
+
 alarm_image, alarm_draw, alarm_colors = state_canvas(
     "industrial", alarm=True)
 alarm_draw.rounded_rectangle((34, 76, 206, 164), radius=12,

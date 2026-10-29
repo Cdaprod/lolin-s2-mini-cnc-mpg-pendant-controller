@@ -11,6 +11,8 @@ class TouchRippleGeometryTests(unittest.TestCase):
         self.assertEqual(TOUCH_BITMAP_SIZE, 41)
         center = TOUCH_BITMAP_CENTER
         self.assertEqual(touch_zone(center, center), TOUCH_CORE)
+        self.assertEqual(touch_zone(center + 2, center), TOUCH_CORE)
+        self.assertEqual(touch_zone(center + 3, center), 0)
         self.assertEqual(touch_zone(center + 7, center), TOUCH_INNER)
         self.assertEqual(touch_zone(center + 13, center), TOUCH_MIDDLE)
         self.assertEqual(touch_zone(center + 19, center), TOUCH_OUTER)
