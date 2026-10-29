@@ -86,10 +86,10 @@ MPG_PIN_BUTTON_CANCEL=""
 # Firmware-observed remote stop only; not a safety-rated cabinet E-stop.
 MPG_PIN_ESTOP_OBSERVE="GPB1"
 MPG_ESTOP_ACTIVE_LOW="true"
-# Dedicated active-low hold-to-run switch planned for GPB6. It must be a
-# separate physical contact from SELECT on GPB2. Firmware rejects reusing the
-# same MCP pin, but cannot detect a switch electrically wired to both inputs.
-# The switch is not connected yet; keep inputs disabled until verified.
+# The user-confirmed wiring plan routes the same local momentary contact to
+# SELECT (GPB2) and hold-to-run (GPB6). They remain separate MCP input pins,
+# both active-low; one switch drives both. This is not an independent safety
+# control. Keep inputs disabled until connected and verified.
 MPG_PIN_DEADMAN="GPB6"
 MPG_DEADMAN_ACTIVE_LOW="true"
 MPG_BUTTON_DEBOUNCE="0.03"
