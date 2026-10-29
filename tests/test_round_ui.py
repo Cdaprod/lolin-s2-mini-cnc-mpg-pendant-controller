@@ -378,6 +378,30 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer._bezel_palette,
                          list(bezel_palette.PALETTES["cyan_reactor"]))
 
+    def test_page_theme_tints_bezel_and_alarm_restores_current_page(self):
+        _, _, _, renderer = self.make_renderer()
+        renderer._bezel_palette = list(bezel_palette.PALETTES["cyan_reactor"])
+        renderer._bezel_base_palette = bezel_palette.PALETTES["cyan_reactor"]
+        renderer._bezel_alarm_active = False
+        transparent = renderer._bezel_palette[0]
+
+        renderer._apply_page_theme("EXPLORER")
+        amber = bezel_palette.PALETTES["amber_precision"]
+        self.assertEqual(renderer._bezel_base_palette, amber)
+        self.assertEqual(renderer._bezel_palette[7], amber[7])
+        self.assertEqual(renderer._bezel_palette[0], transparent)
+
+        renderer._set_bezel_alarm(("ALARM", "9"))
+        self.assertEqual(renderer._bezel_palette[7],
+                         bezel_palette.PALETTES["red_alarm"][7])
+
+        renderer._apply_page_theme("CONFIGURATION")
+        self.assertEqual(renderer._bezel_palette[7],
+                         bezel_palette.PALETTES["red_alarm"][7])
+        renderer._set_bezel_alarm(None)
+        self.assertEqual(renderer._bezel_palette,
+                         list(bezel_palette.PALETTES["ice_optical"]))
+
     def test_encoder_feedback_tracks_detent_direction_and_fades(self):
         state, _, _, renderer = self.make_renderer()
         marker, trail, far_trail = Node(), Node(), Node()

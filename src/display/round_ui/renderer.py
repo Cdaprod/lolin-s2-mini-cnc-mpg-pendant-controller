@@ -201,6 +201,15 @@ class RoundRenderer:
             return False
         colors = theme.select(name)
         self.active_theme = name
+        # Keep the configured bezel geometry, but tint its retained palette
+        # to the current page. This keeps navigation identity coherent without
+        # rebuilding bitmaps or touching the selected artwork.
+        bezel_variant = theme.PAGE_BEZEL_PALETTES.get(name)
+        if bezel_variant is not None:
+            self._bezel_base_palette = bezel_palette.PALETTES.get(
+                bezel_variant, self._bezel_base_palette)
+            if not self._bezel_alarm_active:
+                self._apply_bezel_palette(self._bezel_base_palette)
         if self.palettes:
             dial = self.palettes["dial"]
             dial[0] = colors["background"]
@@ -251,12 +260,19 @@ class RoundRenderer:
                   self._bezel_base_palette)
         if colors is None:
             return False
+        changed = self._apply_bezel_palette(colors)
+        self._bezel_alarm_active = active
+        return changed
+
+    def _apply_bezel_palette(self, colors):
+        """Update existing palette entries, preserving transparent index 0."""
+        if colors is None or self._bezel_palette is None:
+            return False
         changed = False
         for index in range(1, min(16, len(colors))):
             if self._bezel_palette[index] != colors[index]:
                 self._bezel_palette[index] = colors[index]
                 changed = True
-        self._bezel_alarm_active = active
         return changed
 
     def touch_feedback(self, point, until):

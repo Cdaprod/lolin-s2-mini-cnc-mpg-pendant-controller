@@ -40,10 +40,12 @@ strokes narrow and leaves gaps between segmented arcs transparent. Palette
 selection uses 32-bit RGB distance arithmetic so squared-color comparisons do
 not overflow and corrupt the indexed firmware image.
 
-Select a bezel with `MPG_UI_BEZEL` in `settings.toml` (for example
+Select bezel geometry with `MPG_UI_BEZEL` in `settings.toml` (for example
 `cyan_reactor`, `turquoise_energy`, `amber_precision`, or `violet_hologram`).
-Invalid names use the default. Existing settings remain unchanged unless the
-user applies a settings update.
+The retained artwork keeps that geometry while its palette follows the active
+page: industrial cyan, amber, ice, or spectrum. Critical alarms override the
+page tint with red. Invalid names use the default geometry. Existing settings
+remain unchanged unless the user applies a settings update.
 
 ## Retained motion
 
@@ -56,11 +58,11 @@ and keeps labels and scale marks stationary. It uses the normalized signed MPG
 activity already maintained by the app; it never reads the encoder, changes
 counts, modifies jog state, or sends commands.
 
-The fixed arcs use the active top-level page's accent color as well as its
-brightness wave. Home uses industrial cyan, Explorer amber, Configuration ice,
-and Preview spectrum; page changes recolor the existing indexed palettes
-without rebuilding TileGrids. Warning, success, alarm, and emergency-stop
-colors retain their semantic meanings.
+The fixed arcs and selected bezel artwork use the active top-level page's
+palette as well as the moving brightness wave. Home uses industrial cyan,
+Explorer amber, Configuration ice, and Preview spectrum; page changes recolor
+existing indexed palettes without rebuilding TileGrids. Warning, success,
+alarm, and emergency-stop colors retain their semantic meanings.
 
 Encoder activity produces a retained cyan bead with two progressively dimmer
 afterimages. The bead advances by the signed detent delta, so a batched encoder
@@ -105,8 +107,8 @@ dim red alarm palette while preserving its geometry and transparent index. The
 change is a bounded palette update on the normal UI render path; motion markers
 and rotor segments remain hidden while the critical overlay is active, even
 when decorative animation is disabled. Clearing the overlay restores the
-selected bezel's original palette and leaves the fixed rotor stationary when
-animation is disabled.
+active page palette and leaves the fixed rotor stationary when animation is
+disabled.
 
 ## Validation
 
