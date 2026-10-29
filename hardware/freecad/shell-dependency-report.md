@@ -94,3 +94,29 @@ The migrated editable retainer's `RetainerStructuralJunctionFillets` is a `PartD
 ### Dependency-cut interpretation
 
 The original 331-object shell-pair closure is a serialization/dependency traversal metric, not 331 independent cross-shell references. It includes Body/container expansion and helper history. Removing the rear full-land link alone did not make the closure smaller because `Binder008` and `Binder009` feed the rear envelope profile/tapered-seat path, `Binder016` feeds the rear screw reinforcement path, and other front-supported construction objects also remain reachable. The earlier report's graph-only cut of five binders plus the rear transfer edge predicts 331 → 185 for the rear closure, but this was only a graph counterfactual: no geometric candidate has validated that cut. It should not be interpreted as a proven minimum cut. The next geometry experiment should first record property-level support edges and dependency closure for each proposed cut, and only replace the smallest path set that disconnects the rear active Tip from the front-owned objects.
+
+## Property-level dependency cut audit (2026-10-29)
+
+This audit distinguishes explicit feature properties (`BaseFeature`, `Base`, `Tool`, and `Support`), container membership (`Body.Group`, top-level `Part.Group`, and SubShapeBinder `Context`), and serialized `ObjectDeps`. Container ownership and `Context` are not treated as geometry inputs in the active shell chain. Therefore the raw 331-object count is not a count of independent cross-shell property edges.
+
+### Active rear Tip paths
+
+The active rear Tip is `Body002.Tip = RearBossWallRamps45`. Property-level tracing identifies three direct geometric support paths from the front shell:
+
+| Front source | Rear-side property edge | Referenced subelement | Active downstream chain | Assessment |
+|---|---|---|---|---|
+| `SmallHangerPocketBody` | `RearFullLandTransfer.Base` | whole shape | `RearFullLandTransfer → Body002FullLandTransferTool.BaseFeature → Body002FullWidthSeat.Group → RearBossToWallLoadPaths → RearBossShoulderTransitions → RearBossWallRamps45` | Active mating-land transfer. A fixed snapshot of only the required land is a viable reference candidate. |
+| `Body.Sketch006` | `Binder008.Support` | full sketch support; 16 selected edges are used through `RearEnvelopeSeamProfile.Support` | `RearEnvelopeSeamProfile → RearExteriorEnvelope → ConformRearReinforcementToLoft → RearTaperedSeats → Pocket018 → Pocket019 → SideButtonRearHeadRelief → SideButtonRearNutRelief → USB15mmCableAccessBody002 → USBConformalCoverSeatBody002 → SmallHangerPocketBody002 → Body002FullWidthSeat → rear Tip` | Active seam/taper profile. A fixed shared profile is plausible if exact profile geometry and downstream loft inputs are preserved. |
+| `Body.Sketch005` | `Binder009.Support` | full sketch support; 10 selected edges are used through `RearEnvelopeBackProfile.Support` | `RearEnvelopeBackProfile → RearExteriorEnvelope → ConformRearReinforcementToLoft → RearTaperedSeats → … → rear Tip` | Active rear envelope profile; validate independently from Binder008. |
+
+The shortest path to `SmallHangerPocketBody` is `RearBossWallRamps45.BaseFeature → RearBossShoulderTransitions → RearBossToWallLoadPaths → Body002FullWidthSeat → Body002FullLandTransferTool → RearFullLandTransfer.Base → SmallHangerPocketBody`. The transfer link does not include the two separate rear envelope profile paths; all three geometric inputs must be replaced to disconnect the active rear Tip from front-owned geometry.
+
+`Binder007.Support = Body.AdditiveLoft` and `Binder016.Support = Body.Sketch019` do not participate in the active rear Tip property chain. `Binder017` (`Body.Sketch020`) and `RearScrewAlignmentBinder` (`Sketch020`) are construction references with no active rear-Tip consumer. `Pad022` has a failed suppressed-feature recompute from `Pad021.?Face97`, but targeted downstream recompute retained the active rear Tip baseline; it is not itself a cross-shell cut edge.
+
+### Practical cut and candidate result
+
+The smallest practical cut identified by the active property graph is **three direct inputs**: `RearFullLandTransfer.Base`, `Binder008.Support`, and `Binder009.Support`. Each feeds a separate downstream branch. This is a graph-only prediction until all three links are tested in a CAD candidate; it does not mean the 331-object closure should drop by three.
+
+The transfer-only disposable candidate replaced `RearFullLandTransfer.Base` with a fixed master shape copied from the exact saved transfer. Transfer symmetric-difference volume was `0 mm^3`; the rear active Tip remained valid, one solid, volume `40961.35900828918 mm^3`, and retained its saved bounds. However, `SmallHangerPocketBody` remained reachable through other front-owned geometry and the `OutList` closure grew from 307 to 308 because the master link replaces rather than removes one dependency. This candidate preserved geometry but failed dependency reduction and was discarded.
+
+No shell geometry, master file, modular assembly, or component file was changed. A future candidate should replace Binder008 and Binder009 supports with separately labeled fixed master-owned profile snapshots, then replace the transfer Base input. After each step, report direct property-level edges and closure, validate both shell Tips, then save, close, reopen, and recompute. Do not count inactive binders or Body/Part membership as proof of an active dependency.
