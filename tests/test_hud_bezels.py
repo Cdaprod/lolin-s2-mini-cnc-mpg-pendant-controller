@@ -83,6 +83,21 @@ class AssetPipelineTests(unittest.TestCase):
             self.assertEqual(len(bezel_palette.PALETTES[name]), 16)
         self.assertEqual(len(names), 12)
 
+    def test_segmented_bezel_keeps_its_arc_gaps_dark(self):
+        """Glow must not merge precision strokes into a solid annulus."""
+        from PIL import Image
+        import math
+        image = Image.open(ASSETS / "development" / "cyan_reactor.png")
+        alpha = image.getchannel("A")
+        # At the 22.5 degree midpoint between the first two major arcs,
+        # nothing should fill the gap at the outer ring radius.
+        x = round(120 + 113 * math.cos(math.radians(-67.5)))
+        y = round(120 + 113 * math.sin(math.radians(-67.5)))
+        self.assertLessEqual(alpha.getpixel((x, y)), 8)
+        # A corresponding arc core remains bright, proving the test catches
+        # over-broad illumination without accepting a blank asset.
+        self.assertGreaterEqual(alpha.getpixel((120, 7)), 180)
+
     def test_runtime_deployment_includes_only_generated_bitmap_assets(self):
         files = deploy.runtime_files()
         bezels = [path for path in files

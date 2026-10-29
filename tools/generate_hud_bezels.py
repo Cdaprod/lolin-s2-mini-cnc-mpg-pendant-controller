@@ -181,24 +181,15 @@ def render(theme, supersample=8):
     pa=np.asarray(first,dtype=np.float32)/255
     sa=np.asarray(second,dtype=np.float32)/255
     def blur(image,r): return np.asarray(image.filter(ImageFilter.GaussianBlur(r*supersample)),dtype=np.float32)/255
-    p_glow=blur(first,1.5); p_halo=blur(first,7 if kind!="aura" else 12)
-    s_glow=blur(second,1.2); s_halo=blur(second,6 if kind!="aura" else 11)
-    env=np.exp(-((radius-110.5)/8.5)**2)
-    angular=.20+.80*(.5+.5*np.cos(angle*8+.35))**2
-    if kind in ("dual","gauge"):
-        env_a,env_b=env*(angle<0),env*(angle>=0)
-    elif kind=="spectral":
-        env_a,env_b=env*(.55+.45*np.cos(angle*3)),env*(.55+.45*np.sin(angle*3))
-    else:
-        env_a,env_b=env*.35,env*angular*.22
-    halo_gain = 1.55 if kind != "aura" else 2.1
-    pa=np.clip(pa*.88+p_glow*.42+p_halo*halo_gain+env_a*.145,0,1)
-    sa=np.clip(sa*.78+s_glow*.38+s_halo*(halo_gain*.8)+env_b*.12,0,1)
+    # Keep illumination attached to the drawn strokes. Wide Gaussian fields
+    # merge adjacent arcs into a solid annulus at 240px, especially after the
+    # GC9A01's RGB565 conversion. A restrained sub-2px halo preserves a crisp
+    # optical line while leaving the gaps genuinely transparent.
+    p_glow=blur(first,.55); p_halo=blur(first,1.8)
+    s_glow=blur(second,.5); s_halo=blur(second,1.6)
+    pa=np.clip(pa*.94+p_glow*.20+p_halo*.16,0,1)
+    sa=np.clip(sa*.90+s_glow*.18+s_halo*.14,0,1)
     edge=(radius>=INNER)&(radius<=OUTER)
-    # Reserve small top and bottom windows for page dots and the footer.
-    top_gap=(radius<104)&(np.abs(np.angle(np.exp(1j*(angle+math.pi/2))))<.115)
-    bottom_gap=(radius<104)&(np.abs(np.angle(np.exp(1j*(angle-math.pi/2))))<.14)
-    edge &= ~(top_gap|bottom_gap)
     weighted=pa[...,None]*np.asarray(primary)+sa[...,None]*np.asarray(secondary)
     total=np.maximum(pa+sa,1e-8)
     hue=np.clip(weighted/total[...,None],0,255)
