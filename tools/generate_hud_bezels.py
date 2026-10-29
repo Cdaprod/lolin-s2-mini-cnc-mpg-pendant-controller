@@ -78,11 +78,11 @@ def rotor_segment_data():
     """Return a supersampled curved-arc atlas for the fixed outer rotor.
 
     Each 33px tile contains a longer, visibly curved ~30px arc on a 110px
-    track. Twenty-four tangent orientations align with the fixed positions;
+    track. Twelve tangent orientations align with the fixed positions;
     subpixel placement is precomputed. Firmware only changes palette levels,
     so the geometry never pivots or rotates during animation.
     """
-    tile, phases, orientations, samples = 33, 4, 24, 8
+    tile, phases, orientations, samples = 33, 4, 12, 8
     track_radius, half_length = 110.0, 14.5
     atlas = np.zeros((tile * orientations * phases, tile * phases),
                      dtype=np.uint8)
@@ -363,7 +363,7 @@ def generate(output,supersample=8,overrides=None):
                         "bytes":len(data)})
     _write_palette_module(palettes,ROOT/"src/display/round_ui/bezel_palette.py")
     _contact_sheet(dev,output/"contact-sheet.png")
-    manifest={"generator":"tools/generate_hud_bezels.py","generator_version":6,"target":[SIZE,SIZE],
+    manifest={"generator":"tools/generate_hud_bezels.py","generator_version":7,"target":[SIZE,SIZE],
               "supersampling":supersample,"palette_entries":16,
               "bezel_palette_luminance":BEZEL_LUMINANCE,
               "default":"cyan_reactor","themes":entries,
@@ -371,8 +371,8 @@ def generate(output,supersample=8,overrides=None):
                                 "width":36,"height":36,"tile_size":9,"tiles":16,
                                 "palette_entries":16,"transparent_index":0,"bytes":len(orbit_data)},
                                {"name":"rotor_segment_phases","file":"assets/round_hud/runtime/rotor_segment_phases.4bpp",
-                                "width":132,"height":3168,"tile_size":33,"tiles":384,
-                                "orientations":24,"subpixel_phases":16,
+                                "width":132,"height":1584,"tile_size":33,"tiles":192,
+                                "orientations":12,"subpixel_phases":16,
                                "instances":12,"track_radius_px":110,
                                "arc_length_px":29,"angular_offset_degrees":29,
                                 "palette_entries":16,"transparent_index":0,"bytes":len(rotor_data)}],

@@ -91,9 +91,11 @@ interval and ease through deceleration. Encoder detent rate sets signed rotor
 speed, capped at `MPG_BEZEL_MAX_SPEED_RAD_S`; after the input becomes idle, the
 velocity blends toward the current ambient speed with `MPG_BEZEL_INERTIA_S`.
 Presentation is limited by `MPG_BEZEL_FRAME_RATE` (default 24 Hz). The fixed
-ring accents use precomputed 33x33 curved-arc tiles with 24 tangent
-orientations and 16 subpixel phases. Their longer inward-curved strokes sit
-over the existing bezel arcs with deliberate separation. The animation updates retained palette
+ring accents use precomputed 33x33 curved-arc tiles with 12 tangent
+orientations and 16 subpixel phases, matching the twelve fixed display
+positions. This halves the atlas bitmap from 209,088 to 104,544 bytes without
+changing the on-screen arc layout. Their longer inward-curved strokes sit over
+the existing bezel arcs with deliberate separation. The animation updates retained palette
 brightness only; it does not reposition or rotate the arcs and does not
 construct bitmaps at runtime. Page swipes ease into and out of the transition while matching
 velocity at the outgoing/incoming page handoff. These settings are clamped by

@@ -295,7 +295,7 @@ class RoundRendererTests(unittest.TestCase):
         renderer.bezel_segments = segments
         renderer.bezel_segment_palettes = [[0] + [1] * 15
                                            for _ in segments]
-        renderer.rotor_tile_count = 384
+        renderer.rotor_tile_count = 192
         renderer._rotor_brightness_levels = [-1] * len(segments)
         renderer._rotor_target_levels = [0] * len(segments)
         renderer._rotor_color = theme.CYAN
@@ -333,7 +333,7 @@ class RoundRendererTests(unittest.TestCase):
         _, _, _, renderer = self.make_renderer()
         renderer.bezel_segments = [Node() for _ in range(BEZEL_SEGMENT_COUNT)]
         renderer.bezel_palette_bank = [Palette() for _ in range(16)]
-        renderer.rotor_tile_count = 384
+        renderer.rotor_tile_count = 192
         renderer._rotor_brightness_levels = [-1] * BEZEL_SEGMENT_COUNT
         renderer._rotor_target_levels = [0] * BEZEL_SEGMENT_COUNT
 
