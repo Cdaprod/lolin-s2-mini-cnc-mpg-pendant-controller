@@ -77,6 +77,8 @@ does not expand into a large ripple while pressed. On release, that same ring
 fades in place over 80 ms. Gesture recognition and menu activation remain
 release-gated, so the visual acknowledgment does not dispatch an early action.
 The contact-sequence preview uses the same palette phases as the firmware.
+Release selection requires 60 ms of stable no-contact samples, filtering brief
+touch-controller gaps while a finger remains down.
 
 `MPG_BEZEL_ROTATION_ENABLED` controls the outer rotor. Ambient speed defaults
 to one turn per 54 seconds; direction changes use a deterministic 20–40 second
