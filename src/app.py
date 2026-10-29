@@ -73,7 +73,6 @@ class PendantApplication:
         # HOME touch selection opens navigation, so preview it on contact for
         # immediate feedback. Cancel the preview if the gesture becomes a
         # swipe or long press. Actual menu row selection stays on lift.
-        self._touch_menu_preview_active = False
         self.clock = clock
         try:
             import supervisor
@@ -445,17 +444,6 @@ class PendantApplication:
                 pass
             self.i2c_bus = None
 
-    def _cancel_touch_menu_preview(self):
-        """Undo an uncommitted HOME menu preview without dispatching input."""
-        if not self._touch_menu_preview_active:
-            return False
-        self._touch_menu_preview_active = False
-        if (self.ui.current_screen == "MAIN_MENU" and
-                len(self.ui.stack) > 1 and self.ui.stack[-2] == "HOME"):
-            self.ui.back()
-            return True
-        return False
-
     def handle_ui_event(self, event):
         """Route a normalized UI event and execute only its semantic result."""
         if self.ui.current_screen in ("JOBS", "JOB_BROWSER", "EXPLORER"):
@@ -682,45 +670,23 @@ class PendantApplication:
             contact = getattr(self.touch_manager,
                               "last_contact_transition", None)
             gestures = getattr(self.touch_manager, "gestures", None)
-            if (self._touch_menu_preview_active and gestures is not None and
-                    getattr(gestures, "axis_lock", None) is not None):
-                self._cancel_touch_menu_preview()
-                touch_needs_render = True
             if contact is not None:
                 # USB CDC output can block. Defer diagnostic writes until the
                 # immediate contact redraw has reached the display.
                 touch_contact_log = contact
                 if contact[0] == "down":
                     touch_needs_render = True
-                    if (self.ui.current_screen == "HOME" and
-                            self.ui.active_overlay() is None):
-                        # This preview only opens navigation; it cannot select
-                        # a menu row or dispatch a machine command.
-                        self.ui.enter("MAIN_MENU")
-                        self._touch_menu_preview_active = True
-                    else:
-                        # Menu focus previews on contact; selection remains
-                        # release-gated in the normal UI event path.
+                    # Contact feedback is immediate, but navigation and
+                    # selection remain tied to the completed release gesture.
+                    if self.ui.current_screen != "HOME":
                         preview = getattr(self.ui, "preview_touch", None)
                         if preview is not None:
                             touch_needs_render = (
                                 preview(contact[1], contact[2]) or
                                 touch_needs_render)
-            if (self._touch_menu_preview_active and contact is not None and
-                    contact[0] == "up" and not touch_events):
-                # A sub-minimum contact is not a tap; undo its visual preview.
-                self._cancel_touch_menu_preview()
-                touch_needs_render = True
             for event in touch_events:
                 touch_needs_render = True
                 touch_gesture_log = (event.kind, event.x, event.y)
-                if self._touch_menu_preview_active:
-                    if event.kind in ("tap", "release_select"):
-                        # Keep the already-open menu. The release belongs to
-                        # the same contact and must not select its first row.
-                        self._touch_menu_preview_active = False
-                        continue
-                    self._cancel_touch_menu_preview()
                 try:
                     self.handle_ui_event(event)
                 except SafetyError as exc:
