@@ -64,7 +64,7 @@ class GestureTests(unittest.TestCase):
         source.current = None
         clock.t = .11
         touch.poll()
-        clock.t = .131
+        clock.t = .171
         touch.poll()
         self.assertFalse(touch.feedback_active)
         self.assertEqual(touch.last_contact_transition, ("up", 90, 65))
@@ -145,23 +145,36 @@ class GestureTests(unittest.TestCase):
         source.current = TOUCH_SAMPLE_UNAVAILABLE
         self.assertEqual(touch.poll(), ())
         self.assertTrue(touch.gestures.active)
-        clock.t = .149
+        clock.t = .189
         source.current = None
         self.assertEqual(touch.poll(), ())
-        clock.t = .151
+        clock.t = .191
         self.assertEqual(touch.poll()[0].kind, "release_select")
 
-    def test_tap_release_is_confirmed_within_20ms(self):
+    def test_tap_release_is_confirmed_after_stable_60ms(self):
         clock = Clock()
         gestures = TouchGestures(clock)
         gestures.poll((120, 120))
         clock.t = .10
         gestures.poll(None)
-        clock.t = .119
+        clock.t = .159
         self.assertEqual(gestures.poll(None), ())
-        clock.t = .121
+        clock.t = .161
         self.assertEqual(gestures.poll(None),
                          (("release_select", 120, 120),))
+
+    def test_brief_missing_sample_does_not_release_while_still_touching(self):
+        clock, source = Clock(), Source()
+        touch = TouchInput(source, clock)
+        source.current = (120, 102)
+        self.assertEqual(touch.poll(), ())
+        clock.t = .10
+        source.current = None
+        self.assertEqual(touch.poll(), ())
+        clock.t = .13
+        source.current = (120, 102)
+        self.assertEqual(touch.poll(), ())
+        self.assertTrue(touch.gestures.active)
 
     def test_short_contact_and_navigation_cooldown(self):
         clock = Clock()

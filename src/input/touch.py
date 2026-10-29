@@ -11,11 +11,10 @@ class TouchInput:
 
     def __init__(self, source, clock, long_press=0.8, swipe_distance=58,
                  rotation=0, invert_x=False, invert_y=False,
-                 release_delay=0.02):
+                 release_delay=0.06):
         self.source = source
-        # The touch loop runs much faster than a human tap. A 20 ms confirmed
-        # release keeps accidental I2C dropouts from activating controls while
-        # removing the sluggish tail users can feel after lifting a finger.
+        # Confirm release long enough to reject brief CHSC6X sample dropouts
+        # while keeping the selection response immediate after a real lift.
         self.gestures = TouchGestures(
             clock, long_press, swipe_distance, release_delay=release_delay)
         self.rotation = int(rotation) % 360
