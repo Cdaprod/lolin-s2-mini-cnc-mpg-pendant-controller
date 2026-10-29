@@ -281,7 +281,8 @@ class PendantApplication:
             try:
                 if shared_i2c is None:
                     raise RuntimeError("shared I2C unavailable")
-                from src.input.touch import build_chsc6x, build_cst8xx
+                from src.input.touch import (TOUCH_POLL_INTERVAL_S,
+                                             build_chsc6x, build_cst8xx)
                 touch_driver = config.get("touch_driver", "chsc6x")
                 touch_source = (build_chsc6x(shared_i2c, config.get("touch_irq_pin", "D7"))
                                 if touch_driver == "chsc6x" else
@@ -295,7 +296,8 @@ class PendantApplication:
                 touch_source, clock=clock,
                 rotation=config.get("touch_rotation", 0),
                 invert_x=config.get("touch_invert_x", False),
-                invert_y=config.get("touch_invert_y", False))
+                invert_y=config.get("touch_invert_y", False),
+                poll_interval=TOUCH_POLL_INTERVAL_S)
         state.storage_state = storage.status
         state.storage_error = storage.error
         addresses, i2c_error = scan_i2c(shared_i2c)

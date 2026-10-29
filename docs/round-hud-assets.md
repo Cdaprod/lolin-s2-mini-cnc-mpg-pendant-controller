@@ -81,8 +81,10 @@ does not expand into a large ripple while pressed. On release, that same ring
 fades in place over 80 ms. Gesture recognition and menu activation remain
 release-gated, so the visual acknowledgment does not dispatch an early action.
 The contact-sequence preview uses the same palette phases as the firmware.
-Release selection requires 60 ms of stable no-contact samples, filtering brief
-touch-controller gaps while a finger remains down. CHSC6X D7 remains the
+The touch sampler runs at 120 Hz and release selection requires 40 ms of stable
+no-contact samples. This bounds idle polling while filtering brief
+touch-controller gaps, with press feedback appearing on the first sampled
+contact. CHSC6X D7 remains the
 active-low contact authority, matching [Seeed's round-display driver](https://github.com/Seeed-Studio/Seeed_Arduino_RoundDisplay/blob/main/src/lv_xiao_round_screen.h#L800-L815); the adapter does not read stale coordinates after IRQ release.
 
 `MPG_BEZEL_ROTATION_ENABLED` controls the outer rotor. Ambient speed defaults

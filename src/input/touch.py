@@ -4,6 +4,7 @@ from src.display.ui import TouchEvent
 from src.input.touch_gestures import TouchGestures
 
 TOUCH_SAMPLE_UNAVAILABLE = object()
+TOUCH_POLL_INTERVAL_S = 1.0 / 120.0
 
 
 class TouchInput:
@@ -11,7 +12,8 @@ class TouchInput:
 
     def __init__(self, source, clock, long_press=0.8, swipe_distance=58,
                  rotation=0, invert_x=False, invert_y=False,
-                 release_delay=0.06):
+                 release_delay=0.04,
+                 poll_interval=0.0):
         self.source = source
         # Confirm release long enough to reject brief CHSC6X sample dropouts
         # while keeping the selection response immediate after a real lift.
@@ -23,6 +25,8 @@ class TouchInput:
         self.last_feedback = None
         self.feedback_until = 0
         self.clock = clock
+        self.poll_interval = max(0.0, float(poll_interval))
+        self._last_poll_time = None
         self.poll_count = 0
         self.sample_count = 0
         self.event_count = 0
@@ -53,8 +57,14 @@ class TouchInput:
         return x, y
 
     def poll(self):
-        self.poll_count += 1
         self.last_contact_transition = None
+        self.last_feedback = None
+        now = self.clock()
+        if (self.poll_interval and self._last_poll_time is not None and
+                now - self._last_poll_time < self.poll_interval):
+            return ()
+        self._last_poll_time = now
+        self.poll_count += 1
         try:
             raw_point = self.source.point()
             if raw_point is TOUCH_SAMPLE_UNAVAILABLE:

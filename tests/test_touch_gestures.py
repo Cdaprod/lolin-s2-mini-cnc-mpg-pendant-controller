@@ -36,6 +36,41 @@ class FlakySource(Source):
 
 
 class GestureTests(unittest.TestCase):
+    def test_hardware_poll_rate_is_bounded_and_selection_stays_release_gated(self):
+        clock = Clock()
+        source = Source()
+        touch = TouchInput(source, clock, poll_interval=1.0 / 120.0)
+
+        self.assertEqual(touch.poll(), ())
+        self.assertEqual(touch.poll_count, 1)
+        clock.t = 0.004
+        self.assertEqual(touch.poll(), ())
+        self.assertEqual(touch.poll_count, 1)
+        clock.t = 0.009
+        self.assertEqual(touch.poll(), ())
+        self.assertEqual(touch.poll_count, 2)
+
+        source.current = (90, 65)
+        clock.t = 0.018
+        self.assertEqual(touch.poll(), ())
+        self.assertEqual(touch.last_contact_transition, ("down", 90, 65))
+        for tick in (0.027, 0.036, 0.045, 0.054, 0.063):
+            clock.t = tick
+            self.assertEqual(touch.poll(), ())
+        source.current = None
+        clock.t = 0.072
+        self.assertEqual(touch.poll(), ())
+        self.assertTrue(touch.gestures.active)
+        clock.t = 0.103
+        self.assertEqual(touch.poll(), ())
+        self.assertTrue(touch.gestures.active)
+        clock.t = 0.114
+        events = touch.poll()
+        self.assertEqual(len(events), 1)
+        self.assertEqual((events[0].kind, events[0].x, events[0].y),
+                         ("release_select", 90, 65))
+        self.assertFalse(touch.gestures.active)
+
     def test_contact_down_shows_feedback_without_dispatching_navigation(self):
         clock = Clock()
         source = Source()
