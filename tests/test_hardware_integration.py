@@ -365,6 +365,12 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(network.poll_count, 0)
             clock.advance(0.05)
             app.poll()
+            self.assertEqual(network.poll_count, 0)
+            clock.advance(0.049)
+            app.poll()
+            self.assertEqual(network.poll_count, 0)
+            clock.advance(0.001)
+            app.poll()
             self.assertEqual(network.poll_count, 1)
 
     def make_app(self, root, adapter=None):
