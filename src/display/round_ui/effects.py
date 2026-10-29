@@ -1,6 +1,6 @@
 """Compact mathematical effects shared by the runtime and host previews."""
 
-TOUCH_BITMAP_SIZE = 35
+TOUCH_BITMAP_SIZE = 25
 TOUCH_BITMAP_CENTER = TOUCH_BITMAP_SIZE // 2
 
 # Palette indices are ordered from the widest ring inward. Zero remains the
@@ -18,11 +18,11 @@ def touch_zone(x, y):
     radius2 = dx * dx + dy * dy
     if radius2 <= 2:
         return TOUCH_CORE
-    if 16 <= radius2 <= 25:
+    if 9 <= radius2 <= 20:
         return TOUCH_INNER
-    if 81 <= radius2 <= 100:
+    if 36 <= radius2 <= 56:
         return TOUCH_MIDDLE
-    if 196 <= radius2 <= 225:
+    if 81 <= radius2 <= 110:
         return TOUCH_OUTER
     return 0
 
@@ -31,13 +31,11 @@ def touch_level(index, progress):
     """Brightness percentage for a touch ripple palette index."""
     progress = max(0.0, min(1.0, float(progress)))
     if index == TOUCH_CORE:
-        return int(100 * max(0.0, 1.0 - progress / 0.34))
+        return int(100 * max(0.0, 1.0 - progress / 0.42))
     if index == TOUCH_INNER:
-        return int(96 * max(0.0, 1.0 - abs(progress - 0.08) / 0.34))
+        return int(78 * max(0.0, 1.0 - abs(progress - 0.12) / 0.42))
     if index == TOUCH_MIDDLE:
-        return 30 + int(70 * max(
-            0.0, 1.0 - abs(progress - 0.42) / 0.43))
+        return int(74 * max(0.0, 1.0 - abs(progress - 0.48) / 0.40))
     if index == TOUCH_OUTER:
-        return 38 + int(62 * max(
-            0.0, 1.0 - abs(progress - 0.72) / 0.72))
+        return int(64 * max(0.0, 1.0 - abs(progress - 0.82) / 0.30))
     return 0

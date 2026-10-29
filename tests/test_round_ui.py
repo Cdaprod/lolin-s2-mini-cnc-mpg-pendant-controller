@@ -791,6 +791,7 @@ class RoundRendererTests(unittest.TestCase):
         renderer.render(state)
         initial = display.refreshes
         renderer.touch_feedback((120, 120), 1.2)
+        self.assertEqual(renderer._halo_duration, 0.10)
         self.assertFalse(renderer.touch_halo.hidden)
         self.assertEqual((renderer.touch_halo.x, renderer.touch_halo.y),
                          (120 - TOUCH_BITMAP_CENTER,
@@ -815,14 +816,14 @@ class RoundRendererTests(unittest.TestCase):
         renderer.touch_halo.hidden = True
         renderer.touch_feedback((120, 120), 1.2)
         initial = tuple(palette)
-        self.assertGreater(palette[1], 0)  # Broad outer ring is present at down.
-        self.assertGreater(palette[2], 0)  # Mid ring anchors the full ripple.
+        self.assertEqual(palette[1], 0)  # Broad ring waits for the outward wave.
+        self.assertEqual(palette[2], 0)
         self.assertGreater(palette[3], 0)  # Inner ring is visible immediately.
         self.assertGreater(palette[4], palette[3])  # Bright contact core.
         self.assertTrue(renderer.animate(1.1))
         self.assertNotEqual(tuple(palette), initial)
-        self.assertTrue(renderer._update_halo_palette(0.76))
-        self.assertGreater(palette[1], palette[4])  # Light travels outward.
+        self.assertTrue(renderer._update_halo_palette(0.82))
+        self.assertGreater(palette[1], palette[2])  # Light travels outward.
 
     def test_touch_hold_keeps_outer_contact_ring_without_restarting_wave(self):
         _, _, _, renderer = self.make_renderer()
