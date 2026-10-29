@@ -207,8 +207,11 @@ def render(theme, supersample=8):
     display_rgb=Image.fromarray(np.uint8(hue),"RGB").resize((SIZE,SIZE),resampling)
     rgba=display_rgb.convert("RGBA"); rgba.putalpha(alpha)
     palette=_palette(primary,secondary)
-    pal=np.array([((v>>16)&255,(v>>8)&255,v&255) for v in palette[1:]],dtype=np.int16)
-    pixels=np.asarray(rgb,dtype=np.int16)
+    # Squared RGB distances can exceed signed 16-bit range (3*255^2).
+    # int16 wrapped negative values and selected unrelated palette entries,
+    # which rendered the hardware bezel as noisy white/multicolor pixels.
+    pal=np.array([((v>>16)&255,(v>>8)&255,v&255) for v in palette[1:]],dtype=np.int32)
+    pixels=np.asarray(rgb,dtype=np.int32)
     # Avoid materializing a 240x240x15x3 intermediate array.
     chosen=np.ones((SIZE,SIZE),dtype=np.uint8)
     # Initialize with first palette distance.

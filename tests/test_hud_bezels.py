@@ -98,6 +98,25 @@ class AssetPipelineTests(unittest.TestCase):
         # over-broad illumination without accepting a blank asset.
         self.assertGreaterEqual(alpha.getpixel((120, 7)), 180)
 
+    def test_firmware_bitmap_palette_matches_the_generated_bezel_core(self):
+        """Catch host arithmetic that corrupts the indexed device bitmap."""
+        _, packed, palette = generate_hud_bezels.render(
+            generate_hud_bezels.THEMES[0], supersample=8)
+        self.assertEqual(
+            packed,
+            (ASSETS / "runtime" / "cyan_reactor.4bpp").read_bytes())
+        # The segment centered at 12 o'clock must quantize to luminous cyan,
+        # not an unrelated color caused by overflow in squared RGB distances.
+        byte = packed[7 * 120 + 120 // 2]
+        index = byte & 0x0F
+        core = palette[index]
+        primary = generate_hud_bezels.THEMES[0][2]
+        distance = sum(
+            (channel - expected) ** 2
+            for channel, expected in zip(
+                ((core >> 16) & 255, (core >> 8) & 255, core & 255), primary))
+        self.assertLess(distance, 80 ** 2)
+
     def test_runtime_deployment_includes_only_generated_bitmap_assets(self):
         files = deploy.runtime_files()
         bezels = [path for path in files

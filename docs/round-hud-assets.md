@@ -25,7 +25,10 @@ sheets. Intermediate supersampled frames stay in memory. Only `.4bpp` files in
 345,600 bytes of filesystem storage; the selected bitmap occupies 28,800 bytes
 in RAM. The 4x4 subpixel orb atlas adds 648 bytes on storage and in RAM. A
 missing bezel falls back to the established instrument backdrop; a missing orb
-atlas falls back to the simpler retained marker.
+atlas falls back to the simpler retained marker. The generator keeps light
+strokes narrow and leaves gaps between segmented arcs transparent. Palette
+selection uses 32-bit RGB distance arithmetic so squared-color comparisons do
+not overflow and corrupt the indexed firmware image.
 
 Select a bezel with `MPG_UI_BEZEL` in `settings.toml` (for example
 `cyan_reactor`, `turquoise_energy`, `amber_precision`, or `violet_hologram`).
