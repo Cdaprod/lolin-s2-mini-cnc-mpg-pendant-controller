@@ -1,4 +1,5 @@
 import unittest
+import math
 from unittest.mock import patch
 
 from src.display.round_ui.renderer import RoundRenderer, _profile_ticks_diff
@@ -348,11 +349,12 @@ class RoundRendererTests(unittest.TestCase):
 
     def test_encoder_feedback_tracks_detent_direction_and_fades(self):
         state, _, _, renderer = self.make_renderer()
-        marker, trail = Node(), Node()
-        marker.hidden = trail.hidden = True
-        palettes = ([0, 0, 0, 0], [0, 0])
+        marker, trail, far_trail = Node(), Node(), Node()
+        marker.hidden = trail.hidden = far_trail.hidden = True
+        palettes = ([0, 0, 0, 0], [0, 0], [0, 0])
         renderer.encoder_marker = marker
         renderer.encoder_trail = trail
+        renderer.encoder_far_trail = far_trail
         renderer.encoder_palettes = palettes
         state.mpg_activity = 1
         state.mpg_activity_timestamp = 1.0
@@ -360,6 +362,7 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer.animate(1.0))
         self.assertFalse(marker.hidden)
         self.assertFalse(trail.hidden)
+        self.assertFalse(far_trail.hidden)
         clockwise_angle = renderer._encoder_angle
         self.assertGreater(marker.x, 120)
         self.assertTrue(renderer.animate(1.12))
@@ -372,6 +375,26 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer.animate(1.38))
         self.assertTrue(marker.hidden)
         self.assertTrue(trail.hidden)
+        self.assertTrue(far_trail.hidden)
+
+    def test_encoder_afterimages_follow_the_actual_detent_delta(self):
+        state, _, _, renderer = self.make_renderer()
+        marker, trail, far_trail = Node(), Node(), Node()
+        renderer.encoder_marker = marker
+        renderer.encoder_trail = trail
+        renderer.encoder_far_trail = far_trail
+        state.mpg_activity = 3
+        state.mpg_activity_timestamp = 1.0
+
+        renderer.animate(1.0)
+
+        self.assertEqual(renderer._encoder_angle, 337.5)
+        self.assertAlmostEqual(marker.x, 120 + round(101 * math.cos(
+            math.radians(-22.5))) - 4)
+        self.assertAlmostEqual(trail.y, 120 + round(101 * math.sin(
+            math.radians(-90))) - 2)
+        self.assertAlmostEqual(far_trail.y, 120 + round(101 * math.sin(
+            math.radians(-112.5))) - 2)
 
     def test_home_and_menu_groups_are_mutually_exclusive(self):
         state, ui, _, renderer = self.make_renderer()
