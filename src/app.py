@@ -666,6 +666,13 @@ class PendantApplication:
             if contact is not None:
                 emit("touch_contact", state=contact[0],
                      x=contact[1], y=contact[2])
+                if contact[0] == "down":
+                    # Preview menu focus on contact in this same render pass.
+                    # The later release event remains the only path that can
+                    # select a row or dispatch its command.
+                    preview = getattr(self.ui, "preview_touch", None)
+                    if preview is not None:
+                        preview(contact[1], contact[2])
             for event in touch_events:
                 emit("touch_gesture", kind=event.kind, x=event.x, y=event.y)
                 try:

@@ -713,6 +713,18 @@ class UIManager:
         target = menu_window_start(selected, len(items), 6) + row
         return target if target < len(items) else None
 
+    def preview_touch(self, x, y):
+        """Move only the menu highlight on contact; never select or dispatch."""
+        if (self.active_overlay() is not None or self.current_screen == "HOME" or
+                not 58 <= int(y) < 190):
+            return False
+        target = self._touch_row_index(y)
+        if target is None or self.focus.get(self.current_screen, 0) == target:
+            return False
+        self.focus[self.current_screen] = target
+        self._changed()
+        return True
+
     def active_overlay(self):
         if self.state.estop_observed:
             return ("E-STOP", "MOTION INHIBITED", 100)
