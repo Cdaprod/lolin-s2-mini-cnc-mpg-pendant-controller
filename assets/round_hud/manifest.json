@@ -370,5 +370,18 @@
       "bytes": 28800
     }
   ],
-  "generation_seconds": 8.633
+  "sprite_assets": [
+    {
+      "name": "orbit_phases",
+      "file": "assets/round_hud/runtime/orbit_phases.4bpp",
+      "width": 36,
+      "height": 36,
+      "tile_size": 9,
+      "tiles": 16,
+      "palette_entries": 16,
+      "transparent_index": 0,
+      "bytes": 648
+    }
+  ],
+  "generation_seconds": 8.121
 }

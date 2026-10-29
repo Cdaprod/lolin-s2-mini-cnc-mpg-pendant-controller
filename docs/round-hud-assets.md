@@ -23,8 +23,9 @@ runtime bitmaps, CircuitPython palette constants, a manifest, and contact
 sheets. Intermediate supersampled frames stay in memory. Only `.4bpp` files in
 `assets/round_hud/runtime/` are deployed. The twelve production images occupy
 345,600 bytes of filesystem storage; the selected bitmap occupies 28,800 bytes
-in RAM. A missing or invalid asset falls back to the established vector-like
-instrument backdrop.
+in RAM. The 4x4 subpixel orb atlas adds 648 bytes on storage and in RAM. A
+missing bezel falls back to the established instrument backdrop; a missing orb
+atlas falls back to the simpler retained marker.
 
 Select a bezel with `MPG_UI_BEZEL` in `settings.toml` (for example
 `cyan_reactor`, `turquoise_energy`, `amber_precision`, or `violet_hologram`).
@@ -45,9 +46,13 @@ to one turn per 54 seconds; direction changes use a deterministic 20–40 second
 interval and ease through deceleration. Encoder detent rate sets signed rotor
 speed, capped at `MPG_BEZEL_MAX_SPEED_RAD_S`; after the input becomes idle, the
 velocity blends toward the current ambient speed with `MPG_BEZEL_INERTIA_S`.
-Presentation is limited by `MPG_BEZEL_FRAME_RATE` (default 24 Hz). These
-settings are clamped by the rotor model and do not affect UI polling or
-communication loops.
+Presentation is limited by `MPG_BEZEL_FRAME_RATE` (default 24 Hz). Orb motion
+uses sixteen supersampled, precomputed tile phases to antialias fractional
+positions; the frame loop changes only retained tile indices and integer
+coordinates. It does not construct rotated bitmaps or sample geometry at
+runtime. Page swipes ease into and out of the transition while matching
+velocity at the outgoing/incoming page handoff. These settings are clamped by
+the rotor model and do not affect UI polling or communication loops.
 
 The renderer preview script emits the normal screen snapshots plus
 `bezel-angle-000.png`, `bezel-angle-090.png`, `bezel-angle-180.png`, and

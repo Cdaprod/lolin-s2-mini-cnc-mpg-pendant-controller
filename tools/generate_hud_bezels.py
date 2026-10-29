@@ -39,6 +39,33 @@ def _rgb(c):
     return (int(c[0]) << 16) | (int(c[1]) << 8) | int(c[2])
 
 
+def orbit_phase_data():
+    """Return a 36px atlas of 16 supersampled 9px subpixel orb phases."""
+    tile, phases, samples = 9, 4, 4
+    atlas = np.zeros((tile * phases, tile * phases), dtype=np.uint8)
+    yy, xx = np.mgrid[0:tile*samples, 0:tile*samples]
+    xx = (xx + 0.5) / samples
+    yy = (yy + 0.5) / samples
+    for phase_y in range(phases):
+        center_y = 4.0 + phase_y / float(phases)
+        for phase_x in range(phases):
+            center_x = 4.0 + phase_x / float(phases)
+            distance = np.hypot(xx-center_x, yy-center_y)
+            light = np.zeros(distance.shape, dtype=np.float32)
+            light[distance <= 1.8] = 1.0
+            mid = (distance > 1.8) & (distance <= 3.0)
+            light[mid] = 0.72
+            falloff = (distance > 3.0) & (distance < 4.3)
+            light[falloff] = 0.72 * (4.3-distance[falloff]) / 1.3
+            coverage = light.reshape(tile, samples, tile, samples).mean(
+                axis=(1, 3))
+            indices = np.rint(coverage * 15).astype(np.uint8)
+            x0, y0 = phase_x * tile, phase_y * tile
+            atlas[y0:y0+tile, x0:x0+tile] = indices
+    packed = (atlas[:, 0::2] | (atlas[:, 1::2] << 4)).astype(np.uint8)
+    return packed.tobytes()
+
+
 def _point(r, a, scale):
     theta = math.radians(a)
     return (round((CENTER + r*math.cos(theta))*scale),
@@ -242,6 +269,9 @@ def generate(output,supersample=8,overrides=None):
     output=Path(output); runtime=output/"runtime"; dev=output/"development"
     runtime.mkdir(parents=True,exist_ok=True); dev.mkdir(parents=True,exist_ok=True)
     start=time.perf_counter(); palettes={}; entries=[]
+    orbit_file = runtime / "orbit_phases.4bpp"
+    orbit_data = orbit_phase_data()
+    orbit_file.write_bytes(orbit_data)
     for item in THEMES:
         name,label,primary,secondary,kind=item
         if overrides and name in overrides:
@@ -260,6 +290,9 @@ def generate(output,supersample=8,overrides=None):
     _contact_sheet(dev,output/"contact-sheet.png")
     manifest={"generator":"tools/generate_hud_bezels.py","generator_version":1,"target":[SIZE,SIZE],
               "supersampling":supersample,"palette_entries":16,"default":"cyan_reactor","themes":entries,
+              "sprite_assets":[{"name":"orbit_phases","file":"assets/round_hud/runtime/orbit_phases.4bpp",
+                                "width":36,"height":36,"tile_size":9,"tiles":16,
+                                "palette_entries":16,"transparent_index":0,"bytes":len(orbit_data)}],
               "generation_seconds":round(time.perf_counter()-start,3)}
     (output/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n",encoding="utf-8")
     return manifest

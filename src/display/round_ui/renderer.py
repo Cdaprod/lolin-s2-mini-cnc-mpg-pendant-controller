@@ -117,6 +117,8 @@ class RoundRenderer:
         self.nav_dots = scene.get("nav_dots", ())
         self.hud_markers = scene.get("hud_markers", ())
         self.hud_trails = scene.get("hud_trails", ())
+        self.hud_frame_count = scene.get("hud_frame_count", 0)
+        self._hud_tile_indexes = [-1] * len(self.hud_markers)
         self._hud_phase = -1
         self._hud_dirty = False
         self._last_nonhome_model_ticks = None
@@ -181,9 +183,9 @@ class RoundRenderer:
             self._update_halo_palette(self._halo_progress)
             for index, palette in enumerate(self.palettes.get("hud_markers", ())):
                 color = colors["accent"] if index == 0 else colors["highlight"]
-                palette[1] = color
-                palette[2] = theme.shade_color(color, 72)
-                palette[3] = theme.shade_color(color, 38)
+                for shade in range(1, 16):
+                    palette[shade] = theme.shade_color(
+                        color, shade * 100 // 15)
             for index, palette in enumerate(self.palettes.get("hud_trails", ())):
                 color = colors["accent"] if index == 0 else colors["highlight"]
                 palette[1] = theme.shade_color(color, 22)
@@ -254,7 +256,9 @@ class RoundRenderer:
             elapsed = max(0.0, now - transition["started"])
             if transition["phase"] == "out":
                 progress = min(1.0, elapsed / half)
-                offset = round(-transition["delta"] * 240 * progress)
+                # Ease in to the handoff; the matching incoming curve begins
+                # at the same velocity, so the page swap never visibly stalls.
+                offset = round(-transition["delta"] * 240 * progress * progress)
                 if transition["old_group"].x != offset:
                     transition["old_group"].x = offset
                     self._page_transition_dirty = True
@@ -271,7 +275,8 @@ class RoundRenderer:
                     changed = True
             elif transition["phase"] == "in":
                 progress = min(1.0, elapsed / half)
-                offset = round(transition["delta"] * 240 * (1.0-progress))
+                offset = round(transition["delta"] * 240 *
+                               (1.0-progress) * (1.0-progress))
                 if transition["new_group"].x != offset:
                     transition["new_group"].x = offset
                     self._page_transition_dirty = True
@@ -393,8 +398,23 @@ class RoundRenderer:
                             angle = rotor_angle
                         else:
                             angle = float(now) * HUD_ORBIT_RATES[index]
-                        x = 116 + round(radius * math.cos(angle))
-                        y = 116 + round(radius * math.sin(angle))
+                        if self.hud_frame_count == 16:
+                            center_x = 120 + radius * math.cos(angle)
+                            center_y = 120 + radius * math.sin(angle)
+                            base_x = math.floor(center_x)
+                            base_y = math.floor(center_y)
+                            phase_x = int((center_x-base_x) * 4)
+                            phase_y = int((center_y-base_y) * 4)
+                            tile_index = phase_y * 4 + phase_x
+                            x, y = int(base_x) - 4, int(base_y) - 4
+                            if self._hud_tile_indexes[index] != tile_index:
+                                sprite[0] = tile_index
+                                self._hud_tile_indexes[index] = tile_index
+                                self._hud_dirty = True
+                                changed = True
+                        else:
+                            x = 116 + round(radius * math.cos(angle))
+                            y = 116 + round(radius * math.sin(angle))
                         if sprite.x != x or sprite.y != y or sprite.hidden:
                             sprite.x, sprite.y = x, y
                             sprite.hidden = False

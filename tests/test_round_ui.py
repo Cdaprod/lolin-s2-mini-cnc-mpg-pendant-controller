@@ -335,7 +335,7 @@ class RoundRendererTests(unittest.TestCase):
         start = transition["started"]
         self.assertEqual(transition["phase"], "out")
         self.assertTrue(renderer.animate(start + 0.12))
-        self.assertEqual(renderer.home_group.x, -120)
+        self.assertEqual(renderer.home_group.x, -60)
         self.assertTrue(renderer.render(state))
         self.assertTrue(renderer.animate(start + 0.241))
         self.assertEqual(renderer.home_group.x, -240)
@@ -346,7 +346,7 @@ class RoundRendererTests(unittest.TestCase):
 
         incoming = renderer._page_transition["started"]
         self.assertTrue(renderer.animate(incoming + 0.12))
-        self.assertEqual(renderer.menu_group.x, 120)
+        self.assertEqual(renderer.menu_group.x, 60)
         renderer.render(state)
         self.assertTrue(renderer.animate(incoming + 0.241))
         self.assertEqual(renderer.menu_group.x, 0)

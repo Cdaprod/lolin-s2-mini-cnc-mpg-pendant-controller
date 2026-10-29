@@ -8,6 +8,8 @@ from src.app import PendantApplication
 from src.diagnostics import (emit, is_runtime_reload,
                              startup_context_fields)
 
+RUNTIME_BUILD = "round-hud-subpixel-v2"
+
 
 def main():
     print()
@@ -25,8 +27,7 @@ def main():
     except ImportError:
         microcontroller = None
     startup = startup_context_fields(supervisor, microcontroller)
-    if startup:
-        emit("startup_context", **startup)
+    emit("startup_context", runtime_build=RUNTIME_BUILD, **(startup or {}))
 
     config = load_config()
 
