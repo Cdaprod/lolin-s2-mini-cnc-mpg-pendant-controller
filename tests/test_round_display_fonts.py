@@ -3,9 +3,11 @@
 import sys
 import types
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 from src.display.round_ui import display as round_display
+from src.display.ui import build_screens
 from tests.test_displayio_textline import DisplayIO
 
 
@@ -62,6 +64,26 @@ class RoundDisplayFontTests(unittest.TestCase):
 
         self.assertEqual([path for path, _ in loaded],
                          ["/fonts/DejaVuSans-Bold-14.bdf"])
+
+    def test_all_screen_titles_fit_native_heading_width(self):
+        font_path = (Path(__file__).resolve().parents[1] / "fonts" /
+                     "DejaVuSans-Bold-14.bdf")
+        glyph_widths = {}
+        codepoint = None
+        for line in font_path.read_text(encoding="ascii").splitlines():
+            fields = line.split()
+            if fields and fields[0] == "ENCODING":
+                codepoint = int(fields[1])
+            elif fields and fields[0] == "DWIDTH" and codepoint is not None:
+                glyph_widths[codepoint] = int(fields[1])
+                codepoint = None
+
+        for screen in build_screens().values():
+            with self.subTest(screen=screen.id):
+                self.assertTrue(screen.title.isascii())
+                width = sum(glyph_widths[ord(character)]
+                            for character in screen.title)
+                self.assertLessEqual(width, 150)
 
 
 if __name__ == "__main__":

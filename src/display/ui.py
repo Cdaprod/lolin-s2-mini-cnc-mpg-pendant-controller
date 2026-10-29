@@ -70,7 +70,9 @@ def _disabled(label, reason):
 def build_screens():
     """Build the documented IA; unavailable backends are visibly disabled."""
     screens = {}
-    screens["BOOT"] = Screen("BOOT", "BOOT — Connecting…", None, DISABLED)
+    # Keep startup labels within the round renderer's 150px title column and
+    # the bundled ASCII BDF alphabet.
+    screens["BOOT"] = Screen("BOOT", "CONNECTING", None, DISABLED)
     screens["HOME"] = Screen("HOME", "OPERATIONAL", None, MOTION)
     screens["EXPLORER"] = Screen(
         "EXPLORER", "FILE EXPLORER", None, NAVIGATION, dynamic="jobs"
@@ -171,7 +173,7 @@ def build_screens():
     ])
     screens["SYSTEM_INFO"] = Screen("SYSTEM_INFO", "SYSTEM INFO", "SYSTEM")
     screens["INPUT_INFO"] = Screen(
-        "INPUT_INFO", "INPUT DIAGNOSTICS", "SYSTEM", NAVIGATION
+        "INPUT_INFO", "INPUT STATUS", "SYSTEM", NAVIGATION
     )
     return screens
 
