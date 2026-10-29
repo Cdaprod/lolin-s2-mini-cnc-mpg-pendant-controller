@@ -9,6 +9,9 @@ TOUCH_OUTER = 1
 TOUCH_MIDDLE = 2
 TOUCH_INNER = 3
 TOUCH_CORE = 4
+# Hold a single mid-radius ring under contact: larger than the tiny center dot,
+# but compact enough to avoid covering neighboring menu rows.
+TOUCH_HOLD_PROGRESS = 0.48
 
 
 def touch_zone(x, y):

@@ -5,7 +5,8 @@ import time
 
 from ..navigation import menu_window_start
 from . import bezel_palette, theme
-from .effects import TOUCH_BITMAP_CENTER, touch_level
+from .effects import (TOUCH_BITMAP_CENTER, TOUCH_HOLD_PROGRESS,
+                      touch_level)
 
 from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
@@ -102,6 +103,10 @@ class RoundRenderer:
         self._halo_phase = -1
         self._halo_duration = 0.10
         self._halo_held = False
+        self._halo_releasing = False
+        self._halo_release_started = 0.0
+        self._halo_release_duration = 0.08
+        self._halo_release_progress = 0.0
         self._halo_accent = theme.TEXT
         self._last_animation_now = None
         self._highlight_dirty = False
@@ -305,6 +310,7 @@ class RoundRenderer:
         self._halo_held = False
         self._halo_phase = -1
         self._update_halo_palette(0.0)
+        self._halo_releasing = False
         self._halo_dirty = True
 
     def touch_hold(self, until):
@@ -313,26 +319,33 @@ class RoundRenderer:
             return
         self._halo_until = max(self._halo_until, float(until))
         self._halo_held = True
+        self._halo_progress = TOUCH_HOLD_PROGRESS
+        if self._update_halo_palette(self._halo_progress):
+            self._halo_dirty = True
 
     def touch_release(self, now):
         """Fade the held contact glow quickly; do not restart a large ripple."""
         if not self.animations or self.touch_halo is None or not self._halo_visible:
             return
         now = float(now)
-        # Start the final few pixels of the outward wave at the moment of lift.
-        # Its 30 ms tail is perceptible but doesn't delay the release action.
+        # Fade the same compact press indication that was visible under the
+        # finger. Do not advance the outward wave on release.
         self._halo_held = False
-        self._halo_started = now - self._halo_duration * 0.70
-        self._halo_until = now + 0.04
+        self._halo_releasing = True
+        self._halo_release_started = now
+        self._halo_release_progress = self._halo_progress
+        self._halo_release_duration = 0.08
+        self._halo_until = now + self._halo_release_duration
         self._halo_phase = -1
 
-    def _update_halo_palette(self, progress):
+    def _update_halo_palette(self, progress, fade=100):
         if self._halo_palette is None:
             return False
         progress = max(0.0, min(1.0, float(progress)))
+        fade = max(0, min(100, int(fade)))
         changed = False
         for index in range(1, 5):
-            strength = touch_level(index, progress)
+            strength = touch_level(index, progress) * fade // 100
             color = theme.shade_color(self._halo_accent, strength)
             if self._halo_palette[index] != color:
                 self._halo_palette[index] = color
@@ -472,6 +485,7 @@ class RoundRenderer:
             if now >= self._halo_until:
                 self.touch_halo.hidden = True
                 self._halo_visible = False
+                self._halo_releasing = False
                 self._halo_dirty = True
                 changed = True
                 self._halo_progress = 1.0
@@ -480,15 +494,20 @@ class RoundRenderer:
                 frame = int(now * 30)
                 if frame != self._halo_phase:
                     self._halo_phase = frame
-                    duration = self._halo_duration
-                    progress = (now - self._halo_started) / duration
-                    if self._halo_held:
-                        # Keep the bright core and inner halo under the finger.
-                        # Advancing to the outer ring made contact appear dim
-                        # during longer touches and read as a slow worm/ripple.
-                        progress = min(0.10, progress)
-                    self._halo_progress = max(0.0, min(1.0, progress))
-                    if self._update_halo_palette(self._halo_progress):
+                    if self._halo_releasing:
+                        elapsed = max(0.0, now - self._halo_release_started)
+                        fade = int(100 * max(
+                            0.0, 1.0 - elapsed / self._halo_release_duration))
+                        progress = self._halo_release_progress
+                    else:
+                        duration = self._halo_duration
+                        progress = (now - self._halo_started) / duration
+                        if self._halo_held:
+                            # Hold one crisp, compact ring at a stable radius.
+                            progress = TOUCH_HOLD_PROGRESS
+                        self._halo_progress = max(0.0, min(1.0, progress))
+                        fade = 100
+                    if self._update_halo_palette(progress, fade):
                         self._halo_dirty = True
                         changed = True
         highlight_frame = int(now * 24)
