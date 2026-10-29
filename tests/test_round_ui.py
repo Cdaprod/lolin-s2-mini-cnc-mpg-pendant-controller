@@ -839,6 +839,14 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(palettes[0][1], theme.select("amber")["accent"])
         self.assertEqual(palettes[1][1], theme.shade_color(
             theme.select("amber")["accent"], 36))
+        renderer._encoder_started = 1.0
+        renderer._encoder_phase = -1
+        pulse_time = 1.12
+        renderer.animate(pulse_time)
+        pulse_strength = int(100 * (1 - (pulse_time - 1.0) / 0.24))
+        amber_pulse = theme.shade_color(
+            theme.select("amber")["accent"], pulse_strength)
+        self.assertEqual(palettes[0][1], amber_pulse)
         ui.enter("MAIN_MENU")
         renderer.render(state)
         self.assertEqual(renderer.active_theme, "amber")
