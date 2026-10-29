@@ -37,6 +37,30 @@ font = ImageFont.truetype(str(regular_source), 12)
 small = ImageFont.truetype(str(regular_source), 10)
 large = ImageFont.truetype(str(bold_source), 24)
 title_font = ImageFont.truetype(str(bold_source), 14)
+
+
+def draw_hud_orbs(draw, colors, now=4.0):
+    """Match the two retained, counter-rotating instrument indicators."""
+    for radius, rate, color in (
+            (109, 0.22, colors["accent"]),
+            (99, -0.20, colors["highlight"])):
+        angle = now * rate
+        cx = 120 + round(radius * math.cos(angle))
+        cy = 120 + round(radius * math.sin(angle))
+        for yy in range(9):
+            for xx in range(9):
+                distance2 = (xx - 4) ** 2 + (yy - 4) ** 2
+                if distance2 <= 4:
+                    fill = color
+                elif distance2 <= 9:
+                    fill = theme.shade_color(color, 72)
+                elif distance2 <= 16:
+                    fill = theme.shade_color(color, 38)
+                else:
+                    continue
+                draw.point((cx + xx - 4, cy + yy - 4), fill=fill)
+
+
 for skin in ("industrial", "ice", "amber", "spectrum"):
     # Retain per-theme previews for color regression; also publish a page-
     # accurate composite showing the palette chosen by physical selector.
@@ -49,24 +73,7 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
         # Four physical top-level page positions; no pager at idle in firmware.
         page = {"EXPLORER": 1, "CONFIGURATION": 2, "PREVIEW": 3}.get(name, 0)
         # Snapshot at t=4 s to make both counter-rotating HUD markers visible.
-        for radius, rate, color in (
-                (109, 0.22, c["accent"]),
-                (99, -0.20, c["highlight"])):
-            angle = 4.0 * rate
-            cx = 120 + round(radius * math.cos(angle))
-            cy = 120 + round(radius * math.sin(angle))
-            for yy in range(9):
-                for xx in range(9):
-                    distance2 = (xx - 4) ** 2 + (yy - 4) ** 2
-                    if distance2 <= 4:
-                        fill = color
-                    elif distance2 <= 9:
-                        fill = theme.shade_color(color, 72)
-                    elif distance2 <= 16:
-                        fill = theme.shade_color(color, 38)
-                    else:
-                        continue
-                    d.point((cx + xx - 4, cy + yy - 4), fill=fill)
+        draw_hud_orbs(d, c)
         for i in range(4):
             x = 67 + (106 * i) // 3
             y = 120 - int(math.sqrt(108 * 108 - (x - 120) ** 2))
@@ -156,6 +163,7 @@ for storage, primary, secondary in (
     im = Image.new("RGB", (240, 240), c["background"])
     d = ImageDraw.Draw(im)
     d.ellipse((9, 9, 231, 231), outline=c["panel"], width=4)
+    draw_hud_orbs(d, c)
     d.text((120, 43), "FILE EXPLORER", anchor="mm", font=title_font,
            fill=c["text"])
     d.line((44, 55, 196, 55), fill=c["separator"], width=1)
