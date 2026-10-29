@@ -393,8 +393,8 @@ def displayio_scene(display, colors=None, bezel_name=None):
     palettes["encoder"] = (encoder_palette, encoder_trail_palette,
                             encoder_far_palette)
 
-    # Place touch feedback below readable text and controls, but above the
-    # bezel. This lets a tap remain visible without washing out a label.
+    # Build the retained touch pulse once; its layer is moved above ordinary
+    # labels below so the contact response remains visible on a direct tap.
     halo = displayio.Bitmap(41, 41, 5)
     halo_palette = displayio.Palette(5)
     halo_palette[0] = 0x000000
@@ -511,6 +511,11 @@ def displayio_scene(display, colors=None, bezel_name=None):
     menu_footer = _line(displayio, terminalio, 110, 10, 65, 202,
                         colors["muted"], True)
     menu_group.append(menu_footer.node)
+
+    # Keep contact feedback visible over ordinary UI text/highlights. The
+    # critical modal is appended afterward and always remains highest priority.
+    root.remove(halo_node)
+    root.append(halo_node)
 
     overlay_group = displayio.Group()
     # Keep the opaque modal from covering HOME before the first renderer poll.
