@@ -120,6 +120,16 @@ class UIStateMachineTests(unittest.TestCase):
         self.assertEqual(details["Hold-to-run"], "unavailable")
         self.assertEqual(details["Remote stop"], "unavailable")
 
+    def test_configured_but_missing_button_sample_is_unknown(self):
+        state = PendantState()
+        state.input_valid = True
+        state.button_states = {"SELECT": None}
+        ui = UIManager(state)
+        ui.enter("INPUT_INFO")
+
+        details = dict(ui.view_model()["details"])
+        self.assertEqual(details["SELECT button"], "unknown")
+
     def test_wheel_routes_by_context(self):
         _, ui = ready_ui()
         command = ui.handle(ROTATE_CW)

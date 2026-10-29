@@ -401,7 +401,9 @@ class UIManager:
                 stop = self._estop_status()
                 select_state = self.state.button_states.get("SELECT")
                 select = ("pressed" if select_state else "released"
-                          if select_state is not None else "unconfigured")
+                          if select_state is not None else
+                          "unknown" if "SELECT" in self.state.button_states
+                          else "unconfigured")
             return (
                 ("Backend", self.state.selector_backend or "disabled"),
                 ("Input sample", health),
