@@ -792,7 +792,7 @@ class RoundRendererTests(unittest.TestCase):
         renderer.touch_feedback((120, 120), 1.2)
         self.assertFalse(renderer.touch_halo.hidden)
         self.assertEqual((renderer.touch_halo.x, renderer.touch_halo.y),
-                         (105, 105))
+                         (100, 100))
         self.assertFalse(renderer.animate(1.1))
         self.assertTrue(renderer.render(state))
         self.assertEqual(display.refreshes, initial + 1)
@@ -813,6 +813,8 @@ class RoundRendererTests(unittest.TestCase):
         renderer.touch_halo.hidden = True
         renderer.touch_feedback((120, 120), 1.2)
         initial = tuple(palette)
+        self.assertGreater(palette[1], 0)  # Broad outer ring is present at down.
+        self.assertGreater(palette[2], 0)  # Mid ring anchors the full ripple.
         self.assertGreater(palette[3], 0)  # Inner ring is visible immediately.
         self.assertGreater(palette[4], palette[3])  # Bright contact core.
         self.assertTrue(renderer.animate(1.1))

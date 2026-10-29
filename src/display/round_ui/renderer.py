@@ -288,8 +288,8 @@ class RoundRenderer:
         x, y = int(point[0]), int(point[1])
         if not (0 <= x < 240 and 0 <= y < 240):
             return
-        self.touch_halo.x = x - 15
-        self.touch_halo.y = y - 15
+        self.touch_halo.x = x - 20
+        self.touch_halo.y = y - 20
         self.touch_halo.hidden = False
         self._halo_visible = True
         self._halo_until = float(until)
@@ -317,10 +317,12 @@ class RoundRenderer:
         if self._halo_palette is None:
             return False
         progress = max(0.0, min(1.0, float(progress)))
-        core = int(100 * max(0.0, 1.0 - progress / 0.55))
-        inner = int(68 * max(0.0, 1.0 - abs(progress - 0.22) / 0.36))
-        middle = int(78 * max(0.0, 1.0 - abs(progress - 0.50) / 0.42))
-        outer = int(88 * max(0.0, 1.0 - abs(progress - 0.76) / 0.38))
+        core = int(100 * max(0.0, 1.0 - progress / 0.48))
+        inner = int(84 * max(0.0, 1.0 - abs(progress - 0.10) / 0.40))
+        middle = 14 + int(78 * max(
+            0.0, 1.0 - abs(progress - 0.48) / 0.46))
+        outer = 12 + int(88 * max(
+            0.0, 1.0 - abs(progress - 0.78) / 0.78))
         shades = (outer, middle, inner, core)
         changed = False
         for index, strength in enumerate(shades, start=1):
