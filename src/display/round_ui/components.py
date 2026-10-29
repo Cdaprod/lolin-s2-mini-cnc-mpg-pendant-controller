@@ -120,14 +120,34 @@ class MenuHighlight:
     def __init__(self, node):
         self.node = node
         self.row = None
+        self.target_y = int(node.y)
 
-    def set(self, row, visible=True):
+    def set(self, row, visible=True, animate=True):
         row = int(row)
-        changed = row != self.row or self.node.hidden == bool(visible)
+        target_y = 58 + row * 22
+        was_hidden = self.node.hidden
+        was_unset = self.row is None
+        changed = row != self.row or was_hidden == bool(visible)
         self.row = row
-        self.node.hidden = not visible
-        self.node.y = 58 + row * 22
+        self.target_y = target_y
+        self.node.hidden = not bool(visible)
+        if not visible or was_hidden or was_unset or not animate:
+            self.node.y = target_y
         return changed
+
+    def animate(self):
+        """Ease the focus rail toward its row with a short friction settle."""
+        if self.node.hidden or self.node.y == self.target_y:
+            return False
+        distance = self.target_y - self.node.y
+        if abs(distance) <= 1:
+            self.node.y = self.target_y
+            return True
+        step = int(round(distance * 0.68))
+        if step == 0:
+            step = 1 if distance > 0 else -1
+        self.node.y += step
+        return True
 
 
 class Overlay:

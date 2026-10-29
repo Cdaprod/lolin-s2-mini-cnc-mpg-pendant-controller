@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 
 from src.display.round_ui.renderer import RoundRenderer, _profile_ticks_diff
+from src.display.round_ui.components import MenuHighlight
 from src.display.round_ui.bootstrap import apply_mock_state
 from src.display.round_ui.geometry import RoundLayout
 from src.display.round_ui import theme
@@ -54,6 +55,7 @@ def scene_factory(display):
         "axis": Line(), "value": Line(), "context": Line(),
         "increment": Line(), "motion": Line(), "connectivity": Line(),
         "menu_title": Line(), "menu": [Line() for _ in range(6)],
+        "menu_separators": [Node() for _ in range(5)],
         "menu_highlight": Node(), "menu_footer": Line(),
         "overlay_group": Node(),
         "overlay_title": Line(), "overlay_detail": Line(),
@@ -61,6 +63,32 @@ def scene_factory(display):
 
 
 class RoundRendererTests(unittest.TestCase):
+    def test_menu_highlight_uses_short_friction_settle(self):
+        node = Node()
+        node.hidden = True
+        highlight = MenuHighlight(node)
+        highlight.set(0, visible=True)
+        self.assertEqual(node.y, 58)
+
+        highlight.set(1, visible=True)
+        self.assertEqual(node.y, 58)
+        positions = [node.y]
+        for _ in range(12):
+            highlight.animate()
+            positions.append(node.y)
+
+        self.assertTrue(all(a <= b <= 80 for a, b in zip(positions,
+                                                           positions[1:])))
+        self.assertEqual(node.y, 80)
+
+    def test_menu_highlight_is_immediate_when_animation_disabled(self):
+        node = Node()
+        node.hidden = True
+        highlight = MenuHighlight(node)
+        highlight.set(0, visible=True, animate=False)
+        highlight.set(2, visible=True, animate=False)
+        self.assertEqual(node.y, 102)
+
     def test_bootstrap_populates_representative_state(self):
         state = PendantState()
         apply_mock_state(state)
@@ -81,6 +109,8 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer.menu[3].line.text, "SD CARD DISABLED")
         self.assertEqual(renderer.menu[4].line.text, "ENABLE IN SETTINGS")
         self.assertTrue(renderer.menu_highlight.node.hidden)
+        self.assertTrue(all(separator.hidden
+                            for separator in renderer.menu_separators))
 
     def test_empty_job_browser_explanation_is_centered_and_not_selectable(self):
         state, ui, _, renderer = self.make_renderer()
@@ -93,6 +123,16 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer.menu[3].line.text, "NO FILES FOUND")
         self.assertEqual(renderer.menu[4].line.text, "SD CARD READY")
         self.assertTrue(renderer.menu_highlight.node.hidden)
+
+    def test_menu_rules_only_separate_visible_rows(self):
+        state, ui, _, renderer = self.make_renderer()
+        ui.enter("CONFIGURATION")
+
+        renderer.render(state)
+
+        self.assertEqual([separator.hidden
+                          for separator in renderer.menu_separators],
+                         [False, False, False, True, True])
 
     def make_renderer(self):
         state = PendantState()
@@ -157,6 +197,32 @@ class RoundRendererTests(unittest.TestCase):
             previous = current
         self.assertGreater(first_delta, 0)
         self.assertLess(second_delta, 0)
+
+    def test_hud_motion_ghosts_follow_orbits_without_extra_scene_objects(self):
+        _, _, _, renderer = self.make_renderer()
+        markers = []
+        trails = []
+        for radius in (109, 99):
+            marker, trail = Node(), Node()
+            marker.x = marker.y = trail.x = trail.y = 0
+            markers.append(marker)
+            trails.append(trail)
+        renderer.hud_markers = tuple(
+            (marker, radius, None)
+            for marker, radius in zip(markers, (109, 99))
+        )
+        renderer.hud_trails = tuple(
+            (trail, radius, None)
+            for trail, radius in zip(trails, (109, 99))
+        )
+        renderer.animate(0.25)
+        self.assertTrue(all(not trail.hidden for trail in trails))
+        initial = tuple((trail.x, trail.y) for trail in trails)
+        renderer.animate(0.50)
+        self.assertNotEqual(tuple((trail.x, trail.y) for trail in trails), initial)
+        renderer.ui.active_overlay = lambda: ("E-STOP", "test")
+        renderer.animate(0.75)
+        self.assertTrue(all(trail.hidden for trail in trails))
 
     def test_home_and_menu_groups_are_mutually_exclusive(self):
         state, ui, _, renderer = self.make_renderer()
@@ -389,6 +455,21 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer.animate(1.2))
         self.assertTrue(renderer.touch_halo.hidden)
         self.assertTrue(renderer.render(state))
+
+    def test_touch_glow_animates_reused_palette_without_new_bitmap(self):
+        _, _, _, renderer = self.make_renderer()
+
+        class Palette(list):
+            pass
+
+        palette = Palette([0, 0, 0, 0])
+        renderer._halo_palette = palette
+        renderer.touch_halo = Node()
+        renderer.touch_halo.hidden = True
+        renderer.touch_feedback((120, 120), 1.2)
+        initial = tuple(palette)
+        self.assertTrue(renderer.animate(1.1))
+        self.assertNotEqual(tuple(palette), initial)
 
     def test_layout_regions_are_inside_round_safe_area(self):
         for region in RoundLayout.content_rows().values():

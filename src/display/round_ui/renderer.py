@@ -45,8 +45,16 @@ class RoundRenderer:
         self._last_render_signature = None
         self._last_home_signature = None
         self._halo_until = 0
+        self._halo_started = 0
         self._halo_visible = False
         self._halo_dirty = False
+        self._halo_palette = None
+        self._halo_progress = 1.0
+        self._halo_phase = -1
+        self._halo_accent = theme.TEXT
+        self._last_animation_now = None
+        self._highlight_dirty = False
+        self._highlight_phase = -1
         self._nav_until = 0.0
         self._nav_visible = False
         self._nav_dirty = False
@@ -57,11 +65,13 @@ class RoundRenderer:
         self.nav_group = scene.get("nav_group")
         self.nav_dots = scene.get("nav_dots", ())
         self.hud_markers = scene.get("hud_markers", ())
+        self.hud_trails = scene.get("hud_trails", ())
         self._hud_phase = -1
         self._hud_dirty = False
         self._last_nonhome_model_ticks = None
         self._last_nonhome_safety_signature = None
         self.palettes = scene.get("palettes", {})
+        self._halo_palette = self.palettes.get("halo")
         self.themed_text = scene.get("themed_text", ())
         self.active_theme = None
         self.home_group = scene.get("home_group")
@@ -76,6 +86,7 @@ class RoundRenderer:
         self.connectivity = ConnectivityGlyphs(scene["connectivity"])
         self.menu_title = TextComponent(scene["menu_title"])
         self.menu = [TextComponent(line) for line in scene["menu"]]
+        self.menu_separators = scene.get("menu_separators", ())
         self.menu_colors = scene.get("menu_colors", (None, None))
         self.menu_highlight = MenuHighlight(scene["menu_highlight"])
         self.menu_footer = TextComponent(scene["menu_footer"])
@@ -107,12 +118,16 @@ class RoundRenderer:
             focus[1] = colors.get("focus_border", colors["muted"])
             focus[2] = colors["accent"]
             self.palettes["separator"][0] = colors["separator"]
-            self.palettes["halo"][1] = colors["accent"]
+            self._halo_accent = colors["accent"]
+            self._update_halo_palette(self._halo_progress)
             for index, palette in enumerate(self.palettes.get("hud_markers", ())):
                 color = colors["accent"] if index == 0 else colors["highlight"]
                 palette[1] = color
                 palette[2] = theme.shade_color(color, 72)
                 palette[3] = theme.shade_color(color, 38)
+            for index, palette in enumerate(self.palettes.get("hud_trails", ())):
+                color = colors["accent"] if index == 0 else colors["highlight"]
+                palette[1] = theme.shade_color(color, 22)
         if hasattr(self.ring.node, "colors"):
             self.ring.node.colors = colors
             self.ring.signature = None
@@ -139,16 +154,60 @@ class RoundRenderer:
         self.touch_halo.hidden = False
         self._halo_visible = True
         self._halo_until = float(until)
+        self._halo_started = (
+            self._last_animation_now if self._last_animation_now is not None
+            else max(0.0, self._halo_until - 0.20)
+        )
+        self._halo_progress = 0.0
+        self._halo_phase = -1
+        self._update_halo_palette(0.0)
         self._halo_dirty = True
+
+    def _update_halo_palette(self, progress):
+        if self._halo_palette is None:
+            return False
+        progress = max(0.0, min(1.0, float(progress)))
+        core = int(100 * (1.0 - progress))
+        inner = int(70 * max(0.0, 1.0 - abs(progress - 0.25) / 0.25))
+        outer = int(48 * max(0.0, 1.0 - abs(progress - 0.60) / 0.40))
+        shades = (outer, inner, core)
+        changed = False
+        for index, strength in enumerate(shades, start=1):
+            color = theme.shade_color(self._halo_accent, strength)
+            if self._halo_palette[index] != color:
+                self._halo_palette[index] = color
+                changed = True
+        return changed
 
     def animate(self, now):
         """Expire transient indicators without blocking or allocating bitmaps."""
+        now = float(now)
+        self._last_animation_now = now
         changed = False
         if self.touch_halo is not None and self._halo_visible:
-            if float(now) >= self._halo_until:
+            if now >= self._halo_until:
                 self.touch_halo.hidden = True
                 self._halo_visible = False
                 self._halo_dirty = True
+                changed = True
+                self._halo_progress = 1.0
+                self._update_halo_palette(1.0)
+            else:
+                frame = int(now * 24)
+                if frame != self._halo_phase:
+                    self._halo_phase = frame
+                    duration = max(0.001, self._halo_until -
+                                   self._halo_started)
+                    progress = (now - self._halo_started) / duration
+                    self._halo_progress = max(0.0, min(1.0, progress))
+                    if self._update_halo_palette(self._halo_progress):
+                        self._halo_dirty = True
+                        changed = True
+        highlight_frame = int(now * 24)
+        if highlight_frame != self._highlight_phase:
+            self._highlight_phase = highlight_frame
+            if self.menu_highlight.animate():
+                self._highlight_dirty = True
                 changed = True
         if self.nav_group is not None and self._nav_visible:
             if float(now) >= self._nav_until:
@@ -161,6 +220,11 @@ class RoundRenderer:
             unsafe = bool(overlay and overlay[0] in ("E-STOP", "ALARM"))
             if unsafe:
                 for sprite, _, _ in self.hud_markers:
+                    if not sprite.hidden:
+                        sprite.hidden = True
+                        self._hud_dirty = True
+                        changed = True
+                for sprite, _, _ in self.hud_trails:
                     if not sprite.hidden:
                         sprite.hidden = True
                         self._hud_dirty = True
@@ -180,6 +244,17 @@ class RoundRenderer:
                             sprite.hidden = False
                             self._hud_dirty = True
                             changed = True
+                        if index < len(self.hud_trails):
+                            trail, trail_radius, _ = self.hud_trails[index]
+                            trail_angle = angle - HUD_ORBIT_RATES[index] * 0.20
+                            trail_x = 118 + round(trail_radius * math.cos(trail_angle))
+                            trail_y = 118 + round(trail_radius * math.sin(trail_angle))
+                            if (trail.x != trail_x or trail.y != trail_y or
+                                    trail.hidden):
+                                trail.x, trail.y = trail_x, trail_y
+                                trail.hidden = False
+                                self._hud_dirty = True
+                                changed = True
         return changed
 
     def _home_signature(self, state):
@@ -261,7 +336,8 @@ class RoundRenderer:
         if self.ui is None:
             raise RuntimeError("RoundRenderer must be bound to UIManager")
         if (self.ui.current_screen == "HOME" and not self.ui.dirty and
-                not (self._halo_dirty or self._nav_dirty or self._hud_dirty)):
+                not (self._halo_dirty or self._nav_dirty or self._hud_dirty
+                     or self._highlight_dirty)):
             home_signature = self._home_signature(state)
             if home_signature == self._last_home_signature:
                 self.skipped_count += 1
@@ -283,6 +359,7 @@ class RoundRenderer:
                 self._halo_dirty = False
                 self._nav_dirty = False
                 self._hud_dirty = False
+                self._highlight_dirty = False
                 self.last_model_ms = 0
                 self.last_update_ms = 0
                 self.last_refresh_ms = max(
@@ -305,7 +382,7 @@ class RoundRenderer:
                 # poll rate. Only menu/detail view-model work is capped;
                 # event-driven UI dirtiness above this branch renders now.
                 transient_dirty = (self._halo_dirty or self._nav_dirty or
-                                   self._hud_dirty)
+                                   self._hud_dirty or self._highlight_dirty)
                 if transient_dirty:
                     refresh_started = self._profile_ticks_ms()
                     self.render_count += 1
@@ -316,6 +393,7 @@ class RoundRenderer:
                     self._halo_dirty = False
                     self._nav_dirty = False
                     self._hud_dirty = False
+                    self._highlight_dirty = False
                     self.last_model_ms = 0
                     self.last_update_ms = 0
                     self.last_refresh_ms = max(
@@ -342,7 +420,8 @@ class RoundRenderer:
             state.storage_state,
         )
         if (signature == self._last_render_signature and
-                not (self._halo_dirty or self._nav_dirty or self._hud_dirty)):
+                not (self._halo_dirty or self._nav_dirty or self._hud_dirty
+                     or self._highlight_dirty)):
             self.skipped_count += 1
             self.last_update_ms = max(
                 0, _profile_ticks_diff(self._profile_ticks_ms(), update_started))
@@ -426,6 +505,13 @@ class RoundRenderer:
                 selected, len(items), len(self.menu))
             visible_items = items[window_start:window_start + len(self.menu)]
             changed = self.menu_title.set(model["title"]) or changed
+            separator_count = max(0, min(len(self.menu_separators),
+                                         len(visible_items) - 1))
+            for index, separator in enumerate(self.menu_separators):
+                hidden = index >= separator_count
+                if separator.hidden != hidden:
+                    separator.hidden = hidden
+                    changed = True
             empty_state = (self._empty_state(model, state.storage_state)
                            if not visible_items else ("", ""))
             for index, component in enumerate(self.menu):
@@ -450,16 +536,19 @@ class RoundRenderer:
                     row_color = self.menu_colors[1]
                 changed = component.set_color(row_color) or changed
             changed = self.menu_highlight.set(
-                selected - window_start, bool(visible_items)
+                selected - window_start, bool(visible_items),
+                animate=self.animations,
             ) or changed
             page = "{}/{}".format(selected + 1, len(items)) if items else "-"
             changed = self.menu_footer.set(page + "  BACK | HOME") or changed
         changed = self.overlay.update(model.get("overlay")) or changed
         changed = (theme_changed or self._halo_dirty or self._nav_dirty
-                   or self._hud_dirty or nav_changed or changed)
+                   or self._hud_dirty or self._highlight_dirty
+                   or nav_changed or changed)
         self._halo_dirty = False
         self._nav_dirty = False
         self._hud_dirty = False
+        self._highlight_dirty = False
         refresh_started = self._profile_ticks_ms()
         self.last_update_ms = max(
             0, _profile_ticks_diff(refresh_started, update_started))
