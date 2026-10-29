@@ -76,6 +76,50 @@ class UIStateMachineTests(unittest.TestCase):
         self.assertEqual(ui.view_model()["items"][0][0], "NO FILES FOUND")
         self.assertFalse(ui.view_model()["items"][0][1])
 
+    def test_input_diagnostics_keep_unobserved_controls_unknown(self):
+        state = PendantState()
+        ui = UIManager(state)
+        ui.enter("INPUT_INFO")
+
+        details = dict(ui.view_model()["details"])
+        self.assertEqual(details["Input sample"], "unknown")
+        self.assertEqual(details["Axis"], "unknown")
+        self.assertEqual(details["SELECT button"], "unknown")
+        self.assertEqual(details["Hold-to-run"], "unknown")
+        self.assertEqual(details["Remote stop"], "unknown")
+
+    def test_input_diagnostics_distinguish_valid_press_from_missing_deadman(self):
+        state = PendantState()
+        state.input_valid = True
+        state.selector_backend = "mcp23017"
+        state.selected_physical_axis = "X"
+        state.selected_axis = "X"
+        state.selected_multiplier = "X10"
+        state.button_states = {"SELECT": True}
+        ui = UIManager(state)
+        ui.enter("INPUT_INFO")
+
+        details = dict(ui.view_model()["details"])
+        self.assertEqual(details["Input sample"], "valid")
+        self.assertEqual(details["Axis"], "X")
+        self.assertEqual(details["Increment"], "X10")
+        self.assertEqual(details["SELECT button"], "pressed")
+        self.assertEqual(details["Hold-to-run"], "unconfigured")
+        self.assertEqual(details["Remote stop"], "UNKNOWN")
+
+    def test_input_diagnostics_invalidate_retained_button_sample(self):
+        state = PendantState()
+        state.input_valid = False
+        state.button_states = {"SELECT": None}
+        ui = UIManager(state)
+        ui.enter("INPUT_INFO")
+
+        details = dict(ui.view_model()["details"])
+        self.assertEqual(details["Input sample"], "invalid")
+        self.assertEqual(details["SELECT button"], "unavailable")
+        self.assertEqual(details["Hold-to-run"], "unavailable")
+        self.assertEqual(details["Remote stop"], "unavailable")
+
     def test_wheel_routes_by_context(self):
         _, ui = ready_ui()
         command = ui.handle(ROTATE_CW)

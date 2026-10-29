@@ -62,6 +62,8 @@ class PendantState:
         self.board_profile = ""
         self.display_profile = ""
         self.selector_backend = "disabled"
+        self.deadman_input_configured = False
+        self.button_states = {}
         self.mcp23017_detected = False
         self.mcp23017_address = None
         self.subsystems = {}
