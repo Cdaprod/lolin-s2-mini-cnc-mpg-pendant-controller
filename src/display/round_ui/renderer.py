@@ -11,7 +11,7 @@ from .effects import (TOUCH_BITMAP_CENTER, TOUCH_HOLD_PROGRESS,
 from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
                          SelectorFeedback, TextComponent)
-from .rotor import (BEZEL_SEGMENT_OFFSET_RAD, BezelRotor,
+from .rotor import (BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD, BezelRotor,
                    update_bezel_segment_levels)
 
 # At 24 updates/s, keep tangential motion below one pixel per update at the
@@ -626,7 +626,7 @@ class RoundRenderer:
                                 trail.hidden = False
                                 self._hud_dirty = True
                                 changed = True
-                    if self.rotor_tile_count == 384:
+                    if self.rotor_tile_count == BEZEL_SEGMENT_COUNT * 16:
                         update_bezel_segment_levels(
                             rotor_angle, self._rotor_target_levels,
                             phase_offset=BEZEL_SEGMENT_OFFSET_RAD)

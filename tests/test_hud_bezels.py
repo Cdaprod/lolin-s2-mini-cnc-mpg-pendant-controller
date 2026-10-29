@@ -36,7 +36,7 @@ class AssetPipelineTests(unittest.TestCase):
     def test_rotor_segments_have_orientation_and_subpixel_atlas(self):
         import numpy as np
         packed = generate_hud_bezels.rotor_segment_data()
-        self.assertEqual(len(packed), 132 * 3168 // 2)
+        self.assertEqual(len(packed), 132 * 1584 // 2)
         bitmap = (ASSETS / "runtime" / "rotor_segment_phases.4bpp")
         self.assertEqual(bitmap.read_bytes(), packed)
         # Read 33x33 extended curved-arc tiles at the same fractional position.
@@ -119,21 +119,21 @@ class AssetPipelineTests(unittest.TestCase):
                                                     len(source.read()))) )
         })
         with patch.dict("sys.modules", {"bitmaptools": fake_bitmaptools}), \
-                patch("builtins.open", mock_open(read_data=b"x" * 209088)):
+                patch("builtins.open", mock_open(read_data=b"x" * 104544)):
             bitmap, frames = display._load_rotor_sprite_sheet(fake_displayio)
         self.assertIsNotNone(bitmap)
-        self.assertEqual(frames, 384)
-        self.assertEqual(calls, [(132, 3168, 16), (4, 209088)])
+        self.assertEqual(frames, 192)
+        self.assertEqual(calls, [(132, 1584, 16), (4, 104544)])
 
     def test_all_production_bezels_are_240px_4bpp_and_transparent(self):
         manifest = json.loads((ASSETS / "manifest.json").read_text())
         self.assertEqual(len(manifest["themes"]), 12)
         self.assertEqual(manifest["sprite_assets"][0]["bytes"], 648)
-        self.assertEqual(manifest["sprite_assets"][1]["bytes"], 209088)
+        self.assertEqual(manifest["sprite_assets"][1]["bytes"], 104544)
         self.assertEqual((ASSETS / "runtime" / "orbit_phases.4bpp").stat().st_size,
                          648)
         self.assertEqual((ASSETS / "runtime" / "rotor_segment_phases.4bpp").stat().st_size,
-                         209088)
+                         104544)
         self.assertEqual(manifest["target"], [240, 240])
         names = set()
         for item in manifest["themes"]:

@@ -100,7 +100,7 @@ def rgb(color):
 
 def draw_rotor_segments(image, colors, angle):
     """Draw fixed concentric arc tiles with the firmware's moving light wave."""
-    if len(rotor_asset) != 132 * 3168 // 2:
+    if len(rotor_asset) != 132 * 1584 // 2:
         return
     pixels = image.load()
     levels = bezel_segment_levels(
@@ -115,7 +115,8 @@ def draw_rotor_segments(image, colors, angle):
         phase_x = int((center_x - base_x) * 4)
         phase_y = int((center_y - base_y) * 4)
         tangent = (theta + math.pi / 2.0) % (2.0 * math.pi)
-        orientation = int(round(tangent * 24.0 / (2.0 * math.pi))) % 24
+        orientation = int(round(
+            tangent * BEZEL_SEGMENT_COUNT / (2.0 * math.pi))) % BEZEL_SEGMENT_COUNT
         tile_x, tile_y = phase_x, orientation * 4 + phase_y
         brightness = level / 15.0
         for y in range(33):
