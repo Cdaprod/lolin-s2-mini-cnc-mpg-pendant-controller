@@ -355,14 +355,18 @@ class RoundRenderer:
                         self.encoder_marker.x = x - 4
                         self.encoder_marker.y = y - 4
                         self.encoder_marker.hidden = False
-                    trail_angle = math.radians(previous_angle)
+                    # Keep the afterimages close enough to merge into one
+                    # directional glow instead of three detached beads.
+                    trail_angle = math.radians(
+                        self._encoder_angle - direction * 2.0)
                     tx = 120 + round(101 * math.cos(trail_angle))
                     ty = 120 + round(101 * math.sin(trail_angle))
                     if self.encoder_trail is not None:
                         self.encoder_trail.x = tx - 2
                         self.encoder_trail.y = ty - 2
                         self.encoder_trail.hidden = False
-                    far_angle = math.radians(previous_angle - direction * 22.5)
+                    far_angle = math.radians(
+                        self._encoder_angle - direction * 4.0)
                     fx = 120 + round(101 * math.cos(far_angle))
                     fy = 120 + round(101 * math.sin(far_angle))
                     if self.encoder_far_trail is not None:
