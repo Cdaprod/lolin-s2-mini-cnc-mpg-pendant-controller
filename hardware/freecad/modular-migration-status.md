@@ -62,6 +62,8 @@ The earlier broad XML inventory is retained in `shell-dependency-report.md` as h
 
 The audit's feature-label and disposable activation check identifies Pads 020–021 as likely rear registration tongues for the front alignment grooves; Pad022 remains unresolved at `Pad021.?Face97`. See the audit for settings, geometry measurements, and limits of the test. No source feature history was changed.
 
+The saved front groove (`Pocket016 - Alignment Grooves`) and its restoration Pad are also suppressed, so the tongue/groove pair is not present in the current Tips. The active tapered-seat pair is screw-seat geometry; the unsuppressed full-width receiver/seat chain is the best candidate for current shell registration, but its features were marked `Touched`, so contact and clearance are not yet verified. See the audit's current-interface inventory.
+
 The 325-object `front-rear-shells.FCStd` remains an unvalidated disposable candidate and is not included in the assembly or commits. Its recompute/save/reopen attempts still fail because of broken face references, suppressed-feature failures, and Body-versus-Tip shape mismatches. The requested 27.0 → 27.5 → 27.0 mm shell propagation and save/reopen validation therefore did not pass. No taper or shell geometry was changed.
 
 ### Master-driven locator parameter

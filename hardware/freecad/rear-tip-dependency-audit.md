@@ -44,6 +44,20 @@ To distinguish intended geometry from the suppressed cached shape, a disposable 
 
 The following active `RemoveWarpProneTongues` feature is labeled “Remove continuous thin tongues to parting plane,” has a 0.81 mm pocket length, and uses `RearSeamFlushSketch`. Its name and placement in the history indicate the author intended to trim thin tongue material at the seam after the pad branch. Because the Pads are currently suppressed and the pocket's saved shape equals its base shape, the saved model does not establish how much of the would-be tongues the pocket removes when the pads are enabled. Do not call the branch an obsolete experiment or delete it based on the present evidence: the pair's alignment function is evident, but the active design intent of Pad022 and the interaction with the seam-trimming pocket need a separate disposable test before any history edit.
 
+## Current saved shell-interface inventory
+
+The saved feature states show that the Sketch019 alignment groove/tongue system is **not present in the current final shell Tips**: front `Pocket016 - Alignment Grooves` and `RestoreFrontSeamLand` are suppressed, as are rear `Pad020`–`Pad022`. The front sketch and rear binder remain in the model tree as source/reference history. `RemoveWarpProneTongues` is unsuppressed, but its saved shape matches its base while the tongue Pads are suppressed. Thus the paired registration system appears designed but is currently disabled in the saved geometry.
+
+Other candidate shell-interface features are present:
+
+| Feature group | Saved state and observed role |
+|---|---|
+| `FrontTaperedSeats` + `RearTaperedSeats` | Both unsuppressed. The front feature is labeled “Complementary tapered receivers - 0.25 mm radial clearance”; its two circles are centered at X = ±18 mm, Y ≈ −17.757 mm, radius 4.05 mm, with 1.1 mm depth and 12° taper. The rear feature is labeled “Broad shallow tapered screw-seat locators”; its two circles share those centers, radius 3.8 mm, with a 0.8 mm pad and 12° taper. These are screw-seat features, not evidence of a shell-seam tongue-and-groove system. |
+| Full-width seam interface | `RearFullWidthReceiver`, `FrontFullWidthReceiver`, and rear `Body002FullWidthSeat` are unsuppressed Boolean features with valid cached one-solid shapes. Their names and role in the shell history indicate broad receiver/seat mating geometry, making them the strongest existing candidate for continuous shell registration in the current design. Each was marked `Touched` at inspection, so this read-only inventory does not certify fresh recomputation, contact, or clearance. |
+| Matched shell profiles | Rear matched inner cavity and related width-controlled rear profiles remain unsuppressed and shape-valid. They define the shell wall/envelope relationship; they are not discrete registration keys by themselves. |
+
+This inventory does not establish that the full-width interface alone prevents shell shift or that it has acceptable assembly clearance. No current saved discrete alignment tongue is verified. A separate, narrowly scoped interface-fit check would need to recompute disposable copies of the active full-width receiver/seat chain, compare their mating surfaces, and check interference/clearance in the assembly coordinate frame. No geometry was changed for this inventory.
+
 ## What the master substitutions changed—and why the count stayed the same
 
 The disposable candidate retains the validated frame-preserving `App::Link.LinkPlacement` setup:
