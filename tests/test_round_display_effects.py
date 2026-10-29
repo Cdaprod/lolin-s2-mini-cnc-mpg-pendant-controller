@@ -19,6 +19,10 @@ class TouchRippleGeometryTests(unittest.TestCase):
         self.assertEqual(touch_zone(center + 6, center), TOUCH_MIDDLE)
         self.assertEqual(touch_zone(center + 10, center), TOUCH_OUTER)
         self.assertEqual(touch_zone(center + 8, center), TOUCH_MIDDLE_EDGE)
+        self.assertLess(max(touch_zone(x, y)
+                            for y in range(TOUCH_BITMAP_SIZE)
+                            for x in range(TOUCH_BITMAP_SIZE)),
+                        TOUCH_PALETTE_SIZE)
 
     def test_contact_starts_visible_and_brightness_moves_outward(self):
         self.assertEqual(touch_level(TOUCH_CORE, 0.0), 100)

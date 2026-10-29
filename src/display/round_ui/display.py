@@ -372,7 +372,10 @@ def displayio_scene(display, colors=None, bezel_name=None):
 
     # Build the retained touch pulse once; its layer is moved above ordinary
     # labels below so the contact response remains visible on a direct tap.
-    halo = displayio.Bitmap(TOUCH_BITMAP_SIZE, TOUCH_BITMAP_SIZE, 4)
+    # CircuitPython expects the number of distinct pixel values here (not a
+    # bit depth), so all paired edge/core indices must fit in the value count.
+    halo = displayio.Bitmap(TOUCH_BITMAP_SIZE, TOUCH_BITMAP_SIZE,
+                            TOUCH_PALETTE_SIZE)
     halo_palette = displayio.Palette(TOUCH_PALETTE_SIZE)
     halo_palette[0] = 0x000000
     halo_palette.make_transparent(0)
