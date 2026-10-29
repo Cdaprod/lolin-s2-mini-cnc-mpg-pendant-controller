@@ -680,6 +680,21 @@ GPB5      Reserved CANCEL
 GPB6      Reserved DEADMAN
 GPB7      Reserved expansion
 
+MOTION HOLD-TO-RUN DEPENDENCY
+-----------------------------
+
+The canonical XIAO profile currently leaves `MPG_PIN_DEADMAN` blank because
+GPB6 is reserved and no dedicated hold-to-run control is part of the connected
+harness. The S3 C3-wireless controller and C3 receiver both fail closed unless
+the MPG packet carries an active deadman signal. Therefore the documented
+encoder and selector connections alone can validate physical input reporting,
+but every jog will remain rejected. Do not repurpose the remote E-stop
+observation as a deadman. Before any motion commissioning, either connect a
+dedicated hold-to-run control to GPB6 and configure `MPG_PIN_DEADMAN="GPB6"`
+with the documented active-low polarity, or formally revise and revalidate the
+motion safety design. Controller and motion remain disabled until that gate is
+resolved.
+
 
 ===============================================================================
 FIRMWARE PIN MAP
