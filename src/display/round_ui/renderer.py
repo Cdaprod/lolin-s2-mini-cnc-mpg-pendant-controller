@@ -11,7 +11,8 @@ from .effects import (TOUCH_BITMAP_CENTER, TOUCH_HOLD_PROGRESS,
 from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
                          SelectorFeedback, TextComponent)
-from .rotor import BezelRotor, update_bezel_segment_levels
+from .rotor import (BEZEL_SEGMENT_OFFSET_RAD, BezelRotor,
+                   update_bezel_segment_levels)
 
 # At 24 updates/s, keep tangential motion below one pixel per update at the
 # retained marker radii. Integer DisplayIO coordinates then produce a regular
@@ -194,7 +195,8 @@ class RoundRenderer:
                     if palette[shade] != value:
                         palette[shade] = value
             update_bezel_segment_levels(
-                self.bezel_rotor.angle, self._rotor_target_levels)
+                self.bezel_rotor.angle, self._rotor_target_levels,
+                phase_offset=BEZEL_SEGMENT_OFFSET_RAD)
             for index, sprite in enumerate(self.bezel_segments):
                 level = self._rotor_target_levels[index]
                 sprite.pixel_shader = self.bezel_palette_bank[level]
@@ -624,7 +626,8 @@ class RoundRenderer:
                                 changed = True
                     if self.rotor_tile_count == 384:
                         update_bezel_segment_levels(
-                            rotor_angle, self._rotor_target_levels)
+                            rotor_angle, self._rotor_target_levels,
+                            phase_offset=BEZEL_SEGMENT_OFFSET_RAD)
                         for index in range(len(self.bezel_segments)):
                             sprite = self.bezel_segments[index]
                             level = self._rotor_target_levels[index]

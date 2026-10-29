@@ -1,8 +1,9 @@
 import math
 import unittest
 
-from src.display.round_ui.rotor import (BezelRotor, bezel_segment_levels,
-                                        update_bezel_segment_levels)
+from src.display.round_ui.rotor import (
+    BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD, BezelRotor,
+    bezel_segment_levels, update_bezel_segment_levels)
 
 
 class BezelRotorTests(unittest.TestCase):
@@ -85,6 +86,17 @@ class BezelRotorTests(unittest.TestCase):
             rotor.update(1 + i / 1000)
             rotor.frame_due(1 + i / 1000)
         self.assertEqual(keys, set(rotor.__dict__))
+
+    def test_day_long_animation_keeps_angle_and_brightness_bounded(self):
+        rotor = self.make_rotor()
+        levels = [0] * BEZEL_SEGMENT_COUNT
+        for second in range(86_401):
+            angle, velocity = rotor.update(float(second))
+            self.assertTrue(0.0 <= angle < 2.0 * math.pi)
+            self.assertTrue(math.isfinite(velocity))
+            update_bezel_segment_levels(
+                angle, levels, phase_offset=BEZEL_SEGMENT_OFFSET_RAD)
+            self.assertTrue(all(1 <= level <= 15 for level in levels))
 
     def test_rotor_does_not_mutate_machine_or_operator_state(self):
         state = {"encoder": 5, "axis": "X", "increment": "X10",

@@ -54,7 +54,7 @@ class AssetPipelineTests(unittest.TestCase):
         self.assertNotEqual(tile(0), tile(0, 1, 0))
         horizontal_arc = np.asarray(tile(0), dtype=np.uint8).reshape(33, 33)
         yy, xx = np.nonzero(horizontal_arc)
-        self.assertGreaterEqual(int(xx.max() - xx.min()), 24)
+        self.assertGreaterEqual(int(xx.max() - xx.min()), 28)
         self.assertGreaterEqual(int(yy.max() - yy.min()), 5)
         self.assertLessEqual(int(horizontal_arc.max()), 15)
         # With the generator's tangent basis, positive y is inward for the

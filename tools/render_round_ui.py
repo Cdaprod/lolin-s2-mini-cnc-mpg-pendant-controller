@@ -14,7 +14,8 @@ from src.display.round_ui.effects import (TOUCH_BITMAP_CENTER,
                                           TOUCH_BITMAP_SIZE,
                                           TOUCH_HOLD_PROGRESS, touch_level,
                                           touch_zone)
-from src.display.round_ui.rotor import bezel_segment_levels
+from src.display.round_ui.rotor import (
+    BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD, bezel_segment_levels)
 from src.display.round_ui.renderer import HUD_ORBIT_RATES
 from src.display.ui import build_screens
 from src.display.navigation import menu_window_start
@@ -134,11 +135,14 @@ def draw_rotor_segments(image, colors, angle):
     if len(rotor_asset) != 132 * 3168 // 2:
         return
     pixels = image.load()
-    levels = bezel_segment_levels(angle, 24)
+    levels = bezel_segment_levels(
+        angle, BEZEL_SEGMENT_COUNT,
+        phase_offset=BEZEL_SEGMENT_OFFSET_RAD)
     for segment, level in enumerate(levels):
-        theta = segment * (2.0 * math.pi / len(levels))
-        center_x = 120 + 109.0 * math.cos(theta)
-        center_y = 120 + 109.0 * math.sin(theta)
+        theta = (BEZEL_SEGMENT_OFFSET_RAD +
+                 segment * (2.0 * math.pi / len(levels)))
+        center_x = 120 + 110.0 * math.cos(theta)
+        center_y = 120 + 110.0 * math.sin(theta)
         base_x, base_y = math.floor(center_x), math.floor(center_y)
         phase_x = int((center_x - base_x) * 4)
         phase_y = int((center_y - base_y) * 4)
