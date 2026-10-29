@@ -390,6 +390,22 @@ touch_frames[0].save(
     OUT / "touch-contact-sequence.gif", save_all=True,
     append_images=touch_frames[1:], duration=30, loop=0, disposal=2)
 
+# Show the retained contact glow tracking a held finger along a slow curved
+# path. Each frame uses the production hold palette and the exact sprite size;
+# only its center moves, matching RoundRenderer.touch_move().
+follow_frames = []
+follow_path = (
+    (75, 78), (82, 83), (91, 89), (101, 95), (112, 99), (124, 101),
+    (136, 100), (147, 96), (157, 90), (166, 83), (173, 77),
+)
+for center in follow_path:
+    image = touch_base.copy()
+    draw_touch_sprite(image, center, TOUCH_HOLD_PROGRESS, touch_accent)
+    follow_frames.append(image.convert("P", palette=Image.Palette.ADAPTIVE))
+follow_frames[0].save(
+    OUT / "touch-held-follow.gif", save_all=True,
+    append_images=follow_frames[1:], duration=42, loop=0, disposal=2)
+
 alarm_image, alarm_draw, alarm_colors = state_canvas(
     "industrial", alarm=True)
 alarm_draw.rounded_rectangle((34, 76, 206, 164), radius=12,

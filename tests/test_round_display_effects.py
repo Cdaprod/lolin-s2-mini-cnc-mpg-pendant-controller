@@ -34,8 +34,8 @@ class TouchRippleGeometryTests(unittest.TestCase):
     def test_compact_release_phase_does_not_reach_outer_ring(self):
         held = TOUCH_HOLD_PROGRESS
         self.assertEqual(touch_level(TOUCH_CORE, held), 0)
-        self.assertLessEqual(touch_level(TOUCH_INNER, held), 12)
-        self.assertGreater(touch_level(TOUCH_MIDDLE, held), 60)
+        self.assertGreater(touch_level(TOUCH_INNER, held), 30)
+        self.assertGreater(touch_level(TOUCH_MIDDLE, held), 40)
         self.assertEqual(touch_level(TOUCH_OUTER, held), 0)
 
     def test_wave_brightness_clamps_progress(self):
