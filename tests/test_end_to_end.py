@@ -10,6 +10,35 @@ from src.display.ui import TouchEvent
 
 
 class EndToEndTests(unittest.TestCase):
+    def test_touch_preview_renders_before_wifi_service(self):
+        order = []
+
+        class TouchManager:
+            last_contact_transition = ("down", 95, 87)
+            last_feedback = None
+            feedback_until = 0
+            consecutive_errors = 0
+            last_error = None
+
+            def poll(self):
+                return ()
+
+        class Display(ConsoleDisplay):
+            def render(self, state):
+                order.append("render")
+                return super().render(state)
+
+        app = PendantApplication.from_config(
+            {"controller_mode": "disabled"}, display=Display(lambda frame: None),
+            touch_manager=TouchManager(), clock=lambda: 1.0)
+        app.ui.enter("MAIN_MENU")
+        app.network_service.poll = lambda: order.append("wifi")
+
+        app.poll()
+
+        self.assertEqual(app.ui.focus["MAIN_MENU"], 1)
+        self.assertLess(order.index("render"), order.index("wifi"))
+
     def test_contact_down_feedback_reaches_display_without_ui_dispatch(self):
         feedback = []
 
