@@ -99,8 +99,13 @@ construct bitmaps at runtime. Page swipes ease into and out of the transition wh
 velocity at the outgoing/incoming page handoff. These settings are clamped by
 the rotor model and do not affect UI polling or communication loops.
 
+Non-HOME detail and menu view models refresh at 20 Hz. Input actions, touch
+feedback, safety overlays, page transitions, and retained animation frames
+remain event-driven or use their own animation cadence; this limit reduces
+repeated state-to-text reconstruction without delaying operator input.
+
 HOME-to-menu and menu-to-HOME page swipes move the two retained page groups
-together over 0.48 seconds with a smoothstep curve. Their separation stays one
+together over 0.36 seconds with a smoothstep curve. Their separation stays one
 screen width, so the incoming page follows the outgoing page without a blank
 handoff. Menu-to-menu pages share one retained menu group and use the existing
 bounded out/in transition while that group changes content; duplicating all

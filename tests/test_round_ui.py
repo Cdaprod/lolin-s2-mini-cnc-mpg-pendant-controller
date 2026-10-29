@@ -663,13 +663,17 @@ class RoundRendererTests(unittest.TestCase):
             self.assertEqual(view_model.call_count, 0)
             self.assertEqual(renderer.menu[0].line.text, "Wi-Fi: DISABLED")
 
-            ticks[0] = 33
+            ticks[0] = 49
+            self.assertFalse(renderer.render(state))
+            self.assertEqual(view_model.call_count, 0)
+
+            ticks[0] = 50
             self.assertTrue(renderer.render(state))
             self.assertEqual(view_model.call_count, 1)
             self.assertEqual(renderer.menu[0].line.text, "Wi-Fi: CONNECTED")
 
             ui._changed()
-            ticks[0] = 34
+            ticks[0] = 51
             self.assertFalse(renderer.render(state))
             self.assertEqual(view_model.call_count, 2)
 
