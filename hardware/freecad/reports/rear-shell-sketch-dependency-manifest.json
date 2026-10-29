@@ -1,0 +1,3380 @@
+{
+  "app_links": [],
+  "binders": [
+    {
+      "name": "Binder017",
+      "owners": [
+        "Body002"
+      ],
+      "properties_xml": {
+        "Context": "<Property name=\"Context\" type=\"App::PropertyXLink\" status=\"67108864\">\n                    <XLink file=\"\" stamp=\"\" name=\"Part\" sub=\"Body002.Binder017.\" />\n                </Property>\n                ",
+        "Placement": "<Property name=\"Placement\" type=\"App::PropertyPlacement\" status=\"8388608\">\n                    <PropertyPlacement Px=\"0.0000000000000000\" Py=\"0.0000000000000000\" Pz=\"-18.0000000000000000\" Q0=\"0.0000000000000000\" Q1=\"0.0000000000000000\" Q2=\"0.0000000000000000\" Q3=\"1.0000000000000000\" A=\"0.0000000000000000\" Ox=\"0.0000000000000000\" Oy=\"0.0000000000000000\" Oz=\"1.0000000000000000\" />\n                </Property>\n                ",
+        "Support": "<Property name=\"Support\" type=\"App::PropertyXLinkSubList\" status=\"4\">\n                    <XLinkSubList count=\"1\">\n                        <XLink file=\"\" stamp=\"\" name=\"Body\" sub=\"Sketch020.\" />\n                    </XLinkSubList>\n                </Property>\n                "
+      },
+      "type": "PartDesign::SubShapeBinder"
+    }
+  ],
+  "expanded_dependency_closure_count": 47,
+  "expanded_dependency_objects": [
+    {
+      "dependencies": [
+        "WidthControlled_RearMatchedProfile0",
+        "WidthControlled_RearMatchedProfile1"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"WidthControlled_RearMatchedProfile0\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "Sections": "<Property name=\"Sections\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"1\">\n                        <Link obj=\"WidthControlled_RearMatchedProfile1\" sub=\"\" />\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "AdditiveLoft002",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "AdditiveLoft002"
+      ],
+      "type": "PartDesign::AdditiveLoft"
+    },
+    {
+      "dependencies": [
+        "SmallHangerPocketBody002"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"SmallHangerPocketBody002\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"1\">\n                        <Link value=\"Body002FullLandTransferTool\" />\n                    </LinkList>\n                </Property>\n                "
+      },
+      "name": "Body002FullWidthSeat",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat"
+      ],
+      "type": "PartDesign::Boolean"
+    },
+    {
+      "dependencies": [
+        "USBRearRecessStructuralBulk"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"USBRearRecessStructuralBulk\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"1\">\n                        <Link value=\"RearExteriorEnvelope\" />\n                    </LinkList>\n                </Property>\n                "
+      },
+      "name": "ConformRearReinforcementToLoft",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft"
+      ],
+      "type": "PartDesign::Boolean"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {},
+      "name": "ExteriorEnvelope",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "WidthControlled_OriginalRearClosureProfile",
+        "ExteriorEnvelope"
+      ],
+      "type": "App::VarSet"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {},
+      "name": "HangerParameters",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "SmallHangerProfileBody002",
+        "HangerParameters"
+      ],
+      "type": "App::FeaturePython"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {},
+      "name": "InternalHardware",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "RearAlignedHeadSeatSketch",
+        "InternalHardware"
+      ],
+      "type": "App::VarSet"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "OriginalRearClosureProfile",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "WidthControlled_OriginalRearClosureProfile",
+        "OriginalRearClosureProfile"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "RearMatchedInnerCavity",
+        "WidthControlled_OriginalRearClosureProfile"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"RearMatchedInnerCavity\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"WidthControlled_OriginalRearClosureProfile\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "Pad007",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007"
+      ],
+      "type": "PartDesign::Pad"
+    },
+    {
+      "dependencies": [
+        "Pocket",
+        "Sketch012"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"Pocket\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"Sketch012\" count=\"4\">\n                        <Sub value=\"Edge6\" shadow=\";g76;SKT.Edge6\" />\n                        <Sub value=\"Edge8\" shadow=\";g78;SKT.Edge8\" />\n                        <Sub value=\"Edge5\" shadow=\";g75;SKT.Edge5\" />\n                        <Sub value=\"Edge7\" shadow=\";g77;SKT.Edge7\" />\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"Sketch012\" count=\"1\">\n                        <Sub value=\"N_Axis\" />\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "Pad019",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019"
+      ],
+      "type": "PartDesign::Pad"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {},
+      "name": "PendantDimensions",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "PendantDimensions"
+      ],
+      "type": "Spreadsheet::Sheet"
+    },
+    {
+      "dependencies": [
+        "Pad007",
+        "Sketch012"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"Pad007\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"Sketch012\" count=\"2\">\n                        <Sub value=\"Edge5\" shadow=\";g75;SKT.Edge5\" />\n                        <Sub value=\"Edge6\" shadow=\";g76;SKT.Edge6\" />\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"Sketch012\" count=\"1\">\n                        <Sub value=\"N_Axis\" />\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "Pocket",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket"
+      ],
+      "type": "PartDesign::Pocket"
+    },
+    {
+      "dependencies": [
+        "Pad019",
+        "Sketch012"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"Pad019\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"Sketch012\" count=\"4\">\n                        <Sub value=\"Edge2\" shadow=\";g25;SKT.Edge2\" />\n                        <Sub value=\"Edge3\" shadow=\";g26;SKT.Edge3\" />\n                        <Sub value=\"Edge4\" shadow=\";g27;SKT.Edge4\" />\n                        <Sub value=\"Edge1\" shadow=\";g23;SKT.Edge1\" />\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"Sketch012\" count=\"1\">\n                        <Sub value=\"N_Axis\" />\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "Pocket015",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015"
+      ],
+      "type": "PartDesign::Pocket"
+    },
+    {
+      "dependencies": [
+        "RearAlignedM2PassageSketch",
+        "RearTaperedSeats"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"RearTaperedSeats\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"RearAlignedM2PassageSketch\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"RearAlignedM2PassageSketch\" count=\"1\">\n                        <Sub value=\"N_Axis\" />\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "Pocket018",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018"
+      ],
+      "type": "PartDesign::Pocket"
+    },
+    {
+      "dependencies": [
+        "Pocket018",
+        "RearAlignedHeadSeatSketch"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"Pocket018\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"RearAlignedHeadSeatSketch\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"RearAlignedHeadSeatSketch\" count=\"1\">\n                        <Sub value=\"N_Axis\" />\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "Pocket019",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019"
+      ],
+      "type": "PartDesign::Pocket"
+    },
+    {
+      "dependencies": [
+        "InternalHardware"
+      ],
+      "expressions": [
+        {
+          "expression": "-InternalHardware.MiddleScrewHalfSpacing",
+          "path": "Constraints[0]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewHalfSpacing",
+          "path": "Constraints[11]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewY",
+          "path": "Constraints[12]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewY",
+          "path": "Constraints[1]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewHalfSpacing",
+          "path": "Constraints[3]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewY",
+          "path": "Constraints[4]"
+        },
+        {
+          "expression": "-InternalHardware.UpperScrewHalfSpacing",
+          "path": "Constraints[8]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewY",
+          "path": "Constraints[9]"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearAlignedHeadSeatSketch",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "RearAlignedHeadSeatSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "InternalHardware"
+      ],
+      "expressions": [
+        {
+          "expression": "-InternalHardware.MiddleScrewHalfSpacing",
+          "path": "Constraints[0]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewHalfSpacing",
+          "path": "Constraints[11]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewY",
+          "path": "Constraints[12]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewY",
+          "path": "Constraints[1]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewHalfSpacing",
+          "path": "Constraints[3]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewY",
+          "path": "Constraints[4]"
+        },
+        {
+          "expression": "-InternalHardware.UpperScrewHalfSpacing",
+          "path": "Constraints[8]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewY",
+          "path": "Constraints[9]"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearAlignedM2PassageSketch",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearAlignedM2PassageSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "RearBossToWallLoadPaths"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"RearBossToWallLoadPaths\" />\n                </Property>\n                "
+      },
+      "name": "RearBossShoulderTransitions",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions"
+      ],
+      "type": "PartDesign::Feature"
+    },
+    {
+      "dependencies": [
+        "Body002FullWidthSeat"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"Body002FullWidthSeat\" />\n                </Property>\n                "
+      },
+      "name": "RearBossToWallLoadPaths",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths"
+      ],
+      "type": "PartDesign::Feature"
+    },
+    {
+      "dependencies": [
+        "RearBossShoulderTransitions"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"RearBossShoulderTransitions\" />\n                </Property>\n                "
+      },
+      "name": "RearBossWallRamps45",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45"
+      ],
+      "type": "PartDesign::Feature"
+    },
+    {
+      "dependencies": [
+        "AdditiveLoft002",
+        "WidthControlled_RearMatchedProfile2",
+        "WidthControlled_RearMatchedProfile3"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"AdditiveLoft002\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"WidthControlled_RearMatchedProfile2\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "Sections": "<Property name=\"Sections\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"1\">\n                        <Link obj=\"WidthControlled_RearMatchedProfile3\" sub=\"\" />\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearMatchedInnerCavity",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity"
+      ],
+      "type": "PartDesign::SubtractiveLoft"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearMatchedProfile0",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "AdditiveLoft002",
+        "WidthControlled_RearMatchedProfile0",
+        "RearMatchedProfile0"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearMatchedProfile1",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "AdditiveLoft002",
+        "WidthControlled_RearMatchedProfile1",
+        "RearMatchedProfile1"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearMatchedProfile2",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "WidthControlled_RearMatchedProfile2",
+        "RearMatchedProfile2"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearMatchedProfile3",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "WidthControlled_RearMatchedProfile3",
+        "RearMatchedProfile3"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "RearMountReinforcementSketch",
+        "RemoveWarpProneTongues"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"RemoveWarpProneTongues\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"RearMountReinforcementSketch\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearMountReinforcement",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement"
+      ],
+      "type": "PartDesign::Pad"
+    },
+    {
+      "dependencies": [
+        "InternalHardware"
+      ],
+      "expressions": [
+        {
+          "expression": "-InternalHardware.UpperScrewHalfSpacing",
+          "path": "Constraints[10]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewY",
+          "path": "Constraints[11]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewHalfSpacing",
+          "path": "Constraints[13]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewY",
+          "path": "Constraints[14]"
+        },
+        {
+          "expression": "-InternalHardware.MiddleScrewHalfSpacing",
+          "path": "Constraints[2]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewY",
+          "path": "Constraints[3]"
+        },
+        {
+          "expression": "InternalHardware.MiddleSupportRadius",
+          "path": "Constraints[4]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewHalfSpacing",
+          "path": "Constraints[5]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewY",
+          "path": "Constraints[6]"
+        },
+        {
+          "expression": "InternalHardware.MiddleSupportRadius",
+          "path": "Constraints[7]"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearMountReinforcementSketch",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RearMountReinforcementSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearSeamFlushSketch",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "RearSeamFlushSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearTaperedSeatSketch",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "RearTaperedSeatSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "ConformRearReinforcementToLoft",
+        "RearTaperedSeatSketch"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"ConformRearReinforcementToLoft\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"RearTaperedSeatSketch\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearTaperedSeats",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats"
+      ],
+      "type": "PartDesign::Pad"
+    },
+    {
+      "dependencies": [
+        "Pocket015",
+        "RearSeamFlushSketch"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"Pocket015\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"RearSeamFlushSketch\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RemoveWarpProneTongues",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues"
+      ],
+      "type": "PartDesign::Pocket"
+    },
+    {
+      "dependencies": [
+        "Pocket019",
+        "SideButtonRearHeadReliefSketch"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"Pocket019\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"SideButtonRearHeadReliefSketch\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "SideButtonRearHeadRelief",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief"
+      ],
+      "type": "PartDesign::Pocket"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "SideButtonRearHeadReliefSketch",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "SideButtonRearHeadReliefSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "SideButtonRearHeadRelief",
+        "SideButtonRearNutReliefSketch"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"SideButtonRearHeadRelief\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"SideButtonRearNutReliefSketch\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "SideButtonRearNutRelief",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief"
+      ],
+      "type": "PartDesign::Pocket"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "SideButtonRearNutReliefSketch",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearNutReliefSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "Sketch012",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Sketch012"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "SmallHangerProfileBody002",
+        "USBConformalCoverSeatBody002"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"USBConformalCoverSeatBody002\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"SmallHangerProfileBody002\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "SmallHangerPocketBody002",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002"
+      ],
+      "type": "PartDesign::Pocket"
+    },
+    {
+      "dependencies": [
+        "HangerParameters"
+      ],
+      "expressions": [
+        {
+          "expression": "HangerParameters.SlotCenterY",
+          "path": ".Placement.Base.y"
+        },
+        {
+          "expression": "(HangerParameters.SlotLength - HangerParameters.SlotWidth) / 2",
+          "path": "Constraints[0]"
+        },
+        {
+          "expression": "HangerParameters.SlotWidth / 2",
+          "path": "Constraints[2]"
+        },
+        {
+          "expression": "(HangerParameters.SlotLength - HangerParameters.SlotWidth) / 2",
+          "path": "Constraints[3]"
+        },
+        {
+          "expression": "(HangerParameters.SlotLength - HangerParameters.SlotWidth) / 2",
+          "path": "Constraints[4]"
+        },
+        {
+          "expression": "-(HangerParameters.SlotLength - HangerParameters.SlotWidth) / 2",
+          "path": "Constraints[5]"
+        },
+        {
+          "expression": "HangerParameters.SlotWidth / 2",
+          "path": "Constraints[7]"
+        },
+        {
+          "expression": "-(HangerParameters.SlotLength - HangerParameters.SlotWidth) / 2",
+          "path": "Constraints[8]"
+        },
+        {
+          "expression": "-(HangerParameters.SlotLength - HangerParameters.SlotWidth) / 2",
+          "path": "Constraints[9]"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "SmallHangerProfileBody002",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "SmallHangerProfileBody002"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "PendantDimensions",
+        "SideButtonRearNutRelief",
+        "USBExternalAccessSketchBody002"
+      ],
+      "expressions": [
+        {
+          "expression": "45 mm - PendantDimensions.USBPortFaceX",
+          "path": "Length"
+        }
+      ],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"SideButtonRearNutRelief\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"USBExternalAccessSketchBody002\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "USB15mmCableAccessBody002",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002"
+      ],
+      "type": "PartDesign::Pocket"
+    },
+    {
+      "dependencies": [
+        "USB15mmCableAccessBody002"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"USB15mmCableAccessBody002\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"1\">\n                        <Link value=\"USBSeatToolForBody002\" />\n                    </LinkList>\n                </Property>\n                "
+      },
+      "name": "USBConformalCoverSeatBody002",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002"
+      ],
+      "type": "PartDesign::Boolean"
+    },
+    {
+      "dependencies": [
+        "PendantDimensions"
+      ],
+      "expressions": [
+        {
+          "expression": "PendantDimensions.USBPortCenterY",
+          "path": ".Placement.Base.y"
+        },
+        {
+          "expression": "PendantDimensions.USBPortCenterZ",
+          "path": ".Placement.Base.z"
+        },
+        {
+          "expression": "PendantDimensions.USBCableDiameter",
+          "path": "Constraints[1]"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "USBExternalAccessSketchBody002",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "USBExternalAccessSketchBody002"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "PendantDimensions",
+        "RearMountReinforcement",
+        "USBRearRecessStructuralBulkSketch"
+      ],
+      "expressions": [
+        {
+          "expression": "45 mm - PendantDimensions.USBPortFaceX + PendantDimensions.USBTubeWall",
+          "path": "Length"
+        }
+      ],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"RearMountReinforcement\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"USBRearRecessStructuralBulkSketch\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "USBRearRecessStructuralBulk",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk"
+      ],
+      "type": "PartDesign::Pad"
+    },
+    {
+      "dependencies": [
+        "PendantDimensions"
+      ],
+      "expressions": [
+        {
+          "expression": "PendantDimensions.USBPortFaceX - PendantDimensions.USBTubeWall",
+          "path": ".Placement.Base.x"
+        },
+        {
+          "expression": "PendantDimensions.USBPortCenterY",
+          "path": ".Placement.Base.y"
+        },
+        {
+          "expression": "PendantDimensions.USBPortCenterZ",
+          "path": ".Placement.Base.z"
+        },
+        {
+          "expression": "PendantDimensions.USBCableDiameter + 2 * PendantDimensions.USBTubeWall",
+          "path": "Constraints[1]"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "USBRearRecessStructuralBulkSketch",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "USBRearRecessStructuralBulkSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "ExteriorEnvelope",
+        "OriginalRearClosureProfile"
+      ],
+      "expressions": [
+        {
+          "expression": "ExteriorEnvelope.ExteriorWidth / ExteriorEnvelope.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "EnvelopeControl": "<Property name=\"EnvelopeControl\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"ExteriorEnvelope\" />\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "SourceSketch": "<Property name=\"SourceSketch\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"OriginalRearClosureProfile\" />\n                </Property>\n                "
+      },
+      "name": "WidthControlled_OriginalRearClosureProfile",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "WidthControlled_OriginalRearClosureProfile"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "dependencies": [
+        "ExteriorEnvelope",
+        "RearMatchedProfile0"
+      ],
+      "expressions": [
+        {
+          "expression": "ExteriorEnvelope.ExteriorWidth / ExteriorEnvelope.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "EnvelopeControl": "<Property name=\"EnvelopeControl\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"ExteriorEnvelope\" />\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "SourceSketch": "<Property name=\"SourceSketch\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"RearMatchedProfile0\" />\n                </Property>\n                "
+      },
+      "name": "WidthControlled_RearMatchedProfile0",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "AdditiveLoft002",
+        "WidthControlled_RearMatchedProfile0"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "dependencies": [
+        "ExteriorEnvelope",
+        "RearMatchedProfile1"
+      ],
+      "expressions": [
+        {
+          "expression": "ExteriorEnvelope.ExteriorWidth / ExteriorEnvelope.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "EnvelopeControl": "<Property name=\"EnvelopeControl\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"ExteriorEnvelope\" />\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "SourceSketch": "<Property name=\"SourceSketch\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"RearMatchedProfile1\" />\n                </Property>\n                "
+      },
+      "name": "WidthControlled_RearMatchedProfile1",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "AdditiveLoft002",
+        "WidthControlled_RearMatchedProfile1"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "dependencies": [
+        "ExteriorEnvelope",
+        "RearMatchedProfile2"
+      ],
+      "expressions": [
+        {
+          "expression": "ExteriorEnvelope.ExteriorWidth / ExteriorEnvelope.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "EnvelopeControl": "<Property name=\"EnvelopeControl\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"ExteriorEnvelope\" />\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "SourceSketch": "<Property name=\"SourceSketch\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"RearMatchedProfile2\" />\n                </Property>\n                "
+      },
+      "name": "WidthControlled_RearMatchedProfile2",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "WidthControlled_RearMatchedProfile2"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "dependencies": [
+        "ExteriorEnvelope",
+        "RearMatchedProfile3"
+      ],
+      "expressions": [
+        {
+          "expression": "ExteriorEnvelope.ExteriorWidth / ExteriorEnvelope.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "EnvelopeControl": "<Property name=\"EnvelopeControl\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"ExteriorEnvelope\" />\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "SourceSketch": "<Property name=\"SourceSketch\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"RearMatchedProfile3\" />\n                </Property>\n                "
+      },
+      "name": "WidthControlled_RearMatchedProfile3",
+      "owners": [
+        "Body002"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "WidthControlled_RearMatchedProfile3"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    }
+  ],
+  "external_geometry_references": [
+    {
+      "constraint_driving": true,
+      "constraints": [
+        {
+          "index": 1,
+          "name": "",
+          "type": "1"
+        }
+      ],
+      "consumer_active_tip_reachable": false,
+      "consumer_sketch": "Sketch021",
+      "consumer_to_source_path": [
+        "Sketch021",
+        "Binder017"
+      ],
+      "external_geometry_order": 0,
+      "flags": "9",
+      "reached_from_active_tip": false,
+      "reference": "Binder017.;Face1;:C1;OFF;:H:8,F",
+      "serialized_geometry_id": "1",
+      "sketcher_constraint_geometry_index": -3,
+      "source_object": "Binder017",
+      "source_owners": [
+        "Body002"
+      ],
+      "source_subelement_token": ";Face1;:C1;OFF;:H:8,F",
+      "source_suppressed": false,
+      "source_type": "PartDesign::SubShapeBinder",
+      "tip_to_consumer_path": []
+    },
+    {
+      "constraint_driving": true,
+      "constraints": [
+        {
+          "index": 0,
+          "name": "",
+          "type": "1"
+        }
+      ],
+      "consumer_active_tip_reachable": false,
+      "consumer_sketch": "Sketch021",
+      "consumer_to_source_path": [
+        "Sketch021",
+        "Binder017"
+      ],
+      "external_geometry_order": 1,
+      "flags": "9",
+      "reached_from_active_tip": false,
+      "reference": "Binder017.;Face1;OFF;:H:4,F",
+      "serialized_geometry_id": "2",
+      "sketcher_constraint_geometry_index": -4,
+      "source_object": "Binder017",
+      "source_owners": [
+        "Body002"
+      ],
+      "source_subelement_token": ";Face1;OFF;:H:4,F",
+      "source_suppressed": false,
+      "source_type": "PartDesign::SubShapeBinder",
+      "tip_to_consumer_path": []
+    },
+    {
+      "constraint_driving": true,
+      "constraints": [
+        {
+          "index": 3,
+          "name": "",
+          "type": "1"
+        }
+      ],
+      "consumer_active_tip_reachable": false,
+      "consumer_sketch": "Sketch021",
+      "consumer_to_source_path": [
+        "Sketch021",
+        "Binder017"
+      ],
+      "external_geometry_order": 2,
+      "flags": "9",
+      "reached_from_active_tip": false,
+      "reference": "Binder017.;Face1;:C2;OFF;:H:8,F",
+      "serialized_geometry_id": "3",
+      "sketcher_constraint_geometry_index": -5,
+      "source_object": "Binder017",
+      "source_owners": [
+        "Body002"
+      ],
+      "source_subelement_token": ";Face1;:C2;OFF;:H:8,F",
+      "source_suppressed": false,
+      "source_type": "PartDesign::SubShapeBinder",
+      "tip_to_consumer_path": []
+    },
+    {
+      "constraint_driving": true,
+      "constraints": [
+        {
+          "index": 2,
+          "name": "",
+          "type": "1"
+        }
+      ],
+      "consumer_active_tip_reachable": false,
+      "consumer_sketch": "Sketch021",
+      "consumer_to_source_path": [
+        "Sketch021",
+        "Binder017"
+      ],
+      "external_geometry_order": 3,
+      "flags": "9",
+      "reached_from_active_tip": false,
+      "reference": "Binder017.;Face1;:C3;OFF;:H:8,F",
+      "serialized_geometry_id": "4",
+      "sketcher_constraint_geometry_index": -6,
+      "source_object": "Binder017",
+      "source_owners": [
+        "Body002"
+      ],
+      "source_subelement_token": ";Face1;:C3;OFF;:H:8,F",
+      "source_suppressed": false,
+      "source_type": "PartDesign::SubShapeBinder",
+      "tip_to_consumer_path": []
+    },
+    {
+      "constraint_driving": true,
+      "constraints": [
+        {
+          "index": 5,
+          "name": "",
+          "type": "1"
+        }
+      ],
+      "consumer_active_tip_reachable": false,
+      "consumer_sketch": "Sketch021",
+      "consumer_to_source_path": [
+        "Sketch021",
+        "Binder017"
+      ],
+      "external_geometry_order": 4,
+      "flags": "9",
+      "reached_from_active_tip": false,
+      "reference": "Binder017.;Face1;:C4;OFF;:H:8,F",
+      "serialized_geometry_id": "5",
+      "sketcher_constraint_geometry_index": -7,
+      "source_object": "Binder017",
+      "source_owners": [
+        "Body002"
+      ],
+      "source_subelement_token": ";Face1;:C4;OFF;:H:8,F",
+      "source_suppressed": false,
+      "source_type": "PartDesign::SubShapeBinder",
+      "tip_to_consumer_path": []
+    },
+    {
+      "constraint_driving": true,
+      "constraints": [
+        {
+          "index": 4,
+          "name": "",
+          "type": "1"
+        }
+      ],
+      "consumer_active_tip_reachable": false,
+      "consumer_sketch": "Sketch021",
+      "consumer_to_source_path": [
+        "Sketch021",
+        "Binder017"
+      ],
+      "external_geometry_order": 5,
+      "flags": "9",
+      "reached_from_active_tip": false,
+      "reference": "Binder017.;Face1;:C5;OFF;:H:8,F",
+      "serialized_geometry_id": "6",
+      "sketcher_constraint_geometry_index": -8,
+      "source_object": "Binder017",
+      "source_owners": [
+        "Body002"
+      ],
+      "source_subelement_token": ";Face1;:C5;OFF;:H:8,F",
+      "source_suppressed": false,
+      "source_type": "PartDesign::SubShapeBinder",
+      "tip_to_consumer_path": []
+    }
+  ],
+  "limitations": [
+    "FreeCAD 1.1.1 exposes ExternalGeometry (PropertyLinkSubList) and ExternalGeo (PropertyGeometryList), but the former can be empty while ExternalGeometryExtension Ref tokens are present in ExternalGeo serialization.",
+    "This manifest reports exact serialized subelement tokens. Human-readable Edge/Face names may not exist for persistent element-map references.",
+    "App::Link and ShapeBinder/XLink property payloads are preserved in link_properties_xml; resolve their targets in FreeCAD before treating external paths as portable."
+  ],
+  "method": {
+    "constraints": "External geometry order i maps to Sketcher geometry index -(i+3); constraint First/Second/Third fields are checked",
+    "note": "This is a saved-document audit. Validate with the target FreeCAD build before geometry-changing repairs.",
+    "ordinary_edges": "Saved Document.xml ObjectDeps, excluding PartDesign::Body/App::Part ownership containers",
+    "sketch_edges": "Sketcher::ExternalGeometryExtension Ref values in each Sketcher ExternalGeo GeometryList, expanded recursively"
+  },
+  "object_dependency_closure_count": 47,
+  "ordinary_dependency_objects": [
+    "AdditiveLoft002",
+    "Body002FullWidthSeat",
+    "ConformRearReinforcementToLoft",
+    "ExteriorEnvelope",
+    "HangerParameters",
+    "InternalHardware",
+    "OriginalRearClosureProfile",
+    "Pad007",
+    "Pad019",
+    "PendantDimensions",
+    "Pocket",
+    "Pocket015",
+    "Pocket018",
+    "Pocket019",
+    "RearAlignedHeadSeatSketch",
+    "RearAlignedM2PassageSketch",
+    "RearBossShoulderTransitions",
+    "RearBossToWallLoadPaths",
+    "RearBossWallRamps45",
+    "RearMatchedInnerCavity",
+    "RearMatchedProfile0",
+    "RearMatchedProfile1",
+    "RearMatchedProfile2",
+    "RearMatchedProfile3",
+    "RearMountReinforcement",
+    "RearMountReinforcementSketch",
+    "RearSeamFlushSketch",
+    "RearTaperedSeatSketch",
+    "RearTaperedSeats",
+    "RemoveWarpProneTongues",
+    "SideButtonRearHeadRelief",
+    "SideButtonRearHeadReliefSketch",
+    "SideButtonRearNutRelief",
+    "SideButtonRearNutReliefSketch",
+    "Sketch012",
+    "SmallHangerPocketBody002",
+    "SmallHangerProfileBody002",
+    "USB15mmCableAccessBody002",
+    "USBConformalCoverSeatBody002",
+    "USBExternalAccessSketchBody002",
+    "USBRearRecessStructuralBulk",
+    "USBRearRecessStructuralBulkSketch",
+    "WidthControlled_OriginalRearClosureProfile",
+    "WidthControlled_RearMatchedProfile0",
+    "WidthControlled_RearMatchedProfile1",
+    "WidthControlled_RearMatchedProfile2",
+    "WidthControlled_RearMatchedProfile3"
+  ],
+  "root": {
+    "body": "Body002",
+    "tip": "RearBossWallRamps45"
+  },
+  "schema_version": 1,
+  "sketches": [
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 10,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "OriginalRearClosureProfile",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0436332312998600",
+        "Ox": "-0.0436193873653394",
+        "Oy": "0.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "-14.9876700085268624",
+        "Py": "-35.7115748372008284",
+        "Pz": "-29.8799213568184356",
+        "Q0": "-0.0218148850345620",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.9997620270799090"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "WidthControlled_OriginalRearClosureProfile",
+        "OriginalRearClosureProfile"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 14,
+      "expressions": [
+        {
+          "expression": "-InternalHardware.MiddleScrewHalfSpacing",
+          "path": "Constraints[0]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewHalfSpacing",
+          "path": "Constraints[11]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewY",
+          "path": "Constraints[12]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewY",
+          "path": "Constraints[1]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewHalfSpacing",
+          "path": "Constraints[3]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewY",
+          "path": "Constraints[4]"
+        },
+        {
+          "expression": "-InternalHardware.UpperScrewHalfSpacing",
+          "path": "Constraints[8]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewY",
+          "path": "Constraints[9]"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "RearAlignedHeadSeatSketch",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "0.0000000000000000",
+        "Pz": "-37.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "RearAlignedHeadSeatSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 14,
+      "expressions": [
+        {
+          "expression": "-InternalHardware.MiddleScrewHalfSpacing",
+          "path": "Constraints[0]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewHalfSpacing",
+          "path": "Constraints[11]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewY",
+          "path": "Constraints[12]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewY",
+          "path": "Constraints[1]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewHalfSpacing",
+          "path": "Constraints[3]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewY",
+          "path": "Constraints[4]"
+        },
+        {
+          "expression": "-InternalHardware.UpperScrewHalfSpacing",
+          "path": "Constraints[8]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewY",
+          "path": "Constraints[9]"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "RearAlignedM2PassageSketch",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "0.0000000000000000",
+        "Pz": "-37.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearAlignedM2PassageSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 50,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "RearMatchedProfile0",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "-0.0000000000000075",
+        "Py": "-85.5642727047988956",
+        "Pz": "-19.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "AdditiveLoft002",
+        "WidthControlled_RearMatchedProfile0",
+        "RearMatchedProfile0"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 50,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "RearMatchedProfile1",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0436332312998600",
+        "Ox": "-0.0436193873653388",
+        "Oy": "0.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "0.0000000000000005",
+        "Py": "-65.2550204660287960",
+        "Pz": "-28.5900266638974010",
+        "Q0": "-0.0218148850345620",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.9997620270799090"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "AdditiveLoft002",
+        "WidthControlled_RearMatchedProfile1",
+        "RearMatchedProfile1"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 50,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "RearMatchedProfile2",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "-0.0000000000000170",
+        "Py": "-82.2199999999999989",
+        "Pz": "-19.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "WidthControlled_RearMatchedProfile2",
+        "RearMatchedProfile2"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 50,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "RearMatchedProfile3",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0436332312998600",
+        "Ox": "-0.0436193873653389",
+        "Oy": "0.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "-0.0000000000000017",
+        "Py": "-59.5440531057314004",
+        "Pz": "-28.8393728837677017",
+        "Q0": "-0.0218148850345620",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.9997620270799090"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "WidthControlled_RearMatchedProfile3",
+        "RearMatchedProfile3"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 16,
+      "expressions": [
+        {
+          "expression": "-InternalHardware.UpperScrewHalfSpacing",
+          "path": "Constraints[10]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewY",
+          "path": "Constraints[11]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewHalfSpacing",
+          "path": "Constraints[13]"
+        },
+        {
+          "expression": "InternalHardware.UpperScrewY",
+          "path": "Constraints[14]"
+        },
+        {
+          "expression": "-InternalHardware.MiddleScrewHalfSpacing",
+          "path": "Constraints[2]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewY",
+          "path": "Constraints[3]"
+        },
+        {
+          "expression": "InternalHardware.MiddleSupportRadius",
+          "path": "Constraints[4]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewHalfSpacing",
+          "path": "Constraints[5]"
+        },
+        {
+          "expression": "InternalHardware.MiddleScrewY",
+          "path": "Constraints[6]"
+        },
+        {
+          "expression": "InternalHardware.MiddleSupportRadius",
+          "path": "Constraints[7]"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "RearMountReinforcementSketch",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "0.0000000000000000",
+        "Pz": "-19.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RearMountReinforcementSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 4,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "RearSeamFlushSketch",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "0.0000000000000000",
+        "Pz": "-18.1900000000000013",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "RearSeamFlushSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 2,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "RearTaperedSeatSketch",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "0.0000000000000000",
+        "Pz": "-19.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "RearTaperedSeatSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 2,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "SideButtonRearHeadReliefSketch",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "1.5707963267948966",
+        "Ox": "0.0000000000000000",
+        "Oy": "-1.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "-45.0000000000000000",
+        "Py": "5.6299999999999999",
+        "Pz": "-9.8000000000000007",
+        "Q0": "0.0000000000000000",
+        "Q1": "-0.7071067811865475",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.7071067811865476"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "SideButtonRearHeadReliefSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 2,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "SideButtonRearNutReliefSketch",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "1.5707963267948966",
+        "Ox": "0.0000000000000000",
+        "Oy": "-1.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "-32.0000000000000000",
+        "Py": "5.6299999999999999",
+        "Pz": "-9.8000000000000007",
+        "Q0": "0.0000000000000000",
+        "Q1": "-0.7071067811865475",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.7071067811865476"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearNutReliefSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 23,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "Sketch012",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0436332312998546",
+        "Ox": "-1.0000000000001628",
+        "Oy": "0.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "-1.3700500314850608",
+        "Pz": "-31.3793047107521588",
+        "Q0": "-0.0218148850345593",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.9997620270799091"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Sketch012"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": false,
+      "body_history_status": "inactive_body_history",
+      "constraint_count": 12,
+      "expressions": [],
+      "external_geometry": [
+        {
+          "constraint_driving": true,
+          "constraints": [
+            {
+              "index": 1,
+              "name": "",
+              "type": "1"
+            }
+          ],
+          "external_geometry_order": 0,
+          "flags": "9",
+          "reference": "Binder017.;Face1;:C1;OFF;:H:8,F",
+          "serialized_geometry_id": "1",
+          "sketcher_constraint_geometry_index": -3,
+          "source_object": "Binder017",
+          "source_subelement_token": ";Face1;:C1;OFF;:H:8,F"
+        },
+        {
+          "constraint_driving": true,
+          "constraints": [
+            {
+              "index": 0,
+              "name": "",
+              "type": "1"
+            }
+          ],
+          "external_geometry_order": 1,
+          "flags": "9",
+          "reference": "Binder017.;Face1;OFF;:H:4,F",
+          "serialized_geometry_id": "2",
+          "sketcher_constraint_geometry_index": -4,
+          "source_object": "Binder017",
+          "source_subelement_token": ";Face1;OFF;:H:4,F"
+        },
+        {
+          "constraint_driving": true,
+          "constraints": [
+            {
+              "index": 3,
+              "name": "",
+              "type": "1"
+            }
+          ],
+          "external_geometry_order": 2,
+          "flags": "9",
+          "reference": "Binder017.;Face1;:C2;OFF;:H:8,F",
+          "serialized_geometry_id": "3",
+          "sketcher_constraint_geometry_index": -5,
+          "source_object": "Binder017",
+          "source_subelement_token": ";Face1;:C2;OFF;:H:8,F"
+        },
+        {
+          "constraint_driving": true,
+          "constraints": [
+            {
+              "index": 2,
+              "name": "",
+              "type": "1"
+            }
+          ],
+          "external_geometry_order": 3,
+          "flags": "9",
+          "reference": "Binder017.;Face1;:C3;OFF;:H:8,F",
+          "serialized_geometry_id": "4",
+          "sketcher_constraint_geometry_index": -6,
+          "source_object": "Binder017",
+          "source_subelement_token": ";Face1;:C3;OFF;:H:8,F"
+        },
+        {
+          "constraint_driving": true,
+          "constraints": [
+            {
+              "index": 5,
+              "name": "",
+              "type": "1"
+            }
+          ],
+          "external_geometry_order": 4,
+          "flags": "9",
+          "reference": "Binder017.;Face1;:C4;OFF;:H:8,F",
+          "serialized_geometry_id": "5",
+          "sketcher_constraint_geometry_index": -7,
+          "source_object": "Binder017",
+          "source_subelement_token": ";Face1;:C4;OFF;:H:8,F"
+        },
+        {
+          "constraint_driving": true,
+          "constraints": [
+            {
+              "index": 4,
+              "name": "",
+              "type": "1"
+            }
+          ],
+          "external_geometry_order": 5,
+          "flags": "9",
+          "reference": "Binder017.;Face1;:C5;OFF;:H:8,F",
+          "serialized_geometry_id": "6",
+          "sketcher_constraint_geometry_index": -8,
+          "source_object": "Binder017",
+          "source_subelement_token": ";Face1;:C5;OFF;:H:8,F"
+        }
+      ],
+      "external_geometry_count": 6,
+      "name": "Sketch021",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "0.0000000000000000",
+        "Pz": "-37.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 14,
+      "expressions": [
+        {
+          "expression": "HangerParameters.SlotCenterY",
+          "path": ".Placement.Base.y"
+        },
+        {
+          "expression": "(HangerParameters.SlotLength - HangerParameters.SlotWidth) / 2",
+          "path": "Constraints[0]"
+        },
+        {
+          "expression": "HangerParameters.SlotWidth / 2",
+          "path": "Constraints[2]"
+        },
+        {
+          "expression": "(HangerParameters.SlotLength - HangerParameters.SlotWidth) / 2",
+          "path": "Constraints[3]"
+        },
+        {
+          "expression": "(HangerParameters.SlotLength - HangerParameters.SlotWidth) / 2",
+          "path": "Constraints[4]"
+        },
+        {
+          "expression": "-(HangerParameters.SlotLength - HangerParameters.SlotWidth) / 2",
+          "path": "Constraints[5]"
+        },
+        {
+          "expression": "HangerParameters.SlotWidth / 2",
+          "path": "Constraints[7]"
+        },
+        {
+          "expression": "-(HangerParameters.SlotLength - HangerParameters.SlotWidth) / 2",
+          "path": "Constraints[8]"
+        },
+        {
+          "expression": "-(HangerParameters.SlotLength - HangerParameters.SlotWidth) / 2",
+          "path": "Constraints[9]"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "SmallHangerProfileBody002",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "81.0000000000000000",
+        "Pz": "-18.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "SmallHangerProfileBody002"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 2,
+      "expressions": [
+        {
+          "expression": "PendantDimensions.USBPortCenterY",
+          "path": ".Placement.Base.y"
+        },
+        {
+          "expression": "PendantDimensions.USBPortCenterZ",
+          "path": ".Placement.Base.z"
+        },
+        {
+          "expression": "PendantDimensions.USBCableDiameter",
+          "path": "Constraints[1]"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "USBExternalAccessSketchBody002",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "1.5707963267948966",
+        "Ox": "0.0000000000000000",
+        "Oy": "1.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "45.0000000000000000",
+        "Py": "3.0310950703500001",
+        "Pz": "-13.4445319311000002",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.7071067811865475",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.7071067811865476"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "USBExternalAccessSketchBody002"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 2,
+      "expressions": [
+        {
+          "expression": "PendantDimensions.USBPortFaceX - PendantDimensions.USBTubeWall",
+          "path": ".Placement.Base.x"
+        },
+        {
+          "expression": "PendantDimensions.USBPortCenterY",
+          "path": ".Placement.Base.y"
+        },
+        {
+          "expression": "PendantDimensions.USBPortCenterZ",
+          "path": ".Placement.Base.z"
+        },
+        {
+          "expression": "PendantDimensions.USBCableDiameter + 2 * PendantDimensions.USBTubeWall",
+          "path": "Constraints[1]"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "USBRearRecessStructuralBulkSketch",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "1.5707963267948966",
+        "Ox": "0.0000000000000000",
+        "Oy": "1.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "19.2944987063999989",
+        "Py": "3.0310950703500001",
+        "Pz": "-13.4445319311000002",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.7071067811865475",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.7071067811865476"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "USBRearRecessStructuralBulkSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 10,
+      "expressions": [
+        {
+          "expression": "ExteriorEnvelope.ExteriorWidth / ExteriorEnvelope.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "WidthControlled_OriginalRearClosureProfile",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0436332312998600",
+        "Ox": "-0.0436193873653394",
+        "Oy": "0.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "-14.9876700085268624",
+        "Py": "-35.7115748372008284",
+        "Pz": "-29.8799213568184356",
+        "Q0": "-0.0218148850345620",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.9997620270799090"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "WidthControlled_OriginalRearClosureProfile"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 50,
+      "expressions": [
+        {
+          "expression": "ExteriorEnvelope.ExteriorWidth / ExteriorEnvelope.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "WidthControlled_RearMatchedProfile0",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "-0.0000000000000075",
+        "Py": "-85.5642727047988956",
+        "Pz": "-19.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "AdditiveLoft002",
+        "WidthControlled_RearMatchedProfile0"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 50,
+      "expressions": [
+        {
+          "expression": "ExteriorEnvelope.ExteriorWidth / ExteriorEnvelope.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "WidthControlled_RearMatchedProfile1",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0436332312998600",
+        "Ox": "-0.0436193873653388",
+        "Oy": "0.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "0.0000000000000005",
+        "Py": "-65.2550204660287960",
+        "Pz": "-28.5900266638974010",
+        "Q0": "-0.0218148850345620",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.9997620270799090"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "AdditiveLoft002",
+        "WidthControlled_RearMatchedProfile1"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 50,
+      "expressions": [
+        {
+          "expression": "ExteriorEnvelope.ExteriorWidth / ExteriorEnvelope.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "WidthControlled_RearMatchedProfile2",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "-0.0000000000000170",
+        "Py": "-82.2199999999999989",
+        "Pz": "-19.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "WidthControlled_RearMatchedProfile2"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 50,
+      "expressions": [
+        {
+          "expression": "ExteriorEnvelope.ExteriorWidth / ExteriorEnvelope.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "WidthControlled_RearMatchedProfile3",
+      "owners": [
+        "Body002"
+      ],
+      "placement": {
+        "A": "0.0436332312998600",
+        "Ox": "-0.0436193873653389",
+        "Oy": "0.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "-0.0000000000000017",
+        "Py": "-59.5440531057314004",
+        "Pz": "-28.8393728837677017",
+        "Q0": "-0.0218148850345620",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.9997620270799090"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "RearBossWallRamps45",
+        "RearBossShoulderTransitions",
+        "RearBossToWallLoadPaths",
+        "Body002FullWidthSeat",
+        "SmallHangerPocketBody002",
+        "USBConformalCoverSeatBody002",
+        "USB15mmCableAccessBody002",
+        "SideButtonRearNutRelief",
+        "SideButtonRearHeadRelief",
+        "Pocket019",
+        "Pocket018",
+        "RearTaperedSeats",
+        "ConformRearReinforcementToLoft",
+        "USBRearRecessStructuralBulk",
+        "RearMountReinforcement",
+        "RemoveWarpProneTongues",
+        "Pocket015",
+        "Pad019",
+        "Pocket",
+        "Pad007",
+        "RearMatchedInnerCavity",
+        "WidthControlled_RearMatchedProfile3"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    }
+  ],
+  "source": {
+    "document_internal_name": "remove_warp_bypass",
+    "filename": "rear-reference-cleanup.FCStd",
+    "freecad_version_observed": "1.1.1 (0108fd4b4850cc46e625b60e53cea7a7bbe69f8d)",
+    "sha256": "25f1e36637947c6cf4228db84fd03218ce5338b852cb0449f5a0f138be8f0b8d"
+  }
+}
