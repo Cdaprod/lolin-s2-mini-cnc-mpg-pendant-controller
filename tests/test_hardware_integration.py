@@ -329,6 +329,21 @@ class PhysicalInputTests(unittest.TestCase):
 
 
 class ApplicationInputPipelineTests(unittest.TestCase):
+    def test_heap_is_sampled_at_runtime_heartbeat_not_every_poll(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, _, clock = self.make_app(root)
+            with patch("src.app.gc.mem_free", return_value=123456,
+                       create=True) as mem_free:
+                app.poll()
+                self.assertEqual(mem_free.call_count, 0)
+                clock.advance(9.9)
+                app.poll()
+                self.assertEqual(mem_free.call_count, 0)
+                clock.advance(0.1)
+                app.poll()
+                self.assertEqual(mem_free.call_count, 1)
+                self.assertEqual(app.state.free_heap, 123456)
+
     def test_wifi_association_poll_is_deferred_during_machine_activity(self):
         with tempfile.TemporaryDirectory() as root:
             jobs, macros = os.path.join(root, "jobs"), os.path.join(root, "macros")

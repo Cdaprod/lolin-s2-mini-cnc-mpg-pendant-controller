@@ -821,8 +821,12 @@ class PendantApplication:
         last = self.state.last_controller_response
         self.state.last_status_age = (None if last is None else
                                       max(0.0, finished - last))
-        self.state.free_heap = gc.mem_free() if hasattr(gc, "mem_free") else None
         if self._diag_last_heartbeat is None or finished - self._diag_last_heartbeat >= 10.0:
+            # Heap inspection is comparatively expensive on CircuitPython and
+            # the value is only published with this ten-second runtime sample.
+            # Keep it out of the high-frequency input/render loop.
+            self.state.free_heap = (gc.mem_free()
+                                    if hasattr(gc, "mem_free") else None)
             window_ms = (0 if self._diag_last_heartbeat is None else
                          int((finished - self._diag_last_heartbeat) * 1000))
             profiled_ms = (self._diag_total_input_ms +
