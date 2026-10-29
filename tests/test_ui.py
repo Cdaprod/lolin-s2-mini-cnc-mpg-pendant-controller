@@ -49,6 +49,33 @@ class UIStateMachineTests(unittest.TestCase):
         ui.handle(BACK)
         self.assertEqual(ui.current_screen, "HOME")
 
+    def test_empty_file_browser_reports_sd_disabled_without_selectable_action(self):
+        state = PendantState()
+        state.storage_state = "unconfigured"
+        state.subsystems = {"sd": "DISABLED"}
+        ui = UIManager(state)
+        ui.enter("JOB_BROWSER")
+
+        item = ui.view_model()["items"][0]
+        self.assertEqual(item[0], "SD DISABLED")
+        self.assertFalse(item[1])
+        self.assertEqual(item[2], "SD storage is disabled")
+
+    def test_empty_file_browser_distinguishes_missing_sd_from_empty_card(self):
+        state = PendantState()
+        state.storage_state = "missing"
+        state.subsystems = {"sd": "NOT PRESENT"}
+        ui = UIManager(state)
+        ui.enter("JOB_BROWSER")
+        self.assertEqual(ui.view_model()["items"][0][0], "SD CARD MISSING")
+
+        state.storage_state = "available"
+        state.subsystems = {"sd": "MOUNTED"}
+        state.storage_error = None
+        ui.set_dynamic_items("jobs", [])
+        self.assertEqual(ui.view_model()["items"][0][0], "NO FILES FOUND")
+        self.assertFalse(ui.view_model()["items"][0][1])
+
     def test_wheel_routes_by_context(self):
         _, ui = ready_ui()
         command = ui.handle(ROTATE_CW)
