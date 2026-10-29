@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 from src.display.round_ui.renderer import RoundRenderer, _profile_ticks_diff
 from src.display.round_ui.bootstrap import apply_mock_state
@@ -160,7 +161,9 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer.motion.text.value, "HOLD TO JOG")
         axis_updates = renderer.axis.axis.line.updates
         value_updates = renderer.axis.value.line.updates
-        self.assertFalse(renderer.render(state))
+        with patch.object(renderer.ui, "view_model",
+                          side_effect=AssertionError("idle home redraw")):
+            self.assertFalse(renderer.render(state))
         self.assertGreaterEqual(renderer.last_model_ms, 0)
         self.assertGreaterEqual(renderer.last_update_ms, 0)
         self.assertGreaterEqual(renderer.last_refresh_ms, 0)
