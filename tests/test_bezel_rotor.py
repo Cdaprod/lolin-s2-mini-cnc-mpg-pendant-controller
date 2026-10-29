@@ -1,7 +1,8 @@
 import math
 import unittest
 
-from src.display.round_ui.rotor import BezelRotor
+from src.display.round_ui.rotor import (BezelRotor, bezel_segment_levels,
+                                        update_bezel_segment_levels)
 
 
 class BezelRotorTests(unittest.TestCase):
@@ -93,6 +94,21 @@ class BezelRotorTests(unittest.TestCase):
         rotor.update(0.0, 0.0, 5)
         rotor.update(0.2, 0.2, -1)
         self.assertEqual(state, before)
+
+    def test_precomputed_bezel_wave_stays_within_one_brightness_level(self):
+        for phase in range(720):
+            angle = 2.0 * math.pi * phase / 720
+            levels = bezel_segment_levels(angle, 24)
+            for index, actual in enumerate(levels):
+                theta = 2.0 * math.pi * index / 24
+                delta = ((theta - angle + math.pi) % (2.0 * math.pi)) - math.pi
+                exact = int(round(
+                    1 + 14 * math.exp(-0.5 * (delta / 0.58) ** 2)))
+                self.assertLessEqual(abs(actual - exact), 1)
+
+        retained = [0] * 24
+        update_bezel_segment_levels(-0.25, retained)
+        self.assertEqual(tuple(retained), bezel_segment_levels(-0.25, 24))
 
 
 if __name__ == "__main__":

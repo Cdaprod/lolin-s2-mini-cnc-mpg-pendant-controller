@@ -298,6 +298,9 @@ class RoundRendererTests(unittest.TestCase):
         renderer._rotor_brightness_levels = [-1] * len(segments)
         renderer._rotor_target_levels = [0] * len(segments)
         renderer._rotor_color = theme.CYAN
+        # Choose a clear visual detent rate so at least one 4-bit segment
+        # crosses a brightness threshold in this short synthetic interval.
+        renderer.bezel_rotor.encoder_gain = 0.2
         geometry = tuple((item.x, item.y, item.tile_index) for item in segments)
 
         self.assertTrue(renderer.animate(0.0))
