@@ -705,6 +705,9 @@ class PendantApplication:
                     self.display.touch_feedback(
                         feedback[:2], self.touch_manager.feedback_until)
                 self.touch_manager.last_feedback = None
+            if (getattr(self.touch_manager, "feedback_active", False) and
+                    hasattr(self.display, "touch_hold")):
+                self.display.touch_hold(self.touch_manager.feedback_until)
         touch_duration_ms = max(
             0, _diag_ticks_diff_ms(self._diag_ticks_ms(), touch_started))
         if touch_duration_ms > self._diag_max_touch_ms:

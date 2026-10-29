@@ -506,24 +506,27 @@ def displayio_scene(display, colors=None, bezel_name=None):
     overlay_group.append(overlay_detail.node)
     root.append(overlay_group)
 
-    # Tiny retained touch ripple. Its four concentric palette zones animate
-    # with a short glow/fade; the bitmap is built once and never rewritten.
+    # Retained 31px touch ripple. Four concentric palette zones animate with
+    # a short glow/fade; the bitmap is built once and never rewritten.
     # Critical alarm overlay stays above this feedback layer.
-    halo = displayio.Bitmap(13, 13, 4)
-    halo_palette = displayio.Palette(4)
+    halo = displayio.Bitmap(31, 31, 5)
+    halo_palette = displayio.Palette(5)
     halo_palette[0] = 0x000000
     halo_palette.make_transparent(0)
     halo_palette[1] = theme.shade_color(colors["accent"], 0)
     halo_palette[2] = theme.shade_color(colors["accent"], 0)
     halo_palette[3] = theme.shade_color(colors["accent"], 0)
-    for hy in range(13):
-        for hx in range(13):
-            radius2 = (hx - 6) ** 2 + (hy - 6) ** 2
-            if radius2 <= 1:
+    halo_palette[4] = theme.shade_color(colors["accent"], 0)
+    for hy in range(31):
+        for hx in range(31):
+            radius2 = (hx - 15) ** 2 + (hy - 15) ** 2
+            if radius2 <= 4:
+                halo[hx, hy] = 4
+            elif 16 <= radius2 <= 25:
                 halo[hx, hy] = 3
-            elif 4 <= radius2 <= 8:
+            elif 64 <= radius2 <= 81:
                 halo[hx, hy] = 2
-            elif 16 <= radius2 <= 36:
+            elif 144 <= radius2 <= 169:
                 halo[hx, hy] = 1
     palettes["halo"] = halo_palette
     halo_node = displayio.TileGrid(halo, pixel_shader=halo_palette)

@@ -29,6 +29,7 @@ class TouchInput:
         self.event_count = 0
         self.last_point = None
         self.last_contact_transition = None
+        self.feedback_active = False
         self.last_error = None
         self.consecutive_errors = 0
 
@@ -79,6 +80,11 @@ class TouchInput:
             self.sample_count += 1
         events = self.gestures.poll(point)
         is_active = self.gestures.active
+        self.feedback_active = is_active
+        if is_active:
+            # Keep a visual press acknowledgment alive through long touches;
+            # the display extends its existing ripple without restarting it.
+            self.feedback_until = self.clock() + 0.05
         if was_active != is_active:
             transition_point = (point if is_active else
                                 previous_point or self.gestures.start)
@@ -92,12 +98,13 @@ class TouchInput:
                     self.last_feedback = (
                         int(transition_point[0]), int(transition_point[1]),
                         "contact")
-                    self.feedback_until = self.clock() + 0.20
+                    self.feedback_until = self.clock() + 0.05
         if not events:
             return ()
         kind, x, y = events[0]
         self.event_count += 1
         self.last_feedback = (x, y, kind)
+        self.feedback_active = False
         self.feedback_until = self.clock() + 0.20
         if kind == "drag":
             return (TouchEvent(kind, x, y),)

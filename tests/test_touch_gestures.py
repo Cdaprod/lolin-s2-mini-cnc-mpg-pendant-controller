@@ -45,8 +45,29 @@ class GestureTests(unittest.TestCase):
         self.assertEqual(touch.poll(), ())
         self.assertEqual(touch.last_contact_transition, ("down", 90, 65))
         self.assertEqual(touch.last_feedback, (90, 65, "contact"))
-        self.assertAlmostEqual(touch.feedback_until, 0.20)
+        self.assertAlmostEqual(touch.feedback_until, 0.05)
         self.assertTrue(touch.gestures.active)
+        self.assertTrue(touch.feedback_active)
+
+    def test_hold_renews_visual_feedback_until_release(self):
+        clock = Clock()
+        source = Source()
+        touch = TouchInput(source, clock)
+        source.current = (90, 65)
+        touch.poll()
+        first_until = touch.feedback_until
+        clock.t = .10
+        touch.poll()
+        self.assertTrue(touch.feedback_active)
+        self.assertGreater(touch.feedback_until, first_until)
+
+        source.current = None
+        clock.t = .11
+        touch.poll()
+        clock.t = .131
+        touch.poll()
+        self.assertFalse(touch.feedback_active)
+        self.assertEqual(touch.last_contact_transition, ("up", 90, 65))
 
     def test_touch_contact_diagnostics_report_coordinates_and_ignore_read_errors(self):
         clock = Clock()
