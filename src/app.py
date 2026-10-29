@@ -22,7 +22,8 @@ from src.state import PendantState
 from src.network import MockWiFiService, WiFiService
 from src.transport.mock import MockGRBLTransport, MockTransport
 from src.transport.uart import UARTTransport
-from src.diagnostics import emit, input_configuration_fields
+from src.diagnostics import (emit, input_configuration_fields,
+                             loop_timing_fields)
 
 
 # CircuitPython peripheral objects are interpreter-owned singletons. Track
@@ -85,6 +86,7 @@ class PendantApplication:
         self._diag_loop_work_ms = 0
         self._diag_max_loop_work_ms = 0
         self._diag_profile_loops = 0
+        self._diag_total_poll_ms = 0.0
         self._diag_max_input_ms = 0
         self._diag_total_input_ms = 0
         self._diag_max_touch_ms = 0
@@ -794,6 +796,7 @@ class PendantApplication:
         self._diag_profile_loops += 1
         finished = self.clock()
         self.state.last_loop_duration = max(0.0, finished - started)
+        self._diag_total_poll_ms += self.state.last_loop_duration * 1000.0
         self._diag_loop_work_ms = max(
             0, _diag_ticks_diff_ms(self._diag_ticks_ms(), diag_started))
         if self._diag_loop_work_ms > self._diag_max_loop_work_ms:
@@ -805,6 +808,17 @@ class PendantApplication:
                                       max(0.0, finished - last))
         self.state.free_heap = gc.mem_free() if hasattr(gc, "mem_free") else None
         if self._diag_last_heartbeat is None or finished - self._diag_last_heartbeat >= 10.0:
+            window_ms = (0 if self._diag_last_heartbeat is None else
+                         int((finished - self._diag_last_heartbeat) * 1000))
+            profiled_ms = (self._diag_total_input_ms +
+                           self._diag_total_touch_ms +
+                           self._diag_total_transport_ms +
+                           self._diag_total_wifi_ms +
+                           self._diag_total_display_ms +
+                           self._diag_total_mirror_ms)
+            loop_timing = loop_timing_fields(
+                self._diag_profile_loops, self._diag_total_poll_ms,
+                window_ms, profiled_ms)
             input_backend_configured = bool(
                 getattr(self.input_manager.adapter, "configured", True))
             deadman_configured = bool(
@@ -850,6 +864,10 @@ class PendantApplication:
                  max_loop_work_ms=self._diag_max_loop_work_ms,
                  loop_overruns=self._diag_loop_overruns,
                  profile_loops=self._diag_profile_loops,
+                 loop_hz=loop_timing["loop_hz"],
+                 poll_avg_us=loop_timing["poll_avg_us"],
+                 unprofiled_avg_us=loop_timing["unprofiled_avg_us"],
+                 loop_window_ms=loop_timing["loop_window_ms"],
                  max_input_ms=self._diag_max_input_ms,
                  total_input_ms=self._diag_total_input_ms,
                  max_touch_ms=self._diag_max_touch_ms,
@@ -894,6 +912,7 @@ class PendantApplication:
                  controller=self.state.connection_state)
             self._diag_loop_overruns = 0
             self._diag_profile_loops = 0
+            self._diag_total_poll_ms = 0.0
             self._diag_max_loop_work_ms = 0
             self._diag_max_input_ms = 0
             self._diag_total_input_ms = 0

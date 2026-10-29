@@ -2,7 +2,8 @@ import contextlib
 import io
 import unittest
 
-from src.diagnostics import emit, input_configuration_fields
+from src.diagnostics import (emit, input_configuration_fields,
+                             loop_timing_fields)
 
 
 class DiagnosticsTests(unittest.TestCase):
@@ -38,3 +39,13 @@ class DiagnosticsTests(unittest.TestCase):
         self.assertEqual(fields["deadman_pin"], "unassigned")
         self.assertFalse(fields["selector_interface_verified"])
         self.assertEqual(fields["mcp23017_address"], "0x20")
+
+    def test_loop_timing_reports_rate_and_unprofiled_cost(self):
+        fields = loop_timing_fields(850, 9500, 10000, 5000)
+        self.assertEqual(fields, {
+            "loop_hz": 85,
+            "poll_avg_us": 11176,
+            "unprofiled_avg_us": 5294,
+            "loop_window_ms": 10000,
+        })
+        self.assertEqual(loop_timing_fields(0, 0, 0, 0)["loop_hz"], 0)
