@@ -110,6 +110,8 @@ class RoundRenderer:
         self._halo_release_started = 0.0
         self._halo_release_duration = 0.08
         self._halo_release_progress = 0.0
+        self._halo_move_at = 0.0
+        self._halo_position = None
         self._halo_accent = theme.TEXT
         self._last_animation_now = None
         self._highlight_dirty = False
@@ -316,6 +318,10 @@ class RoundRenderer:
             return
         self.touch_halo.x = x - TOUCH_BITMAP_CENTER
         self.touch_halo.y = y - TOUCH_BITMAP_CENTER
+        self._halo_position = (x, y)
+        self._halo_move_at = (
+            self._last_animation_now if self._last_animation_now is not None
+            else max(0.0, float(until) - 0.10))
         self.touch_halo.hidden = False
         self._halo_visible = True
         self._halo_until = float(until)
@@ -332,6 +338,32 @@ class RoundRenderer:
         self._update_halo_palette(0.0)
         self._halo_releasing = False
         self._halo_dirty = True
+
+    def touch_move(self, point, now):
+        """Move the held contact glow with the finger without restarting it.
+
+        The input sampler may run at 120 Hz, while a full GC9A01 refresh can
+        take tens of milliseconds. Cap visual repositioning at 30 Hz so touch
+        tracking remains responsive without flooding the SPI display.
+        """
+        if (not self.animations or self.touch_halo is None or
+                not self._halo_visible or point is None):
+            return False
+        x, y = int(point[0]), int(point[1])
+        if not (0 <= x < 240 and 0 <= y < 240):
+            return False
+        position = (x, y)
+        if position == self._halo_position:
+            return False
+        now = float(now)
+        if now - self._halo_move_at < 1.0 / 30.0:
+            return False
+        self.touch_halo.x = x - TOUCH_BITMAP_CENTER
+        self.touch_halo.y = y - TOUCH_BITMAP_CENTER
+        self._halo_position = position
+        self._halo_move_at = now
+        self._halo_dirty = True
+        return True
 
     def touch_hold(self, until):
         """Hold a compact contact glow in place without advancing its wave."""

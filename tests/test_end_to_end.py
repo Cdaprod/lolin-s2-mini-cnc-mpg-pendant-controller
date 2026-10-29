@@ -167,6 +167,41 @@ class EndToEndTests(unittest.TestCase):
         self.assertEqual(app.ui.current_screen, "HOME")
         self.assertFalse(app.state.controller_enabled)
 
+    def test_held_finger_position_reaches_visual_feedback_without_navigation(self):
+        calls = []
+
+        class TouchManager:
+            last_contact_transition = None
+            last_feedback = None
+            feedback_until = 1.2
+            feedback_active = True
+            last_point = (145, 110)
+            consecutive_errors = 0
+            last_error = None
+
+            def poll(self):
+                return ()
+
+        class Display(ConsoleDisplay):
+            def touch_move(self, point, now):
+                calls.append(("move", point, now))
+                return True
+
+            def touch_hold(self, until):
+                calls.append(("hold", until))
+
+        app = PendantApplication.from_config(
+            {"controller_mode": "disabled"},
+            display=Display(lambda frame: None),
+            touch_manager=TouchManager(), clock=lambda: 1.0)
+
+        app.poll()
+
+        self.assertEqual(calls[0], ("move", (145, 110), 1.0))
+        self.assertEqual(calls[1], ("hold", 1.2))
+        self.assertEqual(app.ui.current_screen, "HOME")
+        self.assertFalse(app.state.controller_enabled)
+
     def test_touch_sample_gate_skips_idle_handling_until_next_sample(self):
         class TouchManager:
             last_contact_transition = ("down", 90, 65)

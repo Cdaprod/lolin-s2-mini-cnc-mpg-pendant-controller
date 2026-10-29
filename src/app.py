@@ -730,6 +730,11 @@ class PendantApplication:
                 self.touch_manager.last_feedback = None
             if (getattr(self.touch_manager, "feedback_active", False) and
                     hasattr(self.display, "touch_hold")):
+                touch_move = getattr(self.display, "touch_move", None)
+                touch_point = getattr(self.touch_manager, "last_point", None)
+                if (touch_point is not None and callable(touch_move) and
+                        touch_move(touch_point, started)):
+                    touch_needs_render = True
                 self.display.touch_hold(self.touch_manager.feedback_until)
         if hasattr(self.display, "animate"):
             self.display.animate(started)

@@ -400,8 +400,8 @@ class RoundRendererTests(unittest.TestCase):
         levels = bezel_segment_levels(0.0)
         self.assertEqual(len(levels), BEZEL_SEGMENT_COUNT)
         self.assertEqual(levels[0], 15)
-        self.assertEqual(sum(value >= 8 for value in levels), 3)
-        self.assertTrue(all(levels[index] >= 8 for index in (11, 0, 1)))
+        self.assertEqual(sum(value >= 8 for value in levels), 1)
+        self.assertTrue(all(levels[index] < 8 for index in (11, 1)))
         self.assertEqual(sum(value >= 8 for value in levels[2:11]), 0)
         self.assertEqual(levels[1], levels[-1])
 
@@ -920,6 +920,26 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer.touch_halo.hidden)
         self.assertFalse(renderer._halo_releasing)
         self.assertTrue(renderer.touch_halo.hidden)
+
+    def test_held_touch_glow_tracks_finger_without_restarting_ripple(self):
+        _, _, _, renderer = self.make_renderer()
+        renderer.touch_halo = Node()
+        renderer._last_animation_now = 1.0
+        renderer.touch_feedback((120, 120), 1.2)
+        renderer.touch_hold(1.2)
+        wave_started = renderer._halo_started
+        held_progress = renderer._halo_progress
+
+        # Repositioning is rate limited to match the display's practical
+        # refresh rate while the input sampler can run faster.
+        self.assertFalse(renderer.touch_move((125, 124), 1.02))
+        self.assertTrue(renderer.touch_move((130, 128), 1.04))
+        self.assertEqual((renderer.touch_halo.x, renderer.touch_halo.y),
+                         (130 - TOUCH_BITMAP_CENTER,
+                          128 - TOUCH_BITMAP_CENTER))
+        self.assertEqual(renderer._halo_started, wave_started)
+        self.assertEqual(renderer._halo_progress, held_progress)
+        self.assertFalse(renderer.touch_move((130, 128), 1.08))
 
     def test_layout_regions_are_inside_round_safe_area(self):
         for region in RoundLayout.content_rows().values():

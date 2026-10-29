@@ -4,7 +4,11 @@ import math
 
 _WAVE_BINS = 2160  # 90 angular samples per 24-segment ring step.
 _WAVE_HALF_BINS = _WAVE_BINS // 2
-_WAVE_SIGMA = 0.58
+# Keep the moving highlight visually local. A wider wave lights most of the
+# 12-arc ring at once, which reads as a persistent smear after extended use.
+# At the 30-degree segment pitch this leaves a bright lead arc and a short,
+# smooth falloff to its immediate neighbors.
+_WAVE_SIGMA = 0.30
 BEZEL_SEGMENT_COUNT = 12
 # The generated cyan reactor bezel has twelve outer arc centers at this
 # screen-space angle, then every 30 degrees. Keep the animated accents on that
