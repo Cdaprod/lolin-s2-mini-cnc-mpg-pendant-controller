@@ -9,8 +9,9 @@ from src.display.round_ui.geometry import RoundLayout
 from src.display.round_ui.effects import TOUCH_BITMAP_CENTER
 from src.display.round_ui.effects import TOUCH_HOLD_PROGRESS
 from src.display.round_ui import bezel_palette, theme
-from src.display.round_ui.rotor import (bezel_segment_levels,
-                                        update_bezel_segment_levels)
+from src.display.round_ui.rotor import (
+    BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD, bezel_segment_levels,
+    update_bezel_segment_levels)
 from src.display.ui import ROTATE_CCW, ROTATE_CW, SELECT, UIManager
 from src.state import PendantState
 
@@ -290,7 +291,7 @@ class RoundRendererTests(unittest.TestCase):
     def test_rotating_bezel_segments_follow_rotor_and_yield_to_alarm(self):
         state, _, _, renderer = self.make_renderer()
         renderer.hud_markers = ((Node(), 109, None), (Node(), 99, None))
-        segments = [Node() for _ in range(24)]
+        segments = [Node() for _ in range(BEZEL_SEGMENT_COUNT)]
         renderer.bezel_segments = segments
         renderer.bezel_segment_palettes = [[0] + [1] * 15
                                            for _ in segments]
@@ -330,11 +331,11 @@ class RoundRendererTests(unittest.TestCase):
                 super().__setitem__(index, value)
 
         _, _, _, renderer = self.make_renderer()
-        renderer.bezel_segments = [Node() for _ in range(24)]
+        renderer.bezel_segments = [Node() for _ in range(BEZEL_SEGMENT_COUNT)]
         renderer.bezel_palette_bank = [Palette() for _ in range(16)]
         renderer.rotor_tile_count = 384
-        renderer._rotor_brightness_levels = [-1] * 24
-        renderer._rotor_target_levels = [0] * 24
+        renderer._rotor_brightness_levels = [-1] * BEZEL_SEGMENT_COUNT
+        renderer._rotor_target_levels = [0] * BEZEL_SEGMENT_COUNT
 
         renderer._apply_rotor_color(theme.CYAN)
         self.assertTrue(all(
@@ -397,18 +398,21 @@ class RoundRendererTests(unittest.TestCase):
 
     def test_rotor_highlight_is_one_connected_traveling_arc(self):
         levels = bezel_segment_levels(0.0)
-        self.assertEqual(len(levels), 24)
+        self.assertEqual(len(levels), BEZEL_SEGMENT_COUNT)
         self.assertEqual(levels[0], 15)
-        self.assertEqual(sum(value >= 8 for value in levels), 5)
-        self.assertTrue(all(levels[index] >= 8 for index in (22, 23, 0, 1, 2)))
-        self.assertEqual(sum(value >= 8 for value in levels[3:22]), 0)
+        self.assertEqual(sum(value >= 8 for value in levels), 3)
+        self.assertTrue(all(levels[index] >= 8 for index in (11, 0, 1)))
+        self.assertEqual(sum(value >= 8 for value in levels[2:11]), 0)
         self.assertEqual(levels[1], levels[-1])
 
     def test_rotor_animation_updates_a_retained_brightness_buffer(self):
-        levels = [0] * 24
+        levels = [0] * BEZEL_SEGMENT_COUNT
         identity = id(levels)
-        update_bezel_segment_levels(0.3, levels)
-        expected = bezel_segment_levels(0.3, 24)
+        update_bezel_segment_levels(0.3, levels,
+                                    phase_offset=BEZEL_SEGMENT_OFFSET_RAD)
+        expected = bezel_segment_levels(
+            0.3, BEZEL_SEGMENT_COUNT,
+            phase_offset=BEZEL_SEGMENT_OFFSET_RAD)
         self.assertEqual(tuple(levels), expected)
         self.assertEqual(id(levels), identity)
 

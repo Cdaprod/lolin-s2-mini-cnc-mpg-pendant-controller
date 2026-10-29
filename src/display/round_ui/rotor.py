@@ -5,6 +5,11 @@ import math
 _WAVE_BINS = 2160  # 90 angular samples per 24-segment ring step.
 _WAVE_HALF_BINS = _WAVE_BINS // 2
 _WAVE_SIGMA = 0.58
+BEZEL_SEGMENT_COUNT = 12
+# The generated cyan reactor bezel has twelve outer arc centers at this
+# screen-space angle, then every 30 degrees. Keep the animated accents on that
+# artwork instead of drawing a second, interleaved ring.
+BEZEL_SEGMENT_OFFSET_RAD = math.radians(29.0)
 _NORMALIZED_WAVE = bytes(
     int(round(255.0 * math.exp(-0.5 * (
         (math.pi * index / _WAVE_HALF_BINS) / _WAVE_SIGMA) ** 2)))
@@ -12,7 +17,8 @@ _NORMALIZED_WAVE = bytes(
 )
 
 
-def bezel_segment_levels(angle, count=24, minimum=1, maximum=15):
+def bezel_segment_levels(angle, count=BEZEL_SEGMENT_COUNT, minimum=1,
+                         maximum=15, phase_offset=0.0):
     """Brightness envelope for fixed tangent arcs, sweeping clockwise.
 
     A single compact light wave travels around the ring. The arcs never rotate
@@ -23,11 +29,12 @@ def bezel_segment_levels(angle, count=24, minimum=1, maximum=15):
     """
     count = max(1, int(count))
     levels = [0] * count
-    update_bezel_segment_levels(angle, levels, minimum, maximum)
+    update_bezel_segment_levels(angle, levels, minimum, maximum, phase_offset)
     return tuple(levels)
 
 
-def update_bezel_segment_levels(angle, levels, minimum=1, maximum=15):
+def update_bezel_segment_levels(angle, levels, minimum=1, maximum=15,
+                                phase_offset=0.0):
     """Update a retained level buffer without allocating animation state."""
     count = len(levels)
     if count < 1:
@@ -35,8 +42,11 @@ def update_bezel_segment_levels(angle, levels, minimum=1, maximum=15):
     phase = int((float(angle) % (2.0 * math.pi)) *
                 (_WAVE_BINS / (2.0 * math.pi))) % _WAVE_BINS
     span = maximum - minimum
+    center_offset = int(float(phase_offset) *
+                        (_WAVE_BINS / (2.0 * math.pi)))
     for index in range(count):
         center = (index * _WAVE_BINS + count // 2) // count
+        center = (center + center_offset) % _WAVE_BINS
         delta = (center - phase) % _WAVE_BINS
         if delta > _WAVE_HALF_BINS:
             delta = _WAVE_BINS - delta

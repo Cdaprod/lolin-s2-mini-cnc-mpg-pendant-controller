@@ -1,6 +1,6 @@
 {
   "generator": "tools/generate_hud_bezels.py",
-  "generator_version": 5,
+  "generator_version": 6,
   "target": [
     240,
     240
@@ -392,10 +392,14 @@
       "tiles": 384,
       "orientations": 24,
       "subpixel_phases": 16,
+      "instances": 12,
+      "track_radius_px": 110,
+      "arc_length_px": 29,
+      "angular_offset_degrees": 29,
       "palette_entries": 16,
       "transparent_index": 0,
       "bytes": 209088
     }
   ],
-  "generation_seconds": 6.587
+  "generation_seconds": 6.642
 }

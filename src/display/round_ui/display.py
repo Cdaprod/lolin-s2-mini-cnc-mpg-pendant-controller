@@ -3,6 +3,7 @@
 import math
 
 from . import bezel_palette, theme
+from .rotor import BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD
 from .effects import TOUCH_BITMAP_CENTER, TOUCH_BITMAP_SIZE, touch_zone
 from .renderer import RoundRenderer
 
@@ -289,7 +290,7 @@ def displayio_scene(display, colors=None, bezel_name=None):
     rotor_palette_bank = []
     rotor_sheet, rotor_frame_count = _load_rotor_sprite_sheet(displayio)
     if rotor_sheet is not None:
-        rotor_count = 24
+        rotor_count = BEZEL_SEGMENT_COUNT
         # Palette entries for each intensity are built once. Animation swaps a
         # TileGrid's existing shader instead of writing up to 360 colors/frame.
         for level in range(16):
@@ -306,9 +307,10 @@ def displayio_scene(display, colors=None, bezel_name=None):
                 rotor_sheet, pixel_shader=rotor_palette_bank[1],
                 width=1, height=1,
                 tile_width=33, tile_height=33)
-            angle = 2.0 * math.pi * index / rotor_count
-            center_x = 120 + 109.0 * math.cos(angle)
-            center_y = 120 + 109.0 * math.sin(angle)
+            angle = (BEZEL_SEGMENT_OFFSET_RAD +
+                     2.0 * math.pi * index / rotor_count)
+            center_x = 120 + 110.0 * math.cos(angle)
+            center_y = 120 + 110.0 * math.sin(angle)
             base_x, base_y = math.floor(center_x), math.floor(center_y)
             phase_x = int((center_x - base_x) * 4)
             phase_y = int((center_y - base_y) * 4)
