@@ -9,6 +9,14 @@ class _DisplayIOTextLine:
         self.width = width
         self.height = height
         self.font = font
+        self.font_y_metrics = None
+        get_bounding_box = getattr(font, "get_bounding_box", None)
+        if get_bounding_box is not None:
+            try:
+                _, font_height, _, font_y_offset = get_bounding_box()
+                self.font_y_metrics = (font_height, font_y_offset)
+            except (AttributeError, TypeError, ValueError):
+                pass
         self.centered = bool(centered)
         self.bitmap = displayio.Bitmap(width, height, 2)
         palette = displayio.Palette(2)
@@ -60,13 +68,31 @@ class _DisplayIOTextLine:
             if glyph.width <= 0 or glyph.height <= 0:
                 cursor += advance
                 continue
-            if cursor + glyph.width > self.width:
-                break
             source = glyph.bitmap
             columns = max(1, source.width // max(1, glyph.width))
             source_x = (glyph.tile_index % columns) * glyph.width
             source_y = (glyph.tile_index // columns) * glyph.height
-            glyph_height = min(glyph.height, self.height)
+            glyph_x = cursor + getattr(glyph, "dx", 0)
+            glyph_y = 0
+            if self.font_y_metrics is not None:
+                font_height, font_y_offset = self.font_y_metrics
+                glyph_y = (font_height + font_y_offset - glyph.height -
+                           getattr(glyph, "dy", 0))
+            if glyph_x < 0:
+                source_x -= glyph_x
+                glyph_width = glyph.width + glyph_x
+                glyph_x = 0
+            else:
+                glyph_width = min(glyph.width, self.width - glyph_x)
+            if glyph_y < 0:
+                source_y -= glyph_y
+                glyph_height = glyph.height + glyph_y
+                glyph_y = 0
+            else:
+                glyph_height = min(glyph.height, self.height - glyph_y)
+            if glyph_width <= 0 or glyph_height <= 0:
+                cursor += advance
+                continue
             if self._bitmap_blit is not None:
                 # bitmaptools copies the glyph rectangle in native code.
                 # The text bitmap was cleared above, so skipping the atlas's
@@ -74,18 +100,17 @@ class _DisplayIOTextLine:
                 # avoiding thousands of Python-level pixel accesses on the
                 # first render and on screen changes.
                 self._bitmap_blit(
-                    self.bitmap, source, cursor, 0,
+                    self.bitmap, source, glyph_x, glyph_y,
                     x1=source_x, y1=source_y,
-                    x2=source_x + glyph.width, y2=source_y + glyph_height,
+                    x2=source_x + glyph_width,
+                    y2=source_y + glyph_height,
                     skip_source_index=0,
                 )
             else:
                 for y in range(glyph_height):
-                    for x in range(glyph.width):
+                    for x in range(glyph_width):
                         if source[source_x + x, source_y + y]:
-                            target_x = cursor + x
-                            if target_x < self.width:
-                                self.bitmap[target_x, y] = 1
+                            self.bitmap[glyph_x + x, glyph_y + y] = 1
             cursor += advance
         return True
 
