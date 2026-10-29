@@ -314,26 +314,38 @@ def displayio_scene(display, colors=None, bezel_name=None):
     palettes["hud_markers"] = tuple(item[2] for item in hud_markers)
     palettes["hud_trails"] = tuple(item[2] for item in hud_trails)
 
-    # Three small tangential light segments form a moving outer rotor over
-    # the static bezel artwork. They are separate from the counter-orbiting
-    # HUD orbs and remain underneath every readout and critical overlay.
+    # Fixed concentric arcs form the outer rotor. Their brightness wave turns
+    # around the ring; the arcs themselves never spin or change orientation.
     rotor_segments = []
+    rotor_palettes = []
     rotor_sheet, rotor_frame_count = _load_rotor_sprite_sheet(displayio)
     if rotor_sheet is not None:
-        rotor_palette = displayio.Palette(16)
-        rotor_palette[0] = 0
-        rotor_palette.make_transparent(0)
-        for shade in range(1, 16):
-            rotor_palette[shade] = theme.shade_color(
-                colors["accent"], shade * 100 // 15)
-        for _ in range(3):
+        rotor_count = 24
+        for index in range(rotor_count):
+            rotor_palette = displayio.Palette(16)
+            rotor_palette[0] = 0
+            rotor_palette.make_transparent(0)
+            for shade in range(1, 16):
+                rotor_palette[shade] = theme.shade_color(
+                    colors["accent"], shade // 2)
             segment = displayio.TileGrid(
                 rotor_sheet, pixel_shader=rotor_palette, width=1, height=1,
                 tile_width=23, tile_height=23)
-            segment.hidden = True
+            angle = 2.0 * math.pi * index / rotor_count
+            center_x = 120 + 109.0 * math.cos(angle)
+            center_y = 120 + 109.0 * math.sin(angle)
+            base_x, base_y = math.floor(center_x), math.floor(center_y)
+            phase_x = int((center_x - base_x) * 4)
+            phase_y = int((center_y - base_y) * 4)
+            tangent = (angle + math.pi / 2.0) % (2.0 * math.pi)
+            orientation = int(round(tangent * 32.0 / (2.0 * math.pi))) % 32
+            segment[0] = orientation * 16 + phase_y * 4 + phase_x
+            segment.x, segment.y = int(base_x) - 11, int(base_y) - 11
+            segment.hidden = False
             root.append(segment)
             rotor_segments.append(segment)
-        palettes["rotor_segment"] = rotor_palette
+            rotor_palettes.append(rotor_palette)
+        palettes["rotor_segments"] = tuple(rotor_palettes)
 
     # Encoder-only feedback is a retained bead and trailing point. Its angle
     # follows physical detents, and it never represents accepted machine motion.
@@ -527,7 +539,9 @@ def displayio_scene(display, colors=None, bezel_name=None):
         "hud_trails": tuple(hud_trails),
         "hud_frame_count": hud_frame_count,
         "rotor_segments": tuple(rotor_segments),
-        "rotor_frame_count": rotor_frame_count,
+        "rotor_palettes": tuple(rotor_palettes),
+        "rotor_tile_count": rotor_frame_count,
+        "rotor_color": colors["accent"],
         "encoder_marker": encoder_marker, "encoder_trail": encoder_trail,
         "encoder_palettes": palettes["encoder"],
         "nav_group": nav_group,

@@ -9,7 +9,7 @@ from . import bezel_palette, theme
 from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
                          SelectorFeedback, TextComponent)
-from .rotor import BezelRotor
+from .rotor import BezelRotor, update_bezel_segment_levels
 
 # At 24 updates/s, keep tangential motion below one pixel per update at the
 # retained marker radii. Integer DisplayIO coordinates then produce a regular
@@ -120,8 +120,11 @@ class RoundRenderer:
         self.hud_frame_count = scene.get("hud_frame_count", 0)
         self._hud_tile_indexes = [-1] * len(self.hud_markers)
         self.bezel_segments = scene.get("rotor_segments", ())
-        self.rotor_frame_count = scene.get("rotor_frame_count", 0)
-        self._rotor_tile_indexes = [-1] * len(self.bezel_segments)
+        self.bezel_segment_palettes = scene.get("rotor_palettes", ())
+        self.rotor_tile_count = scene.get("rotor_tile_count", 0)
+        self._rotor_color = scene.get("rotor_color", theme.CYAN)
+        self._rotor_brightness_levels = [-1] * len(self.bezel_segments)
+        self._rotor_target_levels = [0] * len(self.bezel_segments)
         self._hud_phase = -1
         self._hud_dirty = False
         self._last_nonhome_model_ticks = None
@@ -481,28 +484,25 @@ class RoundRenderer:
                                 trail.hidden = False
                                 self._hud_dirty = True
                                 changed = True
-                    if self.rotor_frame_count == 512:
-                        for index, sprite in enumerate(self.bezel_segments):
-                            angle = rotor_angle + index * (2.0 * math.pi / 3.0)
-                            center_x = 120 + 109.0 * math.cos(angle)
-                            center_y = 120 + 109.0 * math.sin(angle)
-                            base_x, base_y = math.floor(center_x), math.floor(center_y)
-                            phase_x = int((center_x - base_x) * 4)
-                            phase_y = int((center_y - base_y) * 4)
-                            tangent = (angle + math.pi / 2.0) % (2.0 * math.pi)
-                            orientation = int(round(
-                                tangent * 32.0 / (2.0 * math.pi))) % 32
-                            tile_index = (orientation * 16 + phase_y * 4 +
-                                          phase_x)
-                            if self._rotor_tile_indexes[index] != tile_index:
-                                sprite[0] = tile_index
-                                self._rotor_tile_indexes[index] = tile_index
+                    if self.rotor_tile_count == 512:
+                        update_bezel_segment_levels(
+                            rotor_angle, self._rotor_target_levels)
+                        for index in range(len(self.bezel_segments)):
+                            sprite = self.bezel_segments[index]
+                            palette = self.bezel_segment_palettes[index]
+                            level = self._rotor_target_levels[index]
+                            if sprite.hidden:
+                                sprite.hidden = False
                                 self._hud_dirty = True
                                 changed = True
-                            x, y = int(base_x) - 11, int(base_y) - 11
-                            if sprite.x != x or sprite.y != y or sprite.hidden:
-                                sprite.x, sprite.y = x, y
-                                sprite.hidden = False
+                            if self._rotor_brightness_levels[index] != level:
+                                percent = level * 100 // 15
+                                for shade in range(1, 16):
+                                    color = theme.shade_color(
+                                        self._rotor_color, shade * percent // 15)
+                                    if palette[shade] != color:
+                                        palette[shade] = color
+                                self._rotor_brightness_levels[index] = level
                                 self._hud_dirty = True
                                 changed = True
                 elif not self.bezel_rotation_enabled:
