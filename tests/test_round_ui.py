@@ -190,6 +190,46 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer.axis.axis.line.updates, axis_updates)
         self.assertEqual(renderer.axis.value.line.updates, value_updates + 1)
 
+    def test_nonhome_view_model_is_bounded_but_dirty_actions_render_now(self):
+        state, ui, _, renderer = self.make_renderer()
+        ui.enter("NETWORK_INFO")
+        ticks = [0]
+        renderer._profile_ticks_ms = lambda: ticks[0]
+        renderer.render(state)
+        self.assertEqual(renderer.menu[0].line.text, "Wi-Fi: DISABLED")
+
+        state.wifi_state = "CONNECTED"
+        ticks[0] = 10
+        with patch.object(ui, "view_model", wraps=ui.view_model) as view_model:
+            self.assertFalse(renderer.render(state))
+            self.assertEqual(view_model.call_count, 0)
+            self.assertEqual(renderer.menu[0].line.text, "Wi-Fi: DISABLED")
+
+            ticks[0] = 33
+            self.assertTrue(renderer.render(state))
+            self.assertEqual(view_model.call_count, 1)
+            self.assertEqual(renderer.menu[0].line.text, "Wi-Fi: CONNECTED")
+
+            ui._changed()
+            ticks[0] = 34
+            self.assertFalse(renderer.render(state))
+            self.assertEqual(view_model.call_count, 2)
+
+    def test_nonhome_transient_hud_refresh_skips_view_model(self):
+        state, ui, display, renderer = self.make_renderer()
+        ui.enter("MAIN_MENU")
+        ticks = [0]
+        renderer._profile_ticks_ms = lambda: ticks[0]
+        renderer.render(state)
+        ticks[0] = 5
+        renderer._hud_dirty = True
+        refreshes = display.refreshes
+        with patch.object(ui, "view_model",
+                          side_effect=AssertionError("transient full redraw")):
+            self.assertTrue(renderer.render(state))
+        self.assertFalse(renderer._hud_dirty)
+        self.assertEqual(display.refreshes, refreshes + 1)
+
     def test_auto_refresh_display_uses_nonblocking_background_refresh(self):
         state, _, display, renderer = self.make_renderer()
         display.auto_refresh = True
