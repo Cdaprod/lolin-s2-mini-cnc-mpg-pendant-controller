@@ -357,6 +357,14 @@ class CurrentPendantInputTests(unittest.TestCase):
         self.assertEqual((adapter.encoder.a, adapter.encoder.b),
                          (self.board.GPIO39, self.board.GPIO40))
 
+        # GPB6 is the dedicated active-low hold-to-run input.  A held
+        # contact must be observed as active, and opening it must release
+        # motion authority on the very next coherent MCP snapshot.
+        i2c.gpio = (0xFE, 0xB8)  # Same selectors; GPB6 pulled low.
+        self.assertTrue(adapter.read().deadman)
+        i2c.gpio = (0xFE, 0xF8)  # GPB6 high through the configured pull-up.
+        self.assertFalse(adapter.read().deadman)
+
 
 if __name__ == "__main__":
     unittest.main()
