@@ -660,13 +660,16 @@ class PendantApplication:
         self._diag_total_input_ms += input_duration_ms
         touch_started = self._diag_ticks_ms()
         touch_needs_render = False
+        touch_contact_log = None
+        touch_gesture_log = None
         if self.touch_manager is not None:
             touch_events = self.touch_manager.poll()
             contact = getattr(self.touch_manager,
                               "last_contact_transition", None)
             if contact is not None:
-                emit("touch_contact", state=contact[0],
-                     x=contact[1], y=contact[2])
+                # USB CDC output can block. Defer diagnostic writes until the
+                # immediate contact redraw has reached the display.
+                touch_contact_log = contact
                 if contact[0] == "down":
                     touch_needs_render = True
                     # Preview menu focus on contact in this same render pass.
@@ -679,7 +682,7 @@ class PendantApplication:
                             touch_needs_render)
             for event in touch_events:
                 touch_needs_render = True
-                emit("touch_gesture", kind=event.kind, x=event.x, y=event.y)
+                touch_gesture_log = (event.kind, event.x, event.y)
                 try:
                     self.handle_ui_event(event)
                 except SafetyError as exc:
@@ -708,11 +711,6 @@ class PendantApplication:
             if (getattr(self.touch_manager, "feedback_active", False) and
                     hasattr(self.display, "touch_hold")):
                 self.display.touch_hold(self.touch_manager.feedback_until)
-        touch_duration_ms = max(
-            0, _diag_ticks_diff_ms(self._diag_ticks_ms(), touch_started))
-        if touch_duration_ms > self._diag_max_touch_ms:
-            self._diag_max_touch_ms = touch_duration_ms
-        self._diag_total_touch_ms += touch_duration_ms
         if hasattr(self.display, "animate"):
             self.display.animate(started)
         if touch_needs_render:
@@ -734,6 +732,19 @@ class PendantApplication:
                 self.display, "last_refresh_ms", 0)
         else:
             touch_display_duration_ms = 0
+        # This measures the physical touch sample through its first visible
+        # update, excluding the optional USB diagnostic writes below.
+        touch_duration_ms = max(
+            0, _diag_ticks_diff_ms(self._diag_ticks_ms(), touch_started))
+        if touch_duration_ms > self._diag_max_touch_ms:
+            self._diag_max_touch_ms = touch_duration_ms
+        self._diag_total_touch_ms += touch_duration_ms
+        if touch_contact_log is not None:
+            emit("touch_contact", state=touch_contact_log[0],
+                 x=touch_contact_log[1], y=touch_contact_log[2])
+        if touch_gesture_log is not None:
+            emit("touch_gesture", kind=touch_gesture_log[0],
+                 x=touch_gesture_log[1], y=touch_gesture_log[2])
         if getattr(self.network_service, "scanning", False):
             if self.network_service.poll_scan():
                 self.ui.set_dynamic_items(
