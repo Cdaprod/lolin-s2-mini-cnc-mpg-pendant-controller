@@ -26,6 +26,7 @@ class Esp:
         self.sent = []
         self.peers = []
         self.fail_types = set()
+        self.incoming = []
     def register_peer(self, mac):
         peer = Peer(mac)
         self.peers.append(peer)
@@ -35,7 +36,12 @@ class Esp:
             raise OSError("simulated ESP-NOW send failure")
         self.sent.append((packet, peer.mac if peer else None))
     def read(self):
-        return None
+        return self.incoming.pop(0) if self.incoming else None
+
+
+class Packet:
+    def __init__(self, mac, msg):
+        self.mac, self.msg = mac, msg
 
 
 class WirelessTests(unittest.TestCase):
@@ -56,6 +62,23 @@ class WirelessTests(unittest.TestCase):
         self.ctrl.transport.events.append(
             (proto.UART_RESPONSE, 0, line.encode("ascii") + b"\n"))
         self.ctrl.poll()
+
+    def test_peer_change_invalidates_partial_and_stale_controller_status(self):
+        self.status("<Idle|MPos:1,2,3>")
+        self.ctrl._partial.extend(b"<Hold|MPos:4,")
+        new_peer = bytes.fromhex("112233445566")
+        pair_ack = proto.encode(
+            proto.PAIR_ACK, 123, payload=bytes((1, 1)) +
+            Radio.mac_address + bytes((255,)))
+        self.esp.incoming.append(Packet(new_peer, pair_ack))
+
+        self.ctrl.poll()
+
+        self.assertEqual(self.ctrl.transport.peer, new_peer)
+        self.assertEqual(self.ctrl._partial, bytearray())
+        self.assertIsNone(self.ctrl._last_status)
+        self.assertIsNone(self.ctrl._status_peer)
+        self.assertEqual(self.state.connection_state, "disconnected")
 
     def test_display_reports_pairing_radio_and_grbl_independently(self):
         from src.display.round_ui.renderer import RoundRenderer

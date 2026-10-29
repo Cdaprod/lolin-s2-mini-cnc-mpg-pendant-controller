@@ -115,6 +115,9 @@ class C3PairingBench:
             self.peer = None
             self.last_rx = None
             self.last_heartbeat = None
+            # Events were validated for the peer that just timed out. Do not
+            # let queued ACKs or partial status data cross a pairing boundary.
+            self.events = []
             print("[event] event=espnow_link state=lost reason=heartbeat_timeout peer={} uptime_ms={}".format(
                 ":".join("%02x" % byte for byte in old_peer) if old_peer else "unknown",
                 int(current * 1000)))
@@ -140,6 +143,11 @@ class C3PairingBench:
                         raise ValueError("pair ACK contains wrong local MAC")
                     if sender == BROADCAST or sender == self.local_mac:
                         raise ValueError("invalid bridge MAC")
+                    if self.peer is not None and self.peer != sender:
+                        # A sequence number is scoped to the peer/session that
+                        # produced the frame. Drop old-peer events before the
+                        # controller can mistake them for the new peer's ACK.
+                        self.events = []
                     if self.unicast_peer is None or bytes(self.unicast_peer.mac) != sender:
                         if hasattr(self.esp, "register_peer"):
                             self.unicast_peer = self.esp.register_peer(sender)

@@ -137,6 +137,7 @@ class C3WirelessController:
 
     def poll(self, now=None):
         current = self.clock() if now is None else now
+        previous_peer = self.transport.peer
         try:
             self.transport.poll()
         except (OSError, RuntimeError, ValueError):
@@ -144,6 +145,13 @@ class C3WirelessController:
             self.state.link_state = "LINK_LOST" if self.transport.paired else "PAIRING"
             self.cancel_jog()
             return
+        if self.transport.peer != previous_peer:
+            # A GRBL line may have arrived in fragments. Never complete a
+            # fragment received from one bridge using bytes from another, and
+            # invalidate telemetry until the new peer supplies a fresh line.
+            self._partial = bytearray()
+            self._last_status = None
+            self._status_peer = None
         while self.transport.events:
             kind, seq, payload = self.transport.events.pop(0)
             if kind == proto.UART_RESPONSE:
