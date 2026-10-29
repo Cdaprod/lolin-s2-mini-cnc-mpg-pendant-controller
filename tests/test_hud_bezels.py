@@ -33,12 +33,12 @@ class AssetPipelineTests(unittest.TestCase):
                          packed)
 
     def test_rotor_segments_have_orientation_and_subpixel_atlas(self):
+        import numpy as np
         packed = generate_hud_bezels.rotor_segment_data()
-        self.assertEqual(len(packed), 36 * 576 // 2)
+        self.assertEqual(len(packed), 92 * 2944 // 2)
         bitmap = (ASSETS / "runtime" / "rotor_segment_phases.4bpp")
         self.assertEqual(bitmap.read_bytes(), packed)
-        # Read two 9x9 tiles at the same fractional position. Orientation
-        # changes the capsule while retaining a shared indexed palette.
+        # Read 23x23 curved-arc tiles at the same fractional position.
         pixels = []
         for value in packed:
             pixels.extend((value & 0x0F, value >> 4))
@@ -46,12 +46,17 @@ class AssetPipelineTests(unittest.TestCase):
         def tile(orientation, phase_x=0, phase_y=0):
             tile_x = phase_x
             tile_y = orientation * 4 + phase_y
-            return tuple(pixels[(tile_y * 9 + y) * 36 + tile_x * 9 + x]
-                         for y in range(9) for x in range(9))
+            return tuple(pixels[(tile_y * 23 + y) * 92 + tile_x * 23 + x]
+                         for y in range(23) for x in range(23))
 
         self.assertTrue(any(tile(0)))
-        self.assertNotEqual(tile(0), tile(4))
+        self.assertNotEqual(tile(0), tile(8))
         self.assertNotEqual(tile(0), tile(0, 1, 0))
+        horizontal_arc = np.asarray(tile(0), dtype=np.uint8).reshape(23, 23)
+        yy, xx = np.nonzero(horizontal_arc)
+        self.assertGreaterEqual(int(xx.max() - xx.min()), 16)
+        self.assertGreaterEqual(int(yy.max() - yy.min()), 3)
+        self.assertLessEqual(int(horizontal_arc.max()), 15)
 
     def test_precomputed_orb_sheet_loads_without_runtime_geometry_sampling(self):
         calls = []
@@ -87,21 +92,21 @@ class AssetPipelineTests(unittest.TestCase):
                                                     len(source.read()))) )
         })
         with patch.dict("sys.modules", {"bitmaptools": fake_bitmaptools}), \
-                patch("builtins.open", mock_open(read_data=b"x" * 10368)):
+                patch("builtins.open", mock_open(read_data=b"x" * 135424)):
             bitmap, frames = display._load_rotor_sprite_sheet(fake_displayio)
         self.assertIsNotNone(bitmap)
-        self.assertEqual(frames, 256)
-        self.assertEqual(calls, [(36, 576, 16), (4, 10368)])
+        self.assertEqual(frames, 512)
+        self.assertEqual(calls, [(92, 2944, 16), (4, 135424)])
 
     def test_all_production_bezels_are_240px_4bpp_and_transparent(self):
         manifest = json.loads((ASSETS / "manifest.json").read_text())
         self.assertEqual(len(manifest["themes"]), 12)
         self.assertEqual(manifest["sprite_assets"][0]["bytes"], 648)
-        self.assertEqual(manifest["sprite_assets"][1]["bytes"], 10368)
+        self.assertEqual(manifest["sprite_assets"][1]["bytes"], 135424)
         self.assertEqual((ASSETS / "runtime" / "orbit_phases.4bpp").stat().st_size,
                          648)
         self.assertEqual((ASSETS / "runtime" / "rotor_segment_phases.4bpp").stat().st_size,
-                         10368)
+                         135424)
         self.assertEqual(manifest["target"], [240, 240])
         names = set()
         for item in manifest["themes"]:

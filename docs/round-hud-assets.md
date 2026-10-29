@@ -58,11 +58,13 @@ to one turn per 54 seconds; direction changes use a deterministic 20–40 second
 interval and ease through deceleration. Encoder detent rate sets signed rotor
 speed, capped at `MPG_BEZEL_MAX_SPEED_RAD_S`; after the input becomes idle, the
 velocity blends toward the current ambient speed with `MPG_BEZEL_INERTIA_S`.
-Presentation is limited by `MPG_BEZEL_FRAME_RATE` (default 24 Hz). Orb motion
-uses precomputed 9x9 capsule tiles with 16 orientations and 16 subpixel phases
-to keep moving segments crisp. The frame loop changes only retained tile
-indices and integer coordinates; it does not construct or rotate bitmaps at
-runtime. Page swipes ease into and out of the transition while matching
+Presentation is limited by `MPG_BEZEL_FRAME_RATE` (default 24 Hz). The three
+moving ring accents use precomputed 23x23 curved-arc tiles with 32 tangent
+orientations and 16 subpixel phases. Their longer arc geometry follows the
+outer track instead of appearing as short bars spinning on their axes. The
+frame loop changes only retained tile indices and integer coordinates; it
+does not construct or rotate bitmaps at runtime. Page swipes ease into and out
+of the transition while matching
 velocity at the outgoing/incoming page handoff. These settings are clamped by
 the rotor model and do not affect UI polling or communication loops.
 

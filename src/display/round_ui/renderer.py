@@ -481,17 +481,17 @@ class RoundRenderer:
                                 trail.hidden = False
                                 self._hud_dirty = True
                                 changed = True
-                    if self.rotor_frame_count == 256:
+                    if self.rotor_frame_count == 512:
                         for index, sprite in enumerate(self.bezel_segments):
                             angle = rotor_angle + index * (2.0 * math.pi / 3.0)
-                            center_x = 120 + 113.0 * math.cos(angle)
-                            center_y = 120 + 113.0 * math.sin(angle)
+                            center_x = 120 + 109.0 * math.cos(angle)
+                            center_y = 120 + 109.0 * math.sin(angle)
                             base_x, base_y = math.floor(center_x), math.floor(center_y)
                             phase_x = int((center_x - base_x) * 4)
                             phase_y = int((center_y - base_y) * 4)
                             tangent = (angle + math.pi / 2.0) % (2.0 * math.pi)
                             orientation = int(round(
-                                tangent * 16.0 / (2.0 * math.pi))) % 16
+                                tangent * 32.0 / (2.0 * math.pi))) % 32
                             tile_index = (orientation * 16 + phase_y * 4 +
                                           phase_x)
                             if self._rotor_tile_indexes[index] != tile_index:
@@ -499,7 +499,7 @@ class RoundRenderer:
                                 self._rotor_tile_indexes[index] = tile_index
                                 self._hud_dirty = True
                                 changed = True
-                            x, y = int(base_x) - 4, int(base_y) - 4
+                            x, y = int(base_x) - 11, int(base_y) - 11
                             if sprite.x != x or sprite.y != y or sprite.hidden:
                                 sprite.x, sprite.y = x, y
                                 sprite.hidden = False
