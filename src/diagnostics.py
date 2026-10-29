@@ -7,6 +7,16 @@ def _token(value):
     return value.replace("%", "_25").replace("=", "_").replace(" ", "_")[:80]
 
 
+def is_runtime_reload(exc):
+    """Return whether CircuitPython raised its normal VM-reload signal.
+
+    ReloadException is a CircuitPython builtin, but is intentionally absent
+    from CPython. Name-checking keeps the host test surface importable while
+    distinguishing expected soft reloads from application failures.
+    """
+    return type(exc).__name__ == "ReloadException"
+
+
 def emit(event, **fields):
     """Write one low-allocation event line to CircuitPython's USB console."""
     parts = ["event=" + _token(event)]

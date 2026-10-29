@@ -3,10 +3,17 @@ import io
 import unittest
 
 from src.diagnostics import (emit, input_configuration_fields,
-                             loop_timing_fields)
+                             is_runtime_reload, loop_timing_fields)
 
 
 class DiagnosticsTests(unittest.TestCase):
+    def test_circuitpython_reload_is_distinct_from_application_failure(self):
+        class ReloadException(Exception):
+            pass
+
+        self.assertTrue(is_runtime_reload(ReloadException()))
+        self.assertFalse(is_runtime_reload(RuntimeError("failure")))
+
     def test_structured_diagnostic_line_has_bounded_single_token_fields(self):
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
