@@ -84,3 +84,11 @@ The candidate saves/reopens successfully. Opening the assembly by itself automat
 The full edit/save/refresh/restore test passed on a disposable relocated project: `USBPlugLeadIn.Size` 0.20 → 0.25 → 0.20 mm changed the assembly link volume `665.220690448208 → 665.1743368845141 → 665.2206904482084 mm³`, then returned to baseline. The edited native component document remained separately editable.
 
 This is a useful interim assembly, not a fully modular or fully master-driven pendant: six legacy components remain static BREP representations, and the shell dependency migration is still blocked. The old monolith remains the authoritative editable source for them.
+
+### Continued parameterization
+
+The shared/local split now has one validated local component parameter in addition to the existing shared locator-depth alias. `usb-tethered-cover.FCStd` contains a `LocalParameters` spreadsheet with `USBLeadInChamferSize = 0.20 mm`, driving the existing native `USBPlugLeadIn.Size` chamfer. The feature history was preserved. Save/reopen/recompute retained a valid one-solid Body with volume `665.2206904482084 mm^3` and unchanged bounds. On a disposable candidate, changing the local alias 0.20 → 0.25 → 0.20 mm changed volume `665.2206904482084 → 665.1743368845141 → 665.2206904482082 mm^3`; the restored geometry matched the original within kernel precision. The modular assembly refresh then passed with all four links and six static interim shapes valid; the USB link retained the restored volume.
+
+The display-retainer local-parameter attempt was not promoted. Driving the early base Pad caused the existing downstream junction Fillet to report invalid edge references on recompute, while a terminal clearance-pocket depth change did not measurably change its output. The original display-retainer document remains untouched. Continue identifying local parameters only where an actual edit produces a valid, measurable, recoverable geometry change.
+
+The rear transfer-reference experiment and its dependency-graph comparison are recorded in `shell-dependency-report.md`. It replaced the direct `RearFullLandTransfer.Base` edge only in a disposable copy; the rear closure did not shrink because other front-supported dependencies still reach `SmallHangerPocketBody`. The experiment was therefore not added to the production master or assembly.
