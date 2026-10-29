@@ -162,13 +162,17 @@ def build_screens():
     screens["SETTINGS"] = Screen("SETTINGS", "SETTINGS", "MAIN_MENU", items=[
         _disabled(label, "settings editor is not implemented") for label in settings
     ])
-    system = ("Firmware", "Hardware", "Storage", "Diagnostics", "Logs",
+    system = ("Firmware", "Hardware", "Storage", "Input Diagnostics", "Logs",
               "Version", "Restart")
     screens["SYSTEM"] = Screen("SYSTEM", "SYSTEM / ABOUT", "MAIN_MENU", items=[
-        MenuItem(label, "SYSTEM_INFO") if label != "Restart" else
+        MenuItem(label, "INPUT_INFO" if label == "Input Diagnostics"
+                 else "SYSTEM_INFO") if label != "Restart" else
         MenuItem(label, command="CONFIRM_RESTART") for label in system
     ])
     screens["SYSTEM_INFO"] = Screen("SYSTEM_INFO", "SYSTEM INFO", "SYSTEM")
+    screens["INPUT_INFO"] = Screen(
+        "INPUT_INFO", "INPUT DIAGNOSTICS", "SYSTEM", NAVIGATION
+    )
     return screens
 
 
@@ -368,6 +372,50 @@ class UIManager:
                 ("Last error", self.state.network_error or
                  self.state.controller_error or self.state.input_error or
                  self.state.display_error or self.state.storage_error or "none"),
+            )
+        if self.current_screen == "INPUT_INFO":
+            input_valid = self.state.input_valid
+            if input_valid is None:
+                health = "unknown"
+                axis = selector = increment = wheel = "unknown"
+                deadman = stop = "unknown"
+                select = "unknown"
+            elif not input_valid:
+                health = "invalid"
+                axis = selector = increment = wheel = "unavailable"
+                deadman = stop = "unavailable"
+                select = "unavailable"
+            else:
+                health = "valid"
+                if self.state.selectors_valid:
+                    axis = self.state.selected_axis or "OFF"
+                    selector = self.state.selected_physical_axis or "OFF"
+                    increment = self.state.selected_multiplier
+                else:
+                    axis = selector = increment = "invalid"
+                wheel = ("CW" if self.state.mpg_activity > 0 else
+                         "CCW" if self.state.mpg_activity < 0 else "idle")
+                deadman = (
+                    ("active" if self.state.deadman_enabled else "inactive")
+                    if self.state.deadman_input_configured else "unconfigured")
+                stop = self._estop_status()
+                select_state = self.state.button_states.get("SELECT")
+                select = ("pressed" if select_state else "released"
+                          if select_state is not None else "unconfigured")
+            return (
+                ("Backend", self.state.selector_backend or "disabled"),
+                ("Input sample", health),
+                ("Axis", axis),
+                ("Selector", selector),
+                ("Increment", increment),
+                ("Wheel", wheel),
+                ("SELECT button", select),
+                ("Hold-to-run", deadman),
+                ("Remote stop", stop),
+                ("MCP23017", "0x{:02X}".format(self.state.mcp23017_address)
+                 if self.state.mcp23017_detected else "not detected"),
+                ("Input error", self.state.input_error or "none"),
+                ("Selector error", self.state.selector_error or "none"),
             )
         if self.current_screen == "NETWORK_INFO":
             return (
@@ -739,7 +787,7 @@ class UIManager:
         if self.current_screen == "CONTROLLER_INFO":
             model["title"] = self.detail_title or model["title"]
             model["details"] = self.details()
-        elif self.current_screen == "SYSTEM_INFO":
+        elif self.current_screen in ("SYSTEM_INFO", "INPUT_INFO"):
             model["title"] = self.detail_title or model["title"]
             model["details"] = self.details()
         elif self.current_screen == "NETWORK_INFO":

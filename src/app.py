@@ -259,6 +259,11 @@ class PendantApplication:
                     type(exc).__name__)
                 input_manager = build_inputs({}, state)
         input_adapter_for_status = getattr(input_manager, "adapter", None)
+        state.deadman_input_configured = bool(
+            getattr(input_adapter_for_status, "deadman_configured", False))
+        state.button_states = dict(
+            (name, None) for name, pin in
+            config.get("button_pins", {}).items() if pin)
         state.estop_input_configured = bool(
             config.get("estop_observe_pin") and
             getattr(input_adapter_for_status, "configured", False))
@@ -575,8 +580,12 @@ class PendantApplication:
                  valid=self.state.selectors_valid,
                  reason=self.state.selector_error or "none")
             self._diag_last_selectors_valid = self.state.selectors_valid
+        if self.state.input_valid is False:
+            for name in self.state.button_states:
+                self.state.button_states[name] = None
         for name, active in sample.button_states.items():
             active = bool(active)
+            self.state.button_states[name] = active
             if self._diag_buttons.get(name) != active:
                 emit("input_state", input="button_" + name.lower(), active=active)
                 self._diag_buttons[name] = active
