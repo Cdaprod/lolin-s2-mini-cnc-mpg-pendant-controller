@@ -13,9 +13,51 @@ ASSETS = ROOT / "assets" / "round_hud"
 
 
 class AssetPipelineTests(unittest.TestCase):
+    def test_orbit_marker_sheet_has_all_supersampled_subpixel_tiles(self):
+        packed = generate_hud_bezels.orbit_phase_data()
+        self.assertEqual(len(packed), 36 * 36 // 2)
+        pixels = []
+        for value in packed:
+            pixels.extend((value & 0x0F, value >> 4))
+        tiles = []
+        for ty in range(4):
+            for tx in range(4):
+                tile = tuple(
+                    pixels[(ty*9+y)*36 + tx*9+x]
+                    for y in range(9) for x in range(9))
+                self.assertTrue(any(tile))
+                self.assertLessEqual(max(tile), 15)
+                tiles.append(tile)
+        self.assertEqual(len(set(tiles)), 16)
+        self.assertEqual((ASSETS / "runtime" / "orbit_phases.4bpp").read_bytes(),
+                         packed)
+
+    def test_precomputed_orb_sheet_loads_without_runtime_geometry_sampling(self):
+        calls = []
+
+        class Bitmap:
+            def __init__(self, width, height, colors):
+                calls.append((width, height, colors))
+
+        fake_displayio = type("DisplayIO", (), {"Bitmap": Bitmap})
+        fake_bitmaptools = type("BitmapTools", (), {
+            "readinto": staticmethod(lambda bitmap, source, bits_per_pixel:
+                                      calls.append((bits_per_pixel,
+                                                    len(source.read()))) )
+        })
+        with patch.dict("sys.modules", {"bitmaptools": fake_bitmaptools}), \
+                patch("builtins.open", mock_open(read_data=b"x" * 648)):
+            bitmap, frames = display._load_orb_sprite_sheet(fake_displayio)
+        self.assertIsNotNone(bitmap)
+        self.assertEqual(frames, 16)
+        self.assertEqual(calls, [(36, 36, 16), (4, 648)])
+
     def test_all_production_bezels_are_240px_4bpp_and_transparent(self):
         manifest = json.loads((ASSETS / "manifest.json").read_text())
         self.assertEqual(len(manifest["themes"]), 12)
+        self.assertEqual(manifest["sprite_assets"][0]["bytes"], 648)
+        self.assertEqual((ASSETS / "runtime" / "orbit_phases.4bpp").stat().st_size,
+                         648)
         self.assertEqual(manifest["target"], [240, 240])
         names = set()
         for item in manifest["themes"]:
@@ -45,7 +87,7 @@ class AssetPipelineTests(unittest.TestCase):
         files = deploy.runtime_files()
         bezels = [path for path in files
                   if path.startswith("assets/round_hud/")]
-        self.assertEqual(len(bezels), 12)
+        self.assertEqual(len(bezels), 13)
         self.assertTrue(all(path.endswith(".4bpp") for path in bezels))
         self.assertFalse(deploy.managed_path(
             "assets/round_hud/development/cyan_reactor.png"))

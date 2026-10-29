@@ -219,6 +219,29 @@ def _load_bezel(displayio, name):
         return None, None
 
 
+def _load_orb_sprite_sheet(displayio):
+    """Load precomputed subpixel phases or create a cheap legacy marker."""
+    try:
+        import bitmaptools
+        bitmap = displayio.Bitmap(36, 36, 16)
+        with open("/assets/round_hud/runtime/orbit_phases.4bpp", "rb") as source:
+            bitmaptools.readinto(bitmap, source, bits_per_pixel=4)
+        return bitmap, 16
+    except (ImportError, OSError, RuntimeError, ValueError, AttributeError,
+            MemoryError):
+        bitmap = displayio.Bitmap(9, 9, 4)
+        for yy in range(9):
+            for xx in range(9):
+                distance2 = (xx-4)**2 + (yy-4)**2
+                if distance2 <= 4:
+                    bitmap[xx, yy] = 1
+                elif distance2 <= 9:
+                    bitmap[xx, yy] = 2
+                elif distance2 <= 16:
+                    bitmap[xx, yy] = 3
+        return bitmap, 0
+
+
 def displayio_scene(display, colors=None, bezel_name=None):
     """Create a bounded retained scene optimized for a 240px circular panel."""
     import displayio
@@ -235,29 +258,24 @@ def displayio_scene(display, colors=None, bezel_name=None):
         # Decorative light stays beneath all readouts, feedback, and alarms.
         root.append(displayio.TileGrid(bezel_bitmap, pixel_shader=bezel_colors))
     palettes = {"dial": palette}
-    # Small retained 9x9 multi-tone discs soften pixel stair-steps while
-    # keeping the orbit indicators distinct at native 240x240 resolution.
-    # Only sprite positions change per frame; no bitmap rebuilds.
+    # One shared sprite sheet supplies 16 precomputed subpixel phases. Separate
+    # palettes keep the two counter-rotating indicators visually distinct.
     hud_markers = []
     hud_trails = []
+    marker_sheet, hud_frame_count = _load_orb_sprite_sheet(displayio)
     for radius, color in ((109, colors["accent"]), (99, colors["highlight"])):
-        pixels = displayio.Bitmap(9, 9, 4)
-        marker_palette = displayio.Palette(4)
+        marker_palette = displayio.Palette(16)
         marker_palette[0] = 0
         marker_palette.make_transparent(0)
-        marker_palette[1] = color
-        marker_palette[2] = theme.shade_color(color, 72)
-        marker_palette[3] = theme.shade_color(color, 38)
-        for yy in range(9):
-            for xx in range(9):
-                distance2 = (xx - 4) ** 2 + (yy - 4) ** 2
-                if distance2 <= 4:
-                    pixels[xx, yy] = 1
-                elif distance2 <= 9:
-                    pixels[xx, yy] = 2
-                elif distance2 <= 16:
-                    pixels[xx, yy] = 3
-        sprite = displayio.TileGrid(pixels, pixel_shader=marker_palette)
+        for shade in range(1, 16):
+            marker_palette[shade] = theme.shade_color(color, shade * 100 // 15)
+        if hud_frame_count:
+            sprite = displayio.TileGrid(
+                marker_sheet, pixel_shader=marker_palette, width=1, height=1,
+                tile_width=9, tile_height=9)
+        else:
+            sprite = displayio.TileGrid(marker_sheet,
+                                        pixel_shader=marker_palette)
         sprite.x, sprite.y = 116 + radius, 116
         root.append(sprite)
         hud_markers.append((sprite, radius, marker_palette))
@@ -470,6 +488,7 @@ def displayio_scene(display, colors=None, bezel_name=None):
                         (overlay_detail, "text")),
         "touch_halo": halo_node, "hud_markers": tuple(hud_markers),
         "hud_trails": tuple(hud_trails),
+        "hud_frame_count": hud_frame_count,
         "encoder_marker": encoder_marker, "encoder_trail": encoder_trail,
         "encoder_palettes": palettes["encoder"],
         "nav_group": nav_group,
