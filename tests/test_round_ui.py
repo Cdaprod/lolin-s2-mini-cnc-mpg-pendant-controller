@@ -6,6 +6,7 @@ from src.display.round_ui.renderer import RoundRenderer, _profile_ticks_diff
 from src.display.round_ui.components import MenuHighlight
 from src.display.round_ui.bootstrap import apply_mock_state
 from src.display.round_ui.geometry import RoundLayout
+from src.display.round_ui.effects import TOUCH_BITMAP_CENTER
 from src.display.round_ui import bezel_palette, theme
 from src.display.round_ui.rotor import (bezel_segment_levels,
                                         update_bezel_segment_levels)
@@ -792,7 +793,8 @@ class RoundRendererTests(unittest.TestCase):
         renderer.touch_feedback((120, 120), 1.2)
         self.assertFalse(renderer.touch_halo.hidden)
         self.assertEqual((renderer.touch_halo.x, renderer.touch_halo.y),
-                         (100, 100))
+                         (120 - TOUCH_BITMAP_CENTER,
+                          120 - TOUCH_BITMAP_CENTER))
         self.assertFalse(renderer.animate(1.1))
         self.assertTrue(renderer.render(state))
         self.assertEqual(display.refreshes, initial + 1)
