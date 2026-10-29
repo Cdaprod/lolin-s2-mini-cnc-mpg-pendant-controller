@@ -16,6 +16,7 @@ import zipfile
 import xml.etree.ElementTree as ET
 
 CONTAINERS = {"PartDesign::Body", "App::Part"}
+CONTEXT_PROPERTIES = {"Context"}
 
 
 def value_for(obj: ET.Element, prop: str) -> str | None:
@@ -43,6 +44,44 @@ def link_properties(obj: ET.Element) -> dict[str, str]:
     return out
 
 
+def property_link_edges(obj: ET.Element, known_objects: set[str]) -> list[dict[str, str]]:
+    """Decode saved link-like property values with the property name attached."""
+    edges: list[dict[str, str]] = []
+    for prop in obj.findall("./Properties/Property"):
+        if "Link" not in prop.get("type", ""):
+            continue
+        pname = prop.get("name", "")
+        for node in prop.iter():
+            target = node.get("value") or node.get("obj")
+            sub = node.get("sub", "")
+            external_file = node.get("file", "")
+            if node.tag in ("XLink", "XLinkSub"):
+                # FreeCAD XLinks encode the document/object path in name/sub.
+                path = node.get("sub", "")
+                target = node.get("name", "")
+                if path:
+                    first = path.strip(".").split(".", 1)[0]
+                    if first in known_objects:
+                        target = first
+                    sub = path
+            if not target:
+                continue
+            if target not in known_objects and "." in target:
+                first = target.split(".", 1)[0]
+                if first in known_objects:
+                    sub = target[len(first):] or sub
+                    target = first
+            if target in known_objects:
+                edges.append({"property": pname, "target_object": target,
+                              "subelement": sub, "external_file": external_file,
+                              "serialized_tag": node.tag})
+            elif node.tag in ("Link", "LinkSub", "XLink", "XLinkSub"):
+                edges.append({"property": pname, "target_object": target,
+                              "subelement": sub, "external_file": external_file,
+                              "serialized_tag": node.tag})
+    return edges
+
+
 def sketch_external_refs(obj: ET.Element) -> list[dict]:
     p = obj.find("./Properties/Property[@name='ExternalGeo']")
     constraints_prop = obj.find("./Properties/Property[@name='Constraints']")
@@ -66,10 +105,16 @@ def sketch_external_refs(obj: ET.Element) -> list[dict]:
                                                "name": c.get("Name", "")})
         target = ref.split(".", 1)[0] if "." in ref else ref
         subtoken = ref[len(target) + 1:] if target and ref.startswith(target + ".") else ""
+        geom_row = next((g for g in p.findall(".//GeometryList/Geometry")
+                         if g.get("id", "") == geometry_id), None)
+        geometry_node = next((child for child in (list(geom_row) if geom_row is not None else [])
+                              if child.tag not in ("GeoExtensions", "Construction")), None)
         refs.append({"external_geometry_order": index, "serialized_geometry_id": geometry_id,
                      "sketcher_constraint_geometry_index": sketch_index,
                      "reference": ref, "source_object": target,
                      "source_subelement_token": subtoken, "flags": flags,
+                     "projected_geometry_type": geom_row.get("type") if geom_row is not None else None,
+                     "projected_geometry_data": geometry_node.attrib if geometry_node is not None else {},
                      "constraints": referenced_constraints,
                      "constraint_driving": bool(referenced_constraints)})
     return refs
@@ -80,6 +125,10 @@ def main() -> int:
     ap.add_argument("fcstd", type=Path, help="FreeCAD document to inspect")
     ap.add_argument("--body", default="Body002", help="PartDesign Body root (default: Body002)")
     ap.add_argument("--json", type=Path, help="output JSON path (default: stdout)")
+    ap.add_argument("--allow-owner", action="append", default=[],
+                    help="owner Body/App::Part permitted as a dependency; repeatable")
+    ap.add_argument("--allow-object", action="append", default=[],
+                    help="document object explicitly permitted as a dependency; repeatable")
     args = ap.parse_args()
     source = args.fcstd.resolve()
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -107,7 +156,12 @@ def main() -> int:
         if not name or name in ordinary_visited or name not in objects:
             continue
         ordinary_visited.add(name)
-        if object_headers.get(name, "") in CONTAINERS:
+        typ = object_headers.get(name, "")
+        if typ in CONTAINERS:
+            # A linked helper Body contributes its active Tip geometry. Do not
+            # expand the Body's entire Group/history as a container relation.
+            if typ == "PartDesign::Body" and name != args.body:
+                ordinary_queue.append(value_for(objects[name], "Tip"))
             continue
         ordinary_targets = set(deps.get(name, []))
         ordinary_targets.discard(args.body)
@@ -120,6 +174,7 @@ def main() -> int:
 
     # Ordinary object dependencies, then Sketcher external-reference edges.
     graph: dict[str, set[str]] = {}
+    property_edges_by_object: dict[str, list[dict[str, str]]] = {}
     queue = [tip]
     visited: set[str] = set()
     while queue:
@@ -129,11 +184,20 @@ def main() -> int:
         visited.add(name)
         typ = object_headers.get(name, "")
         if typ in CONTAINERS:
+            if typ == "PartDesign::Body" and name != args.body:
+                body_tip = value_for(objects[name], "Tip")
+                graph[name] = {body_tip} if body_tip else set()
+                queue.append(body_tip)
             continue
         targets = set(deps.get(name, []))
         targets.discard(args.body)
         targets = {t for t in targets if object_headers.get(t, "") not in CONTAINERS}
         o = objects[name]
+        property_edges = property_link_edges(o, set(object_headers))
+        property_edges_by_object[name] = property_edges
+        targets.update(edge["target_object"] for edge in property_edges
+                       if edge["target_object"] in objects
+                       and edge["property"] not in CONTEXT_PROPERTIES)
         refs = sketch_external_refs(o) if typ.startswith("Sketcher::") else []
         targets.update(r["source_object"] for r in refs if r["source_object"] in objects)
         # Expression references are ordinary document object names; keep these
@@ -142,22 +206,6 @@ def main() -> int:
             targets.update(n for n in object_headers if re.search(rf"(?<![A-Za-z0-9_]){re.escape(n)}\.", e["expression"]))
         graph[name] = targets
         queue.extend(targets)
-
-    # Owner and suppression metadata.
-    owners: dict[str, list[str]] = {}
-    for owner_name, owner in objects.items():
-        if object_headers.get(owner_name, "") not in CONTAINERS:
-            continue
-        group = owner.find("./Properties/Property[@name='Group']")
-        if group is not None:
-            for link in group.findall(".//Link"):
-                owners.setdefault(link.get("value", ""), []).append(owner_name)
-    def suppressed(name: str) -> bool:
-        p = objects[name].find("./Properties/Property[@name='Suppressed']")
-        if p is None:
-            return False
-        b = p.find(".//Bool")
-        return bool(b is not None and b.get("value", "false").lower() == "true")
 
     # Shortest Tip-to-object path gives a traceable downstream chain.
     paths = {tip: [tip]}
@@ -168,6 +216,47 @@ def main() -> int:
             if target not in paths:
                 paths[target] = paths[n] + [target]
                 q.append(target)
+
+    # Owner and suppression metadata.
+    owners: dict[str, list[str]] = {}
+    for owner_name, owner in objects.items():
+        if object_headers.get(owner_name, "") not in CONTAINERS:
+            continue
+        group = owner.find("./Properties/Property[@name='Group']")
+        if group is not None:
+            for link in group.findall(".//Link"):
+                owners.setdefault(link.get("value", ""), []).append(owner_name)
+
+    # Conservative readiness: only the root Body, explicitly allowed owners,
+    # and explicitly allowed objects may supply geometry to an extraction.
+    permitted_owners = {args.body, *args.allow_owner}
+    permitted_objects = set(args.allow_object)
+    blockers = []
+    uncertain = []
+    for name in sorted(visited):
+        object_owners = set(owners.get(name, []))
+        if object_owners and not (object_owners & permitted_owners) and name not in permitted_objects:
+            blockers.append({"kind": "object_outside_permitted_owner", "object": name,
+                             "owners": sorted(object_owners), "tip_path": paths.get(name, [])})
+        elif not object_owners and name not in permitted_objects and name not in (args.body,):
+            blockers.append({"kind": "unowned_document_object", "object": name,
+                             "tip_path": paths.get(name, [])})
+        for edge in property_edges_by_object.get(name, []):
+            if edge["property"] in CONTEXT_PROPERTIES:
+                continue
+            target = edge["target_object"]
+            if target not in objects:
+                blockers.append({"kind": "unresolved_property_link", "object": name,
+                                 **edge, "tip_path": paths.get(name, [])})
+            elif edge["external_file"]:
+                uncertain.append({"kind": "external_file_link", "object": name,
+                                  **edge, "tip_path": paths.get(name, [])})
+    def suppressed(name: str) -> bool:
+        p = objects[name].find("./Properties/Property[@name='Suppressed']")
+        if p is None:
+            return False
+        b = p.find(".//Bool")
+        return bool(b is not None and b.get("value", "false").lower() == "true")
 
     body_group = root_body.find("./Properties/Property[@name='Group']")
     body_sketches = ({link.get("value", "") for link in body_group.findall(".//Link")}
@@ -197,10 +286,45 @@ def main() -> int:
             "tip_to_sketch_path": paths.get(name, []),
         })
 
+    # The sketch records are now complete; include external-geometry checks in
+    # the readiness state after their exact source tokens have been recorded.
+    for row in sketch_records:
+        if not row["active_tip_reachable"]:
+            continue
+        for ref in row["external_geometry"]:
+            target = ref["source_object"]
+            if target not in objects:
+                blockers.append({"kind": "unresolved_sketch_external_geometry",
+                                 "object": row["name"], **ref})
+            else:
+                target_owners = set(owners.get(target, []))
+                if not (target_owners & permitted_owners) and target not in permitted_objects:
+                    blockers.append({"kind": "sketch_external_geometry_outside_permitted_owner",
+                                     "object": row["name"], "target_object": target,
+                                     "target_owners": sorted(target_owners),
+                                     "subelement": ref["source_subelement_token"],
+                                     "constraint_geometry_index": ref["sketcher_constraint_geometry_index"],
+                                     "constraints": ref["constraints"],
+                                     "tip_to_consumer_path": row["tip_to_sketch_path"]})
+                if "#" in ref["source_subelement_token"]:
+                    uncertain.append({"kind": "opaque_generated_subelement", "object": row["name"],
+                                      "target_object": target,
+                                      "subelement": ref["source_subelement_token"],
+                                      "constraint_driving": ref["constraint_driving"]})
+
     external_edges = []
     for row in sketch_records:
         for ref in row["external_geometry"]:
             source_name = ref["source_object"]
+            source_placement = objects[source_name].find(
+                "./Properties/Property[@name='Placement']/PropertyPlacement") if source_name in objects else None
+            ref["source_object_placement"] = source_placement.attrib if source_placement is not None else None
+            ref["source_owner_placements"] = {
+                owner: (objects[owner].find("./Properties/Property[@name='Placement']/PropertyPlacement").attrib
+                        if objects[owner].find("./Properties/Property[@name='Placement']/PropertyPlacement") is not None
+                        else None)
+                for owner in owners.get(source_name, []) if owner in objects
+            }
             external_edges.append({
                 "consumer_sketch": row["name"], **ref,
                 "source_type": object_headers.get(source_name, "unknown"),
@@ -211,6 +335,64 @@ def main() -> int:
                 "tip_to_consumer_path": row["tip_to_sketch_path"],
                 "consumer_to_source_path": [row["name"], source_name],
             })
+
+    property_edges = []
+    for consumer, edges in property_edges_by_object.items():
+        if consumer not in paths:
+            continue
+        for edge in edges:
+            target = edge["target_object"]
+            property_edges.append({"consumer_object": consumer, **edge,
+                                   "consumer_owners": owners.get(consumer, []),
+                                   "target_owners": owners.get(target, []),
+                                   "dependency_role": ("container_context" if edge["property"] in CONTEXT_PROPERTIES
+                                                       else "geometry_or_parameter_link"),
+                                   "tip_to_consumer_path": paths.get(consumer, []),
+                                   "active_tip_reachable": True})
+
+    # Summarize every direct object-graph edge that crosses a component-owner
+    # boundary. Property links carry exact source properties; ObjectDeps-only
+    # links remain explicit as graph edges without inventing a property name.
+    boundary_crossings = []
+    for consumer, targets in graph.items():
+        if consumer not in paths:
+            continue
+        source_owners = owners.get(consumer, [])
+        for target in sorted(targets):
+            if target not in paths:
+                continue
+            target_owners = owners.get(target, [])
+            if set(source_owners) == set(target_owners):
+                continue
+            matching = [e for e in property_edges
+                        if e["consumer_object"] == consumer and e["target_object"] == target]
+            if matching:
+                for edge in matching:
+                    boundary_crossings.append({"source_object": consumer,
+                                               "source_owners": source_owners,
+                                               "target_object": target,
+                                               "target_owners": target_owners,
+                                               "edge_kind": "property_link",
+                                               "property": edge["property"],
+                                               "subelement": edge["subelement"],
+                                               "tip_to_source_path": paths.get(consumer, [])})
+            else:
+                boundary_crossings.append({"source_object": consumer,
+                                           "source_owners": source_owners,
+                                           "target_object": target,
+                                           "target_owners": target_owners,
+                                           "edge_kind": "ObjectDeps_or_expression",
+                                           "tip_to_source_path": paths.get(consumer, [])})
+
+    readiness = {
+        "status": "BLOCKED" if blockers else ("INDETERMINATE" if uncertain else "READY"),
+        "root_body": args.body,
+        "permitted_owners": sorted(permitted_owners),
+        "permitted_objects": sorted(permitted_objects),
+        "blockers": blockers,
+        "uncertainties": uncertain,
+        "policy": "READY requires every active dependency to resolve to the root Body or an explicitly permitted owner/object, with no unknown Sketcher references or external-file links."
+    }
 
     referenced_binders = {r["source_object"] for r in external_edges
                           if "Binder" in object_headers.get(r["source_object"], "")}
@@ -234,10 +416,10 @@ def main() -> int:
                    "freecad_version_observed": "1.1.1 (0108fd4b4850cc46e625b60e53cea7a7bbe69f8d)"},
         "root": {"body": args.body, "tip": tip},
         "method": {
-            "ordinary_edges": "Saved Document.xml ObjectDeps, excluding PartDesign::Body/App::Part ownership containers",
+            "ordinary_edges": "Saved Document.xml ObjectDeps plus serialized property-link targets, excluding non-geometric Context links and PartDesign::Body/App::Part ownership containers; a referenced helper PartDesign::Body contributes its active Tip only",
             "sketch_edges": "Sketcher::ExternalGeometryExtension Ref values in each Sketcher ExternalGeo GeometryList, expanded recursively",
             "constraints": "External geometry order i maps to Sketcher geometry index -(i+3); constraint First/Second/Third fields are checked",
-            "note": "This is a saved-document audit. Validate with the target FreeCAD build before geometry-changing repairs."
+            "note": "This is a saved-document audit. Referenced helper Bodies are traversed through Tip, not their complete Group. Validate with target FreeCAD before geometry-changing repairs."
         },
         "object_dependency_closure_count": len(ordinary_visited),
         "expanded_dependency_closure_count": len(visited),
@@ -251,6 +433,9 @@ def main() -> int:
                                          for n in sorted(visited)],
         "sketches": sketch_records,
         "external_geometry_references": external_edges,
+        "property_link_edges": property_edges,
+        "component_boundary_crossings": boundary_crossings,
+        "extraction_readiness": readiness,
         "binders": binder_records,
         "app_links": [{"name": n, "type": object_headers.get(n, ""),
                        "owners": owners.get(n, []),
