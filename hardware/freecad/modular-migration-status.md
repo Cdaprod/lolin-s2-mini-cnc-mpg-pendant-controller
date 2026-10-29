@@ -121,3 +121,7 @@ Added the component-local `TetherOpeningDiameter = 2.00 mm` alias, driving the e
 ### Display retainer M2 passage parameters (2026-10-29)
 
 The existing five-hole sketch now uses two component-local diameter aliases: three display passages at 2.20 mm and two shell passages at 2.30 mm. Their original values, positions, fully constrained sketch, and feature history are preserved. Independent 0.02 mm perturbations to each group changed the final Tip while retaining valid/up-to-date downstream features; save/reopen and restoration returned the original Tip metrics. In a relocated disposable project, changing both values updated the live assembly link, and restoring them returned its original volume after assembly refresh and save/reopen. See `reports/display-retainer-m2-parameterization.md` for measurements.
+
+### Combined editable-component regression (2026-10-29)
+
+After promoting both the USB tether opening and display-retainer M2 passage aliases at their original values, a single relocated-project assembly refresh recomputed all three editable component documents and validated all four live links plus six static interim solids. The assembly saved, closed, reopened, and recomputed with no errors. The USB and retainer link volumes matched their restored component baselines. No production assembly or master file was rewritten by this check.
