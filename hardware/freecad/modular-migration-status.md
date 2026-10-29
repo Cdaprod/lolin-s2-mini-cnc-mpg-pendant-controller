@@ -125,3 +125,7 @@ The existing five-hole sketch now uses two component-local diameter aliases: thr
 ### Combined editable-component regression (2026-10-29)
 
 After promoting both the USB tether opening and display-retainer M2 passage aliases at their original values, a single relocated-project assembly refresh recomputed all three editable component documents and validated all four live links plus six static interim solids. The assembly saved, closed, reopened, and recomputed with no errors. The USB and retainer link volumes matched their restored component baselines. No production assembly or master file was rewritten by this check.
+
+### Initial modular load benchmark (2026-10-29)
+
+A new bounded read-only benchmark opened the monolith and current modular assembly in fresh FreeCADCmd processes, with three interleaved runs per file and no explicit recompute or save. Median `App.openDocument()` time was 5.714 s for the 65.8 MB, 816-object monolith and 0.422 s for the 2.55 MB assembly, which auto-loaded its master and three linked component documents (167 total objects). That is a 13.6× faster load in this warm-cache test on this machine. This covers document load only, not viewport rendering, recompute, or editing responsiveness; six components in the assembly remain static BREP interim representations. The repeatable benchmark and raw results are in `scripts/benchmark_document_open.py` and `reports/modular-load-benchmark-2026-10-29.*`.
