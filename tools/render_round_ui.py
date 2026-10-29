@@ -18,9 +18,25 @@ screens = build_screens()
 names = ["HOME", "MAIN_MENU", "MACHINE", "JOBS", "JOB_BROWSER",
          "ACTIVE_JOB", "EXPLORER", "CONFIGURATION", "CONTROLLER",
          "NETWORK", "SETTINGS", "SYSTEM", "SYSTEM_INFO", "PREVIEW"]
-font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 12)
-small = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 10)
-large = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 17)
+runtime_fonts = Path(__file__).resolve().parents[1] / "fonts-source"
+regular_candidates = (
+    runtime_fonts / "DejaVuSans.ttf",
+    Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+    Path("/System/Library/Fonts/Supplemental/Arial.ttf"),
+)
+bold_candidates = (
+    runtime_fonts / "DejaVuSans-Bold.ttf",
+    Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"),
+    Path("/System/Library/Fonts/Supplemental/Arial Bold.ttf"),
+)
+regular_source = next(path for path in regular_candidates if path.is_file())
+bold_source = next(path for path in bold_candidates if path.is_file())
+# Use the same family and pixel sizes as the device BDF strikes. The TTF
+# source is optional and only used for host previews.
+font = ImageFont.truetype(str(regular_source), 12)
+small = ImageFont.truetype(str(regular_source), 10)
+large = ImageFont.truetype(str(bold_source), 24)
+title_font = ImageFont.truetype(str(bold_source), 14)
 for skin in ("industrial", "ice", "amber", "spectrum"):
     # Retain per-theme previews for color regression; also publish a page-
     # accurate composite showing the palette chosen by physical selector.
@@ -32,6 +48,25 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
         d.ellipse((9, 9, 231, 231), outline=c["panel"], width=4)
         # Four physical top-level page positions; no pager at idle in firmware.
         page = {"EXPLORER": 1, "CONFIGURATION": 2, "PREVIEW": 3}.get(name, 0)
+        # Snapshot at t=4 s to make both counter-rotating HUD markers visible.
+        for radius, rate, color in (
+                (109, 0.22, c["accent"]),
+                (99, -0.20, c["highlight"])):
+            angle = 4.0 * rate
+            cx = 120 + round(radius * math.cos(angle))
+            cy = 120 + round(radius * math.sin(angle))
+            for yy in range(9):
+                for xx in range(9):
+                    distance2 = (xx - 4) ** 2 + (yy - 4) ** 2
+                    if distance2 <= 4:
+                        fill = color
+                    elif distance2 <= 9:
+                        fill = theme.shade_color(color, 72)
+                    elif distance2 <= 16:
+                        fill = theme.shade_color(color, 38)
+                    else:
+                        continue
+                    d.point((cx + xx - 4, cy + yy - 4), fill=fill)
         for i in range(4):
             x = 67 + (106 * i) // 3
             y = 120 - int(math.sqrt(108 * 108 - (x - 120) ** 2))
@@ -45,10 +80,10 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
             d.text((120, 168), "X10", anchor="mm", font=large, fill=c["warning"])
             d.text((120, 194), "HOLD TO JOG", anchor="mm", font=small, fill=c["text"])
         else:
-            title = screen.title[:20]
-            if d.textbbox((0, 0), title, font=font)[2] > 165:
-                title = title[:17]
-            d.text((120, 43), title, anchor="mm", font=font, fill=c["text"])
+            title = screen.title
+            while title and d.textbbox((0, 0), title, font=title_font)[2] > 166:
+                title = title[:-1]
+            d.text((120, 43), title, anchor="mm", font=title_font, fill=c["text"])
             d.line((44, 55, 196, 55), fill=c.get("separator", c["muted"]), width=1)
             items = screen.items
             if not items:
@@ -72,7 +107,7 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
                     d.rounded_rectangle((30, y-4, 34, y+17), radius=2, fill=c["accent"])
                 elif row:
                     d.line((37, y-7, 203, y-7), fill=c.get("separator", c["muted"]), width=1)
-                available = 150
+                available = 156
                 label = str(label)
                 while label and d.textbbox((0, 0), label, font=font)[2] > available:
                     label = label[:-2]
@@ -88,7 +123,7 @@ assigned = (("HOME", "industrial"), ("EXPLORER", "amber"),
             ("CONFIGURATION", "ice"), ("PREVIEW", "spectrum"))
 page_sheet = Image.new("RGB", (1120, 310), "#15191D")
 page_draw = ImageDraw.Draw(page_sheet)
-heading = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 18)
+heading = ImageFont.truetype(str(regular_source), 18)
 for i, (screen, palette) in enumerate(assigned):
     x = 20 + i * 280
     preview = Image.open(OUT / f"{palette}-{screen.lower()}.png")
@@ -100,8 +135,7 @@ page_sheet.save(OUT / "physical-pages-themed.png")
 for skin in ("industrial", "ice", "amber", "spectrum"):
     sheet = Image.new("RGB", (1120, 1160), "#15191D")
     draw = ImageDraw.Draw(sheet)
-    heading = ImageFont.truetype(
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 18)
+    heading = ImageFont.truetype(str(regular_source), 18)
     for index, name in enumerate(names):
         x = index % 4 * 280 + 20
         y = index // 4 * 290 + 16
@@ -111,3 +145,22 @@ for skin in ("industrial", "ice", "amber", "spectrum"):
                   font=heading, fill="#E5E7EB")
     sheet.save(OUT / f"{skin}-contact-sheet.png")
 print(f"Generated {len(names)*4} previews + 4 contact sheets in {OUT}")
+
+# The user-provided photo showed the browser's no-files page. Keep both
+# storage outcomes visible in snapshots so that blank-row regressions are
+# immediately apparent.
+for storage, primary, secondary in (
+        ("disabled", "SD CARD DISABLED", "ENABLE IN SETTINGS"),
+        ("available", "NO FILES FOUND", "SD CARD READY")):
+    c = theme.select("amber")
+    im = Image.new("RGB", (240, 240), c["background"])
+    d = ImageDraw.Draw(im)
+    d.ellipse((9, 9, 231, 231), outline=c["panel"], width=4)
+    d.text((120, 43), "FILE EXPLORER", anchor="mm", font=title_font,
+           fill=c["text"])
+    d.line((44, 55, 196, 55), fill=c["separator"], width=1)
+    d.text((120, 129), primary, anchor="mm", font=font, fill=c["text"])
+    d.text((120, 151), secondary, anchor="mm", font=small, fill=c["muted"])
+    d.text((120, 211), "-  BACK  |  HOME", anchor="mm", font=small,
+           fill=c["muted"])
+    im.save(OUT / f"explorer-empty-{storage}.png")

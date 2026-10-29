@@ -202,6 +202,11 @@ class ReconciliationTests(unittest.TestCase):
             self.assertTrue(deploy.dependency_problems(settings, root=root))
             (root / "lib").mkdir()
             (root / "lib/adafruit_gc9a01a.mpy").write_bytes(b"driver")
+            self.assertIn("adafruit_bitmap_font",
+                          deploy.dependency_problems(settings, root=root)[0])
+            (root / "lib/adafruit_bitmap_font").mkdir()
+            (root / "lib/adafruit_bitmap_font/bitmap_font.mpy").write_bytes(
+                b"font loader")
             self.assertEqual(deploy.dependency_problems(settings, root=root), [])
 
     def test_enabled_touch_requires_cst8xx_dependency(self):

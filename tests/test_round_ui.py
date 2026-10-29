@@ -73,12 +73,26 @@ class RoundRendererTests(unittest.TestCase):
         state, ui, _, renderer = self.make_renderer()
         state.storage_state = "unconfigured"
         state.subsystems = {"sd": "DISABLED"}
-        ui.enter("JOB_BROWSER")
+        ui.enter("EXPLORER")
 
         renderer.render(state)
 
-        self.assertEqual(renderer.menu[0].line.text, "SD DISABLED  -")
-        self.assertEqual(renderer.menu[1].line.text, "")
+        self.assertEqual(renderer.menu[0].line.text, "")
+        self.assertEqual(renderer.menu[3].line.text, "SD CARD DISABLED")
+        self.assertEqual(renderer.menu[4].line.text, "ENABLE IN SETTINGS")
+        self.assertTrue(renderer.menu_highlight.node.hidden)
+
+    def test_empty_job_browser_explanation_is_centered_and_not_selectable(self):
+        state, ui, _, renderer = self.make_renderer()
+        state.storage_state = "available"
+        ui.enter("EXPLORER")
+
+        renderer.render(state)
+
+        self.assertEqual(renderer.menu[0].line.text, "")
+        self.assertEqual(renderer.menu[3].line.text, "NO FILES FOUND")
+        self.assertEqual(renderer.menu[4].line.text, "SD CARD READY")
+        self.assertTrue(renderer.menu_highlight.node.hidden)
 
     def make_renderer(self):
         state = PendantState()
@@ -351,6 +365,10 @@ class RoundRendererTests(unittest.TestCase):
             self.assertTrue(required.issubset(palette))
             self.assertNotEqual(palette["text"], palette["background"])
         self.assertEqual(theme.select("unknown"), theme.select("industrial"))
+
+    def test_hud_shades_scale_each_rgb_channel(self):
+        self.assertEqual(theme.shade_color(0x80C040, 50), 0x406020)
+        self.assertEqual(theme.shade_color(0x80C040, 0), 0x000000)
 
     def test_touch_feedback_nonblocking_expiration(self):
         state, ui, display, renderer = self.make_renderer()

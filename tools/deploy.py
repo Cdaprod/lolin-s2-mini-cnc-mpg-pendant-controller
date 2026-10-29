@@ -24,7 +24,7 @@ ASSIGNMENT = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+?)\s*$")
 BOARD_PROFILES = {"", "lolin_s2_mini_v1", "xiao_esp32s3"}
 DISPLAY_PROFILES = {"", "seeed_round_240"}
 PROFILE_DEPENDENCIES = {
-    "seeed_round_240": ("adafruit_gc9a01a",),
+    "seeed_round_240": ("adafruit_gc9a01a", "adafruit_bitmap_font"),
 }
 SECRET_MARKERS = ("PASSWORD", "SECRET", "TOKEN", "KEY")
 WIFI_CREDENTIALS = {"CIRCUITPY_WIFI_SSID", "CIRCUITPY_WIFI_PASSWORD"}
@@ -294,6 +294,10 @@ def runtime_files(root=ROOT):
         paths.extend(path.relative_to(root) for path in sorted(lib.rglob("*"))
                      if path.is_file() and path.name != "README.md" and
                      "__pycache__" not in path.parts and not path.name.startswith("."))
+    fonts = root / "fonts"
+    if fonts.exists():
+        paths.extend(path.relative_to(root) for path in sorted(fonts.glob("*.bdf"))
+                     if path.is_file())
     return [str(path) for path in paths]
 
 
@@ -333,7 +337,8 @@ def dependency_problems(settings, root=ROOT, target=None):
     for module in modules:
         candidates = ("lib/{}.mpy".format(module), "lib/{}.py".format(module),
                       "lib/{}/__init__.py".format(module),
-                      "lib/{}/__init__.mpy".format(module))
+                      "lib/{}/__init__.mpy".format(module),
+                      "lib/{}/bitmap_font.mpy".format(module))
         bases = [Path(root)] if root is not None else []
         if target:
             bases.append(Path(target))
@@ -368,7 +373,9 @@ def managed_path(relative):
     if path.is_absolute() or ".." in path.parts:
         return False
     return (relative in ("code.py", "patterns.py") or
-            (path.parts and path.parts[0] in ("src", "lib")))
+            (path.parts and path.parts[0] in ("src", "lib")) or
+            (len(path.parts) == 2 and path.parts[0] == "fonts" and
+             path.suffix.lower() == ".bdf"))
 
 
 def historical_managed_path(relative):

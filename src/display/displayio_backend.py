@@ -53,6 +53,13 @@ class _DisplayIOTextLine:
             glyph = self.font.get_glyph(ord(character))
             if glyph is None:
                 continue
+            advance = max(1, glyph.shift_x)
+            # BDF spaces and other blank glyphs can have a zero-height
+            # displayio.Bitmap. CircuitPython treats that bitmap as
+            # deinitialized; whitespace only needs its advance width.
+            if glyph.width <= 0 or glyph.height <= 0:
+                cursor += advance
+                continue
             if cursor + glyph.width > self.width:
                 break
             source = glyph.bitmap
@@ -79,7 +86,7 @@ class _DisplayIOTextLine:
                             target_x = cursor + x
                             if target_x < self.width:
                                 self.bitmap[target_x, y] = 1
-            cursor += max(1, glyph.shift_x)
+            cursor += advance
         return True
 
 

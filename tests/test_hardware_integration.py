@@ -431,6 +431,8 @@ class ApplicationInputPipelineTests(unittest.TestCase):
                 last_feedback=None,
                 source=SimpleNamespace(read_count=0, bus_busy_count=0,
                                        irq_idle_count=120))
+            app.ui.enter("MAIN_MENU")
+            app.state.active_page = "CONFIGURATION"
             clock.advance(10)
             loop_clock = [clock.now]
 
@@ -451,6 +453,8 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(runtime.kwargs["selector_position"], "X")
             self.assertEqual(runtime.kwargs["increment"], "X10")
             self.assertEqual(runtime.kwargs["deadman"], "active")
+            self.assertEqual(runtime.kwargs["screen"], "MAIN_MENU")
+            self.assertEqual(runtime.kwargs["page"], "CONFIGURATION")
             self.assertEqual(runtime.kwargs["touch_polls"], 120)
             self.assertEqual(runtime.kwargs["touch_active_samples"], 0)
             self.assertEqual(runtime.kwargs["touch_i2c_reads"], 0)
