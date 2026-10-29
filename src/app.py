@@ -62,6 +62,12 @@ class PendantApplication:
         self._diag_last_heartbeat = None
         self._diag_encoder_delta = 0
         self._diag_loop_overruns = 0
+        self._diag_max_input_ms = 0
+        self._diag_max_touch_ms = 0
+        self._diag_max_transport_ms = 0
+        self._diag_max_wifi_ms = 0
+        self._diag_max_display_ms = 0
+        self._diag_max_mirror_ms = 0
         self._diag_last_touch_error = None
         self._diag_last_wifi_state = None
         self._diag_last_controller_state = None
@@ -602,6 +608,10 @@ class PendantApplication:
                 self.handle_ui_event(event)
             except SafetyError as exc:
                 self.ui.toast = str(exc)
+        input_duration_ms = int(max(0.0, self.clock() - started) * 1000)
+        if input_duration_ms > self._diag_max_input_ms:
+            self._diag_max_input_ms = input_duration_ms
+        touch_started = self.clock()
         if self.touch_manager is not None:
             for event in self.touch_manager.poll():
                 emit("touch_gesture", kind=event.kind, x=event.x, y=event.y)
@@ -630,6 +640,9 @@ class PendantApplication:
                     self.display.touch_feedback(
                         feedback[:2], self.touch_manager.feedback_until)
                 self.touch_manager.last_feedback = None
+        touch_duration_ms = int(max(0.0, self.clock() - touch_started) * 1000)
+        if touch_duration_ms > self._diag_max_touch_ms:
+            self._diag_max_touch_ms = touch_duration_ms
         if hasattr(self.display, "animate"):
             self.display.animate(started)
         if getattr(self.network_service, "scanning", False):
@@ -643,6 +656,7 @@ class PendantApplication:
                     self.ui.toast = "{} networks".format(
                         len(self.network_service.scan_results)
                     )
+        transport_started = self.clock()
         self.controller.poll(started)
         if not isinstance(self.controller, (C3StatusController, C3WirelessController)):
             self.streamer.poll(started)
@@ -655,12 +669,17 @@ class PendantApplication:
             emit("display_navigation", screen=display_state[0],
                  page=display_state[1])
             self._diag_last_display_state = display_state
+        transport_duration_ms = int(max(
+            0.0, self.clock() - transport_started) * 1000)
+        if transport_duration_ms > self._diag_max_transport_ms:
+            self._diag_max_transport_ms = transport_duration_ms
         # Give network transitions their turn after physical safety and
         # transport processing; HTTP services themselves advance one bounded
         # nonblocking operation per poll.
         # CircuitPython's portable wifi.radio.connect() call is synchronous.
         # Do not let a reconnect or setup-portal submission pause pendant
         # servicing while a jog or job has authority on the machine.
+        wifi_started = self.clock()
         if not self._machine_activity_blocks_network_association():
             self.network_service.poll()
         info = self.network_service.info()
@@ -700,16 +719,29 @@ class PendantApplication:
                  machine=self.state.machine_state,
                  link=getattr(self.state, "link_state", None))
             self._diag_last_controller_state = controller_state
+        wifi_duration_ms = int(max(0.0, self.clock() - wifi_started) * 1000)
+        if wifi_duration_ms > self._diag_max_wifi_ms:
+            self._diag_max_wifi_ms = wifi_duration_ms
+        display_started = self.clock()
         self._update_indicator()
         self.display.render(self.state)
         self.state.render_count = getattr(self.display, "render_count", 0)
+        display_duration_ms = int(max(
+            0.0, self.clock() - display_started) * 1000)
+        if display_duration_ms > self._diag_max_display_ms:
+            self._diag_max_display_ms = display_duration_ms
         # Low-priority, one-step nonblocking HTTP work runs only after safety,
         # inputs, transport, UI and display refresh have had their turn.
+        mirror_started = self.clock()
         if self.mirror is not None:
             self.mirror.poll()
             self.state.mirror_clients = self.mirror.completed_requests
             self.state.mirror_errors = self.mirror.client_errors
             self.state.mirror_error = self.mirror.last_error
+        mirror_duration_ms = int(max(
+            0.0, self.clock() - mirror_started) * 1000)
+        if mirror_duration_ms > self._diag_max_mirror_ms:
+            self._diag_max_mirror_ms = mirror_duration_ms
         self.state.loop_count += 1
         finished = self.clock()
         self.state.last_loop_duration = max(0.0, finished - started)
@@ -763,6 +795,12 @@ class PendantApplication:
                  free_heap=self.state.free_heap,
                  loop_work_ms=int(self.state.last_loop_duration * 1000),
                  loop_overruns=self._diag_loop_overruns,
+                 max_input_ms=self._diag_max_input_ms,
+                 max_touch_ms=self._diag_max_touch_ms,
+                 max_transport_ms=self._diag_max_transport_ms,
+                 max_wifi_ms=self._diag_max_wifi_ms,
+                 max_display_ms=self._diag_max_display_ms,
+                 max_mirror_ms=self._diag_max_mirror_ms,
                  touch_polls=getattr(self.touch_manager, "poll_count", 0)
                              if self.touch_manager is not None else 0,
                  touch_active_samples=getattr(
@@ -791,6 +829,12 @@ class PendantApplication:
                  wifi=self.state.wifi_state,
                  controller=self.state.connection_state)
             self._diag_loop_overruns = 0
+            self._diag_max_input_ms = 0
+            self._diag_max_touch_ms = 0
+            self._diag_max_transport_ms = 0
+            self._diag_max_wifi_ms = 0
+            self._diag_max_display_ms = 0
+            self._diag_max_mirror_ms = 0
             self._diag_last_heartbeat = finished
         if (self.state.free_heap is not None and self.state.free_heap < 32768 and
                 (self._last_heap_warning is None or
