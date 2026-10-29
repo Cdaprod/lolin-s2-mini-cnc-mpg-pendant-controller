@@ -168,6 +168,12 @@ class RoundRendererTests(unittest.TestCase):
         self.assertGreaterEqual(renderer.last_update_ms, 0)
         self.assertGreaterEqual(renderer.last_refresh_ms, 0)
         self.assertEqual(display.refreshes, 1)
+        renderer._hud_dirty = True
+        with patch.object(renderer.ui, "view_model",
+                          side_effect=AssertionError("transient full redraw")):
+            self.assertTrue(renderer.render(state))
+        self.assertFalse(renderer._hud_dirty)
+        self.assertEqual(display.refreshes, 2)
         state.work_position["X"] = 125.0
         self.assertTrue(renderer.render(state))
         self.assertEqual(renderer.axis.axis.line.updates, axis_updates)

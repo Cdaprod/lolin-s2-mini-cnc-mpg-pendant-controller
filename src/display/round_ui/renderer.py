@@ -231,6 +231,26 @@ class RoundRenderer:
                 self.last_update_ms = 0
                 self.last_refresh_ms = 0
                 return False
+        elif (self.ui.current_screen == "HOME" and not self.ui.dirty):
+            home_signature = self._home_signature(state)
+            if home_signature == self._last_home_signature:
+                # Only preallocated transient sprites changed. Refresh them
+                # without rebuilding the unchanged view model/components.
+                refresh_started = self._profile_ticks_ms()
+                self.render_count += 1
+                try:
+                    self.display.refresh(minimum_frames_per_second=0)
+                except (AttributeError, RuntimeError):
+                    pass
+                self._halo_dirty = False
+                self._nav_dirty = False
+                self._hud_dirty = False
+                self.last_model_ms = 0
+                self.last_update_ms = 0
+                self.last_refresh_ms = max(
+                    0, _profile_ticks_diff(
+                        self._profile_ticks_ms(), refresh_started))
+                return True
         model_started = self._profile_ticks_ms()
         model = self.ui.view_model()
         update_started = self._profile_ticks_ms()
