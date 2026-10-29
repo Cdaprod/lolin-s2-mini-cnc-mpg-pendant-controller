@@ -172,6 +172,27 @@ class RoundRenderer:
             return
         self.display.refresh(minimum_frames_per_second=0)
 
+    def _apply_rotor_color(self, color):
+        """Recolor fixed rotor tiles for a page theme without rebuilding them."""
+        self._rotor_color = color
+        if not self.bezel_segment_palettes:
+            return False
+        update_bezel_segment_levels(
+            self.bezel_rotor.angle, self._rotor_target_levels)
+        changed = False
+        for index, palette in enumerate(self.bezel_segment_palettes):
+            level = self._rotor_target_levels[index]
+            percent = level * 100 // 15
+            for shade in range(1, 16):
+                value = theme.shade_color(color, shade * percent // 15)
+                if palette[shade] != value:
+                    palette[shade] = value
+                    changed = True
+            self._rotor_brightness_levels[index] = level
+        if changed:
+            self._hud_dirty = True
+        return changed
+
     def _apply_page_theme(self, active_page):
         """Recolor retained DisplayIO objects without rebuilding the screen."""
         name = theme.PAGE_THEMES.get(str(active_page or "HOME").upper(),
@@ -192,6 +213,7 @@ class RoundRenderer:
             self.palettes["separator"][0] = colors["separator"]
             self._halo_accent = colors["accent"]
             self._update_halo_palette(self._halo_progress)
+            self._apply_rotor_color(colors["accent"])
             for index, palette in enumerate(self.palettes.get("hud_markers", ())):
                 color = colors["accent"] if index == 0 else colors["highlight"]
                 for shade in range(1, 16):

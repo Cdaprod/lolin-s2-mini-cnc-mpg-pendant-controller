@@ -56,6 +56,12 @@ and keeps labels and scale marks stationary. It uses the normalized signed MPG
 activity already maintained by the app; it never reads the encoder, changes
 counts, modifies jog state, or sends commands.
 
+The fixed arcs use the active top-level page's accent color as well as its
+brightness wave. Home uses industrial cyan, Explorer amber, Configuration ice,
+and Preview spectrum; page changes recolor the existing indexed palettes
+without rebuilding TileGrids. Warning, success, alarm, and emergency-stop
+colors retain their semantic meanings.
+
 Encoder activity produces a retained cyan bead with two progressively dimmer
 afterimages. The bead advances by the signed detent delta, so a batched encoder
 sample is represented by the same angular displacement rather than a fixed
