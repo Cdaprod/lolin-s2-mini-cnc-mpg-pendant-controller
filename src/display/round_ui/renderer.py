@@ -131,6 +131,7 @@ class RoundRenderer:
         self._hud_tile_indexes = [-1] * len(self.hud_markers)
         self.bezel_segments = scene.get("rotor_segments", ())
         self.bezel_segment_palettes = scene.get("rotor_palettes", ())
+        self.bezel_palette_bank = scene.get("rotor_palette_bank", ())
         self.rotor_tile_count = scene.get("rotor_tile_count", 0)
         self._rotor_color = scene.get("rotor_color", theme.CYAN)
         self._rotor_brightness_levels = [-1] * len(self.bezel_segments)
@@ -183,8 +184,23 @@ class RoundRenderer:
         self.display.refresh(minimum_frames_per_second=0)
 
     def _apply_rotor_color(self, color):
-        """Recolor fixed rotor tiles for a page theme without rebuilding them."""
+        """Recolor retained rotor palettes and bind their current levels."""
         self._rotor_color = color
+        if self.bezel_palette_bank:
+            for level, palette in enumerate(self.bezel_palette_bank):
+                percent = level * 100 // 15
+                for shade in range(1, 16):
+                    value = theme.shade_color(color, shade * percent // 15)
+                    if palette[shade] != value:
+                        palette[shade] = value
+            update_bezel_segment_levels(
+                self.bezel_rotor.angle, self._rotor_target_levels)
+            for index, sprite in enumerate(self.bezel_segments):
+                level = self._rotor_target_levels[index]
+                sprite.pixel_shader = self.bezel_palette_bank[level]
+                self._rotor_brightness_levels[index] = level
+            self._hud_dirty = True
+            return True
         if not self.bezel_segment_palettes:
             return False
         update_bezel_segment_levels(
@@ -611,19 +627,24 @@ class RoundRenderer:
                             rotor_angle, self._rotor_target_levels)
                         for index in range(len(self.bezel_segments)):
                             sprite = self.bezel_segments[index]
-                            palette = self.bezel_segment_palettes[index]
                             level = self._rotor_target_levels[index]
                             if sprite.hidden:
                                 sprite.hidden = False
                                 self._hud_dirty = True
                                 changed = True
                             if self._rotor_brightness_levels[index] != level:
-                                percent = level * 100 // 15
-                                for shade in range(1, 16):
-                                    color = theme.shade_color(
-                                        self._rotor_color, shade * percent // 15)
-                                    if palette[shade] != color:
-                                        palette[shade] = color
+                                if self.bezel_palette_bank:
+                                    sprite.pixel_shader = \
+                                        self.bezel_palette_bank[level]
+                                else:
+                                    palette = self.bezel_segment_palettes[index]
+                                    percent = level * 100 // 15
+                                    for shade in range(1, 16):
+                                        color = theme.shade_color(
+                                            self._rotor_color,
+                                            shade * percent // 15)
+                                        if palette[shade] != color:
+                                            palette[shade] = color
                                 self._rotor_brightness_levels[index] = level
                                 self._hud_dirty = True
                                 changed = True
