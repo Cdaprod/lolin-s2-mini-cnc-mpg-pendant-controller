@@ -5,12 +5,28 @@ import sys
 
 from src.config import load_config
 from src.app import PendantApplication
-from src.diagnostics import emit, is_runtime_reload
+from src.diagnostics import (emit, is_runtime_reload,
+                             startup_context_fields)
 
 
 def main():
     print()
     print("[boot] XIAO ESP32-S3 CNC MPG Pendant")
+
+    # CircuitPython 10.3 exposes why this VM run started. This lets passive
+    # serial traces distinguish reset, REPL reload, supervisor reload, and
+    # filesystem auto-reload without sending control bytes to the board.
+    try:
+        import supervisor
+    except ImportError:
+        supervisor = None
+    try:
+        import microcontroller
+    except ImportError:
+        microcontroller = None
+    startup = startup_context_fields(supervisor, microcontroller)
+    if startup:
+        emit("startup_context", **startup)
 
     config = load_config()
 

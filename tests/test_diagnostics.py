@@ -3,7 +3,8 @@ import io
 import unittest
 
 from src.diagnostics import (emit, input_configuration_fields,
-                             is_runtime_reload, loop_timing_fields)
+                             is_runtime_reload, loop_timing_fields,
+                             startup_context_fields)
 
 
 class DiagnosticsTests(unittest.TestCase):
@@ -13,6 +14,40 @@ class DiagnosticsTests(unittest.TestCase):
 
         self.assertTrue(is_runtime_reload(ReloadException()))
         self.assertFalse(is_runtime_reload(RuntimeError("failure")))
+
+    def test_startup_context_reports_reload_and_reset_reasons(self):
+        class Reason:
+            name = "REPL_RELOAD"
+
+        class Runtime:
+            run_reason = Reason()
+            safe_mode_reason = "NONE"
+            serial_connected = True
+
+        class CPU:
+            reset_reason = "POWER_ON"
+
+        class Supervisor:
+            runtime = Runtime()
+
+        class Microcontroller:
+            cpu = CPU()
+
+        self.assertEqual(startup_context_fields(Supervisor, Microcontroller), {
+            "run_reason": "REPL_RELOAD",
+            "safe_mode_reason": "NONE",
+            "serial_connected": True,
+            "reset_reason": "POWER_ON",
+        })
+
+    def test_startup_context_tolerates_missing_platform_diagnostics(self):
+        class Runtime:
+            pass
+
+        class Supervisor:
+            runtime = Runtime()
+
+        self.assertEqual(startup_context_fields(Supervisor, object()), {})
 
     def test_structured_diagnostic_line_has_bounded_single_token_fields(self):
         output = io.StringIO()
