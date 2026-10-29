@@ -6,7 +6,7 @@ import types
 from types import SimpleNamespace
 from unittest.mock import patch
 
-from src.app import PendantApplication
+from src.app import PendantApplication, _diag_ticks_diff_ms
 from src.hardware import build_storage, scan_i2c
 from src.display.console import ConsoleDisplay
 from src.display.indicator import DigitalIndicatorOutput
@@ -29,6 +29,13 @@ class MutableClock:
 
     def advance(self, seconds):
         self.now += seconds
+
+
+class DiagnosticTickTests(unittest.TestCase):
+    def test_millisecond_delta_handles_circuitpython_tick_wrap(self):
+        period = 1 << 29
+        self.assertEqual(_diag_ticks_diff_ms(4, period - 3), 7)
+        self.assertEqual(_diag_ticks_diff_ms(100, 90), 10)
 
 
 class FakeI2C:
@@ -425,13 +432,21 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(runtime.kwargs["touch_i2c_busy"], 0)
             self.assertEqual(runtime.kwargs["touch_irq_idle"], 120)
             self.assertGreaterEqual(runtime.kwargs["loop_work_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["max_loop_work_ms"], 15)
             self.assertEqual(runtime.kwargs["loop_overruns"], 1)
+            self.assertEqual(runtime.kwargs["profile_loops"], 1)
             self.assertGreaterEqual(runtime.kwargs["max_input_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["total_input_ms"], 15)
             self.assertGreaterEqual(runtime.kwargs["max_touch_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["total_touch_ms"], 15)
             self.assertGreaterEqual(runtime.kwargs["max_transport_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["total_transport_ms"], 15)
             self.assertGreaterEqual(runtime.kwargs["max_wifi_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["total_wifi_ms"], 15)
             self.assertGreaterEqual(runtime.kwargs["max_display_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["total_display_ms"], 15)
             self.assertGreaterEqual(runtime.kwargs["max_mirror_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["total_mirror_ms"], 15)
 
     def test_runtime_reports_unconfigured_deadman_as_unavailable(self):
         with tempfile.TemporaryDirectory() as root:
