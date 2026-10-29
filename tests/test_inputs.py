@@ -105,11 +105,18 @@ class MPGTests(unittest.TestCase):
 
     def test_disabled_input_backend_is_unavailable_not_reported_healthy(self):
         state = PendantState()
-        manager = InputManager(state, NullInputAdapter())
+        adapter = NullInputAdapter()
+        adapter.read = lambda: self.fail("disabled backend must not be polled")
+        manager = InputManager(state, adapter)
         result = manager.poll(0)
+        repeated = manager.poll(1)
         self.assertFalse(result.input_valid_changed)
         self.assertIsNone(state.input_valid)
         self.assertIsNone(state.input_error)
+        self.assertIs(result, repeated)
+        self.assertEqual(result.events, ())
+        self.assertEqual(result.button_states, {})
+        self.assertFalse(state.deadman_enabled)
 
     def test_invalid_hardware_sample_clears_deadman_controls_and_encoder(self):
         state = PendantState()

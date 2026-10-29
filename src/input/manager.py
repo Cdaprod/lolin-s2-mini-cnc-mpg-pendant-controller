@@ -86,6 +86,12 @@ class InputManager:
         self.hardware_accumulator = 0
         self._discard_next_encoder_sample = False
         self._suppress_buttons_until_release = False
+        # A disabled backend has no hardware transitions to normalize. Keep a
+        # single neutral result so the normal app loop does not allocate an
+        # InputSnapshot, button results, event list, or result object each pass.
+        # Consumers treat poll results as read-only.
+        self._disabled_poll_result = InputPollResult(
+            (), False, False, False, False, button_states={})
 
     def reset_encoder(self):
         """Discard a partial detent at a transport or safety boundary."""
@@ -161,6 +167,14 @@ class InputManager:
             self.state.error = None
 
     def poll(self, now):
+        if (not getattr(self.adapter, "configured", True) and
+                self.state.input_valid is None and
+                not self.state.deadman_enabled):
+            # Unknown is intentionally distinct from a successful hardware
+            # sample. Motion stays inhibited, and no synthetic released/clear
+            # events are emitted for controls that are not connected.
+            self.state.input_error = None
+            return self._disabled_poll_result
         sample = self.adapter.read()
         estop_changed = (self.last_estop is None or
                          sample.estop != self.last_estop)
