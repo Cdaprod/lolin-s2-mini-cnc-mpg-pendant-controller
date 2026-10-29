@@ -86,22 +86,31 @@ class MotionPrompt:
     def __init__(self, line):
         self.text = TextComponent(line)
 
-    def update(self, hold, armed, activity, controller, link_state=None):
+    def update(self, hold, armed, activity, controller, link_state=None,
+               colors=None):
         activity = int(activity)
+        colors = colors or theme.select("industrial")
         if not controller:
             value = ("GRBL OFFLINE" if link_state == "PAIRED_NO_GRBL" else
                      "MOTION DISARMED")
+            color = colors["warning"]
         elif not hold:
             value = "HOLD TO JOG"
+            color = colors["warning"]
         elif not armed:
             value = "MOTION INHIBITED"
+            color = colors["warning"]
         elif activity > 0:
             value = "CW  " + ">" * min(4, activity)
+            color = colors["accent"]
         elif activity < 0:
             value = "<" * min(4, -activity) + "  CCW"
+            color = colors["accent"]
         else:
             value = "JOG READY"
-        return self.text.set(value)
+            color = colors["success"]
+        changed = self.text.set(value)
+        return self.text.set_color(color) or changed
 
 
 class ConnectivityGlyphs:

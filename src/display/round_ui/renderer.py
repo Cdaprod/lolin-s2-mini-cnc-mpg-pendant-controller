@@ -465,7 +465,27 @@ class RoundRenderer:
                        "LINK_LOST": "ESP-NOW LOST"}.get(link, "ESP-NOW WAITING")
                       if wireless else
                       ("READY" if model["jog_armed"] else state.machine_state.upper()))
+        colors = theme.select(self.active_theme)
+        if (state.estop_observed or state.estop_latched or
+                state.machine_state in ("alarm", "estop")):
+            state_color = colors["danger"]
+        elif wireless:
+            state_color = {
+                "GRBL_FRESH": colors["success"],
+                "PAIRED_NO_GRBL": colors["success"],
+                "PAIRING": colors["warning"],
+                "LINK_LOST": colors["danger"],
+            }.get(link, colors["muted"])
+        elif state.connection_state != "connected":
+            state_color = colors["muted"]
+        elif state.machine_state == "hold":
+            state_color = colors["warning"]
+        elif state.machine_state in ("run", "jog"):
+            state_color = colors["accent"]
+        else:
+            state_color = colors["success"]
         changed = self.state_label.set(state_text) or changed
+        changed = self.state_label.set_color(state_color) or changed
         changed = self.axis.update(
             selected_axis, coordinates.get(selected_axis), state.coordinate_mode,
             "mm",
@@ -474,7 +494,7 @@ class RoundRenderer:
         controller = state.connection_state == "connected"
         changed = self.motion.update(
             model["jog_hold"], model["jog_armed"], model["mpg_activity"],
-            controller, link if wireless else None,
+            controller, link if wireless else None, colors,
         ) or changed
         wifi = getattr(state, "wifi_state", "DISABLED") in (
             "CONNECTED", "connected"

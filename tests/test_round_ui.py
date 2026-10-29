@@ -28,6 +28,7 @@ class Node:
 class Line:
     def __init__(self):
         self.text = ""
+        self.color = None
         self.updates = 0
 
     def set_text(self, value):
@@ -36,6 +37,12 @@ class Line:
             return False
         self.text = value
         self.updates += 1
+        return True
+
+    def set_color(self, value):
+        if self.color == value:
+            return False
+        self.color = value
         return True
 
 
@@ -250,6 +257,9 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer.axis.value.value, "+124.520")
         self.assertEqual(renderer.state_label.value, "IDLE")
         self.assertEqual(renderer.motion.text.value, "HOLD TO JOG")
+        colors = theme.select("industrial")
+        self.assertEqual(renderer.state_label.line.color, colors["success"])
+        self.assertEqual(renderer.motion.text.line.color, colors["warning"])
         axis_updates = renderer.axis.axis.line.updates
         value_updates = renderer.axis.value.line.updates
         with patch.object(renderer.ui, "view_model",
@@ -342,13 +352,19 @@ class RoundRendererTests(unittest.TestCase):
         state.machine_state = "disconnected"
         renderer.render(state)
         self.assertEqual(renderer.state_label.value, "DISCONNECTED")
+        self.assertEqual(renderer.state_label.line.color,
+                         theme.select("industrial")["muted"])
         self.assertEqual(renderer.motion.text.value, "MOTION DISARMED")
+        self.assertEqual(renderer.motion.text.line.color,
+                         theme.select("industrial")["warning"])
 
         state.transport = "c3-espnow"
         state.link_state = "PAIRED_NO_GRBL"
         renderer.render(state)
         self.assertEqual(renderer.state_label.value, "ESP-NOW LINKED")
         self.assertEqual(renderer.motion.text.value, "GRBL OFFLINE")
+        self.assertEqual(renderer.state_label.line.color,
+                         theme.select("industrial")["success"])
 
     def test_existing_ui_navigation_and_overlay_drive_round_components(self):
         state, ui, _, renderer = self.make_renderer()
