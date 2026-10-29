@@ -54,7 +54,9 @@ outer arc sections stay in fixed positions and orientations, aligned to the
 twelve native outer arcs in the generated bezel artwork. They are longer than
 the former accents but retain clear gaps, avoiding the doubled, interleaved
 strokes seen when 24 accents were layered over the 12-arc artwork. A single
-broad, smooth brightness wave travels clockwise or counterclockwise around them;
+compact, smooth brightness wave travels clockwise or counterclockwise around them;
+its falloff is deliberately narrow so neighboring arcs do not merge into a
+long bright smear during extended idle animation.
 the arc shapes never pivot or rotate on their own axes. The renderer adds no
 continuous orbital beads or afterimages, so there is no secondary moving layer
 to leave stale marks around the dial. The hybrid avoids a full-screen rotated
@@ -76,9 +78,10 @@ current direction and fade over 240 ms; they are visual input feedback only and 
 admitted or executed.
 
 The touchscreen uses one retained 25px sprite. Contact immediately selects a
-single crisp mid-radius ring and holds it stationary beneath the finger; it
-does not expand into a large ripple while pressed. On release, that same ring
-fades in place over 80 ms. Gesture recognition and menu activation remain
+single crisp mid-radius ring and keeps it beneath the moving finger while
+pressed; the sprite repositions at up to 30 Hz without restarting the ripple.
+It does not expand into a large ripple while pressed. On release, that same
+ring fades in place over 80 ms. Gesture recognition and menu activation remain
 release-gated, so the visual acknowledgment does not dispatch an early action.
 The contact-sequence preview uses the same palette phases as the firmware.
 The touch sampler runs at 120 Hz and release selection requires 40 ms of stable
