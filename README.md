@@ -144,7 +144,11 @@ To observe first boot, connect USB, identify the CDC port with
 Ctrl-A, then `k`, then `y`). CircuitPython `print()` output is available on its
 USB CDC console; the application does not disable or redirect that interface.
 Boot and subsystem messages are emitted during startup and are not replayed to
-a monitor attached later. Runtime diagnostics now emit bounded `[event]`
+a monitor attached later. Each boot emits a bounded `startup_context` record
+with CircuitPython `run_reason`, `safe_mode_reason`, USB serial connection
+state, and processor reset reason when those APIs are available. This
+distinguishes REPL reload, supervisor reload, filesystem auto-reload, and
+hardware reset in a captured serial trace. Runtime diagnostics emit bounded `[event]`
 records for normalized encoder movement, selector/button/E-stop/deadman state,
 touch gestures and errors, Wi-Fi/controller transitions, render/loop/heap
 summaries, and ESP-NOW packet/session/sequence activity. The runtime summary

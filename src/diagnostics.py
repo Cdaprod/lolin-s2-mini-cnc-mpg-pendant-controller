@@ -17,6 +17,44 @@ def is_runtime_reload(exc):
     return type(exc).__name__ == "ReloadException"
 
 
+def _enum_token(value):
+    """Format CircuitPython enum values compactly without assuming an API."""
+    name = getattr(value, "name", None)
+    if name:
+        return str(name)
+    return str(value).rsplit(".", 1)[-1]
+
+
+def startup_context_fields(supervisor_module=None,
+                           microcontroller_module=None):
+    """Return non-secret reset/reload evidence when the runtime exposes it."""
+    fields = {}
+    runtime = getattr(supervisor_module, "runtime", None)
+    if runtime is not None:
+        for attribute, key in (("run_reason", "run_reason"),
+                               ("safe_mode_reason", "safe_mode_reason")):
+            try:
+                value = getattr(runtime, attribute)
+            except (AttributeError, NotImplementedError, RuntimeError):
+                continue
+            if value is not None:
+                fields[key] = _enum_token(value)
+        try:
+            fields["serial_connected"] = bool(runtime.serial_connected)
+        except (AttributeError, NotImplementedError, RuntimeError):
+            pass
+
+    cpu = getattr(microcontroller_module, "cpu", None)
+    if cpu is not None:
+        try:
+            value = cpu.reset_reason
+        except (AttributeError, NotImplementedError, RuntimeError):
+            value = None
+        if value is not None:
+            fields["reset_reason"] = _enum_token(value)
+    return fields
+
+
 def emit(event, **fields):
     """Write one low-allocation event line to CircuitPython's USB console."""
     parts = ["event=" + _token(event)]
