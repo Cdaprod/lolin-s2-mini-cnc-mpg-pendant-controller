@@ -9,12 +9,14 @@ from . import theme
 from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
                          SelectorFeedback, TextComponent)
+from .rotor import BezelRotor
 
 # At 24 updates/s, keep tangential motion below one pixel per update at the
 # retained marker radii. Integer DisplayIO coordinates then produce a regular
 # one-pixel cadence instead of the visible multi-pixel jumps from faster rates.
 HUD_ORBIT_RATES = (0.22, -0.20)
 NONHOME_MODEL_INTERVAL_MS = 33
+PAGE_SWIPE_DURATION = 0.48
 _PROFILE_TICKS_MASK = (1 << 29) - 1
 _PROFILE_TICKS_HALF = 1 << 28
 
@@ -60,12 +62,24 @@ def _detail_status_color(label, value, colors):
 class RoundRenderer:
     """Mutate a small persistent scene; never issue controller operations."""
 
-    def __init__(self, display, scene_factory, animations=True):
+    def __init__(self, display, scene_factory, animations=True,
+                 bezel_rotation_enabled=True, bezel_ambient_period_s=54.0,
+                 bezel_encoder_gain=0.04, bezel_max_speed_rad_s=0.35,
+                 bezel_inertia_s=0.9,
+                 bezel_direction_change_min_s=20.0,
+                 bezel_direction_change_max_s=40.0,
+                 bezel_frame_rate=24):
         self.display = display
         self.ui = None
         self.render_count = 0
         self.skipped_count = 0
         self.animations = bool(animations)
+        self.bezel_rotation_enabled = bool(bezel_rotation_enabled)
+        self.bezel_rotor = BezelRotor(
+            bezel_ambient_period_s, bezel_encoder_gain,
+            bezel_max_speed_rad_s, bezel_inertia_s,
+            bezel_direction_change_min_s, bezel_direction_change_max_s,
+            bezel_frame_rate)
         try:
             import supervisor
             self._profile_ticks_ms = supervisor.ticks_ms
@@ -91,6 +105,11 @@ class RoundRenderer:
         self._nav_visible = False
         self._nav_dirty = False
         self._nav_signature = None
+        self._displayed_page = None
+        self._displayed_screen = None
+        self._page_transition = None
+        self._page_transition_dirty = False
+        self._encoder_dirty = False
         scene = scene_factory(display)
         self.root = scene["root"]
         self.touch_halo = scene.get("touch_halo")
@@ -108,6 +127,14 @@ class RoundRenderer:
         self.active_theme = None
         self.home_group = scene.get("home_group")
         self.menu_group = scene.get("menu_group")
+        self.encoder_marker = scene.get("encoder_marker")
+        self.encoder_trail = scene.get("encoder_trail")
+        self.encoder_palettes = scene.get("encoder_palettes", ())
+        self._encoder_angle = -90.0
+        self._encoder_seen_timestamp = None
+        self._encoder_started = 0.0
+        self._encoder_direction = 0
+        self._encoder_phase = -1
         self.ring = InstrumentRing(scene["ring"])
         self.state_label = TextComponent(scene["state_label"])
         self.axis_feedback = SelectorFeedback(scene["axis_feedback"], "AXIS")
@@ -160,6 +187,11 @@ class RoundRenderer:
             for index, palette in enumerate(self.palettes.get("hud_trails", ())):
                 color = colors["accent"] if index == 0 else colors["highlight"]
                 palette[1] = theme.shade_color(color, 22)
+            if self.encoder_palettes:
+                self.encoder_palettes[0][1] = colors["accent"]
+                self.encoder_palettes[0][2] = theme.shade_color(colors["accent"], 64)
+                self.encoder_palettes[0][3] = theme.shade_color(colors["accent"], 28)
+                self.encoder_palettes[1][1] = theme.shade_color(colors["accent"], 36)
         if hasattr(self.ring.node, "colors"):
             self.ring.node.colors = colors
             self.ring.signature = None
@@ -216,6 +248,92 @@ class RoundRenderer:
         now = float(now)
         self._last_animation_now = now
         changed = False
+        transition = self._page_transition
+        if transition is not None:
+            half = PAGE_SWIPE_DURATION / 2
+            elapsed = max(0.0, now - transition["started"])
+            if transition["phase"] == "out":
+                progress = min(1.0, elapsed / half)
+                offset = round(-transition["delta"] * 240 * progress)
+                if transition["old_group"].x != offset:
+                    transition["old_group"].x = offset
+                    self._page_transition_dirty = True
+                    changed = True
+                if progress >= 1.0:
+                    old_group, new_group = (transition["old_group"],
+                                            transition["new_group"])
+                    if old_group is not new_group:
+                        old_group.hidden = True
+                        new_group.hidden = False
+                    new_group.x = transition["delta"] * 240
+                    transition["phase"] = "commit"
+                    self._page_transition_dirty = True
+                    changed = True
+            elif transition["phase"] == "in":
+                progress = min(1.0, elapsed / half)
+                offset = round(transition["delta"] * 240 * (1.0-progress))
+                if transition["new_group"].x != offset:
+                    transition["new_group"].x = offset
+                    self._page_transition_dirty = True
+                    changed = True
+                if progress >= 1.0:
+                    transition["new_group"].x = 0
+                    self._page_transition = None
+                    self._page_transition_dirty = True
+                    changed = True
+        if self.animations and self.ui is not None:
+            state = self.ui.state
+            timestamp = getattr(state, "mpg_activity_timestamp", None)
+            if timestamp is not None and timestamp != self._encoder_seen_timestamp:
+                self._encoder_seen_timestamp = timestamp
+                direction = 1 if state.mpg_activity > 0 else (
+                    -1 if state.mpg_activity < 0 else 0)
+                if direction:
+                    self._encoder_direction = direction
+                    self._encoder_angle = (self._encoder_angle +
+                                           direction * 22.5) % 360
+                    angle = math.radians(self._encoder_angle)
+                    x = 120 + round(101 * math.cos(angle))
+                    y = 120 + round(101 * math.sin(angle))
+                    if self.encoder_marker is not None:
+                        self.encoder_marker.x = x - 4
+                        self.encoder_marker.y = y - 4
+                        self.encoder_marker.hidden = False
+                    trail_angle = math.radians(
+                        self._encoder_angle - direction * 12)
+                    tx = 120 + round(97 * math.cos(trail_angle))
+                    ty = 120 + round(97 * math.sin(trail_angle))
+                    if self.encoder_trail is not None:
+                        self.encoder_trail.x = tx - 2
+                        self.encoder_trail.y = ty - 2
+                        self.encoder_trail.hidden = False
+                    self._encoder_started = now
+                    self._encoder_phase = -1
+                    self._encoder_dirty = True
+                    changed = True
+            if self._encoder_started:
+                elapsed = max(0.0, now-self._encoder_started)
+                if elapsed >= 0.24:
+                    if self.encoder_marker is not None:
+                        self.encoder_marker.hidden = True
+                    if self.encoder_trail is not None:
+                        self.encoder_trail.hidden = True
+                    self._encoder_started = 0.0
+                    self._encoder_dirty = True
+                    changed = True
+                else:
+                    phase = int(elapsed*24)
+                    if phase != self._encoder_phase:
+                        self._encoder_phase = phase
+                        strength = max(0, int(100*(1-elapsed/0.24)))
+                        if self.encoder_palettes:
+                            accent = theme.select(self.active_theme or "industrial")["accent"]
+                            self.encoder_palettes[0][1] = theme.shade_color(accent,strength)
+                            self.encoder_palettes[0][2] = theme.shade_color(accent,strength*64//100)
+                            self.encoder_palettes[0][3] = theme.shade_color(accent,strength*28//100)
+                            self.encoder_palettes[1][1] = theme.shade_color(accent,strength*36//100)
+                        self._encoder_dirty = True
+                        changed = True
         if self.touch_halo is not None and self._halo_visible:
             if now >= self._halo_until:
                 self.touch_halo.hidden = True
@@ -262,13 +380,19 @@ class RoundRenderer:
                         self._hud_dirty = True
                         changed = True
             else:
-                # Time-based angular motion: quantize refresh cadence, not
-                # position/angle. The old 8 Hz phase produced visible jumps.
-                frame = int(float(now) * 24)
-                if frame != self._hud_phase:
-                    self._hud_phase = frame
+                state = self.ui.state if self.ui is not None else None
+                encoder_timestamp = getattr(
+                    state, "mpg_activity_timestamp", None) if state else None
+                encoder_delta = getattr(state, "mpg_activity", 0) if state else 0
+                rotor_angle, _ = self.bezel_rotor.update(
+                    now, encoder_timestamp, encoder_delta)
+                if self.bezel_rotation_enabled and self.bezel_rotor.frame_due(now):
+                    self._hud_phase = int(float(now) * self.bezel_rotor.frame_rate)
                     for index, (sprite, radius, _) in enumerate(self.hud_markers):
-                        angle = float(now) * HUD_ORBIT_RATES[index]
+                        if index == 0:
+                            angle = rotor_angle
+                        else:
+                            angle = float(now) * HUD_ORBIT_RATES[index]
                         x = 116 + round(radius * math.cos(angle))
                         y = 116 + round(radius * math.sin(angle))
                         if sprite.x != x or sprite.y != y or sprite.hidden:
@@ -278,7 +402,9 @@ class RoundRenderer:
                             changed = True
                         if index < len(self.hud_trails):
                             trail, trail_radius, _ = self.hud_trails[index]
-                            trail_angle = angle - HUD_ORBIT_RATES[index] * 0.20
+                            trail_rate = (self.bezel_rotor.velocity if index == 0
+                                          else HUD_ORBIT_RATES[index])
+                            trail_angle = angle - trail_rate * 0.20
                             trail_x = 118 + round(trail_radius * math.cos(trail_angle))
                             trail_y = 118 + round(trail_radius * math.sin(trail_angle))
                             if (trail.x != trail_x or trail.y != trail_y or
@@ -287,6 +413,17 @@ class RoundRenderer:
                                 trail.hidden = False
                                 self._hud_dirty = True
                                 changed = True
+                elif not self.bezel_rotation_enabled:
+                    for sprite, _, _ in self.hud_markers[:1]:
+                        if not sprite.hidden:
+                            sprite.hidden = True
+                            self._hud_dirty = True
+                            changed = True
+                    for sprite, _, _ in self.hud_trails[:1]:
+                        if not sprite.hidden:
+                            sprite.hidden = True
+                            self._hud_dirty = True
+                            changed = True
         return changed
 
     def _home_signature(self, state):
@@ -367,9 +504,30 @@ class RoundRenderer:
     def render(self, state):
         if self.ui is None:
             raise RuntimeError("RoundRenderer must be bound to UIManager")
+        transition = self._page_transition
+        if transition is not None and self.ui.active_overlay():
+            # Safety messages bypass decorative transitions immediately.
+            old_group, new_group = transition["old_group"], transition["new_group"]
+            old_group.x = new_group.x = 0
+            if old_group is not new_group:
+                old_group.hidden = True
+            self._page_transition = None
+            self._page_transition_dirty = False
+            transition = None
+        if transition is not None and transition["phase"] == "out":
+            self.ui.dirty = True
+            self.render_count += 1
+            self._refresh_if_manual()
+            return True
+        if (transition is not None and transition["phase"] == "in" and
+                self._page_transition_dirty and not self.ui.dirty):
+            self._page_transition_dirty = False
+            self._refresh_if_manual()
+            return True
         if (self.ui.current_screen == "HOME" and not self.ui.dirty and
                 not (self._halo_dirty or self._nav_dirty or self._hud_dirty
-                     or self._highlight_dirty)):
+                     or self._highlight_dirty or self._page_transition_dirty
+                     or self._encoder_dirty)):
             home_signature = self._home_signature(state)
             if home_signature == self._last_home_signature:
                 self.skipped_count += 1
@@ -392,6 +550,8 @@ class RoundRenderer:
                 self._nav_dirty = False
                 self._hud_dirty = False
                 self._highlight_dirty = False
+                self._page_transition_dirty = False
+                self._encoder_dirty = False
                 self.last_model_ms = 0
                 self.last_update_ms = 0
                 self.last_refresh_ms = max(
@@ -414,7 +574,8 @@ class RoundRenderer:
                 # poll rate. Only menu/detail view-model work is capped;
                 # event-driven UI dirtiness above this branch renders now.
                 transient_dirty = (self._halo_dirty or self._nav_dirty or
-                                   self._hud_dirty or self._highlight_dirty)
+                                   self._hud_dirty or self._highlight_dirty or
+                                   self._page_transition_dirty or self._encoder_dirty)
                 if transient_dirty:
                     refresh_started = self._profile_ticks_ms()
                     self.render_count += 1
@@ -426,6 +587,8 @@ class RoundRenderer:
                     self._nav_dirty = False
                     self._hud_dirty = False
                     self._highlight_dirty = False
+                    self._page_transition_dirty = False
+                    self._encoder_dirty = False
                     self.last_model_ms = 0
                     self.last_update_ms = 0
                     self.last_refresh_ms = max(
@@ -441,6 +604,36 @@ class RoundRenderer:
             self._last_nonhome_safety_signature = safety_signature
         model_started = self._profile_ticks_ms()
         model = self.ui.view_model()
+        if self._page_transition is not None and \
+                self._page_transition["phase"] == "commit":
+            self._page_transition["phase"] = "in"
+            self._page_transition["started"] = time.monotonic()
+            self._page_transition_dirty = False
+        else:
+            direction = self.ui.consume_page_swipe_direction()
+            page = model.get("active_page", "HOME")
+            if (direction and self._displayed_page is not None and
+                    page != self._displayed_page and not model.get("overlay") and
+                    self.home_group is not None and self.menu_group is not None):
+                old_group = (self.home_group if self._displayed_screen == "HOME"
+                             else self.menu_group)
+                new_group = (self.home_group if model["screen"] == "HOME"
+                             else self.menu_group)
+                old_group.x = 0
+                new_group.x = 0
+                old_group.hidden = False
+                if old_group is not new_group:
+                    new_group.hidden = True
+                self._page_transition = {
+                    "phase": "out", "delta": int(direction),
+                    "started": time.monotonic(), "old_group": old_group,
+                    "new_group": new_group,
+                }
+                self._page_transition_dirty = True
+                self.ui.dirty = True
+                self.render_count += 1
+                self._refresh_if_manual()
+                return True
         update_started = self._profile_ticks_ms()
         self.last_model_ms = max(
             0, _profile_ticks_diff(update_started, model_started))
@@ -453,7 +646,8 @@ class RoundRenderer:
         )
         if (signature == self._last_render_signature and
                 not (self._halo_dirty or self._nav_dirty or self._hud_dirty
-                     or self._highlight_dirty)):
+                     or self._highlight_dirty or self._page_transition_dirty
+                     or self._encoder_dirty)):
             self.skipped_count += 1
             self.last_update_ms = max(
                 0, _profile_ticks_diff(self._profile_ticks_ms(), update_started))
@@ -474,6 +668,8 @@ class RoundRenderer:
             self.home_group.hidden = not is_home
         if self.menu_group is not None:
             self.menu_group.hidden = is_home
+        self._displayed_page = model.get("active_page", "HOME")
+        self._displayed_screen = model["screen"]
 
         changed = self.ring.update(
             state.machine_state,
@@ -604,11 +800,14 @@ class RoundRenderer:
         changed = self.overlay.update(model.get("overlay")) or changed
         changed = (theme_changed or self._halo_dirty or self._nav_dirty
                    or self._hud_dirty or self._highlight_dirty
+                   or self._page_transition_dirty or self._encoder_dirty
                    or nav_changed or changed)
         self._halo_dirty = False
         self._nav_dirty = False
         self._hud_dirty = False
         self._highlight_dirty = False
+        self._page_transition_dirty = False
+        self._encoder_dirty = False
         refresh_started = self._profile_ticks_ms()
         self.last_update_ms = max(
             0, _profile_ticks_diff(refresh_started, update_started))

@@ -164,7 +164,18 @@ def load_config():
         "display_touch_sda_pin": _get("MPG_DISPLAY_TOUCH_SDA_PIN", ""),
         "display_touch_scl_pin": _get("MPG_DISPLAY_TOUCH_SCL_PIN", ""),
         "ui_theme": _get("MPG_UI_THEME", "industrial").lower(),
+        "ui_bezel": _get("MPG_UI_BEZEL", "cyan_reactor").lower(),
         "ui_animations": _get_bool("MPG_UI_ANIMATIONS", True),
+        "bezel_rotation_enabled": _get_bool("MPG_BEZEL_ROTATION_ENABLED", True),
+        "bezel_ambient_period_s": _get_float("MPG_BEZEL_AMBIENT_PERIOD_S", 54.0),
+        "bezel_encoder_gain": _get_float("MPG_BEZEL_ENCODER_GAIN", 0.04),
+        "bezel_max_speed_rad_s": _get_float("MPG_BEZEL_MAX_SPEED_RAD_S", 0.35),
+        "bezel_inertia_s": _get_float("MPG_BEZEL_INERTIA_S", 0.9),
+        "bezel_direction_change_min_s": _get_float(
+            "MPG_BEZEL_DIRECTION_CHANGE_MIN_S", 20.0),
+        "bezel_direction_change_max_s": _get_float(
+            "MPG_BEZEL_DIRECTION_CHANGE_MAX_S", 40.0),
+        "bezel_frame_rate": _get_int("MPG_BEZEL_FRAME_RATE", 24),
         "mirror_enabled": _get_bool("MPG_MIRROR_ENABLED", False),
         "mirror_navigation": _get_bool("MPG_MIRROR_NAVIGATION", False),
         "mirror_port": _get_int("MPG_MIRROR_PORT", 8080),

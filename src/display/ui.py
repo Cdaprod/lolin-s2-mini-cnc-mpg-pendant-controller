@@ -202,6 +202,7 @@ class UIManager:
         self.warning = None
         self.toast = None
         self.dirty = True
+        self.page_swipe_direction = 0
         self._sync_context()
 
     @property
@@ -232,6 +233,11 @@ class UIManager:
     def _changed(self):
         self.dirty = True
         self._sync_context()
+
+    def consume_page_swipe_direction(self):
+        """Consume one swipe direction for presentation-only page motion."""
+        direction, self.page_swipe_direction = self.page_swipe_direction, 0
+        return direction
 
     def _sync_context(self):
         self.state.ui_screen = self.current_screen
@@ -660,6 +666,7 @@ class UIManager:
                     self.state.active_page in pages) else 0
                 delta = 1 if event.kind == "swipe_left" else -1
                 self.state.active_page = pages[(index + delta) % len(pages)]
+                self.page_swipe_direction = delta
                 self.apply_selector_context()
                 return None
             return BACK if event.kind == "swipe_right" else HOME
