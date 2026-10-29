@@ -275,45 +275,13 @@ def displayio_scene(display, colors=None, bezel_name=None):
     palettes = {"dial": palette}
     if bezel_colors is not None:
         palettes["bezel"] = bezel_colors
-    # One shared sprite sheet supplies 16 precomputed subpixel phases. Separate
-    # palettes keep the two counter-rotating indicators visually distinct.
+    # Keep all bezel geometry stationary during continuous animation. The old
+    # orbiting marker and afterimage TileGrids were repositioned every frame,
+    # adding moving sprite bounds on top of the ring. The retained curved arcs
+    # below provide the travelling highlight through palette levels alone.
     hud_markers = []
     hud_trails = []
-    marker_sheet, hud_frame_count = _load_orb_sprite_sheet(displayio)
-    for radius, color in ((109, colors["accent"]), (99, colors["highlight"])):
-        marker_palette = displayio.Palette(16)
-        marker_palette[0] = 0
-        marker_palette.make_transparent(0)
-        for shade in range(1, 16):
-            marker_palette[shade] = theme.shade_color(color, shade * 100 // 15)
-        if hud_frame_count:
-            sprite = displayio.TileGrid(
-                marker_sheet, pixel_shader=marker_palette, width=1, height=1,
-                tile_width=9, tile_height=9)
-        else:
-            sprite = displayio.TileGrid(marker_sheet,
-                                        pixel_shader=marker_palette)
-        sprite.x, sprite.y = 116 + radius, 116
-        root.append(sprite)
-        hud_markers.append((sprite, radius, marker_palette))
-        # One faint, smaller retained ghost sits just behind each orbiting
-        # disc. This gives a restrained sense of motion without a framebuffer,
-        # alpha blending, or per-frame allocation.
-        trail_bitmap = displayio.Bitmap(5, 5, 2)
-        trail_palette = displayio.Palette(2)
-        trail_palette[0] = 0
-        trail_palette.make_transparent(0)
-        trail_palette[1] = theme.shade_color(color, 22)
-        for ty in range(5):
-            for tx in range(5):
-                if (tx - 2) ** 2 + (ty - 2) ** 2 <= 2:
-                    trail_bitmap[tx, ty] = 1
-        trail = displayio.TileGrid(trail_bitmap, pixel_shader=trail_palette)
-        trail.x, trail.y = sprite.x, sprite.y
-        root.append(trail)
-        hud_trails.append((trail, radius, trail_palette))
-    palettes["hud_markers"] = tuple(item[2] for item in hud_markers)
-    palettes["hud_trails"] = tuple(item[2] for item in hud_trails)
+    hud_frame_count = 0
 
     # Fixed concentric arcs form the outer rotor. Their brightness wave turns
     # around the ring; the arcs themselves never spin or change orientation.
