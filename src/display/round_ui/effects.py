@@ -13,6 +13,8 @@ TOUCH_CORE = 4
 # keeps the acknowledgment visible when the fingertip covers the center, while
 # the 25px sprite stays clear of neighboring menu rows.
 TOUCH_HOLD_PROGRESS = 0.34
+TOUCH_HOLD_PULSE_PERIOD_S = 0.90
+TOUCH_HOLD_PULSE_AMPLITUDE = 0.045
 
 
 def touch_zone(x, y):

@@ -6,8 +6,9 @@ from src.display.round_ui.renderer import RoundRenderer, _profile_ticks_diff
 from src.display.round_ui.components import MenuHighlight
 from src.display.round_ui.bootstrap import apply_mock_state
 from src.display.round_ui.geometry import RoundLayout
-from src.display.round_ui.effects import TOUCH_BITMAP_CENTER
-from src.display.round_ui.effects import TOUCH_HOLD_PROGRESS
+from src.display.round_ui.effects import (
+    TOUCH_BITMAP_CENTER, TOUCH_HOLD_PROGRESS,
+    TOUCH_HOLD_PULSE_AMPLITUDE)
 from src.display.round_ui import bezel_palette, theme
 from src.display.round_ui.rotor import (
     BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD, bezel_segment_levels,
@@ -897,27 +898,31 @@ class RoundRendererTests(unittest.TestCase):
         self.assertTrue(renderer._halo_held)
         self.assertEqual(renderer._halo_started, started)
         self.assertEqual(renderer._halo_progress, TOUCH_HOLD_PROGRESS)
-        self.assertTrue(renderer.animate(1.30) or
-                        renderer._halo_progress == TOUCH_HOLD_PROGRESS)
-        self.assertEqual(renderer._halo_progress, TOUCH_HOLD_PROGRESS)
+        self.assertTrue(renderer.animate(1.30))
+        self.assertLessEqual(
+            abs(renderer._halo_progress - TOUCH_HOLD_PROGRESS),
+            TOUCH_HOLD_PULSE_AMPLITUDE)
         self.assertGreater(palette[2], 0)
         self.assertGreater(palette[3], 0)  # Compact inner contour aids visibility.
         self.assertEqual(palette[4], 0)
         self.assertEqual(palette[1], 0)
         held_ring = palette[2]
 
-        renderer.touch_release(1.30)
+        self.assertTrue(renderer.animate(1.45))
+        self.assertNotEqual(palette[2], held_ring)  # Gentle in-place pulse.
+        release_progress = renderer._halo_progress
+        renderer.touch_release(1.45)
         self.assertFalse(renderer._halo_held)
         self.assertTrue(renderer._halo_releasing)
         self.assertEqual(renderer._halo_release_progress,
-                         TOUCH_HOLD_PROGRESS)
-        self.assertTrue(renderer.animate(1.31))
+                         release_progress)
+        self.assertTrue(renderer.animate(1.46))
         self.assertEqual(palette[1], 0)  # Release fades the same inner halo.
         self.assertLess(palette[2], held_ring)
         self.assertGreater(palette[2], 0)
-        self.assertTrue(renderer.animate(1.35))
+        self.assertTrue(renderer.animate(1.50))
         self.assertLess(palette[2], held_ring)
-        renderer.animate(1.39)
+        renderer.animate(1.54)
         self.assertTrue(renderer.touch_halo.hidden)
         self.assertFalse(renderer._halo_releasing)
         self.assertTrue(renderer.touch_halo.hidden)
