@@ -156,7 +156,9 @@ class C3WirelessController:
                         self.state.error = "C3 rejected jog"
                         self.state.jog_active = False
             elif kind == proto.MPG_STOP_ACK:
-                if seq == self._stop_seq and payload == b"\x01":
+                if (seq == self._stop_seq and payload in
+                        (bytes((proto.RESULT_OK,)),
+                         bytes((proto.RESULT_STOP_SUPPRESSED,)))):
                     self._stop_pending = False
                     self._stop_seq = None
                     self._stop_at = None

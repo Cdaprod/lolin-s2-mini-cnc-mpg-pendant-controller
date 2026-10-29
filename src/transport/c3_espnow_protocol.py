@@ -20,6 +20,11 @@ MPG_JOG = 0x30
 MPG_JOG_ACK = 0x31
 MPG_STOP = 0x32
 MPG_STOP_ACK = 0x33
+RESULT_ERROR = 0
+RESULT_OK = 1
+# STOP accepted by the C3 software lease, with physical UART cancel suppressed
+# in a disarmed/dry-run receiver build. This does not mean the machine stopped.
+RESULT_STOP_SUPPRESSED = 2
 ERROR = 0x7F
 
 DEVICE_BRIDGE = 1

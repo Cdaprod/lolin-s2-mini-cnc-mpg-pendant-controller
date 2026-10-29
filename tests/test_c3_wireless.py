@@ -143,6 +143,21 @@ class WirelessTests(unittest.TestCase):
         self.assertFalse(self.ctrl._stop_pending)
         self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
 
+    def test_disarmed_or_dry_run_stop_ack_releases_local_latch(self):
+        """Suppressed physical output is explicit and does not deadlock dry-run."""
+        self.state.deadman_enabled = True
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        self.assertTrue(self.ctrl.cancel_jog())
+        seq = self.ctrl._stop_seq
+        self.ctrl.transport.events.append((proto.MPG_STOP_ACK, seq,
+            bytes((proto.RESULT_STOP_SUPPRESSED,))))
+        self.ctrl.poll()
+        self.assertFalse(self.ctrl._stop_pending)
+        self.assertIsNone(self.ctrl._stop_seq)
+        # The next request still passes through normal readiness, deadman,
+        # selector, session, and C3 admission checks.
+        self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
+
     def test_link_loss_retries_unsent_stop_before_rearming_after_repair(self):
         self.state.deadman_enabled = True
         self.status("<Idle|MPos:0,0,0|FS:0,0>")

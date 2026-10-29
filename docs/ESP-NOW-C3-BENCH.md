@@ -39,6 +39,15 @@ must be read according to its result: a dry-run proposal is not a GRBL command
 transmission, and ESP-NOW driver acceptance is not proof of over-the-air
 delivery.
 
+For `MPG_STOP_ACK`, result `1` confirms the C3 wrote GRBL's realtime cancel
+byte. Result `2` means it revoked its software MPG lease but suppressed the
+physical UART byte in a disarmed/dry-run build; the S3 clears its local retry
+latch so a non-actuating diagnostic can continue. The dashboard reports this
+as `event=mpg_stop result=suppressed physical_uart=not_sent`. It does not mean
+the machine stopped; only fresh controller telemetry and the C3 admission gate
+can permit another dry-run proposal. Older C3 firmware returns an error for a
+suppressed stop, which leaves the S3 inhibited.
+
 When explicitly built for physical jogging, the C3 keeps a 250 ms receiver
 lease, checks status freshness, rejects duplicate/stale sequences, arbitrates
 the UART against its other sender, and sends GRBL's real-time `0x85` jog-cancel
