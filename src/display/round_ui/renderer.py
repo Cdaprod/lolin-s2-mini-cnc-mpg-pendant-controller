@@ -14,6 +14,14 @@ from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
 # retained marker radii. Integer DisplayIO coordinates then produce a regular
 # one-pixel cadence instead of the visible multi-pixel jumps from faster rates.
 HUD_ORBIT_RATES = (0.20, -0.16)
+_PROFILE_TICKS_MASK = (1 << 29) - 1
+_PROFILE_TICKS_HALF = 1 << 28
+
+
+def _profile_ticks_diff(newer, older):
+    diff = (newer - older) & _PROFILE_TICKS_MASK
+    return ((diff + _PROFILE_TICKS_HALF) & _PROFILE_TICKS_MASK) - \
+        _PROFILE_TICKS_HALF
 
 
 class RoundRenderer:
@@ -25,6 +33,15 @@ class RoundRenderer:
         self.render_count = 0
         self.skipped_count = 0
         self.animations = bool(animations)
+        try:
+            import supervisor
+            self._profile_ticks_ms = supervisor.ticks_ms
+        except (ImportError, AttributeError):
+            self._profile_ticks_ms = lambda: int(time.monotonic() * 1000)
+        self.last_model_ms = 0
+        self.last_update_ms = 0
+        self.last_refresh_ms = 0
+        self._last_render_signature = None
         self._halo_until = 0
         self._halo_visible = False
         self._halo_dirty = False
@@ -189,7 +206,26 @@ class RoundRenderer:
     def render(self, state):
         if self.ui is None:
             raise RuntimeError("RoundRenderer must be bound to UIManager")
+        model_started = self._profile_ticks_ms()
         model = self.ui.view_model()
+        update_started = self._profile_ticks_ms()
+        self.last_model_ms = max(
+            0, _profile_ticks_diff(update_started, model_started))
+        coordinates = state.displayed_position()
+        selected_axis = state.selected_axis
+        signature = (
+            model, state.machine_state, state.coordinate_mode, selected_axis,
+            coordinates.get(selected_axis), state.wifi_state,
+            state.storage_state,
+        )
+        if (signature == self._last_render_signature and
+                not (self._halo_dirty or self._nav_dirty or self._hud_dirty)):
+            self.skipped_count += 1
+            self.last_update_ms = max(
+                0, _profile_ticks_diff(self._profile_ticks_ms(), update_started))
+            self.last_refresh_ms = 0
+            return False
+        self._last_render_signature = signature
         theme_changed = self._apply_page_theme(model.get("active_page", "HOME"))
         nav_changed = self._navigation(model)
         if model.get("overlay") and self._nav_visible:
@@ -225,8 +261,6 @@ class RoundRenderer:
                       if wireless else
                       ("READY" if model["jog_armed"] else state.machine_state.upper()))
         changed = self.state_label.set(state_text) or changed
-        coordinates = state.displayed_position()
-        selected_axis = state.selected_axis
         changed = self.axis.update(
             selected_axis, coordinates.get(selected_axis), state.coordinate_mode,
             "mm",
@@ -244,36 +278,45 @@ class RoundRenderer:
             wifi, state.storage_state == "available"
         ) or changed
 
-        items = model.get("items", ())
-        if model.get("details"):
-            items = tuple(("{}: {}".format(key, value), True, "")
-                          for key, value in model["details"])
-        selected = min(model.get("selected", 0), max(0, len(items) - 1))
-        window_start = menu_window_start(selected, len(items), len(self.menu))
-        visible_items = items[window_start:window_start + len(self.menu)]
-        changed = self.menu_title.set(model["title"]) or changed
-        for index, component in enumerate(self.menu):
-            text = ""
-            if index < len(visible_items):
-                text = visible_items[index][0]
-                if not visible_items[index][1]:
-                    text += "  -"
-            changed = component.set(text) or changed
-            row_color = self.menu_colors[0]
-            if index < len(visible_items) and not visible_items[index][1]:
-                row_color = self.menu_colors[1]
-            changed = component.set_color(row_color) or changed
-        changed = self.menu_highlight.set(
-            selected - window_start, bool(visible_items)
-        ) or changed
-        page = "{}/{}".format(selected + 1, len(items)) if items else "-"
-        changed = self.menu_footer.set(page + "  BACK | HOME") or changed
+        # The menu layer is hidden on the operational HOME instrument. Avoid
+        # rebuilding menu strings and updating six retained rows on every
+        # input poll; the first menu transition updates the complete layer.
+        if not is_home:
+            items = model.get("items", ())
+            if model.get("details"):
+                items = tuple(("{}: {}".format(key, value), True, "")
+                              for key, value in model["details"])
+            selected = min(model.get("selected", 0), max(0, len(items) - 1))
+            window_start = menu_window_start(
+                selected, len(items), len(self.menu))
+            visible_items = items[window_start:window_start + len(self.menu)]
+            changed = self.menu_title.set(model["title"]) or changed
+            for index, component in enumerate(self.menu):
+                text = ""
+                if index < len(visible_items):
+                    text = visible_items[index][0]
+                    if not visible_items[index][1]:
+                        text += "  -"
+                changed = component.set(text) or changed
+                row_color = self.menu_colors[0]
+                if index < len(visible_items) and not visible_items[index][1]:
+                    row_color = self.menu_colors[1]
+                changed = component.set_color(row_color) or changed
+            changed = self.menu_highlight.set(
+                selected - window_start, bool(visible_items)
+            ) or changed
+            page = "{}/{}".format(selected + 1, len(items)) if items else "-"
+            changed = self.menu_footer.set(page + "  BACK | HOME") or changed
         changed = self.overlay.update(model.get("overlay")) or changed
         changed = (theme_changed or self._halo_dirty or self._nav_dirty
                    or self._hud_dirty or nav_changed or changed)
         self._halo_dirty = False
         self._nav_dirty = False
         self._hud_dirty = False
+        refresh_started = self._profile_ticks_ms()
+        self.last_update_ms = max(
+            0, _profile_ticks_diff(refresh_started, update_started))
+        self.last_refresh_ms = 0
         if not changed:
             self.skipped_count += 1
             return False
@@ -282,4 +325,6 @@ class RoundRenderer:
             self.display.refresh(minimum_frames_per_second=0)
         except (AttributeError, RuntimeError):
             pass
+        self.last_refresh_ms = max(
+            0, _profile_ticks_diff(self._profile_ticks_ms(), refresh_started))
         return True

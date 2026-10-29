@@ -93,6 +93,9 @@ class PendantApplication:
         self._diag_total_wifi_ms = 0
         self._diag_max_display_ms = 0
         self._diag_total_display_ms = 0
+        self._diag_total_display_model_ms = 0
+        self._diag_total_display_update_ms = 0
+        self._diag_total_display_refresh_ms = 0
         self._diag_max_mirror_ms = 0
         self._diag_total_mirror_ms = 0
         self._diag_last_touch_error = None
@@ -761,6 +764,12 @@ class PendantApplication:
         self._update_indicator()
         self.display.render(self.state)
         self.state.render_count = getattr(self.display, "render_count", 0)
+        self._diag_total_display_model_ms += getattr(
+            self.display, "last_model_ms", 0)
+        self._diag_total_display_update_ms += getattr(
+            self.display, "last_update_ms", 0)
+        self._diag_total_display_refresh_ms += getattr(
+            self.display, "last_refresh_ms", 0)
         display_duration_ms = max(
             0, _diag_ticks_diff_ms(self._diag_ticks_ms(), display_started))
         if display_duration_ms > self._diag_max_display_ms:
@@ -849,6 +858,9 @@ class PendantApplication:
                  total_wifi_ms=self._diag_total_wifi_ms,
                  max_display_ms=self._diag_max_display_ms,
                  total_display_ms=self._diag_total_display_ms,
+                 total_display_model_ms=self._diag_total_display_model_ms,
+                 total_display_update_ms=self._diag_total_display_update_ms,
+                 total_display_refresh_ms=self._diag_total_display_refresh_ms,
                  max_mirror_ms=self._diag_max_mirror_ms,
                  total_mirror_ms=self._diag_total_mirror_ms,
                  touch_polls=getattr(self.touch_manager, "poll_count", 0)
@@ -891,6 +903,9 @@ class PendantApplication:
             self._diag_total_wifi_ms = 0
             self._diag_max_display_ms = 0
             self._diag_total_display_ms = 0
+            self._diag_total_display_model_ms = 0
+            self._diag_total_display_update_ms = 0
+            self._diag_total_display_refresh_ms = 0
             self._diag_max_mirror_ms = 0
             self._diag_total_mirror_ms = 0
             self._diag_last_heartbeat = finished

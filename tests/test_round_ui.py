@@ -1,6 +1,6 @@
 import unittest
 
-from src.display.round_ui.renderer import RoundRenderer
+from src.display.round_ui.renderer import RoundRenderer, _profile_ticks_diff
 from src.display.round_ui.bootstrap import apply_mock_state
 from src.display.round_ui.geometry import RoundLayout
 from src.display.round_ui import theme
@@ -139,10 +139,13 @@ class RoundRendererTests(unittest.TestCase):
         renderer.render(state)
         self.assertFalse(renderer.home_group.hidden)
         self.assertTrue(renderer.menu_group.hidden)
+        self.assertIsNone(renderer.menu_title.value)
         ui.enter("MAIN_MENU")
         renderer.render(state)
         self.assertTrue(renderer.home_group.hidden)
         self.assertFalse(renderer.menu_group.hidden)
+        self.assertEqual(renderer.menu_title.value,
+                         ui.screens["MAIN_MENU"].title)
         ui.back()
         renderer.render(state)
         self.assertFalse(renderer.home_group.hidden)
@@ -158,11 +161,18 @@ class RoundRendererTests(unittest.TestCase):
         axis_updates = renderer.axis.axis.line.updates
         value_updates = renderer.axis.value.line.updates
         self.assertFalse(renderer.render(state))
+        self.assertGreaterEqual(renderer.last_model_ms, 0)
+        self.assertGreaterEqual(renderer.last_update_ms, 0)
+        self.assertGreaterEqual(renderer.last_refresh_ms, 0)
         self.assertEqual(display.refreshes, 1)
         state.work_position["X"] = 125.0
         self.assertTrue(renderer.render(state))
         self.assertEqual(renderer.axis.axis.line.updates, axis_updates)
         self.assertEqual(renderer.axis.value.line.updates, value_updates + 1)
+
+    def test_renderer_timing_delta_handles_tick_wrap(self):
+        period = 1 << 29
+        self.assertEqual(_profile_ticks_diff(4, period - 3), 7)
 
     def test_home_prioritizes_armed_hold_and_signed_relative_activity(self):
         state, _, _, renderer = self.make_renderer()
