@@ -104,6 +104,31 @@ class GestureTests(unittest.TestCase):
         self.assertFalse(touch.feedback_active)
         self.assertEqual(touch.last_contact_transition, ("up", 90, 65))
 
+    def test_active_contact_tracks_latest_sample_and_defers_gesture_until_lift(self):
+        clock = Clock()
+        source = Source()
+        touch = TouchInput(source, clock)
+
+        source.current = (90, 100)
+        self.assertEqual(touch.poll(), ())
+        self.assertTrue(touch.feedback_active)
+        self.assertEqual(touch.last_point, (90, 100))
+
+        source.current = (150, 100)
+        clock.t = 0.10
+        self.assertEqual(touch.poll(), ())
+        self.assertTrue(touch.feedback_active)
+        self.assertEqual(touch.last_point, (150, 100))
+
+        source.current = None
+        clock.t = 0.11
+        self.assertEqual(touch.poll(), ())
+        clock.t = 0.171
+        events = touch.poll()
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0].kind, "swipe_right")
+        self.assertFalse(touch.feedback_active)
+
     def test_touch_contact_diagnostics_report_coordinates_and_ignore_read_errors(self):
         clock = Clock()
         source = FlakySource()
