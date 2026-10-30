@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-30",
+  "candidate_file": "hardware/freecad/pendant-modular-repair-candidate.FCStd",
+  "regeneration_script": "hardware/freecad/regenerate_rear_boss_wall_loadpaths.py",
+  "candidate_scope": "Static rear-shell interim BREP in a disposable copy of the modular assembly",
+  "source_assembly_unchanged": true,
+  "monolith_unchanged": true,
+  "orca_3mf_unchanged_by_this_work": true,
+  "original_tip": {
+    "volume_mm3": 40961.35900828918,
+    "faces": 534,
+    "boundary_edges": 335,
+    "overincident_edges": 12
+  },
+  "candidate": {
+    "valid_solid": true,
+    "solid_count": 1,
+    "volume_mm3": 40609.6936371684,
+    "faces": 471,
+    "bbox_mm": [
+      -36.1370833694447,
+      -85.56427270479894,
+      -36.843780876381665,
+      36.137089549450465,
+      86.68846292863208,
+      0.0
+    ],
+    "bbox_matches_clean_base": true,
+    "change_from_original_volume_mm3": -351.66537112078,
+    "m2_clearance_delta_mm3": 0.0,
+    "magnet_clearance_delta_mm3": 0.0,
+    "front_shell_intersection_mm3": 0.0,
+    "freecad_mesh_facets": 19586,
+    "freecad_mesh_closed": true,
+    "independent_export_mesh_facets": 19640,
+    "independent_export_edge_incidence": {
+      "edge_count": 29460,
+      "incidence_histogram": {
+        "2": 29460
+      },
+      "bad_edge_count": 0
+    }
+  },
+  "assembly_after_reopen": {
+    "live_link_count": 5,
+    "broken_links": 0
+  },
+  "complete_candidate_export": {
+    "parts": 8,
+    "closed_parts": 8,
+    "errors": []
+  },
+  "limitations": [
+    "Intentional reconstructed support geometry differs from the original BREP; geometric equivalence is not claimed.",
+    "Full monolithic Body002 history recompute did not complete in the bounded test; the candidate assembly uses the existing static interim representation.",
+    "The candidate does not prove structural capacity or replace physical proof-load testing."
+  ]
+}

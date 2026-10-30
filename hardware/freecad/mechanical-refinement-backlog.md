@@ -9,6 +9,12 @@ This is a permanent workstream alongside the modularization and parameterization
 3. Check screw passages, head seats, shell mating/alignment, cable and connector clearance, component access, and assembly convenience.
 4. Look for unnecessary material, excessive wall thickness, abrupt curved-surface transitions, and difficult overhangs.
 
+## Active concrete CAD repair — rear-shell mesh
+
+- A disposable modular-assembly candidate now replaces the non-manifold stored rear load-path BREP with four fused boss-to-wall ribs. It preserves the assembly bounding box and existing M2/magnet clearances, and all eight candidate assembly meshes export as closed solids. See `reports/rear-shell-four-rib-repair-candidate-2026-10-30.md` and `regenerate_rear_boss_wall_loadpaths.py`.
+- The candidate's support volume differs from the current Tip (−351.665 mm³), so it remains a review candidate pending mechanical review. It does not claim exact geometry or load capacity; the protected monolith and production assembly remain unchanged.
+- Next: inspect the candidate support geometry against the original on the four screw-boss paths, then decide whether to adjust rib extents before promoting the assembly interim BREP and regenerating print meshes. Keep the OrcaSlicer project unchanged.
+
 ## Change categories
 
 - **Geometry-preserving refactor:** keep the manufactured shape unchanged while improving dependencies, modularity, or parameterization.

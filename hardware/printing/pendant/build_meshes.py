@@ -38,12 +38,15 @@ OBJECTS = [
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--freecadcmd", type=Path, default=Path(os.environ.get("FREECADCMD", DEFAULT_FREECADCMD)))
+    ap.add_argument("--assembly", type=Path, default=ASSEMBLY,
+                    help="FreeCAD assembly to export (defaults to the production modular assembly)")
     ap.add_argument("--linear-deflection", type=float, default=0.08, help="mesh chordal deviation, mm")
     ap.add_argument("--angular-deflection", type=float, default=0.20, help="mesh angular deviation, radians")
     ap.add_argument("--output-dir", type=Path, default=OUT)
     args = ap.parse_args()
-    if not ASSEMBLY.is_file():
-        ap.error(f"saved assembly not found: {ASSEMBLY}")
+    assembly = args.assembly.resolve()
+    if not assembly.is_file():
+        ap.error(f"saved assembly not found: {assembly}")
     if not args.freecadcmd.is_file():
         ap.error(f"FreeCADCmd not found: {args.freecadcmd}")
     if not (0.01 <= args.linear_deflection <= 0.5 and 0.05 <= args.angular_deflection <= 0.8):
@@ -53,7 +56,11 @@ def main() -> int:
     meshdir.mkdir(parents=True, exist_ok=True)
     stage_dir = Path(tempfile.mkdtemp(prefix=".pendant-mesh-candidate-", dir=outdir))
     expected = [{"object": n, "filename": f"{slug}.stl", "slug": slug} for n, slug in OBJECTS]
-    cfg = {"assembly": str(ASSEMBLY.resolve()), "source_rel": str(ASSEMBLY.relative_to(ROOT)),
+    try:
+        source_rel = str(assembly.relative_to(ROOT))
+    except ValueError:
+        source_rel = str(assembly)
+    cfg = {"assembly": str(assembly), "source_rel": source_rel,
            "meshdir": str(stage_dir), "objects": expected,
            "linear": args.linear_deflection, "angular": args.angular_deflection}
     macro = r'''import FreeCAD as App, MeshPart, json, os, traceback

@@ -17,11 +17,23 @@ Open `pendant-orcaslicer.3mf` in OrcaSlicer. It uses the configured Elegoo Neptu
 
 The electronics board envelope, screws, sketches, datum objects, binders, and other construction geometry are excluded. The four shell/faceplate interim objects remain static source shapes in the modular assembly; the project exports their current saved shapes. The fused encoder faceplate/pocket is intentionally kept as one mesh.
 
-## Mesh validation and current rear-shell blocker
+## Mesh validation and rear-shell repair candidate
 
-The export uses 0.08 mm linear deflection and 0.20 rad angular deflection without mesh healing or repair. Seven generated meshes are closed according to FreeCAD's mesh solidity check. `rear-shell.stl` is not watertight/manifold and is **not print-ready**. A source audit traced the first non-solid tessellation to `Body002.RearBossToWallLoadPaths`, a stored-shape PartDesign feature with no regeneration method; its exact geometry must be reconstructed in FreeCAD while preserving the four boss-to-wall reinforcements. See [the rear-shell source audit](../../freecad/reports/rear-shell-nonmanifold-source-audit-2026-10-30.md). OrcaSlicer repair is not the remedy.
+The production exporter uses 0.08 mm linear deflection and 0.20 rad angular deflection without mesh healing or repair. The currently tracked production `rear-shell.stl` remains non-manifold and is not print-ready. A source audit traced it to `Body002.RearBossToWallLoadPaths`, a stored-shape PartDesign feature with no regeneration recipe; see [the source audit](../../freecad/reports/rear-shell-nonmanifold-source-audit-2026-10-30.md).
 
-The mesh exporter now stages all outputs and refuses to promote any set containing a non-closed mesh. A failed export leaves the current meshes and the user's slicer project untouched.
+A separate, reviewable FreeCAD model candidate is now available as `hardware/freecad/pendant-modular-repair-candidate.FCStd`. It replaces the assembly's static rear-shell interim BREP with four fused boss-to-wall ribs reconstructed from explicit section profiles. The candidate saves and reopens with all five live component links resolved. Its rear shell is one valid solid and exports to a closed mesh with 19,640 facets and zero triangle edges of incidence other than two. The other seven component meshes also pass closure checks.
+
+This is an intentional geometry candidate, not an exact BREP restoration or an editable rear-shell source. Its volume is 40,609.694 mm³ versus 40,961.359 mm³ for the current assembly shell; it preserves the original bounding box and the base's screw and magnet clearances, but its changed support volumes still need mechanical review. It is not a load rating. The protected monolith, production assembly, production STL set, and user's OrcaSlicer project remain unchanged.
+
+To export the candidate into a separate output folder without replacing production meshes:
+
+```sh
+python3 hardware/printing/pendant/build_meshes.py \
+  --assembly hardware/freecad/pendant-modular-repair-candidate.FCStd \
+  --output-dir /tmp/pendant-repair-mesh-review
+```
+
+The mesh exporter stages all outputs and refuses to promote any set containing a non-closed mesh. `--assembly` allows safe validation of a disposable FreeCAD assembly into a separate output directory. A failed export leaves the current meshes and the user's slicer project untouched.
 
 All project objects are placed within the profile's 235 × 235 × 250 mm printable volume. That placement check does not override the rear-shell mesh warning. A whole-project slice was not accepted as a validation result while the rear shell mesh is invalid. OrcaSlicer opened the project and displayed the six named plates. No physical print was started.
 
