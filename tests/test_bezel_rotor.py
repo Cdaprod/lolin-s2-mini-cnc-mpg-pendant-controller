@@ -115,20 +115,19 @@ class BezelRotorTests(unittest.TestCase):
                 theta = 2.0 * math.pi * index / 24
                 delta = ((theta - angle + math.pi) % (2.0 * math.pi)) - math.pi
                 exact = int(round(
-                    1 + 14 * math.exp(-0.5 * (delta / 0.30) ** 2)))
+                    9 + 6 * math.exp(-0.5 * (delta / 0.72) ** 2)))
                 self.assertLessEqual(abs(actual - exact), 1)
         retained = [0] * 24
         update_bezel_segment_levels(-0.25, retained)
         self.assertEqual(tuple(retained), bezel_segment_levels(-0.25, 24))
 
     def test_traveling_highlight_does_not_bloom_across_the_full_ring(self):
-        # Production uses 12 arcs at 30-degree spacing. The focused wave
-        # should keep its stronger glow to a small local cluster rather than
-        # leaving most of the bezel energized at once.
+        # Production uses four long arcs at 90-degree spacing. The traveling
+        # wave should focus brightness locally rather than energizing all sides.
         for phase in range(360):
             levels = bezel_segment_levels(2.0 * math.pi * phase / 360)
-            self.assertLessEqual(sum(level >= 5 for level in levels), 3)
-            self.assertGreaterEqual(max(levels), 10)
+            self.assertLessEqual(sum(level >= 12 for level in levels), 2)
+            self.assertGreaterEqual(max(levels), 11)
 
 
 if __name__ == "__main__":

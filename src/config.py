@@ -167,7 +167,7 @@ def load_config():
         "ui_bezel": _get("MPG_UI_BEZEL", "cyan_reactor").lower(),
         "ui_animations": _get_bool("MPG_UI_ANIMATIONS", True),
         "bezel_rotation_enabled": _get_bool("MPG_BEZEL_ROTATION_ENABLED", True),
-        "bezel_ambient_period_s": _get_float("MPG_BEZEL_AMBIENT_PERIOD_S", 54.0),
+        "bezel_ambient_period_s": _get_float("MPG_BEZEL_AMBIENT_PERIOD_S", 46.0),
         "bezel_encoder_gain": _get_float("MPG_BEZEL_ENCODER_GAIN", 0.04),
         "bezel_max_speed_rad_s": _get_float("MPG_BEZEL_MAX_SPEED_RAD_S", 0.35),
         "bezel_inertia_s": _get_float("MPG_BEZEL_INERTIA_S", 0.9),

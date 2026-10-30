@@ -3,7 +3,8 @@
 import math
 
 from . import bezel_palette, theme
-from .rotor import BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD
+from .rotor import (BEZEL_ARC_TILE_SIZE, BEZEL_SEGMENT_COUNT,
+                    BEZEL_SEGMENT_OFFSET_RAD, BEZEL_TRACK_RADIUS)
 from .effects import (TOUCH_BITMAP_CENTER, TOUCH_BITMAP_SIZE,
                       TOUCH_PALETTE_SIZE, touch_zone)
 from .renderer import RoundRenderer
@@ -249,11 +250,13 @@ def _load_rotor_sprite_sheet(displayio):
     """Load precomputed curved-arc orientation and subpixel phases."""
     try:
         import bitmaptools
-        bitmap = displayio.Bitmap(132, 1584, 16)
+        width = BEZEL_ARC_TILE_SIZE * 4
+        height = BEZEL_ARC_TILE_SIZE * 4 * BEZEL_SEGMENT_COUNT
+        bitmap = displayio.Bitmap(width, height, 16)
         with open("/assets/round_hud/runtime/rotor_segment_phases.4bpp",
                   "rb") as source:
             bitmaptools.readinto(bitmap, source, bits_per_pixel=4)
-        return bitmap, 192
+        return bitmap, BEZEL_SEGMENT_COUNT * 16
     except (ImportError, OSError, RuntimeError, ValueError, AttributeError,
             MemoryError):
         return None, 0
@@ -307,11 +310,12 @@ def displayio_scene(display, colors=None, bezel_name=None):
             segment = displayio.TileGrid(
                 rotor_sheet, pixel_shader=rotor_palette_bank[1],
                 width=1, height=1,
-                tile_width=33, tile_height=33)
+                tile_width=BEZEL_ARC_TILE_SIZE,
+                tile_height=BEZEL_ARC_TILE_SIZE)
             angle = (BEZEL_SEGMENT_OFFSET_RAD +
                      2.0 * math.pi * index / rotor_count)
-            center_x = 120 + 110.0 * math.cos(angle)
-            center_y = 120 + 110.0 * math.sin(angle)
+            center_x = 120 + BEZEL_TRACK_RADIUS * math.cos(angle)
+            center_y = 120 + BEZEL_TRACK_RADIUS * math.sin(angle)
             base_x, base_y = math.floor(center_x), math.floor(center_y)
             phase_x = int((center_x - base_x) * 4)
             phase_y = int((center_y - base_y) * 4)
@@ -319,7 +323,8 @@ def displayio_scene(display, colors=None, bezel_name=None):
             orientation = int(round(
                 tangent * BEZEL_SEGMENT_COUNT / (2.0 * math.pi))) % BEZEL_SEGMENT_COUNT
             segment[0] = orientation * 16 + phase_y * 4 + phase_x
-            segment.x, segment.y = int(base_x) - 16, int(base_y) - 16
+            half_tile = BEZEL_ARC_TILE_SIZE // 2
+            segment.x, segment.y = int(base_x) - half_tile, int(base_y) - half_tile
             segment.hidden = False
             root.append(segment)
             rotor_segments.append(segment)
@@ -561,7 +566,7 @@ def from_config(config, shared_spi=None):
             d, colors, config.get("ui_bezel", bezel_palette.DEFAULT_BEZEL)),
         animations=config.get("ui_animations", True),
         bezel_rotation_enabled=config.get("bezel_rotation_enabled", True),
-        bezel_ambient_period_s=config.get("bezel_ambient_period_s", 54.0),
+        bezel_ambient_period_s=config.get("bezel_ambient_period_s", 46.0),
         bezel_encoder_gain=config.get("bezel_encoder_gain", 0.04),
         bezel_max_speed_rad_s=config.get("bezel_max_speed_rad_s", 0.35),
         bezel_inertia_s=config.get("bezel_inertia_s", 0.9),

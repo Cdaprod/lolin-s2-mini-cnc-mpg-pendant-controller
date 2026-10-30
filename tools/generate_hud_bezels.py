@@ -8,10 +8,16 @@ import argparse
 import json
 import math
 from pathlib import Path
+import sys
 import time
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from src.display.round_ui.rotor import (BEZEL_ARC_HALF_LENGTH,
+                                        BEZEL_ARC_TILE_SIZE,
+                                        BEZEL_TRACK_RADIUS,
+                                        BEZEL_SEGMENT_COUNT)
 
 ROOT = Path(__file__).resolve().parents[1]
 SIZE = 240
@@ -75,15 +81,15 @@ def orbit_phase_data():
 
 
 def rotor_segment_data():
-    """Return a supersampled curved-arc atlas for the fixed outer rotor.
+    """Return a compact atlas for four long curved arcs at the cardinal points.
 
-    Each 33px tile contains a longer, visibly curved ~30px arc on a 110px
-    track. Twelve tangent orientations align with the fixed positions;
-    subpixel placement is precomputed. Firmware only changes palette levels,
-    so the geometry never pivots or rotates during animation.
+    Each 39px tile contains a ~33px arc on a 96px track. The four tangent
+    orientations and subpixel positions are precomputed. Firmware only shifts
+    brightness between these fixed arcs, so none pivots during animation.
     """
-    tile, phases, orientations, samples = 33, 4, 12, 8
-    track_radius, half_length = 110.0, 14.5
+    tile, phases, orientations, samples = (
+        BEZEL_ARC_TILE_SIZE, 4, BEZEL_SEGMENT_COUNT, 8)
+    track_radius, half_length = BEZEL_TRACK_RADIUS, BEZEL_ARC_HALF_LENGTH
     atlas = np.zeros((tile * orientations * phases, tile * phases),
                      dtype=np.uint8)
     grid = (np.arange(tile * samples, dtype=np.float32) + .5) / samples
@@ -93,9 +99,9 @@ def rotor_segment_data():
         ux, uy = math.cos(angle), math.sin(angle)
         vx, vy = -uy, ux
         for phase_y in range(phases):
-            center_y = 16.0 + phase_y / float(phases)
+            center_y = tile / 2.0 + phase_y / float(phases)
             for phase_x in range(phases):
-                center_x = 16.0 + phase_x / float(phases)
+                center_x = tile / 2.0 + phase_x / float(phases)
                 dx, dy = xx - center_x, yy - center_y
                 along = dx * ux + dy * uy
                 across = dx * vx + dy * vy
@@ -363,7 +369,7 @@ def generate(output,supersample=8,overrides=None):
                         "bytes":len(data)})
     _write_palette_module(palettes,ROOT/"src/display/round_ui/bezel_palette.py")
     _contact_sheet(dev,output/"contact-sheet.png")
-    manifest={"generator":"tools/generate_hud_bezels.py","generator_version":7,"target":[SIZE,SIZE],
+    manifest={"generator":"tools/generate_hud_bezels.py","generator_version":8,"target":[SIZE,SIZE],
               "supersampling":supersample,"palette_entries":16,
               "bezel_palette_luminance":BEZEL_LUMINANCE,
               "default":"cyan_reactor","themes":entries,
@@ -371,10 +377,11 @@ def generate(output,supersample=8,overrides=None):
                                 "width":36,"height":36,"tile_size":9,"tiles":16,
                                 "palette_entries":16,"transparent_index":0,"bytes":len(orbit_data)},
                                {"name":"rotor_segment_phases","file":"assets/round_hud/runtime/rotor_segment_phases.4bpp",
-                                "width":132,"height":1584,"tile_size":33,"tiles":192,
-                                "orientations":12,"subpixel_phases":16,
-                               "instances":12,"track_radius_px":110,
-                               "arc_length_px":29,"angular_offset_degrees":29,
+                                "width":BEZEL_ARC_TILE_SIZE*4,"height":BEZEL_ARC_TILE_SIZE*4*BEZEL_SEGMENT_COUNT,
+                                "tile_size":BEZEL_ARC_TILE_SIZE,"tiles":BEZEL_SEGMENT_COUNT*16,
+                                "orientations":BEZEL_SEGMENT_COUNT,"subpixel_phases":16,
+                               "instances":BEZEL_SEGMENT_COUNT,"track_radius_px":BEZEL_TRACK_RADIUS,
+                               "arc_length_px":BEZEL_ARC_HALF_LENGTH*2,"angular_offset_degrees":-90,
                                 "palette_entries":16,"transparent_index":0,"bytes":len(rotor_data)}],
               "generation_seconds":round(time.perf_counter()-start,3)}
     (output/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n",encoding="utf-8")
