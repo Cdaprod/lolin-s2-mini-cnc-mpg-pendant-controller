@@ -27,6 +27,8 @@ The sketches remain useful as intent and dimension evidence, but the native feat
 
 FreeCAD 1.1.1 opened the source read-only for inspection. A byte-for-byte disposable copy at `/tmp/pendant-legacy-transition-test.FCStd` was used for the unsuppression test and closed without saving. The authoritative file SHA-256 remains `dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881`.
 
+A complementary shape-difference calculation between the two stored load-path features and their bases exceeded a 60-second bound without producing a result. Its read-only worker was terminated; no file was saved. Do not repeat this same Boolean comparison unchanged. Use a localized mesh/section comparison or recover the generator inputs first.
+
 ## Disposition and next step
 
 Reject the legacy loft chain for production use. Keep the closed, two-Body hanger requirement unchanged. The next experiment should reconstruct the missing boss-to-wall load-path solids from their original sketch profiles and explicit envelope/clearance tools, one shell at a time, on a disposable copy. Require one valid solid, screw and magnet clearance preservation, unchanged mating boundaries outside the intended transition, save/reopen/recompute, and updated hanger geometry reaching each final Tip. Do not claim that the hanger is safe until its material/load case is evaluated and a suitable structural or physical test is passed.
