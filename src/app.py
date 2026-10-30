@@ -133,6 +133,50 @@ class PendantApplication:
             # already have claimed pins even when a later optional service fails.
             sys.modules[_CIRCUITPY_COMPOSITION_KEY] = True
         state = PendantState(config.get("base_increment", 0.001))
+        state.ui_settings = {
+            "Jog": (
+                ("Base increment", "{:.4f}".format(config.get("base_increment", 0.001))),
+                ("Jog feed limit", "{} mm/min".format(config.get("jog_feed", 500))),
+            ),
+            "Units": (
+                ("Coordinate mode", "controller reported"),
+                ("Jog units", "settings.toml"),
+            ),
+            "Display": (
+                ("Theme", config.get("ui_theme", "industrial").upper()),
+                ("Bezel", config.get("ui_bezel", "cyan_reactor").replace("_", " ").upper()),
+                ("Animations", "ON" if config.get("ui_animations", True) else "OFF"),
+                ("Bezel rotation", "ON" if config.get("bezel_rotation_enabled", True) else "OFF"),
+                ("Ambient period", "{:.0f} sec / revolution".format(config.get("bezel_ambient_period_s", 46.0))),
+                ("Animation rate", "{} fps max".format(config.get("bezel_frame_rate", 24))),
+            ),
+            "Controls": (
+                ("Input backend", config.get("selector_backend", "disabled").upper()),
+                ("Input sampling", "ENABLED" if config.get("inputs_enabled") else "DISABLED"),
+                ("Touch", "ENABLED" if config.get("touch_enabled") else "DISABLED"),
+            ),
+            "MPG": (
+                ("Encoder input", "ENABLED" if config.get("inputs_enabled") else "DISABLED"),
+                ("Counts per detent", str(config.get("mpg_counts_per_detent", 4))),
+                ("Direction", "NORMAL" if config.get("mpg_direction", 1) >= 0 else "REVERSED"),
+            ),
+            "Safety": (
+                ("Controller", config.get("controller_mode", "disabled").upper()),
+                ("Hold-to-run", "CONFIGURED" if config.get("deadman_pin") else "UNCONFIGURED"),
+                ("E-stop observe", "CONFIGURED" if config.get("estop_observe_pin") else "UNCONFIGURED"),
+                ("Motion admission", "SAFETY GATES ACTIVE"),
+            ),
+            "Storage": (
+                ("SD support", "ENABLED" if config.get("sd_enabled") else "DISABLED"),
+                ("Jobs folder", config.get("jobs_path", "/jobs")),
+                ("Macros folder", config.get("macros_path", "/macros")),
+            ),
+            "UI": (
+                ("Touch feedback", "FOLLOW FINGER"),
+                ("Page transitions", "SMOOTH SWIPE"),
+                ("Settings source", "settings.toml"),
+            ),
+        }
         state.runtime_version = getattr(sys, "version", "unknown").split(";", 1)[0]
         state.board_profile = config.get("board_profile", "") or "default"
         state.display_profile = config.get("display_profile", "") or "default"

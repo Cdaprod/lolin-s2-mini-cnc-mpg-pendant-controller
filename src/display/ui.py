@@ -164,8 +164,11 @@ def build_screens():
     settings = ("Jog", "Units", "Display", "Controls", "MPG", "Safety",
                 "Storage", "UI")
     screens["SETTINGS"] = Screen("SETTINGS", "SETTINGS", "MAIN_MENU", items=[
-        _disabled(label, "settings editor is not implemented") for label in settings
+        MenuItem(label, "SETTINGS_INFO", value=label) for label in settings
     ])
+    screens["SETTINGS_INFO"] = Screen(
+        "SETTINGS_INFO", "SETTING DETAILS", "SETTINGS"
+    )
     system = ("Firmware", "Hardware", "Storage", "Input Diagnostics", "Logs",
               "Version", "Restart")
     screens["SYSTEM"] = Screen("SYSTEM", "SYSTEM / ABOUT", "MAIN_MENU", items=[
@@ -199,6 +202,7 @@ class UIManager:
         self.text_entry = None
         self.text_purpose = None
         self.detail_title = None
+        self.settings_category = "UI"
         self.network_info = {}
         self.confirmation = None
         self.warning = None
@@ -344,6 +348,10 @@ class UIManager:
 
     def details(self):
         """Return sanitized rows for the current read-only information view."""
+        if self.current_screen == "SETTINGS_INFO":
+            configured = getattr(self.state, "ui_settings", {})
+            rows = tuple(configured.get(self.settings_category, ()))
+            return rows + (("Edit settings", "use settings.toml"),)
         if self.current_screen == "CONTROLLER_INFO":
             return (
                 ("Identity", self.state.controller_identity or "unknown"),
@@ -517,7 +525,10 @@ class UIManager:
             self._start_text(item.label, "WIFI_PASSWORD", masked=True)
             return None
         if item.target:
-            if item.target in ("CONTROLLER_INFO", "SYSTEM_INFO", "NETWORK_INFO"):
+            if item.target == "SETTINGS_INFO":
+                self.settings_category = str(item.value or "UI")
+                self.detail_title = self.settings_category.upper() + " SETTINGS"
+            elif item.target in ("CONTROLLER_INFO", "SYSTEM_INFO", "NETWORK_INFO"):
                 self.detail_title = item.label
             self.enter(item.target)
             return None
@@ -763,7 +774,7 @@ class UIManager:
         """Return backend-independent primitives without exposing passwords."""
         detail_screen = self.current_screen in (
             "CONTROLLER_INFO", "SYSTEM_INFO", "INPUT_INFO", "NETWORK_INFO",
-            "PREVIEW",
+            "PREVIEW", "SETTINGS_INFO",
         )
         details = self.details() if detail_screen else None
         items = self.items(details) if detail_screen else self.items()
@@ -819,6 +830,9 @@ class UIManager:
             model["title"] = self.detail_title or model["title"]
             model["details"] = details
         elif self.current_screen in ("SYSTEM_INFO", "INPUT_INFO"):
+            model["title"] = self.detail_title or model["title"]
+            model["details"] = details
+        elif self.current_screen == "SETTINGS_INFO":
             model["title"] = self.detail_title or model["title"]
             model["details"] = details
         elif self.current_screen == "NETWORK_INFO":
