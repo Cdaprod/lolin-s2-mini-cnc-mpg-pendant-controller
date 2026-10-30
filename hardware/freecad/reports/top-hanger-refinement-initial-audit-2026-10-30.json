@@ -1,104 +1,481 @@
 {
-  "date": "2026-10-30",
-  "scope": "read-only baseline and disposable sketch/section candidate checks",
-  "production_geometry_modified": false,
   "authoritative_file_sha256_before": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881",
-  "parameter_object": "HangerParameters",
   "baseline_parameters_mm": {
     "SlotCenterY": 81.0,
     "SlotLength": 35.6,
     "SlotWidth": 3.0
   },
-  "shells": [
-    {
-      "body": "Body",
-      "role": "front",
-      "tip": "RestoreUpperFaceplateHoles",
-      "profile_sketch": "SmallHangerProfileBody",
-      "pocket": "SmallHangerPocketBody",
-      "pocket_length_mm": 37.0,
-      "sketch_placement_mm": [0.0, 81.0, 1.0],
-      "baseline_tip_volume_mm3": 37683.517480502655,
-      "sampled_min_web_at_current_upper_edge_mm": 0.1637,
-      "sample_location_approx_mm": [12.0, 83.5, -14.0]
-    },
-    {
-      "body": "Body002",
-      "role": "rear",
-      "tip": "RearBossWallRamps45",
-      "profile_sketch": "SmallHangerProfileBody002",
-      "pocket": "SmallHangerPocketBody002",
-      "pocket_length_mm": 22.0,
-      "sketch_placement_mm": [0.0, 81.0, -18.0],
-      "baseline_tip_volume_mm3": 40961.35900828918,
-      "sampled_min_web_at_current_upper_edge_mm": 0.2402,
-      "sample_location_approx_mm": [-12.0, 83.5, -24.0]
-    }
-  ],
   "baseline_sketch_global_xy_bbox_mm": {
-    "x": [-17.8, 17.8],
-    "y": [80.5, 83.5],
     "end_radius": 1.5,
-    "fully_constrained": true
+    "fully_constrained": true,
+    "x": [
+      -17.8,
+      17.8
+    ],
+    "y": [
+      80.5,
+      83.5
+    ]
   },
-  "upper_screw_row": {
-    "centers_xy_mm": [[-16.97, 76.85], [16.97, 76.85]],
-    "passage_radius_mm": 1.15,
-    "head_seat_radius_mm": 2.05,
-    "head_seat_max_y_mm": 78.9,
-    "baseline_slot_lower_edge_y_mm": 80.5,
-    "baseline_vertical_gap_mm": 1.6
+  "date": "2026-10-30",
+  "direct_y_section_intersection_samples_mm": {
+    "current_cut_upper_edge": {
+      "front_x_plus_minus_12_z_minus_14_web": [
+        0.163879,
+        0.163818
+      ],
+      "rear_x_plus_minus_12_z_minus_24_web": [
+        0.240283,
+        0.240292
+      ]
+    },
+    "dormant_sketch_upper_edge_y": 84.12786781815633,
+    "method": "Bounded FreeCADCmd BREP section of each pre-hanger shell feature with line along global Y; source opened read-only; no recompute/save"
+  },
+  "dormant_geometry_investigation": {
+    "associated_helper": {
+      "body": "Body_HangerCutTool",
+      "editable_profile_history": false,
+      "feature": "HangerFacetedSlotAndLipRelief",
+      "feature_type": "PartDesign::Feature",
+      "linked_to_active_shell_cuts": false
+    },
+    "disposition": "rejected as candidate source; narrower horizontally than active 35.6 mm profile and underconstrained",
+    "downstream_consumers": [],
+    "fully_constrained": false,
+    "global_xy_bbox_mm": {
+      "x": [
+        -16.7902,
+        16.7902
+      ],
+      "y": [
+        80.5475,
+        84.1279
+      ]
+    },
+    "label": "Hanger Pocket Sketch001",
+    "sketch": "Sketch015",
+    "upper_edge_section_samples_mm": {
+      "front_x_plus_minus_12_z_minus_15_remaining_web": [
+        0.009888,
+        0.009826
+      ],
+      "rear_x_plus_minus_12_z_minus_24": "outside shell interval at proposed edge Y=84.127868; profile breaks through shell exterior",
+      "rear_x_plus_minus_12_z_minus_24_outer_shell_y_max": [
+        83.740283,
+        83.740292
+      ]
+    }
+  },
+  "next_step": "Establish whether the hanger must remain a closed aperture. Do not use the dormant underconstrained profile. For a closed aperture, test purpose-built symmetric upper-transition geometry while preserving the lower screw-seat clearance; validate full-perimeter sections, 3D head-seat separation, full shell recomputation, and assembly fit. Do not adopt a printer-specific wall target without printer/process requirements.",
+  "parameter_object": "HangerParameters",
+  "production_geometry_modified": false,
+  "recompute": {
+    "assembly_fit_validation": "not completed",
+    "full_monolith_candidate_recompute": "timed out after existing cross-Body link and Pad021.?Face97/suppressed Pad022 errors",
+    "full_shell_geometry_validation": "not completed",
+    "sketch_only_recompute": "passed; both sketches fully constrained and aligned"
   },
   "rejected_candidate": {
     "SlotCenterY_mm": 80.25,
     "SlotLength_mm": 35.6,
     "SlotWidth_mm": 3.5,
-    "profile_bbox_global_xy_mm": {
-      "x": [-17.8, 17.8],
-      "y": [79.5, 83.0],
-      "end_radius": 1.75
-    },
+    "disposition": "rejected; disposable only; not saved/promoted",
     "front_shell_sampled_min_web_mm": 0.6637,
+    "profile_bbox_global_xy_mm": {
+      "end_radius": 1.75,
+      "x": [
+        -17.8,
+        17.8
+      ],
+      "y": [
+        79.5,
+        83.0
+      ]
+    },
     "rear_shell_sampled_min_web_mm": 0.2513,
-    "vertical_gap_to_head_seat_mm": 0.6,
-    "disposition": "rejected; disposable only; not saved/promoted"
+    "vertical_gap_to_head_seat_mm": 0.6
   },
-  "recompute": {
-    "sketch_only_recompute": "passed; both sketches fully constrained and aligned",
-    "full_monolith_candidate_recompute": "timed out after existing cross-Body link and Pad021.?Face97/suppressed Pad022 errors",
-    "full_shell_geometry_validation": "not completed",
-    "assembly_fit_validation": "not completed"
+  "reproducible_audit": {
+    "freecad_version": [
+      "1",
+      "1",
+      "1",
+      "20260414 (Git shallow)",
+      "Unknown",
+      "2026/04/14 22:09:59",
+      "(HEAD detached at 0108fd4b4)",
+      "0108fd4b4850cc46e625b60e53cea7a7bbe69f8d"
+    ],
+    "result": "passed; read-only line-section measurements reproduced",
+    "sampled_shell_sections": {
+      "front": {
+        "samples": [
+          {
+            "cut_edges": [
+              {
+                "outer_surface_y_mm": 83.6638789,
+                "remaining_web_mm": 0.1638789,
+                "state": "inside-shell",
+                "y_mm": 83.5
+              },
+              {
+                "outer_surface_y_mm": 83.6638789,
+                "remaining_web_mm": null,
+                "state": "profile-edge-outside-shell",
+                "y_mm": 84.12786781815633
+              }
+            ],
+            "shell_intervals_y_mm": [
+              [
+                75.1863896,
+                83.6638789
+              ]
+            ],
+            "x_mm": -12.0,
+            "z_mm": -14.0
+          },
+          {
+            "cut_edges": [
+              {
+                "outer_surface_y_mm": 84.2044456,
+                "remaining_web_mm": 0.7044456,
+                "state": "inside-shell",
+                "y_mm": 83.5
+              },
+              {
+                "outer_surface_y_mm": 84.2044456,
+                "remaining_web_mm": 0.0765778,
+                "state": "inside-shell",
+                "y_mm": 84.12786781815633
+              }
+            ],
+            "shell_intervals_y_mm": [
+              [
+                75.7739051,
+                84.2044456
+              ]
+            ],
+            "x_mm": 0.0,
+            "z_mm": -14.0
+          },
+          {
+            "cut_edges": [
+              {
+                "outer_surface_y_mm": 83.663818,
+                "remaining_web_mm": 0.163818,
+                "state": "inside-shell",
+                "y_mm": 83.5
+              },
+              {
+                "outer_surface_y_mm": 83.663818,
+                "remaining_web_mm": null,
+                "state": "profile-edge-outside-shell",
+                "y_mm": 84.12786781815633
+              }
+            ],
+            "shell_intervals_y_mm": [
+              [
+                75.1861513,
+                83.663818
+              ]
+            ],
+            "x_mm": 12.0,
+            "z_mm": -14.0
+          },
+          {
+            "cut_edges": [
+              {
+                "outer_surface_y_mm": 84.1377558,
+                "remaining_web_mm": 0.6377558,
+                "state": "inside-shell",
+                "y_mm": 83.5
+              },
+              {
+                "outer_surface_y_mm": 84.1377558,
+                "remaining_web_mm": 0.009888,
+                "state": "inside-shell",
+                "y_mm": 84.12786781815633
+              }
+            ],
+            "shell_intervals_y_mm": [
+              [
+                74.9718085,
+                84.1377558
+              ]
+            ],
+            "x_mm": -12.0,
+            "z_mm": -15.0
+          },
+          {
+            "cut_edges": [
+              {
+                "outer_surface_y_mm": 84.6764092,
+                "remaining_web_mm": 1.1764092,
+                "state": "inside-shell",
+                "y_mm": 83.5
+              },
+              {
+                "outer_surface_y_mm": 84.6764092,
+                "remaining_web_mm": 0.5485414,
+                "state": "inside-shell",
+                "y_mm": 84.12786781815633
+              }
+            ],
+            "shell_intervals_y_mm": [
+              [
+                75.5573233,
+                84.6764092
+              ]
+            ],
+            "x_mm": 0.0,
+            "z_mm": -15.0
+          },
+          {
+            "cut_edges": [
+              {
+                "outer_surface_y_mm": 84.1376939,
+                "remaining_web_mm": 0.6376939,
+                "state": "inside-shell",
+                "y_mm": 83.5
+              },
+              {
+                "outer_surface_y_mm": 84.1376939,
+                "remaining_web_mm": 0.0098261,
+                "state": "inside-shell",
+                "y_mm": 84.12786781815633
+              }
+            ],
+            "shell_intervals_y_mm": [
+              [
+                74.971565,
+                84.1376939
+              ]
+            ],
+            "x_mm": 12.0,
+            "z_mm": -15.0
+          }
+        ],
+        "solid_count": 1,
+        "source_object": "PreserveOriginalFrontExterior",
+        "valid": true,
+        "volume_mm3": 41823.19379336211
+      },
+      "rear": {
+        "samples": [
+          {
+            "cut_edges": [
+              {
+                "outer_surface_y_mm": 83.7402826,
+                "remaining_web_mm": 0.2402826,
+                "state": "inside-shell",
+                "y_mm": 83.5
+              },
+              {
+                "outer_surface_y_mm": 83.7402826,
+                "remaining_web_mm": null,
+                "state": "profile-edge-outside-shell",
+                "y_mm": 84.12786781815633
+              }
+            ],
+            "shell_intervals_y_mm": [
+              [
+                70.7277883,
+                83.7402826
+              ]
+            ],
+            "x_mm": -12.0,
+            "z_mm": -24.0
+          },
+          {
+            "cut_edges": [
+              {
+                "outer_surface_y_mm": 84.3339586,
+                "remaining_web_mm": 0.8339586,
+                "state": "inside-shell",
+                "y_mm": 83.5
+              },
+              {
+                "outer_surface_y_mm": 84.3339586,
+                "remaining_web_mm": 0.2060908,
+                "state": "inside-shell",
+                "y_mm": 84.12786781815633
+              }
+            ],
+            "shell_intervals_y_mm": [
+              [
+                71.8540825,
+                84.3339586
+              ]
+            ],
+            "x_mm": 0.0,
+            "z_mm": -24.0
+          },
+          {
+            "cut_edges": [
+              {
+                "outer_surface_y_mm": 83.7402925,
+                "remaining_web_mm": 0.2402925,
+                "state": "inside-shell",
+                "y_mm": 83.5
+              },
+              {
+                "outer_surface_y_mm": 83.7402925,
+                "remaining_web_mm": null,
+                "state": "profile-edge-outside-shell",
+                "y_mm": 84.12786781815633
+              }
+            ],
+            "shell_intervals_y_mm": [
+              [
+                70.7276965,
+                83.7402925
+              ]
+            ],
+            "x_mm": 12.0,
+            "z_mm": -24.0
+          },
+          {
+            "cut_edges": [
+              {
+                "outer_surface_y_mm": 83.25144,
+                "remaining_web_mm": null,
+                "state": "profile-edge-outside-shell",
+                "y_mm": 83.5
+              },
+              {
+                "outer_surface_y_mm": 83.25144,
+                "remaining_web_mm": null,
+                "state": "profile-edge-outside-shell",
+                "y_mm": 84.12786781815633
+              }
+            ],
+            "shell_intervals_y_mm": [
+              [
+                70.113069,
+                83.25144
+              ]
+            ],
+            "x_mm": -12.0,
+            "z_mm": -25.0
+          },
+          {
+            "cut_edges": [
+              {
+                "outer_surface_y_mm": 83.8632258,
+                "remaining_web_mm": 0.3632258,
+                "state": "inside-shell",
+                "y_mm": 83.5
+              },
+              {
+                "outer_surface_y_mm": 83.8632258,
+                "remaining_web_mm": null,
+                "state": "profile-edge-outside-shell",
+                "y_mm": 84.12786781815633
+              }
+            ],
+            "shell_intervals_y_mm": [
+              [
+                71.3785175,
+                83.8632258
+              ]
+            ],
+            "x_mm": 0.0,
+            "z_mm": -25.0
+          },
+          {
+            "cut_edges": [
+              {
+                "outer_surface_y_mm": 83.2514487,
+                "remaining_web_mm": null,
+                "state": "profile-edge-outside-shell",
+                "y_mm": 83.5
+              },
+              {
+                "outer_surface_y_mm": 83.2514487,
+                "remaining_web_mm": null,
+                "state": "profile-edge-outside-shell",
+                "y_mm": 84.12786781815633
+              }
+            ],
+            "shell_intervals_y_mm": [
+              [
+                70.113007,
+                83.2514487
+              ]
+            ],
+            "x_mm": 12.0,
+            "z_mm": -25.0
+          }
+        ],
+        "solid_count": 1,
+        "source_object": "USBConformalCoverSeatBody002",
+        "valid": true,
+        "volume_mm3": 39136.66922390781
+      }
+    },
+    "script": "hardware/freecad/scripts/audit_top_hanger_sections.py",
+    "source_recomputed": false,
+    "source_sha256": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881"
   },
-  "dormant_geometry_investigation": {
-    "sketch": "Sketch015",
-    "label": "Hanger Pocket Sketch001",
-    "downstream_consumers": [],
-    "fully_constrained": false,
-    "global_xy_bbox_mm": {
-      "x": [-16.7902, 16.7902],
-      "y": [80.5475, 84.1279]
+  "scope": "read-only baseline and disposable sketch/section candidate checks",
+  "shells": [
+    {
+      "baseline_tip_volume_mm3": 37683.517480502655,
+      "body": "Body",
+      "pocket": "SmallHangerPocketBody",
+      "pocket_length_mm": 37.0,
+      "profile_sketch": "SmallHangerProfileBody",
+      "role": "front",
+      "sample_location_approx_mm": [
+        12.0,
+        83.5,
+        -14.0
+      ],
+      "sampled_min_web_at_current_upper_edge_mm": 0.1637,
+      "sketch_placement_mm": [
+        0.0,
+        81.0,
+        1.0
+      ],
+      "tip": "RestoreUpperFaceplateHoles"
     },
-    "disposition": "rejected as candidate source; narrower horizontally than active 35.6 mm profile and underconstrained",
-    "upper_edge_section_samples_mm": {
-      "front_x_plus_minus_12_z_minus_15_remaining_web": [0.009888, 0.009826],
-      "rear_x_plus_minus_12_z_minus_24_outer_shell_y_max": [83.740283, 83.740292],
-      "rear_x_plus_minus_12_z_minus_24": "outside shell interval at proposed edge Y=84.127868; profile breaks through shell exterior"
-    },
-    "associated_helper": {
-      "body": "Body_HangerCutTool",
-      "feature": "HangerFacetedSlotAndLipRelief",
-      "feature_type": "PartDesign::Feature",
-      "linked_to_active_shell_cuts": false,
-      "editable_profile_history": false
+    {
+      "baseline_tip_volume_mm3": 40961.35900828918,
+      "body": "Body002",
+      "pocket": "SmallHangerPocketBody002",
+      "pocket_length_mm": 22.0,
+      "profile_sketch": "SmallHangerProfileBody002",
+      "role": "rear",
+      "sample_location_approx_mm": [
+        -12.0,
+        83.5,
+        -24.0
+      ],
+      "sampled_min_web_at_current_upper_edge_mm": 0.2402,
+      "sketch_placement_mm": [
+        0.0,
+        81.0,
+        -18.0
+      ],
+      "tip": "RearBossWallRamps45"
     }
-  },
-  "direct_y_section_intersection_samples_mm": {
-    "method": "Bounded FreeCADCmd BREP section of each pre-hanger shell feature with line along global Y; source opened read-only; no recompute/save",
-    "current_cut_upper_edge": {
-      "front_x_plus_minus_12_z_minus_14_web": [0.163879, 0.163818],
-      "rear_x_plus_minus_12_z_minus_24_web": [0.240283, 0.240292]
-    },
-    "dormant_sketch_upper_edge_y": 84.12786781815633
-  },
-  "next_step": "Establish whether the hanger must remain a closed aperture. Do not use the dormant underconstrained profile. For a closed aperture, test purpose-built symmetric upper-transition geometry while preserving the lower screw-seat clearance; validate full-perimeter sections, 3D head-seat separation, full shell recomputation, and assembly fit. Do not adopt a printer-specific wall target without printer/process requirements."
+  ],
+  "upper_screw_row": {
+    "baseline_slot_lower_edge_y_mm": 80.5,
+    "baseline_vertical_gap_mm": 1.6,
+    "centers_xy_mm": [
+      [
+        -16.97,
+        76.85
+      ],
+      [
+        16.97,
+        76.85
+      ]
+    ],
+    "head_seat_max_y_mm": 78.9,
+    "head_seat_radius_mm": 2.05,
+    "passage_radius_mm": 1.15
+  }
 }

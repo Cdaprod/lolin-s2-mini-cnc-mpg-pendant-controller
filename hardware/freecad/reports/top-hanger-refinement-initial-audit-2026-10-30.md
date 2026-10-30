@@ -39,6 +39,8 @@ To verify the thin-web observations efficiently, direct BREP line-section inters
 
 **Disposition: dormant sketch rejected as a candidate source.** Keep both current shell openings unchanged. The next meaningful path is a purpose-built symmetric profile edit that explicitly checks whether a closed, usable hanger aperture can coexist with the observed thin shell geometry and the upper screw seats. If the functional requirement is instead an open-top notch, that would materially change the hanger design and needs confirmation before geometry is promoted.
 
+The read-only measurement is now reproducible with `scripts/audit_top_hanger_sections.py`. It accepts one or more proposed global-Y cut-edge positions, records the source checksum and FreeCAD version, samples both shell base shapes, and does not recompute or save the CAD file. A fresh run reproduced the measurements and source checksum in this report.
+
 ## Recommended next investigation
 
 Do not move the whole obround profile or reuse the dormant sketch. First establish whether the hanger must remain a closed aperture or may open to the exterior. For a closed aperture, investigate whether local upper-cap reshaping can retain enough shell material without reducing the lower screw-seat clearance. Sample shell material around the full upper perimeter and measure true 3D distance to the screw-seat solids. Then test a controlled, symmetric sketch-level transition in a disposable copy and recompute the complete affected feature chains. If the existing cross-Body history prevents trustworthy end-to-end validation, retain any proposal as unpromoted and document the exact blocker.
