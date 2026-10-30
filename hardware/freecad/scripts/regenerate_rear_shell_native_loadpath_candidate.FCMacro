@@ -1,0 +1,170 @@
+"""Build a disposable hybrid rear-shell candidate from the protected monolith.
+
+The shell base remains an imported comparison shape. Four support ribs and the
+M2 passage restoration are native PartDesign features. This does not generate
+the complete historical rear-shell feature tree and is not a production file.
+
+Run with PENDANT_REPO_ROOT and PENDANT_CANDIDATE_OUTPUT set. The output must
+not be any protected production document.
+"""
+import json
+import os
+import traceback
+
+import FreeCAD as App
+import MeshPart
+import Part
+import Sketcher
+
+
+def require_env(name):
+    value = os.environ.get(name)
+    if not value:
+        raise RuntimeError("Set " + name + " before running this macro")
+    return os.path.abspath(value)
+
+
+repo = require_env("PENDANT_REPO_ROOT")
+output_path = require_env("PENDANT_CANDIDATE_OUTPUT")
+source_path = os.path.join(repo, "hardware", "freecad", "pendant.FCStd")
+protected = {
+    os.path.realpath(os.path.join(repo, "hardware", "freecad", name))
+    for name in ("pendant.FCStd", "pendant-master.FCStd",
+                 "pendant-modular-assembly.FCStd")
+}
+if os.path.realpath(output_path) in protected:
+    raise RuntimeError("Refusing to overwrite a protected production document")
+if not os.path.isfile(source_path):
+    raise RuntimeError("Missing protected source document: " + source_path)
+
+
+def removed_volume(feature):
+    if feature is None or getattr(feature, "BaseFeature", None) is None:
+        raise ValueError("Expected a Pocket with BaseFeature")
+    shape = feature.BaseFeature.Shape.cut(feature.Shape)
+    if shape.isNull() or not shape.isValid():
+        raise ValueError("Could not derive clearance from " + feature.Name)
+    return shape
+
+
+src = None
+candidate = None
+try:
+    src = App.openDocument(source_path)
+    source_body = src.getObject("Body002FullWidthSeat")
+    if source_body is None or source_body.Shape.isNull():
+        raise RuntimeError("Body002FullWidthSeat is unavailable")
+    base = source_body.Shape.copy()
+    if not base.isValid() or len(base.Solids) != 1:
+        raise RuntimeError("Source rear base is not one valid solid")
+
+    magnet_clearance = removed_volume(src.getObject("Pocket")).fuse(
+        removed_volume(src.getObject("Pocket015")))
+    screw_clearance = removed_volume(src.getObject("Pocket018"))
+
+    candidate = App.newDocument("RearShellLoadpathRepairCandidate")
+    body = candidate.addObject("PartDesign::Body", "RearShell")
+    body.Label = "Rear shell — hybrid load-path repair candidate"
+    base_feature = body.newObject("PartDesign::Feature", "BaseShell")
+    base_feature.Label = "Imported comparison base — static BREP"
+    base_feature.Shape = base
+    body.Tip = base_feature
+    candidate.recompute()
+
+    # (feature prefix, wall X, boss X, Y start, Y end, wall Z, boss Z)
+    profiles = (
+        ("UpperLeft", -30.0, -24.8, 52.0, 65.0, -31.5, -26.3),
+        ("UpperRight", 30.0, 24.8, 52.0, 65.0, -31.5, -26.3),
+        ("LowerLeft", -20.0, -16.0, -22.0, -13.5, -24.0, -20.0),
+        ("LowerRight", 20.0, 16.0, -22.0, -13.5, -24.0, -20.0),
+    )
+    pads = []
+    for name, wall_x, boss_x, y0, y1, wall_z, boss_z in profiles:
+        sketch = body.newObject("Sketcher::SketchObject", name + "Profile")
+        sketch.Label = name + " wall-to-boss support profile"
+        sketch.Placement = App.Placement(
+            App.Vector(0, y1, 0), App.Rotation(App.Vector(1, 0, 0), 90))
+        points = (App.Vector(wall_x, wall_z, 0),
+                  App.Vector(wall_x, boss_z, 0),
+                  App.Vector(boss_x, boss_z, 0))
+        for a, b in zip(points, points[1:] + points[:1]):
+            sketch.addGeometry(Part.LineSegment(a, b), False)
+        pad = body.newObject("PartDesign::Pad", name + "SupportPad")
+        pad.Label = name + " support rib — native Pad"
+        pad.Profile = sketch
+        pad.Length = y1 - y0
+        pad.Refine = True
+        body.Tip = pad
+        candidate.recompute()
+        if not pad.Shape.isValid() or len(pad.Shape.Solids) != 1:
+            raise RuntimeError(name + " Pad is invalid")
+        sketch.Visibility = False
+        pads.append(pad)
+
+    holes = body.newObject("Sketcher::SketchObject", "RearM2PassageClearanceSketch")
+    holes.Label = "Rear M2 passage clearance — six holes"
+    holes.Placement = App.Placement(App.Vector(0, 0, -17.0), App.Rotation())
+    hole_centers = ((-16.97, 76.85), (16.97, 76.85),
+                    (-27.0, 58.5), (27.0, 58.5),
+                    (18.0, -17.75661828744584),
+                    (-18.0, -17.75661828744584))
+    for x, y in hole_centers:
+        idx = holes.addGeometry(
+            Part.Circle(App.Vector(x, y, 0), App.Vector(0, 0, 1), 1.15), False)
+        holes.addConstraint(Sketcher.Constraint("Block", idx))
+    pocket = body.newObject("PartDesign::Pocket", "RearM2PassageClearance")
+    pocket.Label = "Restore six rear M2 passages after support Pads"
+    pocket.Profile = holes
+    pocket.Length = 20.0
+    pocket.Refine = True
+    body.Tip = pocket
+    candidate.recompute()
+    holes.Visibility = False
+    if not body.Shape.isValid() or len(body.Shape.Solids) != 1:
+        raise RuntimeError("Candidate Body is not one valid solid")
+
+    if abs(body.Shape.common(screw_clearance).Volume -
+           base.common(screw_clearance).Volume) > 1e-4:
+        raise RuntimeError("Support reconstruction obstructs screw passages")
+    if abs(body.Shape.common(magnet_clearance).Volume -
+           base.common(magnet_clearance).Volume) > 1e-4:
+        raise RuntimeError("Support reconstruction obstructs magnet clearances")
+    mesh = MeshPart.meshFromShape(Shape=body.Shape, LinearDeflection=0.08,
+                                  AngularDeflection=0.2, Relative=False)
+    if not mesh.isSolid():
+        raise RuntimeError("Candidate Tip mesh is not closed")
+
+    for prop, value in (
+        ("ModuleStatus", "HYBRID CANDIDATE — static imported base, native support features"),
+        ("BaseGeometrySource", "Body002FullWidthSeat.Shape from pendant.FCStd"),
+        ("RegenerationScript", "hardware/freecad/scripts/regenerate_rear_shell_native_loadpath_candidate.FCMacro"),
+    ):
+        body.addProperty("App::PropertyString", prop, "Candidate metadata")
+        setattr(body, prop, value)
+
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    candidate.recompute()
+    candidate.saveAs(output_path)
+    result = {
+        "file": output_path,
+        "source": source_path,
+        "body": body.Name,
+        "tip": body.Tip.Name,
+        "native_pads": [p.Name for p in pads],
+        "pocket": pocket.Name,
+        "valid": body.Shape.isValid(),
+        "solids": len(body.Shape.Solids),
+        "volume_mm3": body.Shape.Volume,
+        "faces": len(body.Shape.Faces),
+        "mesh_closed": mesh.isSolid(),
+        "mesh_facets": mesh.CountFacets,
+        "screw_clearance_delta_mm3": body.Shape.common(screw_clearance).Volume - base.common(screw_clearance).Volume,
+        "magnet_clearance_delta_mm3": body.Shape.common(magnet_clearance).Volume - base.common(magnet_clearance).Volume,
+        "status": "candidate; imported static base; not full native shell history",
+    }
+    print("REAR_LOADPATH_CANDIDATE=" + json.dumps(result), flush=True)
+finally:
+    if candidate is not None:
+        App.closeDocument(candidate.Name)
+    if src is not None:
+        App.closeDocument(src.Name)
