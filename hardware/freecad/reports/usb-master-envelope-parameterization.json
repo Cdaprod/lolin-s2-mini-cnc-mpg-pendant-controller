@@ -1,0 +1,658 @@
+{
+  "body_at_original_parameter": {
+    "after_expression_rewire": {
+      "area": 733.8375573313687,
+      "bbox": [
+        4.106023947664252,
+        39.68837681046618,
+        -9.571563058751954,
+        22.48728578733798,
+        -32.42093848788702,
+        0.0
+      ],
+      "solids": 1,
+      "state": [
+        "Up-to-date"
+      ],
+      "valid": true,
+      "volume": 665.2206904482822
+    },
+    "after_save_reopen": {
+      "area": 733.8375573313688,
+      "bbox": [
+        4.106023947664252,
+        39.68837681046618,
+        -9.571563058751954,
+        22.48728578733798,
+        -32.42093848788702,
+        0.0
+      ],
+      "solids": 1,
+      "state": [
+        "Up-to-date"
+      ],
+      "valid": true,
+      "volume": 665.2206904482824
+    },
+    "before": {
+      "area": 733.8375573312572,
+      "bbox": [
+        4.106023947664252,
+        39.68837681046618,
+        -9.571563058751954,
+        22.48728578733798,
+        -32.42093848788702,
+        0.0
+      ],
+      "solids": 1,
+      "state": [
+        "Up-to-date"
+      ],
+      "valid": true,
+      "volume": 665.2206904482084
+    },
+    "symmetric_difference_after_reopen": {
+      "a_minus_b_valid": true,
+      "a_minus_b_volume": 0.0,
+      "b_minus_a_valid": true,
+      "b_minus_a_volume": 0.0,
+      "sum": 0.0
+    },
+    "symmetric_difference_after_rewire": {
+      "a_minus_b_valid": true,
+      "a_minus_b_volume": 0.0,
+      "b_minus_a_valid": true,
+      "b_minus_a_volume": 0.0,
+      "sum": 0.0
+    }
+  },
+  "dependency_link_validation": {
+    "aliases": [
+      "ExteriorWidth",
+      "ReferenceWidth"
+    ],
+    "all_paths_relative_and_existing": true,
+    "app_links": 0,
+    "auditor_readiness_with_master_allowlisted": "BLOCKED",
+    "consuming_profiles": [
+      "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "WidthControlled_RearMatchedEnvelopeProfile0",
+      "WidthControlled_RearMatchedEnvelopeProfile1"
+    ],
+    "external_expression_reference_count": 10,
+    "master_sheet": "ExteriorEnvelope",
+    "relative_file_paths": [
+      "../pendant-master.FCStd"
+    ],
+    "same_document_blocker_kinds": {
+      "object_outside_permitted_owner": 10,
+      "unowned_document_object": 22
+    },
+    "same_document_helper_ownership_blocker_count": 32,
+    "scope_note": "This component parameterization does not claim that the USB Body is an isolated one-Body history; remaining blockers are helper objects/Bodies in the same component file, not external monolith geometry.",
+    "shape_binders": 0,
+    "sketcher_external_geometry_refs": 0,
+    "source_manifest": "read-only Tip-rooted audit of the promoted repository component"
+  },
+  "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+  "first_recompute_count": 26,
+  "master_document": "hardware/freecad/pendant-master.FCStd",
+  "master_parameter_propagation": {
+    "changed_refresh": {
+      "assembly_reopen_ok": true,
+      "errors": [],
+      "interim_shape_count": 5,
+      "live_link_count": 5,
+      "usb_body": {
+        "bbox": [
+          4.146710400902507,
+          40.35741726946312,
+          -9.571867643593658,
+          22.487285787337953,
+          -32.420938487886986,
+          0.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 666.4116826978413
+      },
+      "usb_link": {
+        "bbox": [
+          4.146710400902507,
+          40.35741726946312,
+          -9.571867643593658,
+          22.487285787337953,
+          -32.420938487886986,
+          0.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 666.4116826978413
+      }
+    },
+    "parameter_change_in_relocated_test_project": true,
+    "restored_refresh": {
+      "assembly_reopen_ok": true,
+      "errors": [],
+      "interim_shape_count": 5,
+      "live_link_count": 5,
+      "usb_body": {
+        "bbox": [
+          4.106023947664252,
+          39.68837681046618,
+          -9.571563058751954,
+          22.48728578733798,
+          -32.42093848788702,
+          0.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 665.2206904482822
+      },
+      "usb_link": {
+        "bbox": [
+          4.106023947664252,
+          39.68837681046618,
+          -9.571563058751954,
+          22.48728578733798,
+          -32.42093848788702,
+          0.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 665.2206904482822
+      }
+    }
+  },
+  "master_sha256_unchanged": "3e2f041254ec1b6743a44bf1e1abb3925cc06bee913a4cd8a3b4eb304890fbfb",
+  "notes": [
+    "USB component retains its local ExteriorEnvelope VarSet for history; the five active WidthRatio expressions now reference the master.",
+    "The master file in the repository was not modified; the 80.0 mm edit was made only in a relocated disposable project and restored before the final refresh.",
+    "No mechanical interference or fit claim is made for the temporary 80.0 mm test state."
+  ],
+  "parameter": {
+    "alias": "ExteriorWidth",
+    "baseline_mm": 79.5569559596823,
+    "reference_alias": "ReferenceWidth",
+    "reference_width_mm": 79.5569559596823,
+    "restored_mm": 79.5569559596823,
+    "sheet": "ExteriorEnvelope",
+    "test_mm": 80.0
+  },
+  "profile_expression_status_after_reopen": {
+    "WidthControlled_FrontMatchedEnvelopeProfile0": "Valid",
+    "WidthControlled_FrontMatchedEnvelopeProfile1": "Valid",
+    "WidthControlled_FrontMatchedEnvelopeProfile2": "Valid",
+    "WidthControlled_RearMatchedEnvelopeProfile0": "Valid",
+    "WidthControlled_RearMatchedEnvelopeProfile1": "Valid"
+  },
+  "relative_master_link": "../pendant-master.FCStd",
+  "repo_location_validation": {
+    "body_count": 7,
+    "body_tips": {
+      "Body_USBTetheredCover": {
+        "shape": {
+          "bbox": [
+            4.106023947664252,
+            39.68837681046618,
+            -9.571563058751954,
+            22.48728578733798,
+            -32.42093848788702,
+            0.0
+          ],
+          "solids": 1,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 665.2206904482822
+        },
+        "tip": "USBPlugLeadIn"
+      },
+      "Body_USBTetheredCoverInnerEnvelope": {
+        "shape": {
+          "bbox": [
+            -44.174377137575405,
+            41.41020751811004,
+            -92.36472522473227,
+            86.68910767539026,
+            -36.89535166244517,
+            0.0
+          ],
+          "solids": 1,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 324314.39926331246
+        },
+        "tip": "Body_USBTetheredCoverInnerEnvelopeSource"
+      },
+      "Body_USBTetheredCoverLimit": {
+        "shape": {
+          "bbox": [
+            19.999999999999993,
+            45.0,
+            -5.71890492965,
+            11.78109507035,
+            -22.194531931100002,
+            -4.694531931099991
+          ],
+          "solids": 1,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 6013.204688511714
+        },
+        "tip": "Body_USBTetheredCoverRadiusPad"
+      },
+      "RearEnvelopeForUSBCover": {
+        "shape": {
+          "bbox": [
+            -36.23326222744236,
+            36.23327221769675,
+            -85.56427270479892,
+            86.68846292863208,
+            -36.89535166244517,
+            -19.0
+          ],
+          "solids": 1,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 106629.63454751775
+        },
+        "tip": "RearEnvelopeForUSBCoverSource"
+      },
+      "USBSoftPressFitStem": {
+        "shape": {
+          "bbox": [
+            4.106023947664252,
+            39.68837681046618,
+            -8.246726438304398,
+            22.48728578733798,
+            -32.42093848788702,
+            0.0
+          ],
+          "solids": 1,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 608.6773500421964
+        },
+        "tip": "USBSoftPressFitStemBounded"
+      },
+      "USBSoftPressFitStemInnerEnvelope": {
+        "shape": {
+          "bbox": [
+            -45.97437713757541,
+            39.61020751811004,
+            -92.36472522473227,
+            86.68910767539026,
+            -36.89535166244517,
+            0.0
+          ],
+          "solids": 1,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 324314.39926331246
+        },
+        "tip": "USBSoftPressFitStemInnerEnvelopeSource"
+      },
+      "USBSoftPressFitStemLimit": {
+        "shape": {
+          "bbox": [
+            28.499999999999996,
+            45.0,
+            -4.8189049296499995,
+            10.88109507035,
+            -21.2945319311,
+            -5.594531931099995
+          ],
+          "solids": 1,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 3194.2810893813116
+        },
+        "tip": "USBSoftPressFitStemRadiusPad"
+      }
+    },
+    "errors": [],
+    "profile_status": {
+      "WidthControlled_FrontMatchedEnvelopeProfile0": {
+        "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+        "status": "Valid"
+      },
+      "WidthControlled_FrontMatchedEnvelopeProfile1": {
+        "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+        "status": "Valid"
+      },
+      "WidthControlled_FrontMatchedEnvelopeProfile2": {
+        "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+        "status": "Valid"
+      },
+      "WidthControlled_RearMatchedEnvelopeProfile0": {
+        "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+        "status": "Valid"
+      },
+      "WidthControlled_RearMatchedEnvelopeProfile1": {
+        "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+        "status": "Valid"
+      }
+    },
+    "recomputed_count": 26
+  },
+  "rewired_profiles": [
+    "WidthControlled_FrontMatchedEnvelopeProfile0",
+    "WidthControlled_FrontMatchedEnvelopeProfile1",
+    "WidthControlled_FrontMatchedEnvelopeProfile2",
+    "WidthControlled_RearMatchedEnvelopeProfile0",
+    "WidthControlled_RearMatchedEnvelopeProfile1"
+  ],
+  "source_document": "hardware/freecad/pendant-bodies/usb-tethered-cover.FCStd",
+  "source_sha256_after": "94779f401b69d1e61eabf2f1602aedb1fe8e91b79f6cc6a3b8fb21450f3805aa",
+  "source_sha256_before": "8f23df64c89965322838b1d12dc127e6ade6bdb4cf8ff103eb9485ada1611c84",
+  "standalone_component_open": {
+    "body": {
+      "solids": 1,
+      "state": [
+        "Up-to-date"
+      ],
+      "valid": true,
+      "volume": 665.2206904482824
+    },
+    "master_auto_loaded": true,
+    "profile_status": {
+      "WidthControlled_FrontMatchedEnvelopeProfile0": "Valid",
+      "WidthControlled_FrontMatchedEnvelopeProfile1": "Valid",
+      "WidthControlled_FrontMatchedEnvelopeProfile2": "Valid",
+      "WidthControlled_RearMatchedEnvelopeProfile0": "Valid",
+      "WidthControlled_RearMatchedEnvelopeProfile1": "Valid"
+    },
+    "recompute_count": 0
+  },
+  "tip_comparisons_at_original_parameter": {
+    "Body_USBTetheredCover": {
+      "candidate": {
+        "area": 733.8375573313688,
+        "bbox": [
+          4.106023947664252,
+          39.68837681046618,
+          -9.571563058751954,
+          22.48728578733798,
+          -32.42093848788702,
+          0.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 665.2206904482824
+      },
+      "difference": {
+        "ab": 0.0,
+        "ab_valid": true,
+        "ba": 0.0,
+        "ba_valid": true,
+        "sum": 0.0
+      },
+      "original": {
+        "area": 733.8375573312572,
+        "bbox": [
+          4.106023947664252,
+          39.68837681046618,
+          -9.571563058751954,
+          22.48728578733798,
+          -32.42093848788702,
+          0.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 665.2206904482084
+      },
+      "tip_candidate": "USBPlugLeadIn",
+      "tip_original": "USBPlugLeadIn"
+    },
+    "Body_USBTetheredCoverInnerEnvelope": {
+      "candidate": {
+        "area": 33321.54343168079,
+        "bbox": [
+          -44.174377137575405,
+          41.41020751811004,
+          -92.36472522473227,
+          86.68910767539026,
+          -36.895351662445194,
+          0.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 324314.3992633124
+      },
+      "difference": {
+        "ab": 0.0,
+        "ab_valid": true,
+        "ba": 0.0,
+        "ba_valid": true,
+        "sum": 0.0
+      },
+      "original": {
+        "area": 33321.54343168079,
+        "bbox": [
+          -44.174377137575405,
+          41.41020751811004,
+          -92.36472522473227,
+          86.68910767539026,
+          -36.895351662445194,
+          0.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 324314.3992633124
+      },
+      "tip_candidate": "Body_USBTetheredCoverInnerEnvelopeSource",
+      "tip_original": "Body_USBTetheredCoverInnerEnvelopeSource"
+    },
+    "Body_USBTetheredCoverLimit": {
+      "candidate": {
+        "area": 1855.5031610264714,
+        "bbox": [
+          19.999999999999993,
+          45.0,
+          -5.71890492965,
+          11.78109507035,
+          -22.194531931100002,
+          -4.694531931099991
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 6013.204688511714
+      },
+      "difference": {
+        "ab": 0.0,
+        "ab_valid": true,
+        "ba": 0.0,
+        "ba_valid": true,
+        "sum": 0.0
+      },
+      "original": {
+        "area": 1855.5031610264714,
+        "bbox": [
+          19.999999999999993,
+          45.0,
+          -5.71890492965,
+          11.78109507035,
+          -22.194531931100002,
+          -4.694531931099991
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 6013.204688511714
+      },
+      "tip_candidate": "Body_USBTetheredCoverRadiusPad",
+      "tip_original": "Body_USBTetheredCoverRadiusPad"
+    },
+    "RearEnvelopeForUSBCover": {
+      "candidate": {
+        "area": 24426.160423390316,
+        "bbox": [
+          -36.23326222744236,
+          36.23327221769675,
+          -85.56427270479892,
+          86.68846292863208,
+          -36.895351662445194,
+          -19.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 106629.63454751775
+      },
+      "difference": {
+        "ab": 0.0,
+        "ab_valid": true,
+        "ba": 0.0,
+        "ba_valid": true,
+        "sum": 0.0
+      },
+      "original": {
+        "area": 24426.160423390316,
+        "bbox": [
+          -36.23326222744236,
+          36.23327221769675,
+          -85.56427270479892,
+          86.68846292863208,
+          -36.895351662445194,
+          -19.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 106629.63454751775
+      },
+      "tip_candidate": "RearEnvelopeForUSBCoverSource",
+      "tip_original": "RearEnvelopeForUSBCoverSource"
+    },
+    "USBSoftPressFitStem": {
+      "candidate": {
+        "area": 576.6827112824349,
+        "bbox": [
+          4.106023947664252,
+          39.68837681046618,
+          -8.246726438304398,
+          22.48728578733798,
+          -32.42093848788702,
+          0.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 608.6773500421963
+      },
+      "difference": {
+        "ab": 0.0,
+        "ab_valid": true,
+        "ba": 0.0,
+        "ba_valid": true,
+        "sum": 0.0
+      },
+      "original": {
+        "area": 576.6827112824358,
+        "bbox": [
+          4.106023947664252,
+          39.68837681046618,
+          -8.246726438304398,
+          22.48728578733798,
+          -32.42093848788702,
+          0.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 608.6773500421964
+      },
+      "tip_candidate": "USBSoftPressFitStemBounded",
+      "tip_original": "USBSoftPressFitStemBounded"
+    },
+    "USBSoftPressFitStemInnerEnvelope": {
+      "candidate": {
+        "area": 33321.54343168079,
+        "bbox": [
+          -45.97437713757541,
+          39.61020751811004,
+          -92.36472522473227,
+          86.68910767539026,
+          -36.895351662445194,
+          0.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 324314.3992633124
+      },
+      "difference": {
+        "ab": 0.0,
+        "ab_valid": true,
+        "ba": 0.0,
+        "ba_valid": true,
+        "sum": 0.0
+      },
+      "original": {
+        "area": 33321.54343168079,
+        "bbox": [
+          -45.97437713757541,
+          39.61020751811004,
+          -92.36472522473227,
+          86.68910767539026,
+          -36.895351662445194,
+          0.0
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 324314.3992633124
+      },
+      "tip_candidate": "USBSoftPressFitStemInnerEnvelopeSource",
+      "tip_original": "USBSoftPressFitStemInnerEnvelopeSource"
+    },
+    "USBSoftPressFitStemLimit": {
+      "candidate": {
+        "area": 1201.0151635041098,
+        "bbox": [
+          28.499999999999996,
+          45.0,
+          -4.8189049296499995,
+          10.88109507035,
+          -21.2945319311,
+          -5.594531931099995
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 3194.2810893813116
+      },
+      "difference": {
+        "ab": 0.0,
+        "ab_valid": true,
+        "ba": 0.0,
+        "ba_valid": true,
+        "sum": 0.0
+      },
+      "original": {
+        "area": 1201.0151635041098,
+        "bbox": [
+          28.499999999999996,
+          45.0,
+          -4.8189049296499995,
+          10.88109507035,
+          -21.2945319311,
+          -5.594531931099995
+        ],
+        "solids": 1,
+        "valid": true,
+        "volume": 3194.2810893813116
+      },
+      "tip_candidate": "USBSoftPressFitStemRadiusPad",
+      "tip_original": "USBSoftPressFitStemRadiusPad"
+    }
+  }
+}
