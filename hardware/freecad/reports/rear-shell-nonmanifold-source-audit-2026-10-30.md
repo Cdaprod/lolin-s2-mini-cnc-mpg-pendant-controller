@@ -45,6 +45,7 @@ The protected pre-load-path backup contains four suppressed legacy additive-loft
 All trials used copies or extracted BREP snapshots; no production CAD file or STL was changed.
 
 - `Shape.removeSplitter()` produced an invalid shape and changed volume from 40,961.359008 to 40,713.248142 mm³; rejected.
+- `Shape.sewShape()` left the mesh open with unchanged volume and face count, while its returned shape had zero solids; rejected.
 - A small-tolerance `Shape.fix(1e-7, 1e-7, 1e-5)` left the mesh open and did not reduce strict BOP findings; rejected.
 - A higher-tolerance shape fix also left the mesh open and altered the effective bounds; rejected.
 - Boolean extraction of the new load-path material with `RearBossToWallLoadPaths.cut(Body002FullWidthSeat)` returned a null shape, so the saved result cannot be cleanly separated into the original base and reinforcement solids by that operation.
