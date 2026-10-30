@@ -25,7 +25,7 @@ Mechanical design improvement is tracked alongside modularization and parameteri
 - Volume: source `2050.792480333789 mm^3`; reopened destination `2050.792480333789 mm^3`.
 - Bounding box: source and reopened destination `(-29.4202, -16, -10.0615, 29.4234, 25.8, -7.06147) mm`.
 - No copied feature has a link back to the source document.
-- The document remains independently editable. It currently has no external master dependency; no constraints were rewritten to create one.
+- The document remains independently editable. Its five-hole mounting sketch has active expressions to the master `InternalHardware` aliases for display- and shell-mount passage diameters. Reversible component and live-assembly propagation passed in a relocated disposable project; see `reports/display-retainer-master-diameter-propagation-2026-10-30.md`.
 
 `pendant-bodies/usb-tethered-cover.FCStd` contains the editable `Body_USBTetheredCover` plus the hidden envelope/press-fit dependency Bodies recursively required by its history. Its manufacturing Body tip is `USBPlugLeadIn`; the helper Bodies remain hidden. It was recomputed, saved, closed, reopened, and recomputed again.
 
@@ -125,6 +125,10 @@ Added the component-local `TetherOpeningDiameter = 2.00 mm` alias, driving the e
 ### Display retainer M2 passage parameters (2026-10-29)
 
 The existing five-hole sketch now uses two component-local diameter aliases: three display passages at 2.20 mm and two shell passages at 2.30 mm. Their original values, positions, fully constrained sketch, and feature history are preserved. Independent 0.02 mm perturbations to each group changed the final Tip while retaining valid/up-to-date downstream features; save/reopen and restoration returned the original Tip metrics. In a relocated disposable project, changing both values updated the live assembly link, and restoring them returned its original volume after assembly refresh and save/reopen. See `reports/display-retainer-m2-parameterization.md` for measurements.
+
+### Display retainer master-driven diameter retest (2026-10-30)
+
+Current source inspection shows the five native mounting-circle radii reference the shared master `InternalHardware` aliases directly. A +0.10 mm test on both master diameters recomputed the editable retainer Tip to a valid one-solid result; save/reopen at the test values succeeded. Restoring 2.20/2.30 mm restored the baseline volume, topology counts, bounds within floating tolerance, and 0.05 mm mesh hash after reopen. A relocated copy of the existing assembly refresh workflow carried a larger master change into the live retainer link, then returned the link to baseline when the values were restored. This supersedes the earlier status wording that described the mounting diameters as component-local. No production CAD was modified. See `reports/display-retainer-master-diameter-propagation-2026-10-30.md`.
 
 ### Combined editable-component regression (2026-10-29)
 
