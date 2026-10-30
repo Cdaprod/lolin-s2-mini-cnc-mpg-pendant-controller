@@ -66,6 +66,157 @@
       "sum": 0.0
     }
   },
+  "cold_start_refresh_workflow": {
+    "acceptance": {
+      "both_fresh_processes_valid": true,
+      "both_refreshes_reopened_assembly": true,
+      "changed_fresh_open_matches_refreshed_geometry": true,
+      "restored_fresh_open_matches_baseline": true
+    },
+    "changed_value_refresh": {
+      "assembly_reopen_ok": true,
+      "errors": [],
+      "fresh_process_reopen": {
+        "docs": [
+          [
+            "breakout_board",
+            "/tmp/usb-master-parameterization/fresh80-refresh-v2/pendant-bodies/breakout-board.FCStd"
+          ],
+          [
+            "display_retainer",
+            "/tmp/usb-master-parameterization/fresh80-refresh-v2/pendant-bodies/display-retainer.FCStd"
+          ],
+          [
+            "faceplate_locators",
+            "/tmp/usb-master-parameterization/fresh80-refresh-v2/pendant-bodies/faceplate-locators.FCStd"
+          ],
+          [
+            "pendant_master",
+            "/tmp/usb-master-parameterization/fresh80-refresh-v2/pendant-master.FCStd"
+          ],
+          [
+            "pendant_modular_assembly",
+            "/tmp/usb-master-parameterization/fresh80-refresh-v2/pendant-modular-assembly.FCStd"
+          ],
+          [
+            "usb_tethered_cover",
+            "/tmp/usb-master-parameterization/fresh80-refresh-v2/pendant-bodies/usb-tethered-cover.FCStd"
+          ]
+        ],
+        "errors": [],
+        "recompute_count": 0,
+        "usb_link": {
+          "bbox": [
+            4.146710400902507,
+            40.35741726946312,
+            -9.571867643593658,
+            22.487285787337953,
+            -32.420938487886986,
+            0.0
+          ],
+          "valid": true,
+          "volume": 666.4116826978413
+        },
+        "usb_target_state": [
+          "Up-to-date"
+        ]
+      },
+      "interim_count": 5,
+      "link_count": 5,
+      "usb_component_save": {
+        "body": {
+          "bbox": [
+            4.146710400902507,
+            40.35741726946312,
+            -9.571867643593658,
+            22.487285787337953,
+            -32.420938487886986,
+            0.0
+          ],
+          "solids": 1,
+          "valid": true,
+          "volume": 666.4116826978413
+        },
+        "refreshed_expression_count": 5,
+        "saved": true
+      }
+    },
+    "prior_behavior_demonstrated_stale_cache": {
+      "expected_volume_mm3": 666.4116826978413,
+      "fresh_open_body_volume_mm3": 665.2206904482824,
+      "master_width_mm": 80.0,
+      "matches_expected": false
+    },
+    "restored_value_refresh": {
+      "assembly_reopen_ok": true,
+      "errors": [],
+      "fresh_process_reopen": {
+        "docs": [
+          [
+            "breakout_board",
+            "/tmp/usb-master-parameterization/fresh80-refresh-v2/pendant-bodies/breakout-board.FCStd"
+          ],
+          [
+            "display_retainer",
+            "/tmp/usb-master-parameterization/fresh80-refresh-v2/pendant-bodies/display-retainer.FCStd"
+          ],
+          [
+            "faceplate_locators",
+            "/tmp/usb-master-parameterization/fresh80-refresh-v2/pendant-bodies/faceplate-locators.FCStd"
+          ],
+          [
+            "pendant_master",
+            "/tmp/usb-master-parameterization/fresh80-refresh-v2/pendant-master.FCStd"
+          ],
+          [
+            "pendant_modular_assembly",
+            "/tmp/usb-master-parameterization/fresh80-refresh-v2/pendant-modular-assembly.FCStd"
+          ],
+          [
+            "usb_tethered_cover",
+            "/tmp/usb-master-parameterization/fresh80-refresh-v2/pendant-bodies/usb-tethered-cover.FCStd"
+          ]
+        ],
+        "errors": [],
+        "recompute_count": 0,
+        "usb_link": {
+          "bbox": [
+            4.106023947664252,
+            39.68837681046618,
+            -9.571563058751954,
+            22.48728578733798,
+            -32.42093848788702,
+            0.0
+          ],
+          "valid": true,
+          "volume": 665.2206904482824
+        },
+        "usb_target_state": [
+          "Up-to-date"
+        ]
+      },
+      "interim_count": 5,
+      "link_count": 5,
+      "usb_component_save": {
+        "body": {
+          "bbox": [
+            4.106023947664252,
+            39.68837681046618,
+            -9.571563058751954,
+            22.48728578733798,
+            -32.42093848788702,
+            0.0
+          ],
+          "solids": 1,
+          "valid": true,
+          "volume": 665.2206904482822
+        },
+        "refreshed_expression_count": 5,
+        "saved": true
+      }
+    },
+    "script_change": "refresh_modular_assembly.py now backs up and saves every component with refreshed external master expressions before updating the assembly links."
+  },
   "dependency_link_validation": {
     "aliases": [
       "ExteriorWidth",

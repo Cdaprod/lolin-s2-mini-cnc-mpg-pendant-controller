@@ -76,13 +76,14 @@ try:
         for obj in d.Objects:
             if 'Invalid' in getattr(obj,'State',[]):
                 raise RuntimeError('invalid feature state in '+fn+'/'+obj.Name+': '+obj.getStatusString())
-        # Master-driven component shapes must be saved before the assembly
-        # link refresh. Other sources are edited and saved by the user;
-        # refreshing them must not rewrite their archives as a side effect.
-        if fn in ('faceplate-locators.FCStd', 'breakout-board.FCStd'):
+        # Persist any source whose geometry/placement consumes a master
+        # expression. Otherwise a fresh process can reopen its cached Tip
+        # before the external expression has caused a recompute, leaving the
+        # assembly link stale. Back up each source before saving it.
+        if refreshed_expressions:
             backup(d.FileName); d.save()
         report['components'].append({'file':fn,'bodies':[{'name':b.Name,'shape':info(b)} for b in bodies],
-                                     'saved':fn in ('faceplate-locators.FCStd', 'breakout-board.FCStd'),
+                                     'saved':bool(refreshed_expressions),
                                      'refreshed_external_expressions':refreshed_expressions})
     assembly=open_doc(C['assembly']); assembly.recompute()
     links=[o for o in assembly.Objects if o.TypeId=='App::Link']

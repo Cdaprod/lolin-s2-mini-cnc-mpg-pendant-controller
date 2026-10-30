@@ -31,4 +31,8 @@ All five live links and five interim solids passed validation in both changed an
 
 Raw measurements and source hashes are in `usb-master-envelope-parameterization.json`. The test scripts and changed master values were confined to `/tmp/usb-master-parameterization/`.
 
+## Cold-start cache persistence
+
+A fresh-process test exposed a refresh-workflow gap: with the master at 80 mm, refreshing recomputed the USB Body in memory, but the source component was not saved, so a new process reopened the assembly at the stale `79.5569559596823 mm` cached shape. `scripts/refresh_modular_assembly.py` now backs up and saves every component document whose external master expressions it refreshes. In a relocated disposable project, the revised refresh saved the USB source; a separate FreeCADCmd process then opened the assembly with the 80 mm shape. After restoring the master width, refreshing saved the restored source, and a second fresh process opened the assembly at the original shape. Both fresh opens found five live links and five interim solids, and the assembly/link shapes were valid. The earlier in-process close/reopen check alone did not prove this cold-start behavior.
+
 The Tip-rooted dependency auditor still reports `BLOCKED` if asked whether the USB Body is an isolated one-Body extraction: even when the master expression is explicitly allowed, it reports 32 same-document helper-object/Body ownership edges. The component has no ShapeBinders, Sketcher external-geometry references, or App::Links in this audit; the 10 external expression records are the intended two master aliases on each of the five profiles. This parameterization does not claim to solve that helper-history packaging boundary.
