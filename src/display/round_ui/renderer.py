@@ -338,10 +338,7 @@ class RoundRenderer:
         # Keep wave duration independent from the short lease that marks an
         # active contact; TouchInput renews that lease while a finger is down.
         self._halo_duration = 0.10
-        self._halo_held = False
-        self._halo_phase = -1
         self._update_halo_palette(0.0)
-        self._halo_releasing = False
         self._halo_dirty = True
 
     def touch_move(self, point, now):
