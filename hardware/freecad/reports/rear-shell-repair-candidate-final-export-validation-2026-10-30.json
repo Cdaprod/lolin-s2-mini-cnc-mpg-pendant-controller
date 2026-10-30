@@ -116,5 +116,18 @@
     "hardware/freecad/pendant-modular-assembly.FCStd": "2e554ca1c06d5e6b6cf0c552fc722f85180752eced96e467f0f0b76388c77ee4",
     "hardware/printing/pendant/pendant-orcaslicer.3mf": "0a8b9f9c0e33b72c4853c4aa63f7352a9533c46b743797595bf60def438f1fee"
   },
-  "scope_note": "Disposable repair-candidate validation only. No production CAD, STL, 3MF, backup, or recovery file was changed. This verifies printable mesh topology from the candidate assembly; it does not establish exact BREP equivalence, mechanical load capacity, or production acceptance."
+  "scope_note": "Disposable repair-candidate validation only. No production CAD, STL, 3MF, backup, or recovery file was changed. This verifies printable mesh topology from the candidate assembly; it does not establish exact BREP equivalence, mechanical load capacity, or production acceptance.",
+  "parameter_refresh_test": {
+    "resolved_assembly_links": 6,
+    "source_parameter": "UpperLeftSupportPad.Length",
+    "baseline_mm": 13.0,
+    "edited_mm": 13.2,
+    "baseline_volume_mm3": 40609.693012380856,
+    "edited_assembly_volume_mm3": 40609.87327446225,
+    "cold_reopen_edited_volume_mm3": 40609.87327446225,
+    "restored_assembly_volume_mm3": 40609.693012380856,
+    "edit_propagated_to_link": true,
+    "edit_persisted_after_reopen": true,
+    "restored_after_reopen": true
+  }
 }

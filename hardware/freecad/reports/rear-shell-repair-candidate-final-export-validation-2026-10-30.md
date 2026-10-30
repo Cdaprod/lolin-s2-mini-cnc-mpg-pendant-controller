@@ -24,3 +24,7 @@ The repaired rear-shell candidate has 19,126 facets and a closed two-manifold te
 This remains a review candidate. The rear component is hybrid: an imported BREP base with native editable support Pads and an M2 clearance Pocket. The front shell, upper faceplate, and fused encoder-faceplate/pocket remain static interim geometry in the candidate assembly. The rear candidate has not been proven exactly equivalent to the previously defective shell, and its modified load paths have not passed structural analysis or physical testing. The user's PLA / flat-face print requirement and 5× complete pendant weight proof target remain; complete assembly mass and verified hanger/bracket contact are not yet available.
 
 No production assembly, monolith, source STL, 3MF, backup, or recovery file was changed. The OrcaSlicer 3MF remains as it was before this validation. The complete machine-readable result and source hashes are in `rear-shell-repair-candidate-final-export-validation-2026-10-30.json`.
+
+## Cold-open component edit propagation
+
+A second disposable copy mirrored the relative `pendant-bodies/` and master layout. `UpperLeftSupportPad.Length` was changed from 13.0 to 13.2 mm and saved. The assembly rear link changed from 40,609.693012 to 40,609.873274 mm³; the same edited value survived closing and reopening the assembly, and restoring the pad to 13.0 mm returned the exact baseline volume. All six candidate assembly links resolved. This verifies the rear-link edit/refresh path for this parameter only.
