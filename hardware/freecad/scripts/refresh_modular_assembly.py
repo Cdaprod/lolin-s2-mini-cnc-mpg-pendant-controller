@@ -27,9 +27,9 @@ COMPONENTS = (
 )
 
 
-def worker_source(assembly: Path | None = None) -> str:
+def worker_source(assembly: Path | None = None, components: tuple[str, ...] = COMPONENTS) -> str:
     cfg = json.dumps({'base': str(FREECAD_DIR), 'master': str(MASTER),
-                      'assembly': str(assembly or ASSEMBLY), 'components': COMPONENTS})
+                      'assembly': str(assembly or ASSEMBLY), 'components': components})
     return r'''import FreeCAD as App, json, traceback, os, shutil, time
 from pathlib import Path
 C=json.loads(@@CFG@@); report={'errors':[],'components':[],'links':[],'interim':[]}
@@ -137,6 +137,8 @@ def main() -> int:
     p.add_argument('--assembly', type=Path, default=ASSEMBLY,
                    help='assembly document to refresh (defaults to the production modular assembly)')
     p.add_argument('--timeout', type=int, default=170)
+    p.add_argument('--only-component', choices=COMPONENTS,
+                   help='recompute and save only this editable source before validating assembly links')
     a = p.parse_args()
     if not 1 <= a.timeout <= 180: p.error('--timeout must be between 1 and 180 seconds')
     cmd = a.freecadcmd or (str(DEFAULT_CMD) if DEFAULT_CMD.is_file() else None)
@@ -149,7 +151,8 @@ def main() -> int:
     if not assembly.is_file():
         raise SystemExit(f'assembly file does not exist: {assembly}')
     with tempfile.TemporaryDirectory(prefix='pendant-assembly-refresh-') as td:
-        macro=Path(td)/'refresh.FCMacro'; macro.write_text(worker_source(assembly),encoding='utf-8')
+        selected = (a.only_component,) if a.only_component else COMPONENTS
+        macro=Path(td)/'refresh.FCMacro'; macro.write_text(worker_source(assembly, selected),encoding='utf-8')
         proc=subprocess.Popen([cmd,str(macro)],cwd=FREECAD_DIR,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,
                               text=True,start_new_session=True)
         try: out,_=proc.communicate(timeout=a.timeout)

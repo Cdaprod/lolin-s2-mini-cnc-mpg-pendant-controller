@@ -75,7 +75,11 @@ C=json.loads(CONFIG);r={'errors':[]}
 try:
  d=App.openDocument(C['master']);s=d.getObject(C['sheet']);cell=s.getCellFromAlias(C['alias'])
  if not cell: raise RuntimeError('master alias not found: '+C['alias'])
- s.set(cell,C['value']);d.recompute();d.save();r.update({'cell':cell,'value':str(s.get(cell))})
+ value=C['value']
+ # A leading minus is interpreted as text by Spreadsheet::Sheet.set unless
+ # the cell content is an explicit formula. Preserve signed lengths as values.
+ if value.startswith('-'): value='='+value
+ s.set(cell,value);d.recompute();d.save();r.update({'cell':cell,'value':str(s.get(cell))})
 except Exception as e:r.update({'errors':[repr(e)],'traceback':traceback.format_exc()})
 print('PARAM_ALIAS_SET='+json.dumps(r,sort_keys=True))
 for d in list(App.listDocuments().values()):App.closeDocument(d.Name)
@@ -113,10 +117,12 @@ for d in list(App.listDocuments().values()):App.closeDocument(d.Name)
 '''
 
 
-def run_refresh(script: Path, assembly: Path, command: Path, timeout: float) -> dict:
+def run_refresh(script: Path, assembly: Path, command: Path, timeout: float,
+                component: str) -> dict:
     proc = subprocess.run(
         ["python3", str(script), "--freecadcmd", str(command),
-         "--assembly", str(assembly), "--timeout", str(timeout)],
+         "--assembly", str(assembly), "--timeout", str(int(timeout)),
+         "--only-component", component],
         capture_output=True, text=True, timeout=timeout + 10, check=False,
     )
     output = proc.stdout + proc.stderr
@@ -211,7 +217,7 @@ def main() -> int:
 
         def refresh_and_check(label: str, export_brep: Path | None = None) -> tuple[dict, dict]:
             refresh = run_refresh(work / "scripts" / "refresh_modular_assembly.py", assembly,
-                                  args.freecadcmd, args.timeout)
+                                  args.freecadcmd, args.timeout, args.component)
             cfg = {"assembly": str(assembly), "link": args.link, "body": args.body, "sheet": args.sheet,
                    "alias": args.alias,
                    "export_brep": str(export_brep) if export_brep else None}
