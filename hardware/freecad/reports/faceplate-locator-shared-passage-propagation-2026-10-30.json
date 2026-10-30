@@ -1,0 +1,163 @@
+{
+  "affected_constraints": [
+    {
+      "assembly_link": "Editable_Body_FaceplateLocator_A",
+      "body": "Body_FaceplateLocator_A",
+      "constraint_index": 2,
+      "sketch": "LocatorPassageProfile0"
+    },
+    {
+      "assembly_link": "Editable_Body_FaceplateLocator_B",
+      "body": "Body_FaceplateLocator_B",
+      "constraint_index": 2,
+      "sketch": "LocatorPassageProfile1"
+    }
+  ],
+  "assembly_sha256": "d727c69f3e3bc68857fc29aa29438fc2a6f7a59954a6f64b3766d466fa57bbdb",
+  "baseline_geometry_equivalence": {
+    "method": "valid Boolean symmetric difference between pre-expression and parameterized candidate shapes at nominal master value",
+    "results": [
+      {
+        "body": "Body_FaceplateLocator_A",
+        "symmetric_difference_mm3": 0.0
+      },
+      {
+        "body": "Body_FaceplateLocator_B",
+        "symmetric_difference_mm3": 0.0
+      }
+    ]
+  },
+  "canonical_read_only_open_validation": {
+    "body_shapes_valid_single_solid": true,
+    "both_links_match_source_by_volume_and_bounds": true,
+    "master_baseline": "2.30 mm",
+    "result": "passed"
+  },
+  "component": "hardware/freecad/pendant-bodies/faceplate-locators.FCStd",
+  "date": "2026-10-30",
+  "limitations": [
+    "The 2.32 mm value is a reversible sensitivity test, not a changed design requirement.",
+    "This change parameterizes locator screw-passage diameters only; it does not change locator seat diameters or prove hardware fit."
+  ],
+  "master_reference": {
+    "alias": "ShellMountPassageDiameter",
+    "baseline": "2.30 mm",
+    "expression": "pendant_master#<<InternalHardware>>.ShellMountPassageDiameter / 2",
+    "sheet": "InternalHardware"
+  },
+  "master_sha256": "a2990a24c9b4fa140e25c1c5ef721fe65a6cb36f48a55cc168a11778421e56cb",
+  "monolith_sha256": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881",
+  "native_history_integrity": {
+    "body_tips_changed": false,
+    "constraint_values_and_sketch_geometry_changed": false,
+    "feature_and_sketch_inventory_changed": false,
+    "object_count_after": 30,
+    "object_count_before": 30,
+    "unexpected_property_differences": []
+  },
+  "propagation_test": {
+    "assembly_refresh_errors": [],
+    "assembly_save_reopen": "passed at baseline, changed, and restored states",
+    "expressions_valid": true,
+    "test_value": "2.32 mm",
+    "tests": [
+      {
+        "baseline": {
+          "area": 146.2429023329109,
+          "bbox": [
+            -32.36,
+            -25.16,
+            22.946299999999997,
+            30.1463,
+            -3.5,
+            -0.7999999999999998
+          ],
+          "solids": 1,
+          "valid": true,
+          "volume": 88.29496032374551
+        },
+        "body": "Body_FaceplateLocator_A",
+        "changed": {
+          "area": 146.26740675560887,
+          "bbox": [
+            -32.36,
+            -25.16,
+            22.946299999999997,
+            30.1463,
+            -3.5,
+            -0.7999999999999998
+          ],
+          "solids": 1,
+          "valid": true,
+          "volume": 88.09901918994115
+        },
+        "restored": {
+          "area": 146.2429023329109,
+          "bbox": [
+            -32.36,
+            -25.16,
+            22.946299999999997,
+            30.1463,
+            -3.5,
+            -0.7999999999999998
+          ],
+          "solids": 1,
+          "valid": true,
+          "volume": 88.29496032374551
+        },
+        "restored_brep_symmetric_difference_mm3": 0.0,
+        "result": "PASS"
+      },
+      {
+        "baseline": {
+          "area": 146.2429023329109,
+          "bbox": [
+            22.4,
+            29.6,
+            61.4,
+            68.6,
+            -3.5,
+            -0.7999999999999998
+          ],
+          "solids": 1,
+          "valid": true,
+          "volume": 88.29496032374553
+        },
+        "body": "Body_FaceplateLocator_B",
+        "changed": {
+          "area": 146.26740675560887,
+          "bbox": [
+            22.4,
+            29.6,
+            61.4,
+            68.6,
+            -3.5,
+            -0.7999999999999998
+          ],
+          "solids": 1,
+          "valid": true,
+          "volume": 88.09901918994112
+        },
+        "restored": {
+          "area": 146.2429023329109,
+          "bbox": [
+            22.4,
+            29.6,
+            61.4,
+            68.6,
+            -3.5,
+            -0.7999999999999998
+          ],
+          "solids": 1,
+          "valid": true,
+          "volume": 88.29496032374553
+        },
+        "restored_brep_symmetric_difference_mm3": 0.0,
+        "result": "PASS"
+      }
+    ]
+  },
+  "schema_version": 1,
+  "source_hash_after_parameterization": "7d585dd8ac907a56d769cf7d9d8e228a1f757a43597035cac08a1f27b3d93e6c",
+  "source_hash_before_parameterization": "e191ea5c842227c4d55cbf296f1676f8fc7edf16d42eafc4227842cf2d49fa54"
+}
