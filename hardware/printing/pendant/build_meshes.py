@@ -12,6 +12,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import tempfile
 
@@ -50,9 +51,10 @@ def main() -> int:
     outdir = args.output_dir.resolve()
     meshdir = outdir / "meshes"
     meshdir.mkdir(parents=True, exist_ok=True)
+    stage_dir = Path(tempfile.mkdtemp(prefix=".pendant-mesh-candidate-", dir=outdir))
     expected = [{"object": n, "filename": f"{slug}.stl", "slug": slug} for n, slug in OBJECTS]
     cfg = {"assembly": str(ASSEMBLY.resolve()), "source_rel": str(ASSEMBLY.relative_to(ROOT)),
-           "meshdir": str(meshdir), "objects": expected,
+           "meshdir": str(stage_dir), "objects": expected,
            "linear": args.linear_deflection, "angular": args.angular_deflection}
     macro = r'''import FreeCAD as App, MeshPart, json, os, traceback
 C=json.loads(@@CFG@@); d=None; errors=[]; rows=[]
@@ -70,6 +72,7 @@ try:
   shape.translate(App.Vector(-(b.XMin+b.XMax)/2.0, -(b.YMin+b.YMax)/2.0, -b.ZMin))
   mesh=MeshPart.meshFromShape(Shape=shape, LinearDeflection=C['linear'], AngularDeflection=C['angular'], Relative=False)
   if mesh.CountFacets==0: raise RuntimeError('empty tessellation '+obj.Name)
+  if not mesh.isSolid(): raise RuntimeError('non-manifold mesh from CAD source '+obj.Name)
   p=os.path.join(C['meshdir'],item['filename'])
   mesh.write(p)
   mb=mesh.BoundBox
@@ -87,23 +90,34 @@ manifest={'source':C['source_rel'],'linear_deflection_mm':C['linear'],'angular_d
 with open(os.path.join(C['meshdir'],'mesh-manifest.json'),'w') as f: json.dump(manifest,f,indent=2)
 print('PENDANT_MESH_EXPORT='+json.dumps({'errors':errors,'parts':rows}))
 '''.replace("@@CFG@@", repr(json.dumps(cfg)))
-    with tempfile.TemporaryDirectory(prefix="pendant-print-export-") as td:
-        m = Path(td) / "export.FCMacro"
+    try:
+        m = stage_dir / "export.FCMacro"
         m.write_text(macro)
         proc = subprocess.run([str(args.freecadcmd), str(m)], text=True, capture_output=True, timeout=180)
-    print(proc.stdout)
-    if proc.returncode:
-        print(proc.stderr)
-        return proc.returncode
-    manifest_path = meshdir / "mesh-manifest.json"
-    if not manifest_path.is_file():
-        print(proc.stderr)
-        raise SystemExit("FreeCADCmd did not produce a mesh manifest")
-    result = json.loads(manifest_path.read_text())
-    if result["errors"] or len(result["parts"]) != len(OBJECTS):
-        raise SystemExit("mesh export failed: " + json.dumps(result["errors"]))
-    print(f"Exported {len(result['parts'])} one-solid source shapes to {meshdir}")
-    return 0
+        print(proc.stdout)
+        if proc.returncode:
+            print(proc.stderr)
+            return proc.returncode
+        manifest_path = stage_dir / "mesh-manifest.json"
+        if not manifest_path.is_file():
+            print(proc.stderr)
+            raise SystemExit("FreeCADCmd did not produce a mesh manifest")
+        result = json.loads(manifest_path.read_text())
+        if result["errors"] or len(result["parts"]) != len(OBJECTS):
+            raise SystemExit("mesh export failed: " + json.dumps(result["errors"]))
+        if any(not part.get("solid_mesh", False) for part in result["parts"]):
+            raise SystemExit("mesh export failed: at least one mesh is not closed")
+        missing = [part["filename"] for part in result["parts"] if not (stage_dir / part["filename"]).is_file()]
+        if missing:
+            raise SystemExit("mesh export failed: missing staged files " + json.dumps(missing))
+        # Replace outputs only after every source mesh passes validation.
+        for part in result["parts"]:
+            os.replace(stage_dir / part["filename"], meshdir / part["filename"])
+        os.replace(manifest_path, meshdir / "mesh-manifest.json")
+        print(f"Exported {len(result['parts'])} closed source meshes to {meshdir}")
+        return 0
+    finally:
+        shutil.rmtree(stage_dir, ignore_errors=True)
 
 
 if __name__ == "__main__":

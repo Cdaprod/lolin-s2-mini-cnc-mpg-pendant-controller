@@ -17,9 +17,11 @@ Open `pendant-orcaslicer.3mf` in OrcaSlicer. It uses the configured Elegoo Neptu
 
 The electronics board envelope, screws, sketches, datum objects, binders, and other construction geometry are excluded. The four shell/faceplate interim objects remain static source shapes in the modular assembly; the project exports their current saved shapes. The fused encoder faceplate/pocket is intentionally kept as one mesh.
 
-## Mesh validation and limitation
+## Mesh validation and current rear-shell blocker
 
-The export uses 0.08 mm linear deflection and 0.20 rad angular deflection without mesh healing or repair. Every source object was a valid single-solid FreeCAD Shape. Seven generated meshes are closed according to FreeCAD's mesh solidity check. `rear-shell.stl` is not watertight/manifold in the exported tessellation and must be fixed at the CAD/export source before it can be treated as print-ready. It was not silently repaired because that could alter the functional shell geometry.
+The export uses 0.08 mm linear deflection and 0.20 rad angular deflection without mesh healing or repair. Seven generated meshes are closed according to FreeCAD's mesh solidity check. `rear-shell.stl` is not watertight/manifold and is **not print-ready**. A source audit traced the first non-solid tessellation to `Body002.RearBossToWallLoadPaths`, a stored-shape PartDesign feature with no regeneration method; its exact geometry must be reconstructed in FreeCAD while preserving the four boss-to-wall reinforcements. See [the rear-shell source audit](../../freecad/reports/rear-shell-nonmanifold-source-audit-2026-10-30.md). OrcaSlicer repair is not the remedy.
+
+The mesh exporter now stages all outputs and refuses to promote any set containing a non-closed mesh. A failed export leaves the current meshes and the user's slicer project untouched.
 
 All project objects are placed within the profile's 235 × 235 × 250 mm printable volume. That placement check does not override the rear-shell mesh warning. A whole-project slice was not accepted as a validation result while the rear shell mesh is invalid. OrcaSlicer opened the project and displayed the six named plates. No physical print was started.
 
