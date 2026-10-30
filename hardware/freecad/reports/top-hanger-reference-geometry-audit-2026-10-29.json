@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-29",
+  "source_document": "hardware/freecad/pendant.FCStd",
+  "source_sha256": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881",
+  "assembly_document": "hardware/freecad/pendant-modular-assembly.FCStd",
+  "assembly_sha256": "d727c69f3e3bc68857fc29aa29438fc2a6f7a59954a6f64b3766d466fa57bbdb",
+  "freecad_version": "1.1.1",
+  "read_only_saved_shape_inspection": true,
+  "active_hanger": {
+    "required": "Closed hole through both shell bodies, carrying pendant weight.",
+    "parameters_mm": {
+      "center_y": 81.0,
+      "length": 35.6,
+      "width": 3.0
+    },
+    "global_xy_bounds_mm": {
+      "x": [
+        -17.8,
+        17.8
+      ],
+      "y": [
+        80.5,
+        83.5
+      ]
+    },
+    "front_and_rear_profiles_fully_constrained": true
+  },
+  "hook_reference": {
+    "body": "Body_HookReference",
+    "feature": "HookReferenceSolid",
+    "label": "Hook Reference \u2014 2 mm Steel",
+    "validation_only": true,
+    "saved_shape": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 4828.0,
+      "global_bbox_mm": {
+        "x": [
+          -17.0,
+          17.0
+        ],
+        "y": [
+          55.5,
+          79.5
+        ],
+        "z": [
+          -36.0,
+          0.0
+        ]
+      }
+    },
+    "active_slot_lower_y_mm": 80.5,
+    "bbox_separation_below_slot_mm": 1.0,
+    "common_volumes_with_saved_bodies_mm3": {
+      "front_shell": 1084.244447470654,
+      "rear_shell": 2612.6609588745614,
+      "upper_faceplate": 4.9759844852907325
+    },
+    "booleans_valid": true,
+    "conclusion": "Not a valid fit/load fixture as currently placed if it is intended to engage the active closed slot; not part of the modular assembly."
+  },
+  "modular_printed_part_volume": {
+    "shape_count": 9,
+    "valid_single_solids": 9,
+    "sum_volume_mm3": 112191.44865993901,
+    "sum_volume_cm3": 112.191448659939,
+    "excludes": [
+      "screws",
+      "display/electronics",
+      "wiring",
+      "other unmodeled hardware"
+    ],
+    "mass_formula": "112.1914 cm3 \u00d7 selected material density (g/cm3), plus omitted hardware; measure assembled product when available."
+  },
+  "fine_grid_screen": {
+    "grid_step_mm": 0.5,
+    "timeout_seconds": 150,
+    "result": "TIMEOUT_NO_REPORT",
+    "source_saved": false,
+    "repeat_unchanged": false
+  },
+  "structural_status": "UNVERIFIED",
+  "no_geometry_changed": true
+}
