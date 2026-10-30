@@ -10,6 +10,8 @@ Mechanical design improvement is tracked alongside modularization and parameteri
 
 A fresh bounded hanger-chain trace reached changed pocket geometry and an updated rear receiver, but exceeded the 170-second hard timeout inside `FrontFullWidthReceiver`; it did not reach the boss-to-wall stored-shape features or either final Tip. The candidate was not saved. This adds no end-to-end propagation result. The next productive step is recovering the missing construction recipe for the stored load-path features, not repeating the full-document recompute. See `reports/top-hanger-chain-trace-partial-2026-10-30.md` and JSON.
 
+The modular open-time check has since been expanded from two to five interleaved fresh-process samples per document. Median `App.openDocument()` time was 0.421 s for the linked assembly and 5.098 s for the monolith (12.12×); observed ranges were 0.414–0.466 s and 5.053–5.164 s. This remains a load-only benchmark, not a recompute, GUI, or interactive editing benchmark. See `reports/modular-document-open-benchmark-5run-2026-10-30.md` and JSON.
+
 ## Baseline
 
 - FreeCAD 1.1.1, revision `0108fd4b4850cc46e625b60e53cea7a7bbe69f8d`.
