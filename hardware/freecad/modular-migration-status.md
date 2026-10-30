@@ -4,6 +4,10 @@ Date: 2026-10-29
 Branch: `hardware-integration`
 Authoritative source retained unchanged: `pendant.FCStd`
 
+## Disposable rear-shell load-path repair candidate (2026-10-30)
+
+`pendant-modular-repair-candidate.FCStd` now replaces its rear static interim BREP with a live link to `pendant-bodies/rear-shell-loadpath-repair-candidate.FCStd`. The candidate assembly has six live links and three static interim representations (front shell, upper faceplate, and fused encoder faceplate/pocket). This is separate from the protected production `pendant-modular-assembly.FCStd`, which still has five links and four interim representations. The new rear component is a hybrid with a static imported shell base and native support Pads/Pocket; it is not a fully editable shell history. Its source edit/save/assembly-refresh path passed after relocating the assembly, master, and component files. See `reports/rear-shell-native-loadpath-candidate-2026-10-30.md` and `mechanical-refinement-backlog.md`.
+
 ## Logical shell and faceplate modules (2026-10-30)
 
 The linked assembly tree is now organized into `ShellModule`, `FaceplateModule`, and `OtherEditableComponents`. `ShellModule` groups the front and rear shell snapshots; `FaceplateModule` groups the upper faceplate snapshot, the intentionally fused encoder-faceplate/pocket snapshot, and both live editable faceplate-locator links. The other group contains the live display-retainer, USB-cover, and breakout-board links. This is an assembly-tree grouping milestone, not a claim that the shell or faceplate snapshots are independently editable.
