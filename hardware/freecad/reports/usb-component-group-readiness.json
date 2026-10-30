@@ -1,0 +1,3654 @@
+{
+  "app_links": [],
+  "binders": [],
+  "component_boundary_crossings": [
+    {
+      "edge_kind": "ObjectDeps_or_expression",
+      "source_object": "USBPlugLeadIn",
+      "source_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "target_object": "LocalParameters",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn"
+      ]
+    },
+    {
+      "edge_kind": "property_link",
+      "property": "Group",
+      "source_object": "USBFlexiblePlugStem",
+      "source_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "subelement": "",
+      "target_object": "USBSoftPressFitStem",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem"
+      ]
+    },
+    {
+      "edge_kind": "ObjectDeps_or_expression",
+      "source_object": "USBSoftPressFitStem",
+      "source_owners": [],
+      "target_object": "USBSoftPressFitStemBounded",
+      "target_owners": [
+        "USBSoftPressFitStem"
+      ],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem"
+      ]
+    },
+    {
+      "edge_kind": "property_link",
+      "property": "Group",
+      "source_object": "USBSoftPressFitStemBounded",
+      "source_owners": [
+        "USBSoftPressFitStem"
+      ],
+      "subelement": "",
+      "target_object": "USBSoftPressFitStemInnerEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded"
+      ]
+    },
+    {
+      "edge_kind": "property_link",
+      "property": "Group",
+      "source_object": "USBSoftPressFitStemSurfaceBand",
+      "source_owners": [
+        "USBSoftPressFitStem"
+      ],
+      "subelement": "",
+      "target_object": "USBSoftPressFitStemLimit",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand"
+      ]
+    },
+    {
+      "edge_kind": "property_link",
+      "property": "BaseFeature",
+      "source_object": "USBSoftPressFitStemSource",
+      "source_owners": [
+        "USBSoftPressFitStem"
+      ],
+      "subelement": "",
+      "target_object": "CompleteExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand",
+        "USBSoftPressFitStemSource"
+      ]
+    },
+    {
+      "edge_kind": "ObjectDeps_or_expression",
+      "source_object": "RearEnvelopeForUSBCover",
+      "source_owners": [],
+      "target_object": "RearEnvelopeForUSBCoverSource",
+      "target_owners": [
+        "RearEnvelopeForUSBCover"
+      ],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover"
+      ]
+    },
+    {
+      "edge_kind": "property_link",
+      "property": "BaseFeature",
+      "source_object": "RearEnvelopeForUSBCoverSource",
+      "source_owners": [
+        "RearEnvelopeForUSBCover"
+      ],
+      "subelement": "",
+      "target_object": "RearEnvelopeBackThickness",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource"
+      ]
+    },
+    {
+      "edge_kind": "ObjectDeps_or_expression",
+      "source_object": "USBSoftPressFitStemLimit",
+      "source_owners": [],
+      "target_object": "USBSoftPressFitStemRadiusPad",
+      "target_owners": [
+        "USBSoftPressFitStemLimit"
+      ],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand",
+        "USBSoftPressFitStemLimit"
+      ]
+    },
+    {
+      "edge_kind": "ObjectDeps_or_expression",
+      "source_object": "USBSoftPressFitStemInnerEnvelope",
+      "source_owners": [],
+      "target_object": "USBSoftPressFitStemInnerEnvelopeSource",
+      "target_owners": [
+        "USBSoftPressFitStemInnerEnvelope"
+      ],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemInnerEnvelope"
+      ]
+    },
+    {
+      "edge_kind": "property_link",
+      "property": "BaseFeature",
+      "source_object": "USBSoftPressFitStemInnerEnvelopeSource",
+      "source_owners": [
+        "USBSoftPressFitStemInnerEnvelope"
+      ],
+      "subelement": "",
+      "target_object": "CompleteExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemInnerEnvelope",
+        "USBSoftPressFitStemInnerEnvelopeSource"
+      ]
+    },
+    {
+      "edge_kind": "property_link",
+      "property": "Group",
+      "source_object": "Body_USBTetheredCoverBounded",
+      "source_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "subelement": "",
+      "target_object": "Body_USBTetheredCoverInnerEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded"
+      ]
+    },
+    {
+      "edge_kind": "property_link",
+      "property": "Group",
+      "source_object": "Body_USBTetheredCoverSurfaceBand",
+      "source_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "subelement": "",
+      "target_object": "Body_USBTetheredCoverLimit",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand"
+      ]
+    },
+    {
+      "edge_kind": "ObjectDeps_or_expression",
+      "source_object": "Body_USBTetheredCoverLimit",
+      "source_owners": [],
+      "target_object": "Body_USBTetheredCoverRadiusPad",
+      "target_owners": [
+        "Body_USBTetheredCoverLimit"
+      ],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand",
+        "Body_USBTetheredCoverLimit"
+      ]
+    },
+    {
+      "edge_kind": "property_link",
+      "property": "BaseFeature",
+      "source_object": "Body_USBTetheredCoverSource",
+      "source_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "subelement": "",
+      "target_object": "CompleteExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand",
+        "Body_USBTetheredCoverSource"
+      ]
+    },
+    {
+      "edge_kind": "ObjectDeps_or_expression",
+      "source_object": "Body_USBTetheredCoverInnerEnvelope",
+      "source_owners": [],
+      "target_object": "Body_USBTetheredCoverInnerEnvelopeSource",
+      "target_owners": [
+        "Body_USBTetheredCoverInnerEnvelope"
+      ],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope"
+      ]
+    },
+    {
+      "edge_kind": "property_link",
+      "property": "BaseFeature",
+      "source_object": "Body_USBTetheredCoverInnerEnvelopeSource",
+      "source_owners": [
+        "Body_USBTetheredCoverInnerEnvelope"
+      ],
+      "subelement": "",
+      "target_object": "CompleteExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource"
+      ]
+    },
+    {
+      "edge_kind": "ObjectDeps_or_expression",
+      "source_object": "USBCoverTetherSketch",
+      "source_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "target_object": "LocalParameters",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBCoverTetherSketch"
+      ]
+    },
+    {
+      "edge_kind": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "property": "WidthRatio",
+      "source_object": "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "source_owners": [],
+      "subelement": "",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "edge_kind": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "property": "WidthRatio",
+      "source_object": "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "source_owners": [],
+      "subelement": "",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "edge_kind": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "property": "WidthRatio",
+      "source_object": "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "source_owners": [],
+      "subelement": "",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "edge_kind": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "property": "WidthRatio",
+      "source_object": "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "source_owners": [],
+      "subelement": "",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "edge_kind": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "property": "WidthRatio",
+      "source_object": "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "source_owners": [],
+      "subelement": "",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile2"
+      ]
+    },
+    {
+      "edge_kind": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "property": "WidthRatio",
+      "source_object": "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "source_owners": [],
+      "subelement": "",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile2"
+      ]
+    },
+    {
+      "edge_kind": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "property": "WidthRatio",
+      "source_object": "WidthControlled_RearMatchedEnvelopeProfile0",
+      "source_owners": [],
+      "subelement": "",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "edge_kind": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "property": "WidthRatio",
+      "source_object": "WidthControlled_RearMatchedEnvelopeProfile0",
+      "source_owners": [],
+      "subelement": "",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "edge_kind": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "property": "WidthRatio",
+      "source_object": "WidthControlled_RearMatchedEnvelopeProfile1",
+      "source_owners": [],
+      "subelement": "",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "WidthControlled_RearMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "edge_kind": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "property": "WidthRatio",
+      "source_object": "WidthControlled_RearMatchedEnvelopeProfile1",
+      "source_owners": [],
+      "subelement": "",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_source_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "WidthControlled_RearMatchedEnvelopeProfile1"
+      ]
+    }
+  ],
+  "expanded_dependency_closure_count": 39,
+  "expanded_dependency_objects": [
+    {
+      "dependencies": [
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverSurfaceBand"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"Body_USBTetheredCoverSurfaceBand\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"1\">\n                        <Link value=\"Body_USBTetheredCoverInnerEnvelope\" />\n                    </LinkList>\n                </Property>\n                "
+      },
+      "name": "Body_USBTetheredCoverBounded",
+      "owners": [
+        "Body_USBTetheredCover"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded"
+      ],
+      "type": "PartDesign::Boolean"
+    },
+    {
+      "dependencies": [
+        "Body_USBTetheredCoverInnerEnvelopeSource"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\">\n                    <Link value=\"\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"1\">\n                        <Link value=\"Body_USBTetheredCoverInnerEnvelopeSource\" />\n                    </LinkList>\n                </Property>\n                ",
+        "Origin": "<Property name=\"Origin\" type=\"App::PropertyLink\" status=\"67108864\">\n                    <Link value=\"Origin036\" />\n                </Property>\n                ",
+        "Tip": "<Property name=\"Tip\" type=\"App::PropertyLink\">\n                    <Link value=\"Body_USBTetheredCoverInnerEnvelopeSource\" />\n                </Property>\n                "
+      },
+      "name": "Body_USBTetheredCoverInnerEnvelope",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope"
+      ],
+      "type": "PartDesign::Body"
+    },
+    {
+      "dependencies": [
+        "CompleteExteriorEnvelope"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\">\n                    <Link value=\"CompleteExteriorEnvelope\" />\n                </Property>\n                "
+      },
+      "name": "Body_USBTetheredCoverInnerEnvelopeSource",
+      "owners": [
+        "Body_USBTetheredCoverInnerEnvelope"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource"
+      ],
+      "type": "PartDesign::FeatureBase"
+    },
+    {
+      "dependencies": [
+        "Body_USBTetheredCoverRadiusPad"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\">\n                    <Link value=\"\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"2\">\n                        <Link value=\"Body_USBTetheredCoverRadiusSketch\" />\n                        <Link value=\"Body_USBTetheredCoverRadiusPad\" />\n                    </LinkList>\n                </Property>\n                ",
+        "Origin": "<Property name=\"Origin\" type=\"App::PropertyLink\" status=\"67108864\">\n                    <Link value=\"Origin038\" />\n                </Property>\n                ",
+        "Tip": "<Property name=\"Tip\" type=\"App::PropertyLink\">\n                    <Link value=\"Body_USBTetheredCoverRadiusPad\" />\n                </Property>\n                "
+      },
+      "name": "Body_USBTetheredCoverLimit",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand",
+        "Body_USBTetheredCoverLimit"
+      ],
+      "type": "PartDesign::Body"
+    },
+    {
+      "dependencies": [
+        "Body_USBTetheredCoverRadiusSketch"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"Body_USBTetheredCoverRadiusSketch\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "Body_USBTetheredCoverRadiusPad",
+      "owners": [
+        "Body_USBTetheredCoverLimit"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand",
+        "Body_USBTetheredCoverLimit",
+        "Body_USBTetheredCoverRadiusPad"
+      ],
+      "type": "PartDesign::Pad"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "Body_USBTetheredCoverRadiusSketch",
+      "owners": [
+        "Body_USBTetheredCoverLimit"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand",
+        "Body_USBTetheredCoverLimit",
+        "Body_USBTetheredCoverRadiusPad",
+        "Body_USBTetheredCoverRadiusSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "CompleteExteriorEnvelope"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\">\n                    <Link value=\"CompleteExteriorEnvelope\" />\n                </Property>\n                "
+      },
+      "name": "Body_USBTetheredCoverSource",
+      "owners": [
+        "Body_USBTetheredCover"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand",
+        "Body_USBTetheredCoverSource"
+      ],
+      "type": "PartDesign::FeatureBase"
+    },
+    {
+      "dependencies": [
+        "Body_USBTetheredCoverLimit",
+        "Body_USBTetheredCoverSource"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"Body_USBTetheredCoverSource\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"1\">\n                        <Link value=\"Body_USBTetheredCoverLimit\" />\n                    </LinkList>\n                </Property>\n                "
+      },
+      "name": "Body_USBTetheredCoverSurfaceBand",
+      "owners": [
+        "Body_USBTetheredCover"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand"
+      ],
+      "type": "PartDesign::Boolean"
+    },
+    {
+      "dependencies": [
+        "FrontEnvelopeLoft",
+        "RearEnvelopeForUSBCover"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"FrontEnvelopeLoft\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"1\">\n                        <Link value=\"RearEnvelopeForUSBCover\" />\n                    </LinkList>\n                </Property>\n                "
+      },
+      "name": "CompleteExteriorEnvelope",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope"
+      ],
+      "type": "PartDesign::Boolean"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {},
+      "name": "ExteriorEnvelope",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0",
+        "ExteriorEnvelope"
+      ],
+      "type": "App::VarSet"
+    },
+    {
+      "dependencies": [
+        "WidthControlled_FrontMatchedEnvelopeProfile0",
+        "WidthControlled_FrontMatchedEnvelopeProfile1",
+        "WidthControlled_FrontMatchedEnvelopeProfile2"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"WidthControlled_FrontMatchedEnvelopeProfile0\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "Sections": "<Property name=\"Sections\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"2\">\n                        <Link obj=\"WidthControlled_FrontMatchedEnvelopeProfile1\" sub=\"\" />\n                        <Link obj=\"WidthControlled_FrontMatchedEnvelopeProfile2\" sub=\"\" />\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "FrontEnvelopeLoft",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft"
+      ],
+      "type": "PartDesign::AdditiveLoft"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "FrontMatchedEnvelopeProfile0",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0",
+        "FrontMatchedEnvelopeProfile0"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "FrontMatchedEnvelopeProfile1",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile1",
+        "FrontMatchedEnvelopeProfile1"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "FrontMatchedEnvelopeProfile2",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile2",
+        "FrontMatchedEnvelopeProfile2"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {},
+      "name": "LocalParameters",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "LocalParameters"
+      ],
+      "type": "Spreadsheet::Sheet"
+    },
+    {
+      "dependencies": [
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile1"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"RearEnvelopeLoft\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"WidthControlled_RearMatchedEnvelopeProfile1\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearEnvelopeBackThickness",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness"
+      ],
+      "type": "PartDesign::Pad"
+    },
+    {
+      "dependencies": [
+        "RearEnvelopeForUSBCoverSource"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\">\n                    <Link value=\"\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"1\">\n                        <Link value=\"RearEnvelopeForUSBCoverSource\" />\n                    </LinkList>\n                </Property>\n                ",
+        "Origin": "<Property name=\"Origin\" type=\"App::PropertyLink\" status=\"67108864\">\n                    <Link value=\"Origin022\" />\n                </Property>\n                ",
+        "Tip": "<Property name=\"Tip\" type=\"App::PropertyLink\">\n                    <Link value=\"RearEnvelopeForUSBCoverSource\" />\n                </Property>\n                "
+      },
+      "name": "RearEnvelopeForUSBCover",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover"
+      ],
+      "type": "PartDesign::Body"
+    },
+    {
+      "dependencies": [
+        "RearEnvelopeBackThickness"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\">\n                    <Link value=\"RearEnvelopeBackThickness\" />\n                </Property>\n                "
+      },
+      "name": "RearEnvelopeForUSBCoverSource",
+      "owners": [
+        "RearEnvelopeForUSBCover"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource"
+      ],
+      "type": "PartDesign::FeatureBase"
+    },
+    {
+      "dependencies": [
+        "WidthControlled_RearMatchedEnvelopeProfile0",
+        "WidthControlled_RearMatchedEnvelopeProfile1"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"WidthControlled_RearMatchedEnvelopeProfile0\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "Sections": "<Property name=\"Sections\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"1\">\n                        <Link obj=\"WidthControlled_RearMatchedEnvelopeProfile1\" sub=\"\" />\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearEnvelopeLoft",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft"
+      ],
+      "type": "PartDesign::AdditiveLoft"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearMatchedEnvelopeProfile0",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile0",
+        "RearMatchedEnvelopeProfile0"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "RearMatchedEnvelopeProfile1",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "WidthControlled_RearMatchedEnvelopeProfile1",
+        "RearMatchedEnvelopeProfile1"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "USBCoverTetherSketch",
+        "USBFlexiblePlugStem"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"USBFlexiblePlugStem\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"USBCoverTetherSketch\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "USBCoverTetherPassage",
+      "owners": [
+        "Body_USBTetheredCover"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage"
+      ],
+      "type": "PartDesign::Pocket"
+    },
+    {
+      "dependencies": [
+        "LocalParameters"
+      ],
+      "expressions": [
+        {
+          "expression": "LocalParameters.TetherOpeningDiameter",
+          "path": "Constraints[1]"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "USBCoverTetherSketch",
+      "owners": [
+        "Body_USBTetheredCover"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBCoverTetherSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "Body_USBTetheredCoverBounded",
+        "USBSoftPressFitStem"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"Body_USBTetheredCoverBounded\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"1\">\n                        <Link value=\"USBSoftPressFitStem\" />\n                    </LinkList>\n                </Property>\n                "
+      },
+      "name": "USBFlexiblePlugStem",
+      "owners": [
+        "Body_USBTetheredCover"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem"
+      ],
+      "type": "PartDesign::Boolean"
+    },
+    {
+      "dependencies": [
+        "LocalParameters",
+        "USBCoverTetherPassage"
+      ],
+      "expressions": [
+        {
+          "expression": "LocalParameters.USBLeadInChamferSize",
+          "path": "Size"
+        }
+      ],
+      "link_properties_xml": {
+        "Base": "<Property name=\"Base\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"USBCoverTetherPassage\" count=\"2\">\n                        <Sub value=\"Edge34\" shadow=\";#d15:1;:H4ec,E.Edge34\" />\n                        <Sub value=\"Edge39\" shadow=\";#d1b:1;:H4ec,E.Edge39\" />\n                    </LinkSub>\n                </Property>\n                ",
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"USBCoverTetherPassage\" />\n                </Property>\n                "
+      },
+      "name": "USBPlugLeadIn",
+      "owners": [
+        "Body_USBTetheredCover"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn"
+      ],
+      "type": "PartDesign::Chamfer"
+    },
+    {
+      "dependencies": [
+        "USBSoftPressFitStemBounded"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\">\n                    <Link value=\"\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"3\">\n                        <Link value=\"USBSoftPressFitStemSource\" />\n                        <Link value=\"USBSoftPressFitStemSurfaceBand\" />\n                        <Link value=\"USBSoftPressFitStemBounded\" />\n                    </LinkList>\n                </Property>\n                ",
+        "Origin": "<Property name=\"Origin\" type=\"App::PropertyLink\" status=\"67108864\">\n                    <Link value=\"Origin040\" />\n                </Property>\n                ",
+        "Tip": "<Property name=\"Tip\" type=\"App::PropertyLink\">\n                    <Link value=\"USBSoftPressFitStemBounded\" />\n                </Property>\n                "
+      },
+      "name": "USBSoftPressFitStem",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem"
+      ],
+      "type": "PartDesign::Body"
+    },
+    {
+      "dependencies": [
+        "USBSoftPressFitStemInnerEnvelope",
+        "USBSoftPressFitStemSurfaceBand"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"USBSoftPressFitStemSurfaceBand\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"1\">\n                        <Link value=\"USBSoftPressFitStemInnerEnvelope\" />\n                    </LinkList>\n                </Property>\n                "
+      },
+      "name": "USBSoftPressFitStemBounded",
+      "owners": [
+        "USBSoftPressFitStem"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded"
+      ],
+      "type": "PartDesign::Boolean"
+    },
+    {
+      "dependencies": [
+        "USBSoftPressFitStemInnerEnvelopeSource"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\">\n                    <Link value=\"\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"1\">\n                        <Link value=\"USBSoftPressFitStemInnerEnvelopeSource\" />\n                    </LinkList>\n                </Property>\n                ",
+        "Origin": "<Property name=\"Origin\" type=\"App::PropertyLink\" status=\"67108864\">\n                    <Link value=\"Origin042\" />\n                </Property>\n                ",
+        "Tip": "<Property name=\"Tip\" type=\"App::PropertyLink\">\n                    <Link value=\"USBSoftPressFitStemInnerEnvelopeSource\" />\n                </Property>\n                "
+      },
+      "name": "USBSoftPressFitStemInnerEnvelope",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemInnerEnvelope"
+      ],
+      "type": "PartDesign::Body"
+    },
+    {
+      "dependencies": [
+        "CompleteExteriorEnvelope"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\">\n                    <Link value=\"CompleteExteriorEnvelope\" />\n                </Property>\n                "
+      },
+      "name": "USBSoftPressFitStemInnerEnvelopeSource",
+      "owners": [
+        "USBSoftPressFitStemInnerEnvelope"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemInnerEnvelope",
+        "USBSoftPressFitStemInnerEnvelopeSource"
+      ],
+      "type": "PartDesign::FeatureBase"
+    },
+    {
+      "dependencies": [
+        "USBSoftPressFitStemRadiusPad"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\">\n                    <Link value=\"\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"2\">\n                        <Link value=\"USBSoftPressFitStemRadiusSketch\" />\n                        <Link value=\"USBSoftPressFitStemRadiusPad\" />\n                    </LinkList>\n                </Property>\n                ",
+        "Origin": "<Property name=\"Origin\" type=\"App::PropertyLink\" status=\"67108864\">\n                    <Link value=\"Origin044\" />\n                </Property>\n                ",
+        "Tip": "<Property name=\"Tip\" type=\"App::PropertyLink\">\n                    <Link value=\"USBSoftPressFitStemRadiusPad\" />\n                </Property>\n                "
+      },
+      "name": "USBSoftPressFitStemLimit",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand",
+        "USBSoftPressFitStemLimit"
+      ],
+      "type": "PartDesign::Body"
+    },
+    {
+      "dependencies": [
+        "USBSoftPressFitStemRadiusSketch"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"\" />\n                </Property>\n                ",
+        "Profile": "<Property name=\"Profile\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"USBSoftPressFitStemRadiusSketch\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "ReferenceAxis": "<Property name=\"ReferenceAxis\" type=\"App::PropertyLinkSub\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace": "<Property name=\"UpToFace\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToFace2": "<Property name=\"UpToFace2\" type=\"App::PropertyLinkSub\" status=\"4\">\n                    <LinkSub value=\"\" count=\"0\">\n                    </LinkSub>\n                </Property>\n                ",
+        "UpToShape": "<Property name=\"UpToShape\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "UpToShape2": "<Property name=\"UpToShape2\" type=\"App::PropertyLinkSubList\" status=\"4\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "USBSoftPressFitStemRadiusPad",
+      "owners": [
+        "USBSoftPressFitStemLimit"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand",
+        "USBSoftPressFitStemLimit",
+        "USBSoftPressFitStemRadiusPad"
+      ],
+      "type": "PartDesign::Pad"
+    },
+    {
+      "dependencies": [],
+      "expressions": [],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                "
+      },
+      "name": "USBSoftPressFitStemRadiusSketch",
+      "owners": [
+        "USBSoftPressFitStemLimit"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand",
+        "USBSoftPressFitStemLimit",
+        "USBSoftPressFitStemRadiusPad",
+        "USBSoftPressFitStemRadiusSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "dependencies": [
+        "CompleteExteriorEnvelope"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\">\n                    <Link value=\"CompleteExteriorEnvelope\" />\n                </Property>\n                "
+      },
+      "name": "USBSoftPressFitStemSource",
+      "owners": [
+        "USBSoftPressFitStem"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand",
+        "USBSoftPressFitStemSource"
+      ],
+      "type": "PartDesign::FeatureBase"
+    },
+    {
+      "dependencies": [
+        "USBSoftPressFitStemLimit",
+        "USBSoftPressFitStemSource"
+      ],
+      "expressions": [],
+      "link_properties_xml": {
+        "BaseFeature": "<Property name=\"BaseFeature\" type=\"App::PropertyLink\" status=\"8\">\n                    <Link value=\"USBSoftPressFitStemSource\" />\n                </Property>\n                ",
+        "Group": "<Property name=\"Group\" type=\"App::PropertyLinkList\">\n                    <LinkList count=\"1\">\n                        <Link value=\"USBSoftPressFitStemLimit\" />\n                    </LinkList>\n                </Property>\n                "
+      },
+      "name": "USBSoftPressFitStemSurfaceBand",
+      "owners": [
+        "USBSoftPressFitStem"
+      ],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand"
+      ],
+      "type": "PartDesign::Boolean"
+    },
+    {
+      "dependencies": [
+        "ExteriorEnvelope",
+        "FrontMatchedEnvelopeProfile0"
+      ],
+      "expressions": [
+        {
+          "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "EnvelopeControl": "<Property name=\"EnvelopeControl\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"ExteriorEnvelope\" />\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "SourceSketch": "<Property name=\"SourceSketch\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"FrontMatchedEnvelopeProfile0\" />\n                </Property>\n                "
+      },
+      "name": "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "dependencies": [
+        "ExteriorEnvelope",
+        "FrontMatchedEnvelopeProfile1"
+      ],
+      "expressions": [
+        {
+          "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "EnvelopeControl": "<Property name=\"EnvelopeControl\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"ExteriorEnvelope\" />\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "SourceSketch": "<Property name=\"SourceSketch\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"FrontMatchedEnvelopeProfile1\" />\n                </Property>\n                "
+      },
+      "name": "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile1"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "dependencies": [
+        "ExteriorEnvelope",
+        "FrontMatchedEnvelopeProfile2"
+      ],
+      "expressions": [
+        {
+          "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "EnvelopeControl": "<Property name=\"EnvelopeControl\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"ExteriorEnvelope\" />\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "SourceSketch": "<Property name=\"SourceSketch\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"FrontMatchedEnvelopeProfile2\" />\n                </Property>\n                "
+      },
+      "name": "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile2"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "dependencies": [
+        "ExteriorEnvelope",
+        "RearMatchedEnvelopeProfile0"
+      ],
+      "expressions": [
+        {
+          "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "EnvelopeControl": "<Property name=\"EnvelopeControl\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"ExteriorEnvelope\" />\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "SourceSketch": "<Property name=\"SourceSketch\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"RearMatchedEnvelopeProfile0\" />\n                </Property>\n                "
+      },
+      "name": "WidthControlled_RearMatchedEnvelopeProfile0",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile0"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "dependencies": [
+        "ExteriorEnvelope",
+        "RearMatchedEnvelopeProfile1"
+      ],
+      "expressions": [
+        {
+          "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "link_properties_xml": {
+        "AttachmentSupport": "<Property name=\"AttachmentSupport\" type=\"App::PropertyLinkSubList\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "EnvelopeControl": "<Property name=\"EnvelopeControl\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"ExteriorEnvelope\" />\n                </Property>\n                ",
+        "Exports": "<Property name=\"Exports\" type=\"App::PropertyLinkListHidden\" status=\"67108864\">\n                    <LinkList count=\"0\">\n                    </LinkList>\n                </Property>\n                ",
+        "ExternalGeometry": "<Property name=\"ExternalGeometry\" type=\"App::PropertyLinkSubList\" status=\"16777216\">\n                    <LinkSubList count=\"0\">\n                    </LinkSubList>\n                </Property>\n                ",
+        "SourceSketch": "<Property name=\"SourceSketch\" type=\"App::PropertyLink\" group=\"Width control\" doc=\"\" attr=\"0\" ro=\"0\" hide=\"0\" status=\"2097152\">\n                    <Link value=\"RearMatchedEnvelopeProfile1\" />\n                </Property>\n                "
+      },
+      "name": "WidthControlled_RearMatchedEnvelopeProfile1",
+      "owners": [],
+      "suppressed": false,
+      "tip_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "WidthControlled_RearMatchedEnvelopeProfile1"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    }
+  ],
+  "external_expression_references": [
+    {
+      "alias": "ExteriorWidth",
+      "allow_key": "pendant_master#ExteriorEnvelope",
+      "consumer_active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "consumer_owners": [],
+      "document_internal_name": "pendant_master",
+      "document_label": "pendant-master",
+      "explicitly_allowed": true,
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "external_file_exists": true,
+      "external_file_is_relative": true,
+      "path": "WidthRatio",
+      "resolved_external_file": "../pendant-master.FCStd",
+      "target_object": "ExteriorEnvelope",
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "alias": "ReferenceWidth",
+      "allow_key": "pendant_master#ExteriorEnvelope",
+      "consumer_active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "consumer_owners": [],
+      "document_internal_name": "pendant_master",
+      "document_label": "pendant-master",
+      "explicitly_allowed": true,
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "external_file_exists": true,
+      "external_file_is_relative": true,
+      "path": "WidthRatio",
+      "resolved_external_file": "../pendant-master.FCStd",
+      "target_object": "ExteriorEnvelope",
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "alias": "ExteriorWidth",
+      "allow_key": "pendant_master#ExteriorEnvelope",
+      "consumer_active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "consumer_owners": [],
+      "document_internal_name": "pendant_master",
+      "document_label": "pendant-master",
+      "explicitly_allowed": true,
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "external_file_exists": true,
+      "external_file_is_relative": true,
+      "path": "WidthRatio",
+      "resolved_external_file": "../pendant-master.FCStd",
+      "target_object": "ExteriorEnvelope",
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "alias": "ReferenceWidth",
+      "allow_key": "pendant_master#ExteriorEnvelope",
+      "consumer_active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "consumer_owners": [],
+      "document_internal_name": "pendant_master",
+      "document_label": "pendant-master",
+      "explicitly_allowed": true,
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "external_file_exists": true,
+      "external_file_is_relative": true,
+      "path": "WidthRatio",
+      "resolved_external_file": "../pendant-master.FCStd",
+      "target_object": "ExteriorEnvelope",
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "alias": "ExteriorWidth",
+      "allow_key": "pendant_master#ExteriorEnvelope",
+      "consumer_active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "consumer_owners": [],
+      "document_internal_name": "pendant_master",
+      "document_label": "pendant-master",
+      "explicitly_allowed": true,
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "external_file_exists": true,
+      "external_file_is_relative": true,
+      "path": "WidthRatio",
+      "resolved_external_file": "../pendant-master.FCStd",
+      "target_object": "ExteriorEnvelope",
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile2"
+      ]
+    },
+    {
+      "alias": "ReferenceWidth",
+      "allow_key": "pendant_master#ExteriorEnvelope",
+      "consumer_active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "consumer_owners": [],
+      "document_internal_name": "pendant_master",
+      "document_label": "pendant-master",
+      "explicitly_allowed": true,
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "external_file_exists": true,
+      "external_file_is_relative": true,
+      "path": "WidthRatio",
+      "resolved_external_file": "../pendant-master.FCStd",
+      "target_object": "ExteriorEnvelope",
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile2"
+      ]
+    },
+    {
+      "alias": "ExteriorWidth",
+      "allow_key": "pendant_master#ExteriorEnvelope",
+      "consumer_active_tip_reachable": true,
+      "consumer_object": "WidthControlled_RearMatchedEnvelopeProfile0",
+      "consumer_owners": [],
+      "document_internal_name": "pendant_master",
+      "document_label": "pendant-master",
+      "explicitly_allowed": true,
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "external_file_exists": true,
+      "external_file_is_relative": true,
+      "path": "WidthRatio",
+      "resolved_external_file": "../pendant-master.FCStd",
+      "target_object": "ExteriorEnvelope",
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "alias": "ReferenceWidth",
+      "allow_key": "pendant_master#ExteriorEnvelope",
+      "consumer_active_tip_reachable": true,
+      "consumer_object": "WidthControlled_RearMatchedEnvelopeProfile0",
+      "consumer_owners": [],
+      "document_internal_name": "pendant_master",
+      "document_label": "pendant-master",
+      "explicitly_allowed": true,
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "external_file_exists": true,
+      "external_file_is_relative": true,
+      "path": "WidthRatio",
+      "resolved_external_file": "../pendant-master.FCStd",
+      "target_object": "ExteriorEnvelope",
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "alias": "ExteriorWidth",
+      "allow_key": "pendant_master#ExteriorEnvelope",
+      "consumer_active_tip_reachable": true,
+      "consumer_object": "WidthControlled_RearMatchedEnvelopeProfile1",
+      "consumer_owners": [],
+      "document_internal_name": "pendant_master",
+      "document_label": "pendant-master",
+      "explicitly_allowed": true,
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "external_file_exists": true,
+      "external_file_is_relative": true,
+      "path": "WidthRatio",
+      "resolved_external_file": "../pendant-master.FCStd",
+      "target_object": "ExteriorEnvelope",
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "WidthControlled_RearMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "alias": "ReferenceWidth",
+      "allow_key": "pendant_master#ExteriorEnvelope",
+      "consumer_active_tip_reachable": true,
+      "consumer_object": "WidthControlled_RearMatchedEnvelopeProfile1",
+      "consumer_owners": [],
+      "document_internal_name": "pendant_master",
+      "document_label": "pendant-master",
+      "explicitly_allowed": true,
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "external_file_exists": true,
+      "external_file_is_relative": true,
+      "path": "WidthRatio",
+      "resolved_external_file": "../pendant-master.FCStd",
+      "target_object": "ExteriorEnvelope",
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "WidthControlled_RearMatchedEnvelopeProfile1"
+      ]
+    }
+  ],
+  "external_geometry_references": [],
+  "extraction_readiness": {
+    "blockers": [],
+    "permitted_objects": [
+      "Body_USBTetheredCoverInnerEnvelope",
+      "Body_USBTetheredCoverLimit",
+      "CompleteExteriorEnvelope",
+      "ExteriorEnvelope",
+      "FrontEnvelopeLoft",
+      "FrontMatchedEnvelopeProfile0",
+      "FrontMatchedEnvelopeProfile1",
+      "FrontMatchedEnvelopeProfile2",
+      "LocalParameters",
+      "RearEnvelopeBackThickness",
+      "RearEnvelopeForUSBCover",
+      "RearEnvelopeLoft",
+      "RearMatchedEnvelopeProfile0",
+      "RearMatchedEnvelopeProfile1",
+      "USBSoftPressFitStem",
+      "USBSoftPressFitStemInnerEnvelope",
+      "USBSoftPressFitStemLimit",
+      "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "WidthControlled_RearMatchedEnvelopeProfile0",
+      "WidthControlled_RearMatchedEnvelopeProfile1"
+    ],
+    "permitted_owners": [
+      "Body_USBTetheredCover",
+      "Body_USBTetheredCoverInnerEnvelope",
+      "Body_USBTetheredCoverLimit",
+      "RearEnvelopeForUSBCover",
+      "USBSoftPressFitStem",
+      "USBSoftPressFitStemInnerEnvelope",
+      "USBSoftPressFitStemLimit"
+    ],
+    "policy": "READY requires every active dependency to resolve to the root Body or an explicitly permitted owner/object, with no unknown Sketcher references or external-file links.",
+    "root_body": "Body_USBTetheredCover",
+    "status": "READY",
+    "uncertainties": []
+  },
+  "limitations": [
+    "FreeCAD 1.1.1 exposes ExternalGeometry (PropertyLinkSubList) and ExternalGeo (PropertyGeometryList), but the former can be empty while ExternalGeometryExtension Ref tokens are present in ExternalGeo serialization.",
+    "This manifest reports exact serialized subelement tokens. Human-readable Edge/Face names may not exist for persistent element-map references.",
+    "App::Link and ShapeBinder/XLink property payloads are preserved in link_properties_xml; resolve their targets in FreeCAD before treating external paths as portable."
+  ],
+  "method": {
+    "constraints": "External geometry order i maps to Sketcher geometry index -(i+3); constraint First/Second/Third fields are checked",
+    "note": "This is a saved-document audit. Referenced helper Bodies are traversed through Tip, not their complete Group. Validate with target FreeCAD before geometry-changing repairs.",
+    "ordinary_edges": "Saved Document.xml ObjectDeps plus serialized property-link and expression targets, excluding non-geometric Context links and PartDesign::Body/App::Part ownership containers; a referenced helper PartDesign::Body contributes its active Tip only. Root Body expressions are recorded as owner-level dependencies because they can control global placement. Cross-document spreadsheet expressions are recorded separately and must be explicitly allowed.",
+    "sketch_edges": "Sketcher::ExternalGeometryExtension Ref values in each Sketcher ExternalGeo GeometryList, expanded recursively"
+  },
+  "object_dependency_closure_count": 17,
+  "ordinary_dependency_objects": [
+    "Body_USBTetheredCoverBounded",
+    "Body_USBTetheredCoverSource",
+    "Body_USBTetheredCoverSurfaceBand",
+    "CompleteExteriorEnvelope",
+    "ExteriorEnvelope",
+    "FrontEnvelopeLoft",
+    "FrontMatchedEnvelopeProfile0",
+    "FrontMatchedEnvelopeProfile1",
+    "FrontMatchedEnvelopeProfile2",
+    "LocalParameters",
+    "USBCoverTetherPassage",
+    "USBCoverTetherSketch",
+    "USBFlexiblePlugStem",
+    "USBPlugLeadIn",
+    "WidthControlled_FrontMatchedEnvelopeProfile0",
+    "WidthControlled_FrontMatchedEnvelopeProfile1",
+    "WidthControlled_FrontMatchedEnvelopeProfile2"
+  ],
+  "property_link_edges": [
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBPlugLeadIn",
+      "consumer_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Base",
+      "serialized_tag": "LinkSub",
+      "subelement": "",
+      "target_object": "USBCoverTetherPassage",
+      "target_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBPlugLeadIn",
+      "consumer_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "USBCoverTetherPassage",
+      "target_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBCoverTetherPassage",
+      "consumer_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "USBFlexiblePlugStem",
+      "target_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBCoverTetherPassage",
+      "consumer_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Profile",
+      "serialized_tag": "LinkSub",
+      "subelement": "",
+      "target_object": "USBCoverTetherSketch",
+      "target_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBFlexiblePlugStem",
+      "consumer_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "Body_USBTetheredCoverBounded",
+      "target_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBFlexiblePlugStem",
+      "consumer_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Group",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "USBSoftPressFitStem",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBSoftPressFitStemBounded",
+      "consumer_owners": [
+        "USBSoftPressFitStem"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "USBSoftPressFitStemSurfaceBand",
+      "target_owners": [
+        "USBSoftPressFitStem"
+      ],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBSoftPressFitStemBounded",
+      "consumer_owners": [
+        "USBSoftPressFitStem"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Group",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "USBSoftPressFitStemInnerEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBSoftPressFitStemSurfaceBand",
+      "consumer_owners": [
+        "USBSoftPressFitStem"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "USBSoftPressFitStemSource",
+      "target_owners": [
+        "USBSoftPressFitStem"
+      ],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBSoftPressFitStemSurfaceBand",
+      "consumer_owners": [
+        "USBSoftPressFitStem"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Group",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "USBSoftPressFitStemLimit",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBSoftPressFitStemSource",
+      "consumer_owners": [
+        "USBSoftPressFitStem"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "CompleteExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand",
+        "USBSoftPressFitStemSource"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "CompleteExteriorEnvelope",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "FrontEnvelopeLoft",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "CompleteExteriorEnvelope",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Group",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "RearEnvelopeForUSBCover",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "RearEnvelopeForUSBCoverSource",
+      "consumer_owners": [
+        "RearEnvelopeForUSBCover"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "RearEnvelopeBackThickness",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "RearEnvelopeBackThickness",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "RearEnvelopeLoft",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "RearEnvelopeBackThickness",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Profile",
+      "serialized_tag": "LinkSub",
+      "subelement": "",
+      "target_object": "WidthControlled_RearMatchedEnvelopeProfile1",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "RearEnvelopeLoft",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Profile",
+      "serialized_tag": "LinkSub",
+      "subelement": "",
+      "target_object": "WidthControlled_RearMatchedEnvelopeProfile0",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "RearEnvelopeLoft",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Sections",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "WidthControlled_RearMatchedEnvelopeProfile1",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_RearMatchedEnvelopeProfile0",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "EnvelopeControl",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_RearMatchedEnvelopeProfile0",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "SourceSketch",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "RearMatchedEnvelopeProfile0",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_RearMatchedEnvelopeProfile1",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "EnvelopeControl",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "WidthControlled_RearMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_RearMatchedEnvelopeProfile1",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "SourceSketch",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "RearMatchedEnvelopeProfile1",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "WidthControlled_RearMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "FrontEnvelopeLoft",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Profile",
+      "serialized_tag": "LinkSub",
+      "subelement": "",
+      "target_object": "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "FrontEnvelopeLoft",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Sections",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "FrontEnvelopeLoft",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Sections",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "EnvelopeControl",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile2"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "SourceSketch",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "FrontMatchedEnvelopeProfile2",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile2"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "EnvelopeControl",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "SourceSketch",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "FrontMatchedEnvelopeProfile1",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "EnvelopeControl",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "consumer_owners": [],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "SourceSketch",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "FrontMatchedEnvelopeProfile0",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBSoftPressFitStemRadiusPad",
+      "consumer_owners": [
+        "USBSoftPressFitStemLimit"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Profile",
+      "serialized_tag": "LinkSub",
+      "subelement": "",
+      "target_object": "USBSoftPressFitStemRadiusSketch",
+      "target_owners": [
+        "USBSoftPressFitStemLimit"
+      ],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand",
+        "USBSoftPressFitStemLimit",
+        "USBSoftPressFitStemRadiusPad"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "USBSoftPressFitStemInnerEnvelopeSource",
+      "consumer_owners": [
+        "USBSoftPressFitStemInnerEnvelope"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "CompleteExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemInnerEnvelope",
+        "USBSoftPressFitStemInnerEnvelopeSource"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "Body_USBTetheredCoverBounded",
+      "consumer_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "Body_USBTetheredCoverSurfaceBand",
+      "target_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "Body_USBTetheredCoverBounded",
+      "consumer_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Group",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "Body_USBTetheredCoverInnerEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "Body_USBTetheredCoverSurfaceBand",
+      "consumer_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "Body_USBTetheredCoverSource",
+      "target_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "Body_USBTetheredCoverSurfaceBand",
+      "consumer_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Group",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "Body_USBTetheredCoverLimit",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "Body_USBTetheredCoverRadiusPad",
+      "consumer_owners": [
+        "Body_USBTetheredCoverLimit"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "Profile",
+      "serialized_tag": "LinkSub",
+      "subelement": "",
+      "target_object": "Body_USBTetheredCoverRadiusSketch",
+      "target_owners": [
+        "Body_USBTetheredCoverLimit"
+      ],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand",
+        "Body_USBTetheredCoverLimit",
+        "Body_USBTetheredCoverRadiusPad"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "Body_USBTetheredCoverSource",
+      "consumer_owners": [
+        "Body_USBTetheredCover"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "CompleteExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand",
+        "Body_USBTetheredCoverSource"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "Body_USBTetheredCoverInnerEnvelopeSource",
+      "consumer_owners": [
+        "Body_USBTetheredCoverInnerEnvelope"
+      ],
+      "dependency_role": "geometry_or_parameter_link",
+      "external_file": "",
+      "property": "BaseFeature",
+      "serialized_tag": "Link",
+      "subelement": "",
+      "target_object": "CompleteExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "consumer_owners": [],
+      "dependency_role": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "property": "WidthRatio",
+      "serialized_tag": "Expression",
+      "subelement": "",
+      "target_alias": "ExteriorWidth",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "consumer_owners": [],
+      "dependency_role": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "property": "WidthRatio",
+      "serialized_tag": "Expression",
+      "subelement": "",
+      "target_alias": "ReferenceWidth",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "consumer_owners": [],
+      "dependency_role": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "property": "WidthRatio",
+      "serialized_tag": "Expression",
+      "subelement": "",
+      "target_alias": "ExteriorWidth",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "consumer_owners": [],
+      "dependency_role": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "property": "WidthRatio",
+      "serialized_tag": "Expression",
+      "subelement": "",
+      "target_alias": "ReferenceWidth",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "consumer_owners": [],
+      "dependency_role": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "property": "WidthRatio",
+      "serialized_tag": "Expression",
+      "subelement": "",
+      "target_alias": "ExteriorWidth",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile2"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "consumer_owners": [],
+      "dependency_role": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "property": "WidthRatio",
+      "serialized_tag": "Expression",
+      "subelement": "",
+      "target_alias": "ReferenceWidth",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile2"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_RearMatchedEnvelopeProfile0",
+      "consumer_owners": [],
+      "dependency_role": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "property": "WidthRatio",
+      "serialized_tag": "Expression",
+      "subelement": "",
+      "target_alias": "ExteriorWidth",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_RearMatchedEnvelopeProfile0",
+      "consumer_owners": [],
+      "dependency_role": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "property": "WidthRatio",
+      "serialized_tag": "Expression",
+      "subelement": "",
+      "target_alias": "ReferenceWidth",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile0"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_RearMatchedEnvelopeProfile1",
+      "consumer_owners": [],
+      "dependency_role": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "property": "WidthRatio",
+      "serialized_tag": "Expression",
+      "subelement": "",
+      "target_alias": "ExteriorWidth",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "WidthControlled_RearMatchedEnvelopeProfile1"
+      ]
+    },
+    {
+      "active_tip_reachable": true,
+      "consumer_object": "WidthControlled_RearMatchedEnvelopeProfile1",
+      "consumer_owners": [],
+      "dependency_role": "external_expression",
+      "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+      "external_file": "../pendant-master.FCStd",
+      "property": "WidthRatio",
+      "serialized_tag": "Expression",
+      "subelement": "",
+      "target_alias": "ReferenceWidth",
+      "target_document": "pendant_master",
+      "target_object": "ExteriorEnvelope",
+      "target_owners": [],
+      "tip_to_consumer_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "WidthControlled_RearMatchedEnvelopeProfile1"
+      ]
+    }
+  ],
+  "root": {
+    "body": "Body_USBTetheredCover",
+    "tip": "USBPlugLeadIn"
+  },
+  "root_body_expressions": [],
+  "schema_version": 2,
+  "sketches": [
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 2,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "Body_USBTetheredCoverRadiusSketch",
+      "owners": [
+        "Body_USBTetheredCoverLimit"
+      ],
+      "placement": {
+        "A": "1.5707963267948966",
+        "Ox": "0.0000000000000000",
+        "Oy": "1.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "20.0000000000000000",
+        "Py": "3.0310950703500001",
+        "Pz": "-13.4445319311000002",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.7071067811865475",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.7071067811865476"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverSurfaceBand",
+        "Body_USBTetheredCoverLimit",
+        "Body_USBTetheredCoverRadiusPad",
+        "Body_USBTetheredCoverRadiusSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 98,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "FrontMatchedEnvelopeProfile0",
+      "owners": [],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "0.0000000000000000",
+        "Pz": "0.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0",
+        "FrontMatchedEnvelopeProfile0"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 98,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "FrontMatchedEnvelopeProfile1",
+      "owners": [],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "0.0000000000000000",
+        "Pz": "-6.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile1",
+        "FrontMatchedEnvelopeProfile1"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 98,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "FrontMatchedEnvelopeProfile2",
+      "owners": [],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "0.0000000000000000",
+        "Pz": "-19.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile2",
+        "FrontMatchedEnvelopeProfile2"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 50,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "RearMatchedEnvelopeProfile0",
+      "owners": [],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "-0.0000000000000075",
+        "Py": "-85.5642727047988956",
+        "Pz": "-19.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile0",
+        "RearMatchedEnvelopeProfile0"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 50,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "RearMatchedEnvelopeProfile1",
+      "owners": [],
+      "placement": {
+        "A": "0.0436332312998600",
+        "Ox": "-0.0436193873653388",
+        "Oy": "0.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "0.0000000000000005",
+        "Py": "-65.2550204660287960",
+        "Pz": "-28.5900266638974010",
+        "Q0": "-0.0218148850345620",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.9997620270799090"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "WidthControlled_RearMatchedEnvelopeProfile1",
+        "RearMatchedEnvelopeProfile1"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 2,
+      "expressions": [
+        {
+          "expression": "LocalParameters.TetherOpeningDiameter",
+          "path": "Constraints[1]"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "USBCoverTetherSketch",
+      "owners": [
+        "Body_USBTetheredCover"
+      ],
+      "placement": {
+        "A": "1.5707963267948966",
+        "Ox": "0.0000000000000000",
+        "Oy": "1.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "45.0000000000000000",
+        "Py": "6.0000000000000000",
+        "Pz": "-10.5000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.7071067811865475",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.7071067811865476"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBCoverTetherSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 2,
+      "expressions": [],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "USBSoftPressFitStemRadiusSketch",
+      "owners": [
+        "USBSoftPressFitStemLimit"
+      ],
+      "placement": {
+        "A": "1.5707963267948966",
+        "Ox": "0.0000000000000000",
+        "Oy": "1.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "28.5000000000000000",
+        "Py": "3.0310950703500001",
+        "Pz": "-13.4445319311000002",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.7071067811865475",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.7071067811865476"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "USBSoftPressFitStem",
+        "USBSoftPressFitStemBounded",
+        "USBSoftPressFitStemSurfaceBand",
+        "USBSoftPressFitStemLimit",
+        "USBSoftPressFitStemRadiusPad",
+        "USBSoftPressFitStemRadiusSketch"
+      ],
+      "type": "Sketcher::SketchObject"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 98,
+      "expressions": [
+        {
+          "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "owners": [],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "0.0000000000000000",
+        "Pz": "0.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile0"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 98,
+      "expressions": [
+        {
+          "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "owners": [],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "0.0000000000000000",
+        "Pz": "-6.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile1"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 98,
+      "expressions": [
+        {
+          "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "owners": [],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "0.0000000000000000",
+        "Py": "0.0000000000000000",
+        "Pz": "-19.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "FrontEnvelopeLoft",
+        "WidthControlled_FrontMatchedEnvelopeProfile2"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 50,
+      "expressions": [
+        {
+          "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "WidthControlled_RearMatchedEnvelopeProfile0",
+      "owners": [],
+      "placement": {
+        "A": "0.0000000000000000",
+        "Ox": "0.0000000000000000",
+        "Oy": "0.0000000000000000",
+        "Oz": "1.0000000000000000",
+        "Px": "-0.0000000000000075",
+        "Py": "-85.5642727047988956",
+        "Pz": "-19.0000000000000000",
+        "Q0": "0.0000000000000000",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "1.0000000000000000"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "RearEnvelopeLoft",
+        "WidthControlled_RearMatchedEnvelopeProfile0"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    },
+    {
+      "active_tip_reachable": true,
+      "body_history_status": "active_tip_dependency",
+      "constraint_count": 50,
+      "expressions": [
+        {
+          "expression": "pendant_master#<<ExteriorEnvelope>>.ExteriorWidth / pendant_master#<<ExteriorEnvelope>>.ReferenceWidth",
+          "path": "WidthRatio"
+        }
+      ],
+      "external_geometry": [],
+      "external_geometry_count": 0,
+      "name": "WidthControlled_RearMatchedEnvelopeProfile1",
+      "owners": [],
+      "placement": {
+        "A": "0.0436332312998600",
+        "Ox": "-0.0436193873653388",
+        "Oy": "0.0000000000000000",
+        "Oz": "0.0000000000000000",
+        "Px": "0.0000000000000005",
+        "Py": "-65.2550204660287960",
+        "Pz": "-28.5900266638974010",
+        "Q0": "-0.0218148850345620",
+        "Q1": "0.0000000000000000",
+        "Q2": "0.0000000000000000",
+        "Q3": "0.9997620270799090"
+      },
+      "suppressed": false,
+      "tip_to_sketch_path": [
+        "USBPlugLeadIn",
+        "USBCoverTetherPassage",
+        "USBFlexiblePlugStem",
+        "Body_USBTetheredCoverBounded",
+        "Body_USBTetheredCoverInnerEnvelope",
+        "Body_USBTetheredCoverInnerEnvelopeSource",
+        "CompleteExteriorEnvelope",
+        "RearEnvelopeForUSBCover",
+        "RearEnvelopeForUSBCoverSource",
+        "RearEnvelopeBackThickness",
+        "WidthControlled_RearMatchedEnvelopeProfile1"
+      ],
+      "type": "Sketcher::SketchObjectPython"
+    }
+  ],
+  "source": {
+    "document_internal_name": "remove_warp_bypass",
+    "filename": "usb-tethered-cover.FCStd",
+    "freecad_version_observed": "1.1.1 (0108fd4b4850cc46e625b60e53cea7a7bbe69f8d)",
+    "sha256": "94779f401b69d1e61eabf2f1602aedb1fe8e91b79f6cc6a3b8fb21450f3805aa"
+  }
+}
