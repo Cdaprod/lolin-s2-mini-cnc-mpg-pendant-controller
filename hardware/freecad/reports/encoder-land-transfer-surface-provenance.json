@@ -1,0 +1,2451 @@
+{
+  "document": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-encoder-fused-working.FCStd",
+  "errors": [],
+  "freecad_version": [
+    "1",
+    "1",
+    "1",
+    "20260414 (Git shallow)",
+    "Unknown",
+    "2026/04/14 22:09:59",
+    "(HEAD detached at 0108fd4b4)",
+    "0108fd4b4850cc46e625b60e53cea7a7bbe69f8d"
+  ],
+  "objects": {
+    "FrontFullLandCutter": {
+      "bounds_mm": [
+        -38.06811088727007,
+        38.096006053410335,
+        -88.61910721046303,
+        79.1773324592688,
+        -5.358983848632153,
+        0.0
+      ],
+      "edge_count": 84,
+      "face_count": 30,
+      "links": {
+        "BaseFeature": "None",
+        "Group": [
+          {
+            "document": "pendant_encoder_fused_working",
+            "object": "FrontFullLandProfile0"
+          },
+          {
+            "document": "pendant_encoder_fused_working",
+            "object": "FrontFullLandProfile1"
+          },
+          {
+            "document": "pendant_encoder_fused_working",
+            "object": "FrontFullWidthSeatLoft"
+          }
+        ],
+        "Origin": {
+          "document": "pendant_encoder_fused_working",
+          "object": "Origin064"
+        },
+        "Tip": {
+          "document": "pendant_encoder_fused_working",
+          "object": "FrontFullWidthSeatLoft"
+        }
+      },
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "solid_count": 1,
+      "surface_area_mm2": 21843.08256019134,
+      "surface_families": {
+        "BSplineSurface": {
+          "area_mm2": 7662.8270051848385,
+          "face_count": 28,
+          "parameters": {}
+        },
+        "Plane": {
+          "area_mm2": 14180.255555006499,
+          "face_count": 2,
+          "parameters": {}
+        }
+      },
+      "type": "PartDesign::Body",
+      "valid": true,
+      "volume_mm3": 35521.69423870279
+    },
+    "FrontFullLandTransfer": {
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.61910721046303,
+        79.1773324592688,
+        -19.000000000000018,
+        3.552713678800501e-15
+      ],
+      "edge_count": 557,
+      "face_count": 157,
+      "links": {
+        "Base": {
+          "document": "pendant_encoder_fused_working",
+          "object": "SmallHangerPocketBody"
+        },
+        "Tool": {
+          "document": "pendant_encoder_fused_working",
+          "object": "FrontFullLandCutter"
+        }
+      },
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "solid_count": 4,
+      "surface_area_mm2": 4016.4799020008704,
+      "surface_families": {
+        "BSplineSurface": {
+          "area_mm2": 1893.5309522038388,
+          "face_count": 128,
+          "parameters": {}
+        },
+        "Cylinder": {
+          "area_mm2": 396.951871492135,
+          "face_count": 18,
+          "parameters": {
+            "Radius=10.25": 1,
+            "Radius=3.75": 4,
+            "Radius=4.5": 2,
+            "Radius=4.6": 2,
+            "Radius=5.1": 4,
+            "Radius=6.027963001": 4,
+            "Radius=9.75": 1
+          }
+        },
+        "Plane": {
+          "area_mm2": 1725.9970783048948,
+          "face_count": 11,
+          "parameters": {}
+        }
+      },
+      "type": "Part::Common",
+      "valid": true,
+      "volume_mm3": 1093.925648475698
+    },
+    "FrontFullLandTransferRestricted": {
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.61910721046303,
+        79.1773324592688,
+        -19.000000000000018,
+        3.552713678800501e-15
+      ],
+      "edge_count": 537,
+      "face_count": 145,
+      "links": {
+        "Base": {
+          "document": "pendant_encoder_fused_working",
+          "object": "FrontFullLandTransfer"
+        },
+        "Tool": {
+          "document": "pendant_encoder_fused_working",
+          "object": "FrontMatingLandProjection"
+        }
+      },
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "solid_count": 1,
+      "surface_area_mm2": 3973.3308925618408,
+      "surface_families": {
+        "BSplineSurface": {
+          "area_mm2": 1874.240969718662,
+          "face_count": 122,
+          "parameters": {}
+        },
+        "Cylinder": {
+          "area_mm2": 383.92865239113456,
+          "face_count": 15,
+          "parameters": {
+            "Radius=3.75": 4,
+            "Radius=4.5": 2,
+            "Radius=5.1": 4,
+            "Radius=6.027963001": 4,
+            "Radius=9.75": 1
+          }
+        },
+        "Plane": {
+          "area_mm2": 1715.1612704520433,
+          "face_count": 8,
+          "parameters": {}
+        }
+      },
+      "type": "Part::Common",
+      "valid": true,
+      "volume_mm3": 1090.5134890238307
+    },
+    "FrontMatingLandProjection": {
+      "bounds_mm": [
+        -37.61055122087562,
+        37.63904008437915,
+        -87.31630221589262,
+        78.86682365776387,
+        -5.358983848622454,
+        0.0
+      ],
+      "edge_count": 645,
+      "face_count": 217,
+      "links": {
+        "Base": {
+          "document": "pendant_encoder_fused_working",
+          "object": "FrontOriginalMatingLand"
+        },
+        "DirLink": "None"
+      },
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "solid_count": 1,
+      "surface_area_mm2": 8701.55952153345,
+      "surface_families": {
+        "Cylinder": {
+          "area_mm2": 5184.385062773105,
+          "face_count": 199,
+          "parameters": {
+            "Radius=117.943492378": 6,
+            "Radius=128.226389607": 12,
+            "Radius=16.341520796": 2,
+            "Radius=16.377196341": 2,
+            "Radius=16.797096292": 6,
+            "Radius=16.937054962": 6,
+            "Radius=19.626815655": 18,
+            "Radius=21.770476119": 8,
+            "Radius=21.77072395": 8,
+            "Radius=27.625365423": 7,
+            "Radius=27.690972564": 7,
+            "Radius=3.75": 4,
+            "Radius=31.284626539": 2,
+            "Radius=33.407500146": 12,
+            "Radius=34.70493616": 6,
+            "Radius=36.097260839": 7,
+            "Radius=36.129587704": 5,
+            "Radius=37.624795653": 8,
+            "Radius=4.5": 2,
+            "Radius=5.1": 6,
+            "Radius=6.027963001": 4,
+            "Radius=60.459325004": 10,
+            "Radius=63.459325004": 10,
+            "Radius=75.031711797": 3,
+            "Radius=75.064823529": 3,
+            "Radius=78.031711797": 7,
+            "Radius=78.064823529": 7,
+            "Radius=88.13629587": 10,
+            "Radius=90.826056563": 5,
+            "Radius=90.853889531": 6
+          }
+        },
+        "Plane": {
+          "area_mm2": 3513.060070294127,
+          "face_count": 8,
+          "parameters": {}
+        },
+        "SurfaceOfExtrusion": {
+          "area_mm2": 4.114388466218684,
+          "face_count": 10,
+          "parameters": {}
+        }
+      },
+      "type": "Part::Extrusion",
+      "valid": true,
+      "volume_mm3": 8959.511370866307
+    },
+    "SmallHangerPocketBody": {
+      "bounds_mm": [
+        -42.77437713757541,
+        42.81020751811004,
+        -92.36472522473227,
+        86.68910767539026,
+        -19.000000000000018,
+        3.552713678800501e-15
+      ],
+      "edge_count": 1033,
+      "face_count": 339,
+      "links": {
+        "BaseFeature": {
+          "document": "pendant_encoder_fused_working",
+          "object": "PreserveOriginalFrontExterior"
+        },
+        "Profile": [
+          {
+            "document": "pendant_encoder_fused_working",
+            "object": "SmallHangerProfileBody"
+          },
+          []
+        ],
+        "ReferenceAxis": "None",
+        "UpToFace": "None",
+        "UpToFace2": "None",
+        "UpToShape": [],
+        "UpToShape2": [],
+        "_Body": {
+          "document": "pendant_encoder_fused_working",
+          "object": "Body"
+        }
+      },
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "solid_count": 1,
+      "surface_area_mm2": 25856.57003697975,
+      "surface_families": {
+        "BSplineSurface": {
+          "area_mm2": 14380.605441827956,
+          "face_count": 226,
+          "parameters": {}
+        },
+        "Cone": {
+          "area_mm2": 87.03384243374413,
+          "face_count": 14,
+          "parameters": {
+            "Radius=0.8": 12,
+            "Radius=4.05": 2
+          }
+        },
+        "Cylinder": {
+          "area_mm2": 4722.095098466822,
+          "face_count": 47,
+          "parameters": {
+            "Radius=0.8": 12,
+            "Radius=1.0": 1,
+            "Radius=1.45": 4,
+            "Radius=1.5": 2,
+            "Radius=10.25": 1,
+            "Radius=3.75": 4,
+            "Radius=4.5": 6,
+            "Radius=4.6": 2,
+            "Radius=5.1": 4,
+            "Radius=6.027963001": 2,
+            "Radius=7.0": 2,
+            "Radius=7.65": 1,
+            "Radius=7.75": 1,
+            "Radius=9.0": 1,
+            "Radius=9.75": 4
+          }
+        },
+        "Plane": {
+          "area_mm2": 6666.8356542511765,
+          "face_count": 52,
+          "parameters": {}
+        }
+      },
+      "type": "PartDesign::Pocket",
+      "valid": true,
+      "volume_mm3": 40859.167820750845
+    }
+  },
+  "sha256": "c20e68fcc2a17782a37aecc9eac1ae7388192e94479077532331948ac01a6d30",
+  "surface_provenance": {
+    "comparison": {
+      "angular_tolerance": 1e-07,
+      "bspline_definition_fallback_match_count": 8,
+      "complete_without_unresolved_exceptions": true,
+      "exception_count": 8,
+      "exceptions": [
+        {
+          "error": "FreeCADError('Unknown C++ exception')",
+          "source_face": 33,
+          "source_object": "FrontFullLandTransfer",
+          "surface_type": "BSplineSurface",
+          "target_face": 32
+        },
+        {
+          "error": "FreeCADError('Unknown C++ exception')",
+          "source_face": 41,
+          "source_object": "FrontFullLandTransfer",
+          "surface_type": "BSplineSurface",
+          "target_face": 38
+        },
+        {
+          "error": "FreeCADError('Unknown C++ exception')",
+          "source_face": 124,
+          "source_object": "FrontFullLandTransfer",
+          "surface_type": "BSplineSurface",
+          "target_face": 115
+        },
+        {
+          "error": "FreeCADError('Unknown C++ exception')",
+          "source_face": 134,
+          "source_object": "FrontFullLandTransfer",
+          "surface_type": "BSplineSurface",
+          "target_face": 123
+        },
+        {
+          "error": "FreeCADError('Unknown C++ exception')",
+          "source_face": 93,
+          "source_object": "SmallHangerPocketBody",
+          "surface_type": "BSplineSurface",
+          "target_face": 32
+        },
+        {
+          "error": "FreeCADError('Unknown C++ exception')",
+          "source_face": 100,
+          "source_object": "SmallHangerPocketBody",
+          "surface_type": "BSplineSurface",
+          "target_face": 38
+        },
+        {
+          "error": "FreeCADError('Unknown C++ exception')",
+          "source_face": 181,
+          "source_object": "SmallHangerPocketBody",
+          "surface_type": "BSplineSurface",
+          "target_face": 115
+        },
+        {
+          "error": "FreeCADError('Unknown C++ exception')",
+          "source_face": 190,
+          "source_object": "SmallHangerPocketBody",
+          "surface_type": "BSplineSurface",
+          "target_face": 123
+        }
+      ],
+      "linear_tolerance": 1e-07,
+      "same_python_surface_type_only": true,
+      "skipped_different_type_pair_count": 56587,
+      "skipped_different_type_pairs": {
+        "BSplineSurface vs Cone": 1708,
+        "BSplineSurface vs Cylinder": 32208,
+        "BSplineSurface vs Plane": 8906,
+        "BSplineSurface vs SurfaceOfExtrusion": 1220,
+        "Cylinder vs BSplineSurface": 5730,
+        "Cylinder vs Cone": 210,
+        "Cylinder vs Plane": 1095,
+        "Cylinder vs SurfaceOfExtrusion": 150,
+        "Plane vs BSplineSurface": 3056,
+        "Plane vs Cone": 112,
+        "Plane vs Cylinder": 2112,
+        "Plane vs SurfaceOfExtrusion": 80
+      },
+      "support_surface_isSame": true,
+      "unresolved_exception_count": 0
+    },
+    "matched_target_face_union_count": 122,
+    "sources": {
+      "FrontFullLandCutter": {
+        "matched_target_face_count": 32,
+        "matches": [
+          {
+            "area_mm2": 92.42999741944637,
+            "source_faces": [
+              15
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 2
+          },
+          {
+            "area_mm2": 96.36595221886664,
+            "source_faces": [
+              14
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 3
+          },
+          {
+            "area_mm2": 73.12526049523278,
+            "source_faces": [
+              13
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 4
+          },
+          {
+            "area_mm2": 35.89840898155198,
+            "source_faces": [
+              12
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 5
+          },
+          {
+            "area_mm2": 17.610530232193696,
+            "source_faces": [
+              11
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 8
+          },
+          {
+            "area_mm2": 33.29219582899271,
+            "source_faces": [
+              10
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 9
+          },
+          {
+            "area_mm2": 9.161186614470457,
+            "source_faces": [
+              9
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 10
+          },
+          {
+            "area_mm2": 61.19786575206042,
+            "source_faces": [
+              8
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 11
+          },
+          {
+            "area_mm2": 54.48327438718719,
+            "source_faces": [
+              7
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 12
+          },
+          {
+            "area_mm2": 27.634400285546462,
+            "source_faces": [
+              6
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 13
+          },
+          {
+            "area_mm2": 43.57842242794856,
+            "source_faces": [
+              4
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 14
+          },
+          {
+            "area_mm2": 29.874865587778054,
+            "source_faces": [
+              5
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 15
+          },
+          {
+            "area_mm2": 182.22058499379017,
+            "source_faces": [
+              2
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 16
+          },
+          {
+            "area_mm2": 27.70288573646585,
+            "source_faces": [
+              28
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 17
+          },
+          {
+            "area_mm2": 29.891182460213653,
+            "source_faces": [
+              29
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 18
+          },
+          {
+            "area_mm2": 43.39519217497722,
+            "source_faces": [
+              30
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 19
+          },
+          {
+            "area_mm2": 54.59596067136837,
+            "source_faces": [
+              27
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 20
+          },
+          {
+            "area_mm2": 61.12486283347096,
+            "source_faces": [
+              26
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 21
+          },
+          {
+            "area_mm2": 9.194993525487511,
+            "source_faces": [
+              25
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 22
+          },
+          {
+            "area_mm2": 33.48291296536733,
+            "source_faces": [
+              24
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 23
+          },
+          {
+            "area_mm2": 19.593386929503936,
+            "source_faces": [
+              23
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 24
+          },
+          {
+            "area_mm2": 38.66619891525221,
+            "source_faces": [
+              22
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 25
+          },
+          {
+            "area_mm2": 72.78031786126232,
+            "source_faces": [
+              21
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 26
+          },
+          {
+            "area_mm2": 97.43596944687164,
+            "source_faces": [
+              20
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 27
+          },
+          {
+            "area_mm2": 93.24350171518043,
+            "source_faces": [
+              19
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 28
+          },
+          {
+            "area_mm2": 220.97243342966678,
+            "source_faces": [
+              17
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 29
+          },
+          {
+            "area_mm2": 7.895997542838343,
+            "source_faces": [
+              18
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 30
+          },
+          {
+            "area_mm2": 7.805256028068173,
+            "source_faces": [
+              16
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 31
+          },
+          {
+            "area_mm2": 3.0448148464506497,
+            "source_faces": [
+              9
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 131
+          },
+          {
+            "area_mm2": 7.553921267056625,
+            "source_faces": [
+              5
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 132
+          },
+          {
+            "area_mm2": 7.538003356294958,
+            "source_faces": [
+              29
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 133
+          },
+          {
+            "area_mm2": 3.030678816806123,
+            "source_faces": [
+              25
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 134
+          }
+        ]
+      },
+      "FrontFullLandTransfer": {
+        "matched_target_face_count": 122,
+        "matches": [
+          {
+            "area_mm2": 92.42999741944637,
+            "source_faces": [
+              2
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 2
+          },
+          {
+            "area_mm2": 96.36595221886664,
+            "source_faces": [
+              3
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 3
+          },
+          {
+            "area_mm2": 73.12526049523278,
+            "source_faces": [
+              4,
+              151
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 4
+          },
+          {
+            "area_mm2": 35.89840898155198,
+            "source_faces": [
+              5,
+              152
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 5
+          },
+          {
+            "area_mm2": 17.610530232193696,
+            "source_faces": [
+              8
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 8
+          },
+          {
+            "area_mm2": 33.29219582899271,
+            "source_faces": [
+              9
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 9
+          },
+          {
+            "area_mm2": 9.161186614470457,
+            "source_faces": [
+              10,
+              142
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 10
+          },
+          {
+            "area_mm2": 61.19786575206042,
+            "source_faces": [
+              11
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 11
+          },
+          {
+            "area_mm2": 54.48327438718719,
+            "source_faces": [
+              12
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 12
+          },
+          {
+            "area_mm2": 27.634400285546462,
+            "source_faces": [
+              13
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 13
+          },
+          {
+            "area_mm2": 43.57842242794856,
+            "source_faces": [
+              14
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 14
+          },
+          {
+            "area_mm2": 29.874865587778054,
+            "source_faces": [
+              15,
+              143
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 15
+          },
+          {
+            "area_mm2": 182.22058499379017,
+            "source_faces": [
+              16
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 16
+          },
+          {
+            "area_mm2": 27.70288573646585,
+            "source_faces": [
+              17
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 17
+          },
+          {
+            "area_mm2": 29.891182460213653,
+            "source_faces": [
+              18,
+              144
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 18
+          },
+          {
+            "area_mm2": 43.39519217497722,
+            "source_faces": [
+              19
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 19
+          },
+          {
+            "area_mm2": 54.59596067136837,
+            "source_faces": [
+              20
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 20
+          },
+          {
+            "area_mm2": 61.12486283347096,
+            "source_faces": [
+              21
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 21
+          },
+          {
+            "area_mm2": 9.194993525487511,
+            "source_faces": [
+              22,
+              145
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 22
+          },
+          {
+            "area_mm2": 33.48291296536733,
+            "source_faces": [
+              23
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 23
+          },
+          {
+            "area_mm2": 19.593386929503936,
+            "source_faces": [
+              24,
+              149
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 24
+          },
+          {
+            "area_mm2": 38.66619891525221,
+            "source_faces": [
+              25,
+              148,
+              155
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 25
+          },
+          {
+            "area_mm2": 72.78031786126232,
+            "source_faces": [
+              26,
+              156
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 26
+          },
+          {
+            "area_mm2": 97.43596944687164,
+            "source_faces": [
+              27
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 27
+          },
+          {
+            "area_mm2": 93.24350171518043,
+            "source_faces": [
+              28
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 28
+          },
+          {
+            "area_mm2": 220.97243342966678,
+            "source_faces": [
+              29
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 29
+          },
+          {
+            "area_mm2": 7.895997542838343,
+            "source_faces": [
+              30
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 30
+          },
+          {
+            "area_mm2": 7.805256028068173,
+            "source_faces": [
+              31
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 31
+          },
+          {
+            "area_mm2": 4.097225660419192,
+            "source_faces": [
+              33
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 32
+          },
+          {
+            "area_mm2": 0.12183707461250966,
+            "source_faces": [
+              35
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 33
+          },
+          {
+            "area_mm2": 1.2690710005693295,
+            "source_faces": [
+              36
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 34
+          },
+          {
+            "area_mm2": 0.08345488075383586,
+            "source_faces": [
+              38
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 35
+          },
+          {
+            "area_mm2": 4.60127883357165,
+            "source_faces": [
+              39
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 36
+          },
+          {
+            "area_mm2": 1.8033436424649694,
+            "source_faces": [
+              40
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 37
+          },
+          {
+            "area_mm2": 3.1033216845353375,
+            "source_faces": [
+              41
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 38
+          },
+          {
+            "area_mm2": 0.8306125167906598,
+            "source_faces": [
+              42
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 39
+          },
+          {
+            "area_mm2": 0.8984214530080343,
+            "source_faces": [
+              43
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 40
+          },
+          {
+            "area_mm2": 9.923692681132891,
+            "source_faces": [
+              44
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 41
+          },
+          {
+            "area_mm2": 1.8736418620790598,
+            "source_faces": [
+              45
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 42
+          },
+          {
+            "area_mm2": 0.5891173016663707,
+            "source_faces": [
+              46
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 43
+          },
+          {
+            "area_mm2": 0.9724182459849353,
+            "source_faces": [
+              47
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 44
+          },
+          {
+            "area_mm2": 0.9153102533632295,
+            "source_faces": [
+              48
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 45
+          },
+          {
+            "area_mm2": 3.755248375606514,
+            "source_faces": [
+              49
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 46
+          },
+          {
+            "area_mm2": 0.5028914638669179,
+            "source_faces": [
+              50
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 47
+          },
+          {
+            "area_mm2": 0.4479883529076603,
+            "source_faces": [
+              51
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 48
+          },
+          {
+            "area_mm2": 0.7317253090992849,
+            "source_faces": [
+              52
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 49
+          },
+          {
+            "area_mm2": 0.009464000451132439,
+            "source_faces": [
+              53
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 50
+          },
+          {
+            "area_mm2": 2.0209810015370486,
+            "source_faces": [
+              54
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 51
+          },
+          {
+            "area_mm2": 0.88802743418041,
+            "source_faces": [
+              55
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 52
+          },
+          {
+            "area_mm2": 2.6195164882201967,
+            "source_faces": [
+              57
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 53
+          },
+          {
+            "area_mm2": 0.8621317333937742,
+            "source_faces": [
+              59
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 55
+          },
+          {
+            "area_mm2": 0.6609190590831772,
+            "source_faces": [
+              61
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 56
+          },
+          {
+            "area_mm2": 0.4898399182475982,
+            "source_faces": [
+              62
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 57
+          },
+          {
+            "area_mm2": 0.5275054802309683,
+            "source_faces": [
+              63,
+              68
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 58
+          },
+          {
+            "area_mm2": 0.16796041277789509,
+            "source_faces": [
+              64
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 59
+          },
+          {
+            "area_mm2": 1.116228458417325,
+            "source_faces": [
+              66
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 60
+          },
+          {
+            "area_mm2": 0.1425517926972656,
+            "source_faces": [
+              67
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 61
+          },
+          {
+            "area_mm2": 7.2829555735075395,
+            "source_faces": [
+              63,
+              68
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 62
+          },
+          {
+            "area_mm2": 2.9974104399213557,
+            "source_faces": [
+              69
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 63
+          },
+          {
+            "area_mm2": 0.35864375022166994,
+            "source_faces": [
+              70
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 64
+          },
+          {
+            "area_mm2": 9.960379876114295,
+            "source_faces": [
+              71
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 65
+          },
+          {
+            "area_mm2": 4.856077348357305,
+            "source_faces": [
+              72
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 66
+          },
+          {
+            "area_mm2": 0.1701309742365203,
+            "source_faces": [
+              73
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 67
+          },
+          {
+            "area_mm2": 0.4004878471951116,
+            "source_faces": [
+              74
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 68
+          },
+          {
+            "area_mm2": 0.8343129421400769,
+            "source_faces": [
+              75
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 69
+          },
+          {
+            "area_mm2": 0.1445135249472315,
+            "source_faces": [
+              76
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 70
+          },
+          {
+            "area_mm2": 0.25612863644413175,
+            "source_faces": [
+              77
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 71
+          },
+          {
+            "area_mm2": 0.12394772700735084,
+            "source_faces": [
+              78
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 72
+          },
+          {
+            "area_mm2": 2.1506499082029418,
+            "source_faces": [
+              79
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 73
+          },
+          {
+            "area_mm2": 1.0390669915337813,
+            "source_faces": [
+              80
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 74
+          },
+          {
+            "area_mm2": 2.0067406539676806,
+            "source_faces": [
+              81
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 75
+          },
+          {
+            "area_mm2": 18.410225855408378,
+            "source_faces": [
+              82
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 76
+          },
+          {
+            "area_mm2": 41.28083195772467,
+            "source_faces": [
+              83
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 77
+          },
+          {
+            "area_mm2": 18.0990637962228,
+            "source_faces": [
+              84
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 78
+          },
+          {
+            "area_mm2": 41.47924504047776,
+            "source_faces": [
+              85
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 79
+          },
+          {
+            "area_mm2": 1.0397046910336876,
+            "source_faces": [
+              86
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 80
+          },
+          {
+            "area_mm2": 2.023104774070047,
+            "source_faces": [
+              87
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 81
+          },
+          {
+            "area_mm2": 0.12389328740782093,
+            "source_faces": [
+              88
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 82
+          },
+          {
+            "area_mm2": 2.1685548391480567,
+            "source_faces": [
+              89
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 83
+          },
+          {
+            "area_mm2": 0.14453977948542787,
+            "source_faces": [
+              90
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 84
+          },
+          {
+            "area_mm2": 0.27353304210975515,
+            "source_faces": [
+              91
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 85
+          },
+          {
+            "area_mm2": 0.39767836206746654,
+            "source_faces": [
+              92
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 86
+          },
+          {
+            "area_mm2": 0.8260507987833818,
+            "source_faces": [
+              93
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 87
+          },
+          {
+            "area_mm2": 4.840278533557767,
+            "source_faces": [
+              94
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 88
+          },
+          {
+            "area_mm2": 0.18689729655466206,
+            "source_faces": [
+              95
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 89
+          },
+          {
+            "area_mm2": 0.35809990622952875,
+            "source_faces": [
+              96
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 90
+          },
+          {
+            "area_mm2": 10.033038704554762,
+            "source_faces": [
+              97
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 91
+          },
+          {
+            "area_mm2": 7.309354591307494,
+            "source_faces": [
+              98,
+              102
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 92
+          },
+          {
+            "area_mm2": 3.0243411260998174,
+            "source_faces": [
+              99
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 93
+          },
+          {
+            "area_mm2": 0.1427975273627578,
+            "source_faces": [
+              101
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 94
+          },
+          {
+            "area_mm2": 0.5273563509624105,
+            "source_faces": [
+              98,
+              102
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 95
+          },
+          {
+            "area_mm2": 1.2026478050211176,
+            "source_faces": [
+              103
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 96
+          },
+          {
+            "area_mm2": 0.6220385469167484,
+            "source_faces": [
+              104
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 97
+          },
+          {
+            "area_mm2": 0.09418108530517562,
+            "source_faces": [
+              105
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 98
+          },
+          {
+            "area_mm2": 0.8649421962170545,
+            "source_faces": [
+              106
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 99
+          },
+          {
+            "area_mm2": 0.49444619668269,
+            "source_faces": [
+              107
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 100
+          },
+          {
+            "area_mm2": 2.6557175725152047,
+            "source_faces": [
+              108
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 101
+          },
+          {
+            "area_mm2": 0.8883741375307393,
+            "source_faces": [
+              110
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 102
+          },
+          {
+            "area_mm2": 0.009536196788971066,
+            "source_faces": [
+              112
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 104
+          },
+          {
+            "area_mm2": 0.47908780317784594,
+            "source_faces": [
+              114
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 105
+          },
+          {
+            "area_mm2": 2.0298147444677745,
+            "source_faces": [
+              115
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 106
+          },
+          {
+            "area_mm2": 3.7255376290887607,
+            "source_faces": [
+              116
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 107
+          },
+          {
+            "area_mm2": 0.7296927964537457,
+            "source_faces": [
+              117
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 108
+          },
+          {
+            "area_mm2": 0.9722681071073473,
+            "source_faces": [
+              118
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 109
+          },
+          {
+            "area_mm2": 0.5085583907495238,
+            "source_faces": [
+              119
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 110
+          },
+          {
+            "area_mm2": 1.849779017841177,
+            "source_faces": [
+              120
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 111
+          },
+          {
+            "area_mm2": 0.9374103774048406,
+            "source_faces": [
+              121
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 112
+          },
+          {
+            "area_mm2": 0.8984332411250044,
+            "source_faces": [
+              122
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 113
+          },
+          {
+            "area_mm2": 0.5955680615318139,
+            "source_faces": [
+              123
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 114
+          },
+          {
+            "area_mm2": 3.1271506817530144,
+            "source_faces": [
+              124
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 115
+          },
+          {
+            "area_mm2": 11.553669475858296,
+            "source_faces": [
+              125
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 116
+          },
+          {
+            "area_mm2": 4.60327309018637,
+            "source_faces": [
+              126
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 117
+          },
+          {
+            "area_mm2": 0.8302380005591904,
+            "source_faces": [
+              127
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 118
+          },
+          {
+            "area_mm2": 1.8899862130735228,
+            "source_faces": [
+              129
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 119
+          },
+          {
+            "area_mm2": 0.08441605989457898,
+            "source_faces": [
+              131
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 121
+          },
+          {
+            "area_mm2": 1.2263017455206437,
+            "source_faces": [
+              133
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 122
+          },
+          {
+            "area_mm2": 4.127621883826991,
+            "source_faces": [
+              134
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 123
+          },
+          {
+            "area_mm2": 0.1231000883616698,
+            "source_faces": [
+              135
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 124
+          },
+          {
+            "area_mm2": 3.0448148464506497,
+            "source_faces": [
+              10,
+              142
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 131
+          },
+          {
+            "area_mm2": 7.553921267056625,
+            "source_faces": [
+              15,
+              143
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 132
+          },
+          {
+            "area_mm2": 7.538003356294958,
+            "source_faces": [
+              18,
+              144
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 133
+          },
+          {
+            "area_mm2": 3.030678816806123,
+            "source_faces": [
+              22,
+              145
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 134
+          }
+        ]
+      },
+      "FrontMatingLandProjection": {
+        "matched_target_face_count": 0,
+        "matches": []
+      },
+      "SmallHangerPocketBody": {
+        "matched_target_face_count": 90,
+        "matches": [
+          {
+            "area_mm2": 4.097225660419192,
+            "source_faces": [
+              93
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 32
+          },
+          {
+            "area_mm2": 0.12183707461250966,
+            "source_faces": [
+              95,
+              217
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 33
+          },
+          {
+            "area_mm2": 1.2690710005693295,
+            "source_faces": [
+              96,
+              216
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 34
+          },
+          {
+            "area_mm2": 0.08345488075383586,
+            "source_faces": [
+              97,
+              215
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 35
+          },
+          {
+            "area_mm2": 4.60127883357165,
+            "source_faces": [
+              98
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 36
+          },
+          {
+            "area_mm2": 1.8033436424649694,
+            "source_faces": [
+              99,
+              214
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 37
+          },
+          {
+            "area_mm2": 3.1033216845353375,
+            "source_faces": [
+              100
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 38
+          },
+          {
+            "area_mm2": 0.8306125167906598,
+            "source_faces": [
+              101,
+              213
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 39
+          },
+          {
+            "area_mm2": 0.8984214530080343,
+            "source_faces": [
+              102
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 40
+          },
+          {
+            "area_mm2": 9.923692681132891,
+            "source_faces": [
+              103,
+              212
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 41
+          },
+          {
+            "area_mm2": 1.8736418620790598,
+            "source_faces": [
+              104
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 42
+          },
+          {
+            "area_mm2": 0.5891173016663707,
+            "source_faces": [
+              105
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 43
+          },
+          {
+            "area_mm2": 0.9724182459849353,
+            "source_faces": [
+              106
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 44
+          },
+          {
+            "area_mm2": 0.9153102533632295,
+            "source_faces": [
+              107,
+              208
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 45
+          },
+          {
+            "area_mm2": 3.755248375606514,
+            "source_faces": [
+              108
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 46
+          },
+          {
+            "area_mm2": 0.5028914638669179,
+            "source_faces": [
+              109,
+              207
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 47
+          },
+          {
+            "area_mm2": 0.4479883529076603,
+            "source_faces": [
+              110
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 48
+          },
+          {
+            "area_mm2": 0.7317253090992849,
+            "source_faces": [
+              111,
+              206
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 49
+          },
+          {
+            "area_mm2": 0.009464000451132439,
+            "source_faces": [
+              112
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 50
+          },
+          {
+            "area_mm2": 2.0209810015370486,
+            "source_faces": [
+              113,
+              205
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 51
+          },
+          {
+            "area_mm2": 0.88802743418041,
+            "source_faces": [
+              114
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 52
+          },
+          {
+            "area_mm2": 2.6195164882201967,
+            "source_faces": [
+              116
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 53
+          },
+          {
+            "area_mm2": 0.8621317333937742,
+            "source_faces": [
+              118
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 55
+          },
+          {
+            "area_mm2": 0.6609190590831772,
+            "source_faces": [
+              120
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 56
+          },
+          {
+            "area_mm2": 0.4898399182475982,
+            "source_faces": [
+              121
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 57
+          },
+          {
+            "area_mm2": 0.5275054802309683,
+            "source_faces": [
+              122
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 58
+          },
+          {
+            "area_mm2": 0.16796041277789509,
+            "source_faces": [
+              123
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 59
+          },
+          {
+            "area_mm2": 1.116228458417325,
+            "source_faces": [
+              125
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 60
+          },
+          {
+            "area_mm2": 0.1425517926972656,
+            "source_faces": [
+              126
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 61
+          },
+          {
+            "area_mm2": 7.2829555735075395,
+            "source_faces": [
+              122
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 62
+          },
+          {
+            "area_mm2": 2.9974104399213557,
+            "source_faces": [
+              127
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 63
+          },
+          {
+            "area_mm2": 0.35864375022166994,
+            "source_faces": [
+              128
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 64
+          },
+          {
+            "area_mm2": 9.960379876114295,
+            "source_faces": [
+              129
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 65
+          },
+          {
+            "area_mm2": 4.856077348357305,
+            "source_faces": [
+              130
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 66
+          },
+          {
+            "area_mm2": 0.1701309742365203,
+            "source_faces": [
+              131
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 67
+          },
+          {
+            "area_mm2": 0.4004878471951116,
+            "source_faces": [
+              132
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 68
+          },
+          {
+            "area_mm2": 0.8343129421400769,
+            "source_faces": [
+              133
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 69
+          },
+          {
+            "area_mm2": 0.1445135249472315,
+            "source_faces": [
+              134
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 70
+          },
+          {
+            "area_mm2": 0.25612863644413175,
+            "source_faces": [
+              135
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 71
+          },
+          {
+            "area_mm2": 0.12394772700735084,
+            "source_faces": [
+              136
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 72
+          },
+          {
+            "area_mm2": 2.1506499082029418,
+            "source_faces": [
+              137
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 73
+          },
+          {
+            "area_mm2": 1.0390669915337813,
+            "source_faces": [
+              138,
+              223
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 74
+          },
+          {
+            "area_mm2": 2.0067406539676806,
+            "source_faces": [
+              139
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 75
+          },
+          {
+            "area_mm2": 18.410225855408378,
+            "source_faces": [
+              140
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 76
+          },
+          {
+            "area_mm2": 41.28083195772467,
+            "source_faces": [
+              141
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 77
+          },
+          {
+            "area_mm2": 18.0990637962228,
+            "source_faces": [
+              142
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 78
+          },
+          {
+            "area_mm2": 41.47924504047776,
+            "source_faces": [
+              143
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 79
+          },
+          {
+            "area_mm2": 1.0397046910336876,
+            "source_faces": [
+              144,
+              225
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 80
+          },
+          {
+            "area_mm2": 2.023104774070047,
+            "source_faces": [
+              145
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 81
+          },
+          {
+            "area_mm2": 0.12389328740782093,
+            "source_faces": [
+              146
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 82
+          },
+          {
+            "area_mm2": 2.1685548391480567,
+            "source_faces": [
+              147
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 83
+          },
+          {
+            "area_mm2": 0.14453977948542787,
+            "source_faces": [
+              148
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 84
+          },
+          {
+            "area_mm2": 0.27353304210975515,
+            "source_faces": [
+              149
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 85
+          },
+          {
+            "area_mm2": 0.39767836206746654,
+            "source_faces": [
+              150
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 86
+          },
+          {
+            "area_mm2": 0.8260507987833818,
+            "source_faces": [
+              151
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 87
+          },
+          {
+            "area_mm2": 4.840278533557767,
+            "source_faces": [
+              152
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 88
+          },
+          {
+            "area_mm2": 0.18689729655466206,
+            "source_faces": [
+              153
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 89
+          },
+          {
+            "area_mm2": 0.35809990622952875,
+            "source_faces": [
+              154
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 90
+          },
+          {
+            "area_mm2": 10.033038704554762,
+            "source_faces": [
+              155
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 91
+          },
+          {
+            "area_mm2": 7.309354591307494,
+            "source_faces": [
+              156
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 92
+          },
+          {
+            "area_mm2": 3.0243411260998174,
+            "source_faces": [
+              157
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 93
+          },
+          {
+            "area_mm2": 0.1427975273627578,
+            "source_faces": [
+              159
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 94
+          },
+          {
+            "area_mm2": 0.5273563509624105,
+            "source_faces": [
+              156
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 95
+          },
+          {
+            "area_mm2": 1.2026478050211176,
+            "source_faces": [
+              160
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 96
+          },
+          {
+            "area_mm2": 0.6220385469167484,
+            "source_faces": [
+              161
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 97
+          },
+          {
+            "area_mm2": 0.09418108530517562,
+            "source_faces": [
+              162
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 98
+          },
+          {
+            "area_mm2": 0.8649421962170545,
+            "source_faces": [
+              163
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 99
+          },
+          {
+            "area_mm2": 0.49444619668269,
+            "source_faces": [
+              164
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 100
+          },
+          {
+            "area_mm2": 2.6557175725152047,
+            "source_faces": [
+              165
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 101
+          },
+          {
+            "area_mm2": 0.8883741375307393,
+            "source_faces": [
+              167
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 102
+          },
+          {
+            "area_mm2": 0.009536196788971066,
+            "source_faces": [
+              169
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 104
+          },
+          {
+            "area_mm2": 0.47908780317784594,
+            "source_faces": [
+              171
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 105
+          },
+          {
+            "area_mm2": 2.0298147444677745,
+            "source_faces": [
+              172,
+              200
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 106
+          },
+          {
+            "area_mm2": 3.7255376290887607,
+            "source_faces": [
+              173
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 107
+          },
+          {
+            "area_mm2": 0.7296927964537457,
+            "source_faces": [
+              174,
+              199
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 108
+          },
+          {
+            "area_mm2": 0.9722681071073473,
+            "source_faces": [
+              175
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 109
+          },
+          {
+            "area_mm2": 0.5085583907495238,
+            "source_faces": [
+              176,
+              198
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 110
+          },
+          {
+            "area_mm2": 1.849779017841177,
+            "source_faces": [
+              177
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 111
+          },
+          {
+            "area_mm2": 0.9374103774048406,
+            "source_faces": [
+              178,
+              197
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 112
+          },
+          {
+            "area_mm2": 0.8984332411250044,
+            "source_faces": [
+              179
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 113
+          },
+          {
+            "area_mm2": 0.5955680615318139,
+            "source_faces": [
+              180
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 114
+          },
+          {
+            "area_mm2": 3.1271506817530144,
+            "source_faces": [
+              181
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 115
+          },
+          {
+            "area_mm2": 11.553669475858296,
+            "source_faces": [
+              182,
+              196
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 116
+          },
+          {
+            "area_mm2": 4.60327309018637,
+            "source_faces": [
+              183
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 117
+          },
+          {
+            "area_mm2": 0.8302380005591904,
+            "source_faces": [
+              184
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 118
+          },
+          {
+            "area_mm2": 1.8899862130735228,
+            "source_faces": [
+              186
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 119
+          },
+          {
+            "area_mm2": 0.08441605989457898,
+            "source_faces": [
+              188
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 121
+          },
+          {
+            "area_mm2": 1.2263017455206437,
+            "source_faces": [
+              189
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 122
+          },
+          {
+            "area_mm2": 4.127621883826991,
+            "source_faces": [
+              190
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 123
+          },
+          {
+            "area_mm2": 0.1231000883616698,
+            "source_faces": [
+              191,
+              224
+            ],
+            "surface_type": "BSplineSurface",
+            "target_face": 124
+          }
+        ]
+      }
+    },
+    "target_object": "FrontFullLandTransferRestricted",
+    "unmatched_target_face_indices": [
+      1,
+      6,
+      7,
+      54,
+      103,
+      120,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140,
+      141,
+      142,
+      143,
+      144,
+      145
+    ]
+  }
+}

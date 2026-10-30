@@ -43,6 +43,8 @@ A read-only FreeCADCmd probe loaded the same encoder candidate without recomputi
 
 This confirms that the reciprocal dependency supplies actual retention and clearance material, rather than an inert link. The high B-spline face count also means a compact sketch replacement is not established by these measurements. The probe describes saved shapes only; it did not recompute the document and does not prove equivalence after reconstruction. Reproduce it with `scripts/probe_shape_surface_families.py`; the raw per-face-family counts, bounds, volumes, object links, FreeCAD version, and source SHA are in `encoder-retention-interface-surface-inventory.json`.
 
+The subsequent saved-shape surface provenance trace narrows one input: 90 B-spline support definitions in `FrontFullLandTransferRestricted` first appear in `FrontMatchedInnerCavity`, while 32 are associated with the loft cutter. This is a bounded replacement hypothesis only; no Base substitution has passed geometry comparison. See `encoder-land-transfer-provenance.md` and its machine-readable record.
+
 ## Engineering implication
 
 The immediate encoder blocker is not the 110-face `SmallHangerPocketBody` alone, nor the two final binder supports. It is the broader shared upstream graph. A safe standalone encoder boundary needs a coordinated interface for the receiver/shell, retention keepout/capture lip, and front-shell land/nut-relief inputs. The current data does not establish that these can be reduced to a compact master sketch or datum without changing the native history.
