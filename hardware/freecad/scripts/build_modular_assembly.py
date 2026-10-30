@@ -2,8 +2,8 @@
 """Build a portable linked assembly without recomputing the legacy monolith.
 
 Migrated component Bodies are App::Links to their editable source documents.
-Bodies whose dependency histories are not yet safe to migrate are embedded as
-explicitly labeled static BREP snapshots extracted from pendant.FCStd.
+Shell and upper-faceplate snapshots are extracted from pendant.FCStd; the encoder
+faceplate and pocket are embedded as one fused BREP from the manual-split handoff.
 """
 from __future__ import annotations
 
@@ -37,9 +37,9 @@ INTERIM = {
     "Body": "Front shell",
     "Body002": "Rear shell",
     "Body003": "Upper faceplate",
-    "Body_EncoderFacePlate": "Encoder faceplate",
-    "Body_EncoderPocket": "Encoder pocket",
 }
+UNSPLIT_ENCODER_SOURCE = FREECAD_DIR / "encoder-faceplate-pocket-unsplit-user-split.FCStd"
+UNSPLIT_ENCODER_OBJECT = "EncoderFaceplatePocketUnsplit"
 
 
 def find_freecadcmd(override: str | None) -> str:
@@ -59,6 +59,10 @@ def macro_source(freecad_dir: Path, brep_dir: Path, output: Path, source_hash: s
         "source_hash": source_hash,
         "components": COMPONENTS,
         "interim": INTERIM,
+        "unsplit_encoder_brep": str(brep_dir / (UNSPLIT_ENCODER_OBJECT + ".brep")),
+        "unsplit_encoder_source": UNSPLIT_ENCODER_SOURCE.name,
+        "unsplit_encoder_source_hash": hashlib.sha256(UNSPLIT_ENCODER_SOURCE.read_bytes()).hexdigest(),
+        "unsplit_encoder_object": UNSPLIT_ENCODER_OBJECT,
     })
     return r'''import FreeCAD as App, Part, json, traceback, os
 from pathlib import Path
@@ -128,6 +132,19 @@ try:
         info=shape_info(obj)
         if not info['valid'] or info['solids']!=1: raise RuntimeError('invalid interim source BREP: '+name)
         report['interim'].append({'source':name,'label':label,'shape':info})
+    unsplit=Path(CFG['unsplit_encoder_brep'])
+    s=Part.Shape(); s.read(str(unsplit))
+    obj=d.addObject('Part::Feature','Interim_'+CFG['unsplit_encoder_object'])
+    obj.Label='INTERIM — encoder faceplate + pocket (one fused solid)'
+    obj.Shape=s; interim.addObject(obj)
+    obj.addProperty('App::PropertyString','RepresentationStatus','Migration')
+    obj.RepresentationStatus='Static BREP handoff. The separate user-split file is a single solid; native source histories remain in pendant-encoder-fused-working.FCStd.'
+    obj.addProperty('App::PropertyString','SourceDocument','Migration'); obj.SourceDocument=CFG['unsplit_encoder_source']
+    obj.addProperty('App::PropertyString','SourceObjectName','Migration'); obj.SourceObjectName=CFG['unsplit_encoder_object']
+    obj.addProperty('App::PropertyString','SourceSHA256','Migration'); obj.SourceSHA256=CFG['unsplit_encoder_source_hash']
+    info=shape_info(obj)
+    if not info['valid'] or info['solids']!=1: raise RuntimeError('invalid unsplit encoder handoff BREP')
+    report['interim'].append({'source':CFG['unsplit_encoder_source']+'/'+CFG['unsplit_encoder_object'],'label':'Fused encoder faceplate + pocket, unsplit','shape':info})
     index=0
     for filename,names in CFG['components'].items():
         doc=component_docs[filename]
@@ -138,7 +155,7 @@ try:
             link.Label=target.Label+' — editable source link'
             link.setLink(target); link.LinkPlacement=target.Placement; editable.addObject(link)
             report['links'].append(validate_link(link)); index+=1
-    if len(report['links'])!=5 or len(report['interim'])!=5:
+    if len(report['links'])!=5 or len(report['interim'])!=4:
         raise RuntimeError('unexpected component count in assembly')
     d.recompute()
     # Validate all links again after the assembly recompute.
@@ -155,7 +172,7 @@ try:
     report['reopened_links']=[validate_link(o) for o in links]
     interim_objs=[o for o in d.Objects if o.Name.startswith('Interim_')]
     report['reopened_interim']=[{'name':o.Name,'shape':shape_info(o)} for o in interim_objs]
-    if len(links)!=5 or len(interim_objs)!=5 or any(not x['shape']['valid'] for x in report['reopened_interim']):
+    if len(links)!=5 or len(interim_objs)!=4 or any(not x['shape']['valid'] for x in report['reopened_interim']):
         raise RuntimeError('assembly failed save/reopen validation')
     report['reopen_ok']=True
 except Exception as exc:
@@ -209,6 +226,12 @@ def main() -> int:
                 member=name+'.Shape.brp'
                 if member not in archive.namelist(): raise SystemExit('Missing saved source BREP: '+member)
                 (brep_dir/(name+'.brep')).write_bytes(archive.read(member))
+        if not UNSPLIT_ENCODER_SOURCE.is_file():
+            raise SystemExit('Missing unsplit encoder handoff: '+str(UNSPLIT_ENCODER_SOURCE))
+        encoder_member=UNSPLIT_ENCODER_OBJECT+'.Shape.brp'
+        with zipfile.ZipFile(UNSPLIT_ENCODER_SOURCE) as archive:
+            if encoder_member not in archive.namelist(): raise SystemExit('Missing unsplit encoder BREP: '+encoder_member)
+            (brep_dir/(UNSPLIT_ENCODER_OBJECT+'.brep')).write_bytes(archive.read(encoder_member))
         macro=td_path/'build_modular_assembly.FCMacro'
         macro.write_text(macro_source(FREECAD_DIR,brep_dir,output,source_hash),encoding='utf-8')
         proc=subprocess.Popen([command,str(macro)],cwd=ROOT,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,

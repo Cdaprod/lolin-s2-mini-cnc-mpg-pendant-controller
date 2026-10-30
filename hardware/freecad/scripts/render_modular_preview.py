@@ -29,13 +29,12 @@ FREECAD_DIR = SCRIPT.parents[1]
 DEFAULT_CMD = Path('/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd')
 ASSEMBLY = FREECAD_DIR / 'pendant-modular-assembly.FCStd'
 EXPECTED_LINKS = 5
-EXPECTED_INTERIM = 5
+EXPECTED_INTERIM = 4
 PALETTE = {
     'Interim_Body': (48, 134, 104),
     'Interim_Body002': (49, 107, 155),
     'Interim_Body003': (216, 156, 61),
-    'Interim_Body_EncoderFacePlate': (143, 101, 178),
-    'Interim_Body_EncoderPocket': (45, 154, 170),
+    'Interim_EncoderFaceplatePocketUnsplit': (45, 154, 170),
     'Interim_Body006': (136, 145, 151),
     'Editable_Body_DisplayRetainer_EditableV2': (225, 112, 78),
     'Editable_Body_USBTetheredCover': (111, 171, 103),

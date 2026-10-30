@@ -104,7 +104,7 @@ try:
     for obj in static:
         if not info(obj)['valid'] or info(obj)['solids']!=1: raise RuntimeError('invalid static interim shape '+obj.Name)
         report['interim'].append({'name':obj.Name,'shape':info(obj)})
-    if len(links)!=5 or len(static)!=5: raise RuntimeError('unexpected assembly inventory')
+    if len(links)!=5 or len(static)!=4: raise RuntimeError('unexpected assembly inventory')
     # Save only the assembly, backing it up before any overwrite.
     backup(assembly.FileName); assembly.save()
     assembly_name=assembly.Name

@@ -112,7 +112,7 @@ def validate_and_save(path, kind):
             shape = obj.Shape
             if shape.isNull() or not shape.isValid() or len(shape.Solids) != 1:
                 raise RuntimeError('invalid interim shape: ' + obj.Name)
-        if len(links) != 5 or len(interim) != 5:
+        if len(links) != 5 or len(interim) != 4:
             raise RuntimeError('unexpected assembly inventory')
         d.save()
         results.append({'kind': kind, 'file': d.FileName, 'links': link_report,
