@@ -53,3 +53,17 @@ In a second disposable copy, only the six `Sketch020` external references were r
 The serialized Tip-rooted audits confirm that active `Sketch020` external references fell from six to zero for both `Body` and `Body002`. The object closures remained 79/125 for the front Tip and 44/157 for the rear Tip, because the removed source objects remain required elsewhere in the feature graph. `Sketch019` remains unchanged with its five constraint-driving generated-edge references; the full front/rear shell Tip recompute was not repeated after this local cleanup.
 
 This validates a narrow removal of unused sketch references in the disposable candidate. It does not validate either complete shell Tip after this cleanup, eliminate the cross-shell feature dependencies, or authorize assembly integration. The source candidate hash before this cleanup was `478d2944f85475edea9a021213f9fb2664ff445c4341e2876a242bed066d7ae3`; the saved experimental result hash is `b1e4a85658626e672cf2daf15839a6c1d1abbdfbe2fba45b1c6accd537656ac7`. Neither file is tracked or promoted.
+
+## Remaining constrained `Sketch019` references mapped
+
+A read-only constraint-level inspection mapped the five generated arcs that still drive the nine active sketch constraints. Coordinates are in `Sketch019`'s local sketch plane, in millimeters; arc normal is −Z.
+
+| External order / geometry ID | Source | Arc center `(X,Y)` | Radius | Start → end angle (rad) | Consuming constraints |
+|---|---|---:|---:|---:|---|
+| 7 / `-10` | `Pad017` | `(3.072230, -6.667940)` | 36.594903 | 2.893215 → 3.590677 | 52 Distance 0.8; 53 Distance 0.8; 61 Horizontal |
+| 8 / `-11` | `Pad017` | `(27.417600, -48.030750)` | 62.575904 | 3.171740 → 3.425080 | 55 Distance 0.8; 63 Horizontal; 69 Horizontal |
+| 9 / `-12` | `AdditiveLoft` | `(-40.749830, 16.018038)` | 16.021778 | 5.939741 → 6.087196 | 80 PointOnObject |
+| 10 / `-13` | `AdditiveLoft` | `(40.882296, 16.016259)` | 16.142724 | 3.336974 → 3.573659 | 81 PointOnObject |
+| 12 / `-15` | `AdditiveLoft` | `(-40.749830, 16.018038)` | 16.021778 | 6.087196 → 6.691751 | 79 PointOnObject |
+
+This shows the constrained dependency is a small set of circular profile fragments rather than an opaque requirement for all 13 external references. It provides a concrete target for a disposable stable-profile reconstruction, but does not establish that replacing those references will preserve the sketch solution or shell geometry. The corresponding source subelement tokens and full constraint endpoint positions remain available in the machine-readable dependency manifest.
