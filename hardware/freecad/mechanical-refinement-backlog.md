@@ -21,7 +21,8 @@ Printer-dependent wall targets must remain provisional until nozzle, material, o
 - The first read-only audit is recorded in `reports/top-hanger-refinement-initial-audit-2026-10-30.md` and its JSON companion.
 - A sketch-only, reversible 3.5 mm-wide slot candidate was valid and aligned across both shells, but the candidate shifted downward and left only about 0.25 mm at a sampled rear transition. **Rejected; not saved to production CAD.**
 - A modest downward shift also reduces clearance to the nearby upper M2 head seats. Do not promote a dimensional change until the profile can satisfy both shell-material and screw-seat clearance checks.
-- Next useful step: derive an asymmetric sketch-level top transition that preserves the lower slot boundary/screw clearance, then evaluate material sections and the complete native shell chain in a controlled candidate. The monolith's pre-existing cross-Body and suppressed-feature recompute errors must be separated from any candidate regression.
+- The dormant `Sketch015` profile is not a safe starting point: it is underconstrained, narrower than the active opening, leaves roughly 0.01 mm at sampled front-shell sections, and breaks through the rear shell at sampled side sections. Its associated helper cutter is a frozen `PartDesign::Feature`, not an active editable shell operation.
+- Next useful step: clarify/establish whether the hanger needs to stay a closed aperture; then investigate a purpose-built upper-transition profile while preserving screw-seat clearance. Evaluate material sections around the full perimeter and the complete native shell chain in a controlled candidate. The monolith's pre-existing cross-Body and suppressed-feature recompute errors must be separated from any candidate regression.
 
 ## Validation gate for intentional changes
 

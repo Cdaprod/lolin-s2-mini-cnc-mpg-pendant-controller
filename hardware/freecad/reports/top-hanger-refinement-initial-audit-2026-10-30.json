@@ -69,5 +69,36 @@
     "full_shell_geometry_validation": "not completed",
     "assembly_fit_validation": "not completed"
   },
-  "next_step": "Investigate a symmetric sketch-level reshape of the upper cap while retaining the lower boundary; first measure full-perimeter 3D material and screw-seat clearances. Do not adopt a printer-specific wall target without printer/process requirements."
+  "dormant_geometry_investigation": {
+    "sketch": "Sketch015",
+    "label": "Hanger Pocket Sketch001",
+    "downstream_consumers": [],
+    "fully_constrained": false,
+    "global_xy_bbox_mm": {
+      "x": [-16.7902, 16.7902],
+      "y": [80.5475, 84.1279]
+    },
+    "disposition": "rejected as candidate source; narrower horizontally than active 35.6 mm profile and underconstrained",
+    "upper_edge_section_samples_mm": {
+      "front_x_plus_minus_12_z_minus_15_remaining_web": [0.009888, 0.009826],
+      "rear_x_plus_minus_12_z_minus_24_outer_shell_y_max": [83.740283, 83.740292],
+      "rear_x_plus_minus_12_z_minus_24": "outside shell interval at proposed edge Y=84.127868; profile breaks through shell exterior"
+    },
+    "associated_helper": {
+      "body": "Body_HangerCutTool",
+      "feature": "HangerFacetedSlotAndLipRelief",
+      "feature_type": "PartDesign::Feature",
+      "linked_to_active_shell_cuts": false,
+      "editable_profile_history": false
+    }
+  },
+  "direct_y_section_intersection_samples_mm": {
+    "method": "Bounded FreeCADCmd BREP section of each pre-hanger shell feature with line along global Y; source opened read-only; no recompute/save",
+    "current_cut_upper_edge": {
+      "front_x_plus_minus_12_z_minus_14_web": [0.163879, 0.163818],
+      "rear_x_plus_minus_12_z_minus_24_web": [0.240283, 0.240292]
+    },
+    "dormant_sketch_upper_edge_y": 84.12786781815633
+  },
+  "next_step": "Establish whether the hanger must remain a closed aperture. Do not use the dormant underconstrained profile. For a closed aperture, test purpose-built symmetric upper-transition geometry while preserving the lower screw-seat clearance; validate full-perimeter sections, 3D head-seat separation, full shell recomputation, and assembly fit. Do not adopt a printer-specific wall target without printer/process requirements."
 }
