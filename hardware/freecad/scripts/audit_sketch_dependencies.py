@@ -269,15 +269,48 @@ def main() -> int:
                 paths[target] = paths[n] + [target]
                 q.append(target)
 
-    # Owner and suppression metadata.
+    # Owner and suppression metadata. Datum planes/axes live under an App::Origin
+    # GeoFeatureGroupExtension, whose Group is serialized as a hidden _Property
+    # in some FreeCAD versions. Propagate a PartDesign Body's ownership through
+    # its Origin link and that datum group so sketch attachment to an in-body
+    # plane is not misreported as an external component dependency.
     owners: dict[str, list[str]] = {}
     for owner_name, owner in objects.items():
         if object_headers.get(owner_name, "") not in CONTAINERS:
             continue
         group = owner.find("./Properties/Property[@name='Group']")
+        if group is None:
+            group = owner.find("./Properties/_Property[@name='Group']")
         if group is not None:
             for link in group.findall(".//Link"):
                 owners.setdefault(link.get("value", ""), []).append(owner_name)
+
+    body_owners = {name for name, typ in object_headers.items() if typ == "PartDesign::Body"}
+    for body_name in body_owners:
+        origin_name = value_for(objects[body_name], "Origin")
+        if origin_name in objects:
+            owners.setdefault(origin_name, []).append(body_name)
+    changed = True
+    while changed:
+        changed = False
+        for container_name, container in objects.items():
+            inherited = set(owners.get(container_name, [])) & body_owners
+            if not inherited:
+                continue
+            group = container.find("./Properties/Property[@name='Group']")
+            if group is None:
+                group = container.find("./Properties/_Property[@name='Group']")
+            if group is None:
+                continue
+            for link in group.findall(".//Link"):
+                child = link.get("value", "")
+                if child not in objects:
+                    continue
+                existing = set(owners.get(child, []))
+                missing = inherited - existing
+                if missing:
+                    owners.setdefault(child, []).extend(sorted(missing))
+                    changed = True
 
     # Conservative readiness: only the root Body, explicitly allowed owners,
     # and explicitly allowed objects may supply geometry to an extraction.
