@@ -44,12 +44,14 @@ PALETTE = {
 }
 
 
-def macro_source(assembly: Path, export_path: Path, deflection: float) -> str:
+def macro_source(assembly: Path, export_path: Path, deflection: float,
+                 expected_links: int = EXPECTED_LINKS,
+                 expected_interim: int = EXPECTED_INTERIM) -> str:
     cfg = json.dumps({'assembly': str(assembly.resolve()),
                       'export': str(export_path.resolve()),
                       'deflection': deflection,
-                      'expected_links': EXPECTED_LINKS,
-                      'expected_interim': EXPECTED_INTERIM})
+                      'expected_links': expected_links,
+                      'expected_interim': expected_interim})
     return r'''import FreeCAD as App, json, gzip, traceback
 C=json.loads(@@CFG@@); out={'errors':[],'objects':[]}
 opened=[]
@@ -60,7 +62,7 @@ def info(obj):
 try:
     d=App.openDocument(C['assembly']); opened.append(d.Name)
     links=[o for o in d.Objects if o.TypeId=='App::Link']
-    interim=[o for o in d.Objects if o.Name.startswith('Interim_')]
+    interim=[o for o in d.Objects if o.Name.startswith('Interim_') and o.TypeId!='App::Link']
     if len(links)!=C['expected_links'] or len(interim)!=C['expected_interim']:
         raise RuntimeError('unexpected assembly inventory: %d links, %d interim shapes'%(len(links),len(interim)))
     objects=interim+links
@@ -169,11 +171,12 @@ def component_bounds(vertices):
             float(v[:, 0].max()), float(v[:, 1].max()))
 
 
-def render_assembly(objects, view: str, path: Path) -> None:
+def render_assembly(objects, view: str, path: Path,
+                    assembly_label: str = 'Current modular pendant assembly') -> None:
     width, height = 1500, 1050
     image = Image.new('RGB', (width, height), (247, 249, 251))
     draw = ImageDraw.Draw(image)
-    draw.text((38, 24), f'Current modular pendant assembly — {view} view',
+    draw.text((38, 24), f'{assembly_label} — {view} view',
               fill=(24, 35, 47), font=load_font(32))
     draw.text((40, 68), 'Orthographic projection • current saved component links and interim solids',
               fill=(75, 88, 101), font=load_font(17))
@@ -224,6 +227,10 @@ def main() -> int:
     parser.add_argument('--freecadcmd', default=os.environ.get('FREECADCMD'))
     parser.add_argument('--deflection', type=float, default=0.2)
     parser.add_argument('--timeout', type=int, default=170)
+    parser.add_argument('--expected-links', type=int, default=EXPECTED_LINKS,
+                        help='Expected live App::Link count in the chosen assembly')
+    parser.add_argument('--expected-interim', type=int, default=EXPECTED_INTERIM,
+                        help='Expected Interim_* component count in the chosen assembly')
     args = parser.parse_args()
     if not args.assembly.is_file():
         parser.error('assembly file not found: ' + str(args.assembly))
@@ -241,7 +248,9 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix='pendant-preview-') as td:
         export_path = Path(td) / 'assembly-meshes.json.gz'
         macro = Path(td) / 'export_preview.FCMacro'
-        macro.write_text(macro_source(args.assembly, export_path, args.deflection), encoding='utf-8')
+        macro.write_text(macro_source(args.assembly, export_path, args.deflection,
+                                      args.expected_links, args.expected_interim),
+                         encoding='utf-8')
         start = time.monotonic()
         proc = subprocess.Popen([cmd, str(macro)], cwd=args.assembly.resolve().parent,
                                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
@@ -281,8 +290,11 @@ def main() -> int:
     assembly_img = args.output_dir / 'pendant-modular-assembly-bottom.png'
     top_img = args.output_dir / 'pendant-modular-assembly-top.png'
     interim_img = args.output_dir / 'static-interim-components-bottom.png'
-    render_assembly(data['objects'], 'bottom', assembly_img)
-    render_assembly(data['objects'], 'top', top_img)
+    is_repair_candidate = 'repair-candidate' in args.assembly.name
+    assembly_label = ('Rear-shell repair candidate assembly' if is_repair_candidate
+                      else 'Current modular pendant assembly')
+    render_assembly(data['objects'], 'bottom', assembly_img, assembly_label)
+    render_assembly(data['objects'], 'top', top_img, assembly_label)
     render_interim_sheet(data['objects'], interim_img)
     try:
         assembly_name = args.assembly.resolve().relative_to(FREECAD_DIR.resolve()).as_posix()

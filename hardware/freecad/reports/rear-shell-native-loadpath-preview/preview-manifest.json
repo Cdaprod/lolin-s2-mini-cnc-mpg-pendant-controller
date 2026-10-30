@@ -1,0 +1,13 @@
+{
+  "assembly": "pendant-modular-repair-candidate.FCStd",
+  "freecadcmd_export_seconds": 7.464,
+  "deflection_mm": 0.2,
+  "link_count": 6,
+  "static_interim_count": 3,
+  "validated_shapes": 9,
+  "images": [
+    "pendant-modular-assembly-bottom.png",
+    "pendant-modular-assembly-top.png",
+    "static-interim-components-bottom.png"
+  ]
+}

@@ -64,6 +64,12 @@ mesh-repair function.
 The result is recorded in
 `rear-shell-native-loadpath-candidate-mesh-audit-2026-10-30.json`.
 
+Read-only top, bottom, and separate-interim preview images are in
+`rear-shell-native-loadpath-preview/`. The renderer now accepts expected link
+and interim counts, so it can validate both the six-link repair candidate and
+the five-link production assembly. Both inventory checks passed without saving
+or recomputing either CAD file.
+
 ## Remaining limits
 
 The original monolith, production master, production assembly, production
