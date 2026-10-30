@@ -24,8 +24,9 @@ DEFAULT_DOCUMENT = FREECAD_DIR / "pendant.FCStd"
 DEFAULT_CMD = Path("/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd")
 
 
-def macro_source(document: Path, digest: str, cut_y: list[float]) -> str:
-    cfg = json.dumps({"document": str(document.resolve()), "sha256": digest, "cut_y": cut_y})
+def macro_source(document: Path, digest: str, cut_y: list[float], grid_step: float | None) -> str:
+    cfg = json.dumps({"document": str(document.resolve()), "sha256": digest,
+                      "cut_y": cut_y, "grid_step": grid_step})
     return r'''import FreeCAD as App, Part, json, traceback
 C=json.loads(@@CFG@@)
 report={'document':C['document'],'sha256':C['sha256'],'freecad_version':App.Version(),
@@ -74,8 +75,41 @@ try:
                 spans=intervals(shape,x,z)
                 rows.append({'x_mm':x,'z_mm':z,'shell_intervals_y_mm':spans,
                     'cut_edges':[{'y_mm':y,**residual(spans,y)} for y in C['cut_y']]})
-        report['sections'][role]={'source_object':objname,'valid':shape.isValid(),
+        section_report={'source_object':objname,'valid':shape.isValid(),
             'solid_count':len(shape.Solids),'volume_mm3':shape.Volume,'samples':rows}
+        step=C.get('grid_step')
+        if step:
+            bb=shape.BoundBox
+            nx=int((2*16.3)//step)+1
+            xs=[round(-16.3+i*step,6) for i in range(nx) if -16.3+i*step<=16.3+1e-8]
+            z0=bb.ZMin+step/2.0; z1=bb.ZMax-step/2.0
+            zs_grid=[]; z=z0
+            while z<=z1+1e-8:
+                zs_grid.append(round(z,6));z+=step
+            gridrows=[]
+            for z in zs_grid:
+                for x in xs:
+                    sp=intervals(shape,x,z)
+                    gridrows.append({'x_mm':x,'z_mm':z,'intervals_y_mm':sp,
+                        'cut_edges':[{'y_mm':y,**residual(sp,y)} for y in C['cut_y']]})
+            summaries={}
+            for y in C['cut_y']:
+                cut_index=C['cut_y'].index(y)
+                states={}
+                for q in gridrows:
+                    state=q['cut_edges'][cut_index]['state']
+                    states[state]=states.get(state,0)+1
+                hits=[q for q in gridrows if q['cut_edges'][cut_index]['remaining_web_mm'] is not None]
+                values=[q['cut_edges'][C['cut_y'].index(y)]['remaining_web_mm'] for q in hits]
+                summaries[str(y)]={'inside_shell_samples':len(hits),
+                    'profile_edge_outside_shell_samples':states.get('profile-edge-outside-shell',0),
+                    'no_containing_section_samples':states.get('no-containing-section',0),
+                    'min_remaining_web_mm':min(values) if values else None,
+                    'min_location_xz_mm':next(([q['x_mm'],q['z_mm']] for q in hits if q['cut_edges'][C['cut_y'].index(y)]['remaining_web_mm']==min(values)),None) if values else None,
+                    'max_remaining_web_mm':max(values) if values else None}
+            section_report['grid']={'step_mm':step,'x_samples':xs,'z_samples':zs_grid,
+                'sample_count':len(gridrows),'cut_edge_summary':summaries,'samples':gridrows}
+        report['sections'][role]=section_report
 except Exception as e:
     report['errors'].append(repr(e)); report['traceback']=traceback.format_exc()
 print('TOP_HANGER_AUDIT='+json.dumps(report,sort_keys=True))
@@ -90,12 +124,15 @@ def main() -> int:
     ap.add_argument("--document", type=Path, default=DEFAULT_DOCUMENT)
     ap.add_argument("--cut-y", type=float, action="append", default=None,
                     help="global Y of a proposed upper cut edge; repeatable (default: 83.5 and 84.1278678)")
+    ap.add_argument("--grid-step-mm", type=float, default=None,
+                    help="optional sparse X/Z section grid spacing; use to localize thin regions (not a global thickness proof)")
     ap.add_argument("--json", type=Path, required=True, help="report output path")
     ap.add_argument("--freecadcmd", default=os.environ.get("FREECADCMD"))
     ap.add_argument("--timeout", type=int, default=150)
     args = ap.parse_args()
     if not args.document.is_file(): ap.error(f"document not found: {args.document}")
     if not 1 <= args.timeout <= 180: ap.error("--timeout must be between 1 and 180 seconds")
+    if args.grid_step_mm is not None and args.grid_step_mm <= 0: ap.error("--grid-step-mm must be positive")
     cut_y = args.cut_y if args.cut_y is not None else [83.5, 84.12786781815633]
     cmd = args.freecadcmd or (str(DEFAULT_CMD) if DEFAULT_CMD.is_file() else None)
     if not cmd: ap.error("freecadcmd not found; pass --freecadcmd or set FREECADCMD")
@@ -105,7 +142,7 @@ def main() -> int:
     digest = hashlib.sha256(args.document.read_bytes()).hexdigest()
     with tempfile.TemporaryDirectory(prefix="freecad-hanger-audit-") as td:
         macro = Path(td) / "audit.FCMacro"
-        macro.write_text(macro_source(args.document, digest, cut_y), encoding="utf-8")
+        macro.write_text(macro_source(args.document, digest, cut_y, args.grid_step_mm), encoding="utf-8")
         proc = subprocess.Popen([cmd, str(macro)], stdout=subprocess.PIPE,
                                 stderr=subprocess.STDOUT, text=True, start_new_session=True)
         try:

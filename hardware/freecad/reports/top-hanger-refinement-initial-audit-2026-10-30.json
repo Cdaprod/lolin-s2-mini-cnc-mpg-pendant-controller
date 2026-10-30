@@ -17,6 +17,92 @@
       83.5
     ]
   },
+  "closed_hole_candidate_2026_10_30": {
+    "candidate_file": "/tmp/pendant-hanger-closed-hole-candidate.FCStd",
+    "candidate_sha256": "ab43282cebb687c862e98ebe84d829dac3e2148b79406ed3e1a9a59499091690",
+    "disposition": "rejected; disposable only; no production CAD changed",
+    "next_step": "investigate native parametric reinforcement of the hanger bridge through both shells while preserving a closed aperture, screw-seat clearance, and shell mating; establish a measurable load case before claiming strength",
+    "parameters_mm": {
+      "SlotCenterY": 81.05,
+      "SlotLength": 35.6,
+      "SlotWidth": 3.1
+    },
+    "profile_bbox_y_mm": [
+      80.5,
+      83.6
+    ],
+    "read_only_section_grid": {
+      "baseline_comparison": {
+        "cut_edge_y_mm": 83.5,
+        "front_at_x12_z_minus14_remaining_web_mm": 0.163818,
+        "front_grid_samples_at_y83_5": {
+          "inside_shell": 190,
+          "profile_edge_outside_shell": 437,
+          "total": 627
+        },
+        "note": "Flags an existing local breakthrough/thin-web concern; sparse section probes are not a global thickness or stress analysis.",
+        "rear_at_x12_z_minus25_outer_surface_y_mm": 83.2514487,
+        "rear_edge_beyond_surface_mm": 0.2485513,
+        "rear_grid_samples_at_y83_5": {
+          "inside_shell": 202,
+          "no_containing_section": 56,
+          "profile_edge_outside_shell": 336,
+          "total": 594
+        }
+      },
+      "candidate_grid_state_note": "Counts classify sampled edge sections relative to local shell intervals; grid is sparse, not a global wall-thickness or structural proof.",
+      "direct_front_sample": {
+        "candidate_cut_edge_y_mm": 83.6,
+        "outer_surface_y_mm": 83.663818,
+        "remaining_web_mm": 0.063818,
+        "x_mm": 12,
+        "z_mm": -14
+      },
+      "direct_rear_sample": {
+        "candidate_cut_edge_y_mm": 83.6,
+        "edge_beyond_surface_mm": 0.34856,
+        "outer_surface_y_mm": 83.25144,
+        "result": "profile edge exceeds sampled shell exterior",
+        "x_mm": 12,
+        "z_mm": -25
+      },
+      "front": {
+        "inside_shell_samples": 182,
+        "min_location_xz_mm": [
+          9.7,
+          -13.5
+        ],
+        "min_remaining_web_mm": 0.0194545,
+        "outside_or_no_section_samples": 445,
+        "profile_edge_outside_shell_samples": 445,
+        "sample_count": 627
+      },
+      "grid_step_mm": 1.0,
+      "rear": {
+        "inside_shell_samples": 196,
+        "min_location_xz_mm": [
+          11.7,
+          -24.344984
+        ],
+        "min_remaining_web_mm": 0.0088487,
+        "no_containing_section_samples": 56,
+        "outside_or_no_section_samples": 398,
+        "profile_edge_outside_shell_samples": 342,
+        "sample_count": 594
+      }
+    },
+    "reason": "upper edge shift leaves near-zero sampled webs and cuts beyond rear shell at a sampled section; does not meet closed load-bearing hole requirement",
+    "recompute": {
+      "front_and_rear_body_tips_valid_single_solids": true,
+      "front_and_rear_pockets_up_to_date": true,
+      "front_and_rear_sketches_fully_constrained": true,
+      "other_document_error": [
+        "PartChamferTrial: Invalid"
+      ],
+      "reopened_after_save": false,
+      "saved": true
+    }
+  },
   "date": "2026-10-30",
   "direct_y_section_intersection_samples_mm": {
     "current_cut_upper_edge": {
@@ -67,7 +153,12 @@
       ]
     }
   },
-  "next_step": "Establish whether the hanger must remain a closed aperture. Do not use the dormant underconstrained profile. For a closed aperture, test purpose-built symmetric upper-transition geometry while preserving the lower screw-seat clearance; validate full-perimeter sections, 3D head-seat separation, full shell recomputation, and assembly fit. Do not adopt a printer-specific wall target without printer/process requirements.",
+  "hanger_requirement": {
+    "opening": "closed hole through both front and rear shell Bodies",
+    "source": "user clarification",
+    "structural_requirement": "carry pendant weight; no load capacity claimed from section measurements alone"
+  },
+  "next_step": "Investigate a native parametric, locally reinforced hanger bridge/boss shared through both shells. Preserve the closed aperture and screw-seat/mating clearances; establish a measurable load case and validate load path, full contour, shell recomputation, save/reopen, and assembly fit before promotion.",
   "parameter_object": "HangerParameters",
   "production_geometry_modified": false,
   "recompute": {
@@ -107,6 +198,7 @@
       "(HEAD detached at 0108fd4b4)",
       "0108fd4b4850cc46e625b60e53cea7a7bbe69f8d"
     ],
+    "optional_grid_mode": "1 mm X/Z line-section grid used to localize weak/breakthrough sections; not a global thickness proof",
     "result": "passed; read-only line-section measurements reproduced",
     "sampled_shell_sections": {
       "front": {
