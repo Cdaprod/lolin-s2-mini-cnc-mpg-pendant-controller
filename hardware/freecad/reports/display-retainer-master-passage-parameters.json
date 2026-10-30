@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-29",
+  "branch": "hardware-integration",
+  "component": "hardware/freecad/pendant-bodies/display-retainer.FCStd",
+  "master": "hardware/freecad/pendant-master.FCStd",
+  "parameters": [
+    {
+      "sheet": "InternalHardware",
+      "cell": "B7",
+      "alias": "ShellMountPassageDiameter",
+      "baseline_mm": 2.3,
+      "constraints": [2, 5]
+    },
+    {
+      "sheet": "InternalHardware",
+      "cell": "B8",
+      "alias": "DisplayMountPassageDiameter",
+      "baseline_mm": 2.2,
+      "test_mm": 2.22,
+      "constraints": [8, 11, 14]
+    }
+  ],
+  "expression_template": "pendant_master#<<InternalHardware>>.<alias> / 2",
+  "master_link_relative_path": "../pendant-master.FCStd",
+  "baseline": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 2050.792480333789,
+    "area_mm2": 2183.563637888774,
+    "bounds_mm": [-29.42019278301042, 29.423440320911695, -16.0, 25.8, -10.06146722824298, -7.061467228242978],
+    "brep_difference_to_previous_source_mm3": 0.0,
+    "brep_boolean_results_valid": true
+  },
+  "propagation": {
+    "changed_tip_volume_mm3": 2050.1697232614306,
+    "changed_fresh_assembly_link_volume_mm3": 2050.16972326143,
+    "restored_tip_volume_mm3": 2050.792480333789,
+    "restored_fresh_assembly_link_volume_mm3": 2050.792480333789,
+    "valid_single_solid": true,
+    "bounds_unchanged": true,
+    "refresh_errors": [],
+    "assembly_inventory": {
+      "live_links": 5,
+      "static_interim_solids": 5
+    },
+    "fresh_process_assembly_open_changed_and_restored": true,
+    "standalone_component_opened_master": true,
+    "all_five_expressions_valid": true,
+    "save_reopen_recompute": true
+  },
+  "dependency_audit": {
+    "root_body": "Body_DisplayRetainer_EditableV2",
+    "tip": "RetainerShellClearancePocketV3",
+    "object_dependency_closure_count": 10,
+    "expanded_dependency_closure_count": 10,
+    "allowed_external_source": "pendant_master#InternalHardware",
+    "extraction_readiness": "READY",
+    "blockers": [],
+    "uncertainties": []
+  },
+  "sha256_before": {
+    "master": "5027bf0a9d3329ae3468e93c2f428f285ad8f291014e39d7fde9dd46942ca622",
+    "component": "4637bb84bc9897500b41f7c8e9d543df235c464babd235dce51662e8b5e20709"
+  },
+  "sha256_after": {
+    "master": "d3b226b50cbbefd20a4f414afd60532d320b7b32dacca38844360035b4e2ffe7",
+    "component": "066e82cb63553b66c423395e7fdc52fdca88a4694697d98d1482e7e249f4065b"
+  },
+  "monolithic_pendant_modified": false,
+  "modular_assembly_modified": false
+}
