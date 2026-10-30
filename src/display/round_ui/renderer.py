@@ -24,7 +24,6 @@ HUD_ORBIT_RATES = (0.22, -0.20)
 # page swipes, and retained animation frames bypass this model cadence.
 NONHOME_MODEL_INTERVAL_MS = 50
 # Keep the page handoff fluid while making the destination feel immediate.
-# At the current retained-layer refresh cadence this gives roughly 8–9 frames.
 PAGE_SWIPE_DURATION = 0.36
 _PROFILE_TICKS_MASK = (1 << 29) - 1
 _PROFILE_TICKS_HALF = 1 << 28
@@ -72,7 +71,7 @@ class RoundRenderer:
     """Mutate a small persistent scene; never issue controller operations."""
 
     def __init__(self, display, scene_factory, animations=True,
-                 bezel_rotation_enabled=True, bezel_ambient_period_s=54.0,
+                 bezel_rotation_enabled=True, bezel_ambient_period_s=46.0,
                  bezel_encoder_gain=0.04, bezel_max_speed_rad_s=0.35,
                  bezel_inertia_s=0.9,
                  bezel_direction_change_min_s=20.0,
@@ -437,9 +436,14 @@ class RoundRenderer:
                     changed = True
             elif transition["phase"] == "out":
                 progress = min(1.0, elapsed / half)
-                # Ease in to the handoff; the matching incoming curve begins
-                # at the same velocity, so the page swap never visibly stalls.
-                offset = round(-transition["delta"] * 240 * progress * progress)
+                # Menu pages share one retained group. Move that group just
+                # far enough to create a visible handoff, then bring the new
+                # content back from the same offset; sending it offscreen made
+                # the circular panel show a conspicuous blank flash.
+                distance = (240 if transition["old_group"] is not
+                            transition["new_group"] else 18)
+                offset = round(-transition["delta"] * distance *
+                               progress * progress)
                 if transition["old_group"].x != offset:
                     transition["old_group"].x = offset
                     self._page_transition_dirty = True
@@ -450,13 +454,15 @@ class RoundRenderer:
                     if old_group is not new_group:
                         old_group.hidden = True
                         new_group.hidden = False
-                    new_group.x = transition["delta"] * 240
+                    new_group.x = -transition["delta"] * distance
                     transition["phase"] = "commit"
                     self._page_transition_dirty = True
                     changed = True
             elif transition["phase"] == "in":
                 progress = min(1.0, elapsed / half)
-                offset = round(transition["delta"] * 240 *
+                distance = (240 if transition["old_group"] is not
+                            transition["new_group"] else 18)
+                offset = round(-transition["delta"] * distance *
                                (1.0-progress) * (1.0-progress))
                 if transition["new_group"].x != offset:
                     transition["new_group"].x = offset

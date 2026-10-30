@@ -35,11 +35,16 @@ class AssetPipelineTests(unittest.TestCase):
 
     def test_rotor_segments_have_orientation_and_subpixel_atlas(self):
         import numpy as np
+        from src.display.round_ui.rotor import (
+            BEZEL_ARC_TILE_SIZE, BEZEL_TRACK_RADIUS)
         packed = generate_hud_bezels.rotor_segment_data()
-        self.assertEqual(len(packed), 132 * 1584 // 2)
+        tile_size = BEZEL_ARC_TILE_SIZE
+        atlas_width, atlas_height = tile_size * 4, tile_size * 16
+        self.assertEqual(len(packed), atlas_width * atlas_height // 2)
+        self.assertLessEqual(BEZEL_TRACK_RADIUS + tile_size / 2, 120)
         bitmap = (ASSETS / "runtime" / "rotor_segment_phases.4bpp")
         self.assertEqual(bitmap.read_bytes(), packed)
-        # Read 33x33 extended curved-arc tiles at the same fractional position.
+        # Read extended curved-arc tiles at the same fractional position.
         pixels = []
         for value in packed:
             pixels.extend((value & 0x0F, value >> 4))
@@ -47,15 +52,17 @@ class AssetPipelineTests(unittest.TestCase):
         def tile(orientation, phase_x=0, phase_y=0):
             tile_x = phase_x
             tile_y = orientation * 4 + phase_y
-            return tuple(pixels[(tile_y * 33 + y) * 132 + tile_x * 33 + x]
-                         for y in range(33) for x in range(33))
+            return tuple(pixels[(tile_y * tile_size + y) * atlas_width +
+                                tile_x * tile_size + x]
+                         for y in range(tile_size) for x in range(tile_size))
 
         self.assertTrue(any(tile(0)))
-        self.assertNotEqual(tile(0), tile(8))
+        self.assertNotEqual(tile(0), tile(2))
         self.assertNotEqual(tile(0), tile(0, 1, 0))
-        horizontal_arc = np.asarray(tile(0), dtype=np.uint8).reshape(33, 33)
+        horizontal_arc = np.asarray(tile(0), dtype=np.uint8).reshape(
+            tile_size, tile_size)
         yy, xx = np.nonzero(horizontal_arc)
-        self.assertGreaterEqual(int(xx.max() - xx.min()), 28)
+        self.assertGreaterEqual(int(xx.max() - xx.min()), 32)
         self.assertGreaterEqual(int(yy.max() - yy.min()), 5)
         self.assertLessEqual(int(horizontal_arc.max()), 15)
         # With the generator's tangent basis, positive y is inward for the
@@ -119,21 +126,21 @@ class AssetPipelineTests(unittest.TestCase):
                                                     len(source.read()))) )
         })
         with patch.dict("sys.modules", {"bitmaptools": fake_bitmaptools}), \
-                patch("builtins.open", mock_open(read_data=b"x" * 104544)):
+                patch("builtins.open", mock_open(read_data=b"x" * 48672)):
             bitmap, frames = display._load_rotor_sprite_sheet(fake_displayio)
         self.assertIsNotNone(bitmap)
-        self.assertEqual(frames, 192)
-        self.assertEqual(calls, [(132, 1584, 16), (4, 104544)])
+        self.assertEqual(frames, 64)
+        self.assertEqual(calls, [(156, 624, 16), (4, 48672)])
 
     def test_all_production_bezels_are_240px_4bpp_and_transparent(self):
         manifest = json.loads((ASSETS / "manifest.json").read_text())
         self.assertEqual(len(manifest["themes"]), 12)
         self.assertEqual(manifest["sprite_assets"][0]["bytes"], 648)
-        self.assertEqual(manifest["sprite_assets"][1]["bytes"], 104544)
+        self.assertEqual(manifest["sprite_assets"][1]["bytes"], 48672)
         self.assertEqual((ASSETS / "runtime" / "orbit_phases.4bpp").stat().st_size,
                          648)
         self.assertEqual((ASSETS / "runtime" / "rotor_segment_phases.4bpp").stat().st_size,
-                         104544)
+                         48672)
         self.assertEqual(manifest["target"], [240, 240])
         names = set()
         for item in manifest["themes"]:

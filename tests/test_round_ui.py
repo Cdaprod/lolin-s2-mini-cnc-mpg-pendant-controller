@@ -296,7 +296,7 @@ class RoundRendererTests(unittest.TestCase):
         renderer.bezel_segments = segments
         renderer.bezel_segment_palettes = [[0] + [1] * 15
                                            for _ in segments]
-        renderer.rotor_tile_count = 192
+        renderer.rotor_tile_count = 64
         renderer._rotor_brightness_levels = [-1] * len(segments)
         renderer._rotor_target_levels = [0] * len(segments)
         renderer._rotor_color = theme.CYAN
@@ -306,14 +306,13 @@ class RoundRendererTests(unittest.TestCase):
         geometry = tuple((item.x, item.y, item.tile_index) for item in segments)
 
         self.assertTrue(renderer.animate(0.0))
-        initial_levels = tuple(renderer._rotor_brightness_levels)
         self.assertTrue(all(not item.hidden for item in segments))
 
         state.mpg_activity = 2
         state.mpg_activity_timestamp = 0.1
         self.assertTrue(renderer.animate(0.1))
-        self.assertNotEqual(tuple(renderer._rotor_brightness_levels),
-                            initial_levels)
+        self.assertEqual(renderer.bezel_rotor.mode, "FOLLOW")
+        self.assertGreater(renderer.bezel_rotor.velocity, 0)
         self.assertEqual(tuple((item.x, item.y, item.tile_index)
                                for item in segments), geometry)
 
@@ -334,7 +333,7 @@ class RoundRendererTests(unittest.TestCase):
         _, _, _, renderer = self.make_renderer()
         renderer.bezel_segments = [Node() for _ in range(BEZEL_SEGMENT_COUNT)]
         renderer.bezel_palette_bank = [Palette() for _ in range(16)]
-        renderer.rotor_tile_count = 192
+        renderer.rotor_tile_count = 64
         renderer._rotor_brightness_levels = [-1] * BEZEL_SEGMENT_COUNT
         renderer._rotor_target_levels = [0] * BEZEL_SEGMENT_COUNT
 
@@ -390,8 +389,8 @@ class RoundRendererTests(unittest.TestCase):
 
     def test_rotor_brightness_wave_follows_clockwise_and_counterclockwise(self):
         still = bezel_segment_levels(0.0, 24)
-        clockwise = bezel_segment_levels(0.30, 24)
-        counterclockwise = bezel_segment_levels(-0.30, 24)
+        clockwise = bezel_segment_levels(1.0, 24)
+        counterclockwise = bezel_segment_levels(-1.0, 24)
         self.assertEqual(max(still), 15)
         self.assertGreater(clockwise[1], clockwise[0])
         self.assertGreater(counterclockwise[23], counterclockwise[0])
@@ -401,9 +400,8 @@ class RoundRendererTests(unittest.TestCase):
         levels = bezel_segment_levels(0.0)
         self.assertEqual(len(levels), BEZEL_SEGMENT_COUNT)
         self.assertEqual(levels[0], 15)
-        self.assertEqual(sum(value >= 8 for value in levels), 1)
-        self.assertTrue(all(levels[index] < 8 for index in (11, 1)))
-        self.assertEqual(sum(value >= 8 for value in levels[2:11]), 0)
+        self.assertEqual(sum(value >= 12 for value in levels), 1)
+        self.assertTrue(all(9 <= value <= 15 for value in levels))
         self.assertEqual(levels[1], levels[-1])
 
     def test_rotor_animation_updates_a_retained_brightness_buffer(self):
@@ -582,18 +580,18 @@ class RoundRendererTests(unittest.TestCase):
         self.assertEqual(renderer.menu_title.value, "FILE EXPLORER")
         start = renderer._page_transition["started"]
         self.assertTrue(renderer.animate(start + 0.09))
-        self.assertEqual(renderer.menu_group.x, -60)
+        self.assertEqual(renderer.menu_group.x, -5)
         self.assertEqual(renderer.menu_title.value, "FILE EXPLORER")
         renderer.render(state)
 
         self.assertTrue(renderer.animate(start + 0.181))
-        self.assertEqual(renderer.menu_group.x, 240)
+        self.assertEqual(renderer.menu_group.x, -18)
         renderer.render(state)
         self.assertEqual(renderer._page_transition["phase"], "in")
         self.assertEqual(renderer.menu_title.value, "CONFIGURATION")
         incoming = renderer._page_transition["started"]
         self.assertTrue(renderer.animate(incoming + 0.09))
-        self.assertEqual(renderer.menu_group.x, 60)
+        self.assertEqual(renderer.menu_group.x, -4)
         renderer.render(state)
         self.assertTrue(renderer.animate(incoming + 0.181))
         self.assertEqual(renderer.menu_group.x, 0)

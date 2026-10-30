@@ -1,6 +1,6 @@
 {
   "generator": "tools/generate_hud_bezels.py",
-  "generator_version": 7,
+  "generator_version": 8,
   "target": [
     240,
     240
@@ -386,20 +386,20 @@
     {
       "name": "rotor_segment_phases",
       "file": "assets/round_hud/runtime/rotor_segment_phases.4bpp",
-      "width": 132,
-      "height": 1584,
-      "tile_size": 33,
-      "tiles": 192,
-      "orientations": 12,
+      "width": 156,
+      "height": 624,
+      "tile_size": 39,
+      "tiles": 64,
+      "orientations": 4,
       "subpixel_phases": 16,
-      "instances": 12,
-      "track_radius_px": 110,
-      "arc_length_px": 29,
-      "angular_offset_degrees": 29,
+      "instances": 4,
+      "track_radius_px": 96.0,
+      "arc_length_px": 33.0,
+      "angular_offset_degrees": -90,
       "palette_entries": 16,
       "transparent_index": 0,
-      "bytes": 104544
+      "bytes": 48672
     }
   ],
-  "generation_seconds": 6.595
+  "generation_seconds": 7.352
 }

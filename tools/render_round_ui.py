@@ -18,7 +18,9 @@ from src.display.round_ui.effects import (TOUCH_BITMAP_CENTER,
                                           TOUCH_PALETTE_SIZE, touch_level,
                                           touch_zone)
 from src.display.round_ui.rotor import (
-    BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD, bezel_segment_levels)
+    BEZEL_ARC_TILE_SIZE, BEZEL_SEGMENT_COUNT,
+    BEZEL_SEGMENT_OFFSET_RAD, BEZEL_TRACK_RADIUS,
+    bezel_segment_levels)
 from src.display.ui import build_screens
 from src.display.navigation import menu_window_start
 
@@ -103,7 +105,9 @@ def rgb(color):
 
 def draw_rotor_segments(image, colors, angle):
     """Draw fixed concentric arc tiles with the firmware's moving light wave."""
-    if len(rotor_asset) != 132 * 1584 // 2:
+    atlas_width = BEZEL_ARC_TILE_SIZE * 4
+    atlas_height = BEZEL_ARC_TILE_SIZE * 4 * BEZEL_SEGMENT_COUNT
+    if len(rotor_asset) != atlas_width * atlas_height // 2:
         return
     pixels = image.load()
     levels = bezel_segment_levels(
@@ -112,8 +116,8 @@ def draw_rotor_segments(image, colors, angle):
     for segment, level in enumerate(levels):
         theta = (BEZEL_SEGMENT_OFFSET_RAD +
                  segment * (2.0 * math.pi / len(levels)))
-        center_x = 120 + 110.0 * math.cos(theta)
-        center_y = 120 + 110.0 * math.sin(theta)
+        center_x = 120 + BEZEL_TRACK_RADIUS * math.cos(theta)
+        center_y = 120 + BEZEL_TRACK_RADIUS * math.sin(theta)
         base_x, base_y = math.floor(center_x), math.floor(center_y)
         phase_x = int((center_x - base_x) * 4)
         phase_y = int((center_y - base_y) * 4)
@@ -122,15 +126,18 @@ def draw_rotor_segments(image, colors, angle):
             tangent * BEZEL_SEGMENT_COUNT / (2.0 * math.pi))) % BEZEL_SEGMENT_COUNT
         tile_x, tile_y = phase_x, orientation * 4 + phase_y
         brightness = level / 15.0
-        for y in range(33):
-            for x in range(33):
-                atlas_x, atlas_y = tile_x * 33 + x, tile_y * 33 + y
-                byte = rotor_asset[atlas_y * 66 + atlas_x // 2]
+        half_tile = BEZEL_ARC_TILE_SIZE // 2
+        for y in range(BEZEL_ARC_TILE_SIZE):
+            for x in range(BEZEL_ARC_TILE_SIZE):
+                atlas_x = tile_x * BEZEL_ARC_TILE_SIZE + x
+                atlas_y = tile_y * BEZEL_ARC_TILE_SIZE + y
+                byte = rotor_asset[atlas_y * (atlas_width // 2) + atlas_x // 2]
                 value = (byte & 0x0F) if atlas_x % 2 == 0 else byte >> 4
                 if value:
                     color = theme.shade_color(
                         colors["accent"], int(value * brightness * 100 // 15))
-                    px, py = int(base_x) + x - 16, int(base_y) + y - 16
+                    px = int(base_x) + x - half_tile
+                    py = int(base_y) + y - half_tile
                     if 0 <= px < 240 and 0 <= py < 240:
                         pixels[px, py] = rgb(color)
 

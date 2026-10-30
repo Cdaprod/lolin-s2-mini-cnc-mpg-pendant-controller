@@ -8,12 +8,14 @@ _WAVE_HALF_BINS = _WAVE_BINS // 2
 # 12-arc ring at once, which reads as a persistent smear after extended use.
 # At the 30-degree segment pitch this leaves a bright lead arc and a short,
 # smooth falloff to its immediate neighbors.
-_WAVE_SIGMA = 0.30
-BEZEL_SEGMENT_COUNT = 12
-# The generated cyan reactor bezel has twelve outer arc centers at this
-# screen-space angle, then every 30 degrees. Keep the animated accents on that
-# artwork instead of drawing a second, interleaved ring.
-BEZEL_SEGMENT_OFFSET_RAD = math.radians(29.0)
+_WAVE_SIGMA = 0.72
+BEZEL_SEGMENT_COUNT = 4
+# Four long, fixed curved accents sit at the cardinal points. A brightness
+# wave travels clockwise among them; no arc pivots like a moving worm.
+BEZEL_SEGMENT_OFFSET_RAD = -math.pi / 2.0
+BEZEL_TRACK_RADIUS = 96.0
+BEZEL_ARC_TILE_SIZE = 39
+BEZEL_ARC_HALF_LENGTH = 16.5
 _NORMALIZED_WAVE = bytes(
     int(round(255.0 * math.exp(-0.5 * (
         (math.pi * index / _WAVE_HALF_BINS) / _WAVE_SIGMA) ** 2)))
@@ -21,7 +23,7 @@ _NORMALIZED_WAVE = bytes(
 )
 
 
-def bezel_segment_levels(angle, count=BEZEL_SEGMENT_COUNT, minimum=1,
+def bezel_segment_levels(angle, count=BEZEL_SEGMENT_COUNT, minimum=9,
                          maximum=15, phase_offset=0.0):
     """Brightness envelope for fixed tangent arcs, sweeping clockwise.
 
@@ -37,7 +39,7 @@ def bezel_segment_levels(angle, count=BEZEL_SEGMENT_COUNT, minimum=1,
     return tuple(levels)
 
 
-def update_bezel_segment_levels(angle, levels, minimum=1, maximum=15,
+def update_bezel_segment_levels(angle, levels, minimum=9, maximum=15,
                                 phase_offset=0.0):
     """Update a retained level buffer without allocating animation state."""
     count = len(levels)
@@ -69,11 +71,11 @@ class BezelRotor:
     IDLE_AFTER_S = 0.18
     ACCELERATION_TAU_S = 0.12
 
-    def __init__(self, ambient_period_s=54.0, encoder_gain=0.04,
+    def __init__(self, ambient_period_s=46.0, encoder_gain=0.04,
                  max_speed_rad_s=0.35, inertia_s=0.9,
                  direction_change_min_s=20.0,
                  direction_change_max_s=40.0, frame_rate=24):
-        self.ambient_period_s = _bounded(ambient_period_s, 1.0, 600.0, 54.0)
+        self.ambient_period_s = _bounded(ambient_period_s, 1.0, 600.0, 46.0)
         self.encoder_gain = _bounded(encoder_gain, 0.0, 10.0, 0.04)
         self.max_speed_rad_s = _bounded(max_speed_rad_s, 0.001, 4.0, 0.35)
         self.inertia_s = _bounded(inertia_s, 0.05, 10.0, 0.9)
