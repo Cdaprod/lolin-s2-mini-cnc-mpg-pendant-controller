@@ -18,10 +18,129 @@
     ]
   },
   "closed_hole_candidate_2026_10_30": {
+    "active_chain_observation": {
+      "changed_upstream_pocket_outputs": true,
+      "front_path": "SmallHangerPocketBody -> RearFullWidthReceiver -> FrontFullWidthReceiver -> FrontBossToWallLoadPaths -> FrontHighToLowTransitions -> RestoreUpperFaceplateHoles",
+      "interpretation": "Generic PartDesign::Feature stored shapes did not reflect changed upstream pocket geometry in final Body Tips; an Up-to-date state was not sufficient proof of propagation.",
+      "rear_path": "SmallHangerPocketBody002 -> Body002FullWidthSeat -> RearBossToWallLoadPaths -> RearBossShoulderTransitions -> RearBossWallRamps45",
+      "stored_shape_feature_outputs_unchanged": [
+        "FrontBossToWallLoadPaths",
+        "FrontHighToLowTransitions",
+        "RearBossToWallLoadPaths",
+        "RearBossShoulderTransitions",
+        "RearBossWallRamps45"
+      ]
+    },
     "candidate_file": "/tmp/pendant-hanger-closed-hole-candidate.FCStd",
     "candidate_sha256": "ab43282cebb687c862e98ebe84d829dac3e2148b79406ed3e1a9a59499091690",
-    "disposition": "rejected; disposable only; no production CAD changed",
-    "next_step": "investigate native parametric reinforcement of the hanger bridge through both shells while preserving a closed aperture, screw-seat clearance, and shell mating; establish a measurable load case before claiming strength",
+    "disposition": "rejected as a geometry candidate and incomplete as a downstream propagation test; disposable only",
+    "feature_propagation_trace": [
+      {
+        "candidate_volume_mm3": 40840.13294431838,
+        "feature": "SmallHangerPocketBody",
+        "source_volume_mm3": 40859.167820750845,
+        "status": "updated"
+      },
+      {
+        "candidate_volume_mm3": 38540.31948181379,
+        "feature": "RearFullWidthReceiver",
+        "source_volume_mm3": 38556.84702376759,
+        "status": "updated"
+      },
+      {
+        "candidate_volume_mm3": 37450.0648860394,
+        "feature": "FrontFullWidthReceiver",
+        "source_volume_mm3": 37466.592366261575,
+        "status": "updated"
+      },
+      {
+        "candidate_volume_mm3": 37548.75385085744,
+        "feature": "FrontBossToWallLoadPaths",
+        "source_volume_mm3": 37548.75385085744,
+        "status": "stored PartDesign::Feature output unchanged"
+      },
+      {
+        "candidate_volume_mm3": 37690.119840806634,
+        "feature": "FrontHighToLowTransitions",
+        "source_volume_mm3": 37690.119840806634,
+        "status": "downstream output unchanged"
+      },
+      {
+        "candidate_volume_mm3": 37683.517480502655,
+        "feature": "front Body Tip RestoreUpperFaceplateHoles",
+        "source_volume_mm3": 37683.517480502655,
+        "status": "final Tip unchanged"
+      },
+      {
+        "candidate_volume_mm3": 38187.76407019162,
+        "feature": "SmallHangerPocketBody002",
+        "source_volume_mm3": 38207.25187571011,
+        "status": "updated"
+      },
+      {
+        "candidate_volume_mm3": 40463.61532486119,
+        "feature": "Body002FullWidthSeat",
+        "source_volume_mm3": 40485.6574282847,
+        "status": "updated"
+      },
+      {
+        "candidate_volume_mm3": 40869.39100368142,
+        "feature": "RearBossToWallLoadPaths",
+        "source_volume_mm3": 40869.39100368142,
+        "status": "stored PartDesign::Feature output unchanged"
+      },
+      {
+        "candidate_volume_mm3": 40854.429553998285,
+        "feature": "RearBossShoulderTransitions",
+        "source_volume_mm3": 40854.429553998285,
+        "status": "downstream output unchanged"
+      },
+      {
+        "candidate_volume_mm3": 40961.35900828918,
+        "feature": "rear Body Tip RearBossWallRamps45",
+        "source_volume_mm3": 40961.35900828918,
+        "status": "final Tip unchanged"
+      }
+    ],
+    "immediate_regeneration_targets": [
+      "FrontBossToWallLoadPaths",
+      "RearBossToWallLoadPaths"
+    ],
+    "loadpath_feature_metadata": {
+      "FrontBossToWallLoadPaths": {
+        "design_note": "Integrated lofted transitions for four rear/front shell screw bosses, derived from master screw support sketch and clipped to front envelope and component clearances.",
+        "proxy": null,
+        "regeneration_script": null,
+        "type": "PartDesign::Feature"
+      },
+      "FrontHighToLowTransitions": {
+        "proxy": null,
+        "regeneration_script": "hardware/freecad/regenerate_front_high_low_transitions.py",
+        "type": "PartDesign::Feature"
+      },
+      "RearBossShoulderTransitions": {
+        "design_note": "Local 45-degree bevels at boss underside junctions; native Chamfer recompute produced invalid geometry.",
+        "proxy": null,
+        "regeneration_script": null,
+        "source_edges": [
+          "Edge1373",
+          "Edge339"
+        ],
+        "type": "PartDesign::Feature"
+      },
+      "RearBossToWallLoadPaths": {
+        "design_note": "Integrated lofted transitions for four rear shell screw bosses, clipped to rear envelope, screw passages, and magnet well keepouts.",
+        "proxy": null,
+        "regeneration_script": null,
+        "type": "PartDesign::Feature"
+      },
+      "RearBossWallRamps45": {
+        "proxy": null,
+        "regeneration_script": "hardware/freecad/regenerate_rear_boss_wall_ramps.py",
+        "type": "PartDesign::Feature"
+      }
+    },
+    "next_step": "restore a trustworthy hanger-pocket-to-final-Tip regeneration path in both shells, including stored-shape load-path features; then test reinforcement and load case",
     "parameters_mm": {
       "SlotCenterY": 81.05,
       "SlotLength": 35.6,
@@ -51,6 +170,33 @@
         }
       },
       "candidate_grid_state_note": "Counts classify sampled edge sections relative to local shell intervals; grid is sparse, not a global wall-thickness or structural proof.",
+      "data_scope": "Proposed edge heights compared against saved pre-hanger intermediate shell shapes; not final Body Tip validation.",
+      "direct_final_tip_checks": {
+        "caveat": "Source includes touched/stale upstream intermediate features; local saved-tip observations are diagnostic, not fresh complete-recompute proof.",
+        "front_x12_z_minus14": {
+          "intervals_y_mm": [
+            [
+              75.1861513,
+              80.5
+            ],
+            [
+              83.5,
+              83.663818
+            ]
+          ],
+          "remaining_upper_web_at_y83_5_mm": 0.163818
+        },
+        "rear_x12_z_minus25": {
+          "intervals_y_mm": [
+            [
+              70.113007,
+              80.5
+            ]
+          ],
+          "upper_interval_present": false
+        },
+        "source_vs_candidate": "Intervals and Body Tip volumes matched at sampled stations; the candidate did not propagate to final shell shapes."
+      },
       "direct_front_sample": {
         "candidate_cut_edge_y_mm": 83.6,
         "outer_surface_y_mm": 83.663818,
@@ -91,16 +237,30 @@
         "sample_count": 594
       }
     },
-    "reason": "upper edge shift leaves near-zero sampled webs and cuts beyond rear shell at a sampled section; does not meet closed load-bearing hole requirement",
+    "reason": "hanger pocket feature outputs changed, but downstream generic PartDesign::Feature shape outputs and final shell Body Tips remained at baseline; candidate geometry was not demonstrated in the manufactured shapes",
     "recompute": {
-      "front_and_rear_body_tips_valid_single_solids": true,
-      "front_and_rear_pockets_up_to_date": true,
-      "front_and_rear_sketches_fully_constrained": true,
-      "other_document_error": [
+      "body_tip_sections_match_source_at_test_points": true,
+      "document_error_objects": [
         "PartChamferTrial: Invalid"
       ],
+      "downstream_active_tip_chain_propagation": false,
+      "front_body_tip_volume_mm3": 37683.517480502655,
+      "full_history_validation": false,
+      "hanger_pocket_features_updated": true,
+      "rear_body_tip_volume_mm3": 40961.35900828918,
       "reopened_after_save": false,
-      "saved": true
+      "saved": true,
+      "sketches_fully_constrained": true
+    },
+    "stored_shape_delta_replay": {
+      "candidate_copy_sha256_after": "ab43282cebb687c862e98ebe84d829dac3e2148b79406ed3e1a9a59499091690",
+      "candidate_copy_sha256_before": "ab43282cebb687c862e98ebe84d829dac3e2148b79406ed3e1a9a59499091690",
+      "candidate_result_saved": false,
+      "disposition": "unvalidated; do not repeat unchanged; seek a more local regeneration or isolated feature method",
+      "feature_count_attempted": 5,
+      "process_timeout_s": 170,
+      "result": "timed out before producing a validation record",
+      "source_saved": false
     }
   },
   "date": "2026-10-30",
@@ -158,7 +318,7 @@
     "source": "user clarification",
     "structural_requirement": "carry pendant weight; no load capacity claimed from section measurements alone"
   },
-  "next_step": "Investigate a native parametric, locally reinforced hanger bridge/boss shared through both shells. Preserve the closed aperture and screw-seat/mating clearances; establish a measurable load case and validate load path, full contour, shell recomputation, save/reopen, and assembly fit before promotion.",
+  "next_step": "Recover the missing boss-to-wall loft and rear shoulder construction inputs from existing sketches, envelopes, screw passages, and magnet clearances; implement a local disposable regeneration test. Do not repeat the five-feature Boolean delta replay unchanged.",
   "parameter_object": "HangerParameters",
   "production_geometry_modified": false,
   "recompute": {
@@ -511,6 +671,7 @@
     "source_sha256": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881"
   },
   "scope": "read-only baseline and disposable sketch/section candidate checks",
+  "section_visualization": "reports/top-hanger-section-screening-2026-10-30.png",
   "shells": [
     {
       "baseline_tip_volume_mm3": 37683.517480502655,
