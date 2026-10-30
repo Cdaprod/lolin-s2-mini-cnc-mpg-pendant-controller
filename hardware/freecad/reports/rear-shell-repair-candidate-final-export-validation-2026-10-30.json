@@ -1,0 +1,120 @@
+{
+  "date": "2026-10-30",
+  "branch": "hardware-integration",
+  "commit_under_test": "00757e6c94d185e23b92b85b8bfd4bfa0b488594",
+  "freecad": "1.1.1",
+  "candidate_assembly": "hardware/freecad/pendant-modular-repair-candidate.FCStd",
+  "export_settings": {
+    "linear_deflection_mm": 0.08,
+    "angular_deflection_rad": 0.2,
+    "edge_weld_tolerance_mm": 1e-05,
+    "exported_to": "/tmp/pendant-final-validation-20261030"
+  },
+  "part_results": [
+    {
+      "object": "Interim_Body",
+      "label": "INTERIM \u2014 Front shell (static source BREP)",
+      "filename": "front-shell.stl",
+      "source_type": "Part::Feature",
+      "volume_mm3": 37683.517480502655,
+      "triangles": 31638,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_triangles": 0,
+      "closed_two_manifold": true
+    },
+    {
+      "object": "Interim_Body002",
+      "label": "Rear shell \u2014 native load-path module candidate",
+      "filename": "rear-shell.stl",
+      "source_type": "App::Link",
+      "volume_mm3": 40609.693012380856,
+      "triangles": 19126,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_triangles": 0,
+      "closed_two_manifold": true
+    },
+    {
+      "object": "Interim_Body003",
+      "label": "INTERIM \u2014 Upper faceplate (static source BREP)",
+      "filename": "upper-faceplate.stl",
+      "source_type": "Part::Feature",
+      "volume_mm3": 13363.330856364399,
+      "triangles": 13850,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_triangles": 0,
+      "closed_two_manifold": true
+    },
+    {
+      "object": "Interim_EncoderFaceplatePocketUnsplit",
+      "label": "INTERIM \u2014 encoder faceplate + pocket (one fused solid)",
+      "filename": "encoder-faceplate-pocket-fused.stl",
+      "source_type": "Part::Feature",
+      "volume_mm3": 14630.092839744844,
+      "triangles": 7356,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_triangles": 0,
+      "closed_two_manifold": true
+    },
+    {
+      "object": "Editable_Body_DisplayRetainer_EditableV2",
+      "label": "Body_DisplayRetainer_EDITABLE (master-driven) \u2014 editable source link",
+      "filename": "display-retainer.stl",
+      "source_type": "App::Link",
+      "volume_mm3": 2050.792480333789,
+      "triangles": 1856,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_triangles": 0,
+      "closed_two_manifold": true
+    },
+    {
+      "object": "Editable_Body_USBTetheredCover",
+      "label": "Body_USB_Cover_TPU \u2014 editable source link",
+      "filename": "usb-cover.stl",
+      "source_type": "App::Link",
+      "volume_mm3": 665.2206904482824,
+      "triangles": 1854,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_triangles": 0,
+      "closed_two_manifold": true
+    },
+    {
+      "object": "Editable_Body_FaceplateLocator_A",
+      "label": "Body_FaceplateLocator_A \u2014 editable source link",
+      "filename": "faceplate-locator-a.stl",
+      "source_type": "App::Link",
+      "volume_mm3": 88.29496032374551,
+      "triangles": 884,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_triangles": 0,
+      "closed_two_manifold": true
+    },
+    {
+      "object": "Editable_Body_FaceplateLocator_B",
+      "label": "Body_FaceplateLocator_B \u2014 editable source link",
+      "filename": "faceplate-locator-b.stl",
+      "source_type": "App::Link",
+      "volume_mm3": 88.29496032374553,
+      "triangles": 884,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_triangles": 0,
+      "closed_two_manifold": true
+    }
+  ],
+  "all_closed_two_manifold": true,
+  "source_hashes": {
+    "hardware/freecad/pendant-modular-repair-candidate.FCStd": "45e9c686007ba5be3fc051bedbc486c72ccef55092a5edf95d90790ee7ade840",
+    "hardware/freecad/pendant-bodies/rear-shell-loadpath-repair-candidate.FCStd": "d28a69fd20f2433d4114be3d4cb0d1e14df8e5ec4512c8918c16590e800f073d",
+    "hardware/freecad/pendant.FCStd": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881",
+    "hardware/freecad/pendant-modular-assembly.FCStd": "2e554ca1c06d5e6b6cf0c552fc722f85180752eced96e467f0f0b76388c77ee4",
+    "hardware/printing/pendant/pendant-orcaslicer.3mf": "0a8b9f9c0e33b72c4853c4aa63f7352a9533c46b743797595bf60def438f1fee"
+  },
+  "scope_note": "Disposable repair-candidate validation only. No production CAD, STL, 3MF, backup, or recovery file was changed. This verifies printable mesh topology from the candidate assembly; it does not establish exact BREP equivalence, mechanical load capacity, or production acceptance."
+}
