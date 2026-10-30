@@ -40,4 +40,4 @@ SHA-256 after this change:
 - master: `d3b226b50cbbefd20a4f414afd60532d320b7b32dacca38844360035b4e2ffe7`
 - retainer: `066e82cb63553b66c423395e7fdc52fdca88a4694697d98d1482e7e249f4065b`
 
-The monolithic pendant and modular assembly files were not modified. The relocated assembly copy was used for propagation testing only.
+The monolithic pendant and modular assembly files were not modified. The relocated assembly copy was used for propagation testing only. After promotion, the canonical `pendant-modular-assembly.FCStd` was also opened in a fresh FreeCADCmd process without saving. It loaded the master and all four component documents, recomputed, and validated five live links and five static interim solids. The retainer link and source each remained one valid solid at `2050.792480333789 mm³`; the master aliases read 2.30 mm and 2.20 mm.

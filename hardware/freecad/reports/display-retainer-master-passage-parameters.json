@@ -10,7 +10,10 @@
       "cell": "B7",
       "alias": "ShellMountPassageDiameter",
       "baseline_mm": 2.3,
-      "constraints": [2, 5]
+      "constraints": [
+        2,
+        5
+      ]
     },
     {
       "sheet": "InternalHardware",
@@ -18,7 +21,11 @@
       "alias": "DisplayMountPassageDiameter",
       "baseline_mm": 2.2,
       "test_mm": 2.22,
-      "constraints": [8, 11, 14]
+      "constraints": [
+        8,
+        11,
+        14
+      ]
     }
   ],
   "expression_template": "pendant_master#<<InternalHardware>>.<alias> / 2",
@@ -28,7 +35,14 @@
     "solids": 1,
     "volume_mm3": 2050.792480333789,
     "area_mm2": 2183.563637888774,
-    "bounds_mm": [-29.42019278301042, 29.423440320911695, -16.0, 25.8, -10.06146722824298, -7.061467228242978],
+    "bounds_mm": [
+      -29.42019278301042,
+      29.423440320911695,
+      -16.0,
+      25.8,
+      -10.06146722824298,
+      -7.061467228242978
+    ],
     "brep_difference_to_previous_source_mm3": 0.0,
     "brep_boolean_results_valid": true
   },
@@ -68,5 +82,24 @@
     "component": "066e82cb63553b66c423395e7fdc52fdca88a4694697d98d1482e7e249f4065b"
   },
   "monolithic_pendant_modified": false,
-  "modular_assembly_modified": false
+  "modular_assembly_modified": false,
+  "canonical_assembly_cold_start": {
+    "assembly": "hardware/freecad/pendant-modular-assembly.FCStd",
+    "fresh_process_open": true,
+    "recompute_count": 6,
+    "errors": [],
+    "master_values_mm": {
+      "ShellMountPassageDiameter": 2.3,
+      "DisplayMountPassageDiameter": 2.2
+    },
+    "live_links": 5,
+    "static_interim_solids": 5,
+    "retainer_link": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 2050.792480333789,
+      "source_link_match": true
+    },
+    "all_component_documents_loaded": true
+  }
 }
