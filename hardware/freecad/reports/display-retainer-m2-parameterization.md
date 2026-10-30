@@ -35,3 +35,7 @@ The master, assembly, original monolith, and existing recovery files were not mo
 ## Scope
 
 This makes the two existing M2 passage groups independently adjustable while retaining their original values. It does not resolve shell dependencies or make the encoder faceplate/pocket editable as separate native components.
+
+## Later shared-master refinement
+
+The two shell mounting passages (`Constraints[2]` and `[5]`) were subsequently connected to the master `InternalHardware.ShellMountPassageDiameter` alias at the same 2.30 mm baseline. Their reversible 2.32 mm propagation through the complete retainer Tip and refreshed live assembly link, cold-start reopen, and restoration are documented in `display-retainer-shared-shell-mounting.md` and its JSON evidence. The three display mounting passages remain component-local at 2.20 mm. The local shell-passage alias remains stored as historical data but no longer drives those two constraints.
