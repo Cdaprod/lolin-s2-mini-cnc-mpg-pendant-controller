@@ -49,11 +49,13 @@ class JobFile:
 
 class SDStorage:
     def __init__(self, jobs_path="/jobs", macros_path="/macros",
-                 config_path="/config", max_files=64):
+                 config_path="/config", max_files=64,
+                 missing_is_unconfigured=False):
         self.jobs_path = jobs_path
         self.macros_path = macros_path
         self.config_path = config_path
         self.max_files = int(max_files)
+        self.missing_is_unconfigured = bool(missing_is_unconfigured)
         self.status = "unknown"
         self.error = None
         self.refresh_status()
@@ -64,9 +66,24 @@ class SDStorage:
             self.status = "available"
             self.error = None
         except OSError as exc:
-            self.status = "missing"
-            self.error = type(exc).__name__
+            if self._is_expected_missing(exc):
+                self.status = "unconfigured"
+                self.error = None
+            else:
+                self.status = "missing"
+                self.error = "listdir {}: {}: {}".format(
+                    self.jobs_path, type(exc).__name__, str(exc)[:80])
         return self.status
+
+    def _is_expected_missing(self, exc):
+        if not self.missing_is_unconfigured:
+            return False
+        if type(exc).__name__ == "FileNotFoundError":
+            return True
+        number = getattr(exc, "errno", None)
+        if number is None and getattr(exc, "args", None):
+            number = exc.args[0] if isinstance(exc.args[0], int) else None
+        return number == 2
 
     def list_jobs(self):
         try:
@@ -74,8 +91,13 @@ class SDStorage:
             self.status = "available"
             self.error = None
         except OSError as exc:
-            self.status = "missing"
-            self.error = type(exc).__name__
+            if self._is_expected_missing(exc):
+                self.status = "unconfigured"
+                self.error = None
+            else:
+                self.status = "missing"
+                self.error = "listdir {}: {}: {}".format(
+                    self.jobs_path, type(exc).__name__, str(exc)[:80])
             return []
         return sorted(name for name in names if
                       name.lower().endswith(JOB_EXTENSIONS) and

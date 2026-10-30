@@ -22,13 +22,37 @@ from src.state import PendantState
 from src.network import MockWiFiService, WiFiService
 from src.transport.mock import MockGRBLTransport, MockTransport
 from src.transport.uart import UARTTransport
+from src.diagnostics import (emit, input_configuration_fields,
+                             loop_timing_fields)
+
+
+# CircuitPython peripheral objects are interpreter-owned singletons. Track
+# composition in sys.modules so re-importing src.app cannot bypass the guard.
+_CIRCUITPY_COMPOSITION_KEY = "_cdaprod_circuitpython_app_composition"
+# Keep Wi-Fi state/service work off the 115 Hz input loop. The measured S3
+# runtime showed this phase dominating its periodic background work; 10 Hz is
+# ample for link/portal state while limiting added status-detection latency to
+# 100 ms. Input, touch, controller transport, watchdog, and rendering remain
+# serviced on every main-loop pass.
+_WIFI_SERVICE_POLL_INTERVAL = 0.1
+_DIAG_TICKS_PERIOD = 1 << 29
+_DIAG_TICKS_MASK = _DIAG_TICKS_PERIOD - 1
+_DIAG_TICKS_HALFPERIOD = _DIAG_TICKS_PERIOD >> 1
+
+
+def _diag_ticks_diff_ms(newer, older):
+    """Return a wrap-safe signed delta for CircuitPython ticks_ms values."""
+    diff = (newer - older) & _DIAG_TICKS_MASK
+    return ((diff + _DIAG_TICKS_HALFPERIOD) & _DIAG_TICKS_MASK) - \
+        _DIAG_TICKS_HALFPERIOD
 
 
 class PendantApplication:
     def __init__(self, state, transport, controller, safety, actions, display,
                  storage, streamer, watchdog, indicator, ui, network_service,
                  macros, input_manager, indicator_output, sd_mount=None,
-                 touch_manager=None, clock=time.monotonic):
+                 touch_manager=None, clock=time.monotonic, spi_bus=None,
+                 i2c_bus=None):
         self.state = state
         self.transport = transport
         self.controller = controller
@@ -46,7 +70,53 @@ class PendantApplication:
         self.indicator_output = indicator_output
         self.sd_mount = sd_mount
         self.touch_manager = touch_manager
+        # Touch contact feedback is visual only. Navigation actions remain
+        # release-gated; non-HOME menu rows may preview while dragging.
         self.clock = clock
+        try:
+            import supervisor
+            self._diag_ticks_ms = supervisor.ticks_ms
+        except (ImportError, AttributeError):
+            # Keep host tests injectable while using integer millisecond ticks
+            # on CircuitPython, where monotonic() float precision can obscure
+            # short phase timings.
+            self._diag_ticks_ms = lambda: int(self.clock() * 1000)
+        # Keep the shared bus alive independently of individual drivers.
+        self.spi_bus = spi_bus
+        self.i2c_bus = i2c_bus
+        self.mirror = None
+        self._last_heap_warning = None
+        self._diag_last_heartbeat = None
+        self._diag_last_network_poll = None
+        self._diag_encoder_delta = 0
+        self._diag_loop_overruns = 0
+        self._diag_loop_work_ms = 0
+        self._diag_max_loop_work_ms = 0
+        self._diag_profile_loops = 0
+        self._diag_total_poll_ms = 0.0
+        self._diag_max_input_ms = 0
+        self._diag_total_input_ms = 0
+        self._diag_max_touch_ms = 0
+        self._diag_total_touch_ms = 0
+        self._diag_max_transport_ms = 0
+        self._diag_total_transport_ms = 0
+        self._diag_max_wifi_ms = 0
+        self._diag_total_wifi_ms = 0
+        self._diag_max_display_ms = 0
+        self._diag_total_display_ms = 0
+        self._diag_total_display_model_ms = 0
+        self._diag_total_display_update_ms = 0
+        self._diag_total_display_refresh_ms = 0
+        self._diag_max_mirror_ms = 0
+        self._diag_total_mirror_ms = 0
+        self._diag_last_touch_error = None
+        self._diag_last_wifi_state = None
+        self._diag_last_controller_state = None
+        self._diag_last_display_state = None
+        self._diag_last_selectors_valid = None
+        self._diag_last_input_valid = None
+        self._diag_buttons = {}
+        self._diag_last_input_error = None
 
     @classmethod
     def from_config(cls, config, transport=None, display=None,
@@ -54,7 +124,59 @@ class PendantApplication:
                     input_manager=None, input_adapter=None, storage=None,
                     indicator_output=None, shared_spi=None, shared_i2c=None,
                     touch_manager=None, touch_source=None):
+        if sys.implementation.name == "circuitpython":
+            if sys.modules.get(_CIRCUITPY_COMPOSITION_KEY):
+                raise RuntimeError(
+                    "CircuitPython app composition is one-shot per run; "
+                    "use supervisor.reload() to restart safely")
+            # Mark before allocating peripherals: partial initialization may
+            # already have claimed pins even when a later optional service fails.
+            sys.modules[_CIRCUITPY_COMPOSITION_KEY] = True
         state = PendantState(config.get("base_increment", 0.001))
+        state.ui_settings = {
+            "Jog": (
+                ("Base increment", "{:.4f}".format(config.get("base_increment", 0.001))),
+                ("Jog feed limit", "{} mm/min".format(config.get("jog_feed", 500))),
+            ),
+            "Units": (
+                ("Coordinate mode", "controller reported"),
+                ("Jog units", "settings.toml"),
+            ),
+            "Display": (
+                ("Theme", config.get("ui_theme", "industrial").upper()),
+                ("Bezel", config.get("ui_bezel", "cyan_reactor").replace("_", " ").upper()),
+                ("Animations", "ON" if config.get("ui_animations", True) else "OFF"),
+                ("Bezel rotation", "ON" if config.get("bezel_rotation_enabled", True) else "OFF"),
+                ("Ambient period", "{:.0f} sec / revolution".format(config.get("bezel_ambient_period_s", 46.0))),
+                ("Animation rate", "{} fps max".format(config.get("bezel_frame_rate", 24))),
+            ),
+            "Controls": (
+                ("Input backend", config.get("selector_backend", "disabled").upper()),
+                ("Input sampling", "ENABLED" if config.get("inputs_enabled") else "DISABLED"),
+                ("Touch", "ENABLED" if config.get("touch_enabled") else "DISABLED"),
+            ),
+            "MPG": (
+                ("Encoder input", "ENABLED" if config.get("inputs_enabled") else "DISABLED"),
+                ("Counts per detent", str(config.get("mpg_counts_per_detent", 4))),
+                ("Direction", "NORMAL" if config.get("mpg_direction", 1) >= 0 else "REVERSED"),
+            ),
+            "Safety": (
+                ("Controller", config.get("controller_mode", "disabled").upper()),
+                ("Hold-to-run", "CONFIGURED" if config.get("deadman_pin") else "UNCONFIGURED"),
+                ("E-stop observe", "CONFIGURED" if config.get("estop_observe_pin") else "UNCONFIGURED"),
+                ("Motion admission", "SAFETY GATES ACTIVE"),
+            ),
+            "Storage": (
+                ("SD support", "ENABLED" if config.get("sd_enabled") else "DISABLED"),
+                ("Jobs folder", config.get("jobs_path", "/jobs")),
+                ("Macros folder", config.get("macros_path", "/macros")),
+            ),
+            "UI": (
+                ("Touch feedback", "FOLLOW FINGER"),
+                ("Page transitions", "SMOOTH SWIPE"),
+                ("Settings source", "settings.toml"),
+            ),
+        }
         state.runtime_version = getattr(sys, "version", "unknown").split(";", 1)[0]
         state.board_profile = config.get("board_profile", "") or "default"
         state.display_profile = config.get("display_profile", "") or "default"
@@ -104,20 +226,60 @@ class PendantApplication:
                 "PARK": config.get("park", "G53 G0 X0 Y0"),
             }, watchdog=watchdog, clock=clock
         )
-        sd_mount = None
-        if storage is None:
-            storage, sd_mount = build_storage(config, shared_spi)
-        macros = MacroLibrary(storage.macros_path)
-        streamer = GCodeStreamer(state, controller, clock=clock)
+        # One SPI object must be shared by the GC9A01 and SD card. Build it
+        # with MISO at creation (the LCD alone only needs SCK and MOSI).
+        # Never make SD a prerequisite for starting the round UI.
+        sd_spi = shared_spi
+        display_release_error = None
+        if (display is None and sd_spi is None and config.get("display_enabled") and
+                config.get("display_renderer") == "round" and
+                sys.implementation.name == "circuitpython"):
+            try:
+                from src.display.round_ui.display import release_existing_displays
+                release_existing_displays()
+            except (ImportError, OSError, RuntimeError, AttributeError) as exc:
+                display_release_error = "display release failed: {}".format(
+                    type(exc).__name__)
+                print("display release diagnostic:", type(exc).__name__, str(exc)[:80])
+        if (display_release_error is None and sd_spi is None and config.get("sd_enabled") and
+                config.get("display_enabled") and
+                config.get("display_renderer") == "round" and
+                sys.implementation.name == "circuitpython"):
+            from src.hardware import build_shared_spi
+            try:
+                sd_spi = build_shared_spi(config)
+            except (OSError, RuntimeError, ValueError, AttributeError,
+                    ImportError, KeyError) as exc:
+                print("shared SPI allocation failed:", type(exc).__name__, str(exc)[:80])
+        # Initialize the round GC9A01 before mounting the SPI SD card.
+        # A card/mount failure must never prevent critical display startup.
         ui = UIManager(state)
         ui.complete_boot()
-        display_error = None
-        try:
-            renderer = display or build_display(config)
-        except Exception as exc:
-            display_error = "display initialization failed: {}".format(
-                type(exc).__name__)
+        display_error = display_release_error
+        if display_release_error is not None:
             renderer = build_display({"display_enabled": False})
+        else:
+            try:
+                renderer = display or build_display(config, shared_spi=sd_spi)
+            except (OSError, RuntimeError, ValueError, AttributeError,
+                    ImportError, KeyError) as exc:
+                display_error = "display initialization failed: {}".format(
+                    type(exc).__name__)
+                print("display diagnostic:", type(exc).__name__, str(exc)[:80])
+                renderer = build_display({"display_enabled": False})
+        sd_mount = None
+        if storage is None:
+            if (config.get("sd_enabled") and config.get("display_enabled") and
+                    config.get("display_renderer") == "round" and
+                    sd_spi is None and sys.implementation.name == "circuitpython"):
+                sd_config = dict(config)
+                sd_config["sd_enabled"] = False
+                storage, sd_mount = build_storage(sd_config)
+                state.sd_startup_error = "shared SPI unavailable"
+            else:
+                storage, sd_mount = build_storage(config, sd_spi)
+        macros = MacroLibrary(storage.macros_path)
+        streamer = GCodeStreamer(state, controller, clock=clock)
         if hasattr(renderer, "bind_ui"):
             renderer.bind_ui(ui)
         if network_service is None:
@@ -147,6 +309,15 @@ class PendantApplication:
                 state.input_error = "input initialization failed: {}".format(
                     type(exc).__name__)
                 input_manager = build_inputs({}, state)
+        input_adapter_for_status = getattr(input_manager, "adapter", None)
+        state.deadman_input_configured = bool(
+            getattr(input_adapter_for_status, "deadman_configured", False))
+        state.button_states = dict(
+            (name, None) for name, pin in
+            config.get("button_pins", {}).items() if pin)
+        state.estop_input_configured = bool(
+            config.get("estop_observe_pin") and
+            getattr(input_adapter_for_status, "configured", False))
         indicator_output = indicator_output or build_indicator(config)
         touch_error = None
         if (touch_manager is None and touch_source is None and
@@ -154,35 +325,53 @@ class PendantApplication:
             try:
                 if shared_i2c is None:
                     raise RuntimeError("shared I2C unavailable")
-                from src.input.touch import build_cst8xx
-                touch_source = build_cst8xx(shared_i2c)
+                from src.input.touch import (TOUCH_POLL_INTERVAL_S,
+                                             build_chsc6x, build_cst8xx)
+                touch_driver = config.get("touch_driver", "chsc6x")
+                touch_source = (build_chsc6x(shared_i2c, config.get("touch_irq_pin", "D7"))
+                                if touch_driver == "chsc6x" else
+                                build_cst8xx(shared_i2c))
             except Exception as exc:
                 touch_error = "touch initialization failed: {}".format(
                     type(exc).__name__)
         if touch_manager is None and touch_source is not None:
             from src.input.touch import TouchInput
-            touch_manager = TouchInput(touch_source, clock=clock)
+            touch_manager = TouchInput(
+                touch_source, clock=clock,
+                rotation=config.get("touch_rotation", 0),
+                invert_x=config.get("touch_invert_x", False),
+                invert_y=config.get("touch_invert_y", False),
+                poll_interval=TOUCH_POLL_INTERVAL_S)
         state.storage_state = storage.status
         state.storage_error = storage.error
         addresses, i2c_error = scan_i2c(shared_i2c)
         expected_address = config.get("mcp23017_address", 0x20)
         state.mcp23017_detected = expected_address in addresses
         state.mcp23017_address = expected_address if state.mcp23017_detected else None
+        state.i2c_addresses = addresses
         state.i2c_error = i2c_init_error or i2c_error
         state.display_error = display_error
         state.touch_error = touch_error
+        if storage.error:
+            print("storage diagnostic:", storage.error)
+        if state.i2c_error:
+            print("I2C diagnostic:", state.i2c_error)
+        if touch_error:
+            print("touch diagnostic:", touch_error)
         storage_status = str(state.storage_state).lower()
         state.subsystems = {
             "display": "ERROR" if state.display_error else
                        "OK" if config.get("display_enabled") or display is not None
                        else "DISABLED",
             "storage": "OK" if storage_status == "available" else
-                       "NOT PRESENT" if storage_status in ("missing", "unconfigured")
-                       else "ERROR" if state.storage_error else "DISABLED",
-            "sd": ("NOT PRESENT" if not config.get("sd_enabled") else
+                       "NOT PRESENT" if storage_status == "missing" else
+                       "ERROR" if storage_status == "mount_error" else
+                       "DISABLED" if storage_status == "unconfigured" else
+                       "ERROR" if state.storage_error else "DISABLED",
+            "sd": ("DISABLED" if not config.get("sd_enabled") else
                    "MOUNTED" if storage_status == "available" else
-                   "NOT PRESENT" if storage_status in ("missing", "unconfigured")
-                   else "ERROR" if state.storage_error else "DISABLED"),
+                   "NOT PRESENT" if storage_status == "missing" else
+                   "ERROR" if state.storage_error else "DISABLED"),
             "i2c": "ERROR" if state.i2c_error else
                    "OK" if shared_i2c is not None else "DISABLED",
             "inputs": "ERROR" if state.input_error else
@@ -195,13 +384,41 @@ class PendantApplication:
         for name in ("display", "storage", "sd", "i2c", "inputs", "touch",
                      "wifi", "controller"):
             print("{:<13} {}".format(name, state.subsystems[name]))
+            emit("subsystem", name=name, status=state.subsystems[name])
+        input_adapter_configured = bool(
+            getattr(getattr(input_manager, "adapter", None), "configured", False))
+        emit("input_configuration", **input_configuration_fields(
+            config, input_adapter_configured, state.mcp23017_detected,
+            state.mcp23017_address))
+        state.free_heap = gc.mem_free() if hasattr(gc, "mem_free") else None
+        if state.free_heap is not None:
+            print("runtime heap:", state.free_heap)
         if config.get("round_ui_bootstrap"):
             from src.display.round_ui.bootstrap import apply_mock_state
             apply_mock_state(state)
-        return cls(state, transport, controller, safety, actions,
-                   renderer, storage, streamer, watchdog, Indicator(), ui,
-                   network_service, macros, input_manager, indicator_output,
-                   sd_mount, touch_manager, clock)
+        app = cls(state, transport, controller, safety, actions,
+                  renderer, storage, streamer, watchdog, Indicator(), ui,
+                  network_service, macros, input_manager, indicator_output,
+                  sd_mount, touch_manager, clock, sd_spi, shared_i2c)
+        if config.get("mirror_enabled") and sys.implementation.name == "circuitpython":
+            if not 1024 <= config.get("mirror_port", 8080) <= 65535:
+                print("mirror disabled: invalid port")
+            else:
+                try:
+                    from src.network_mirror import PendantMirror
+                    radio = network_service.radio
+                    pool_factory = getattr(network_service, "socket_pool", None)
+                    socket_pool = pool_factory() if pool_factory else None
+                    app.mirror = PendantMirror(
+                        radio, app, config.get("mirror_port", 8080),
+                        config.get("mirror_navigation", False),
+                        socket_pool=socket_pool)
+                    print("mirror listening on port", config.get("mirror_port", 8080))
+                except (OSError, ImportError, RuntimeError, ValueError,
+                        AttributeError) as exc:
+                    state.mirror_error = "startup: {}".format(type(exc).__name__)
+                    print("mirror startup failed:", type(exc).__name__, str(exc)[:80])
+        return app
 
     def observe_estop(self, active):
         """Observe supplementary E-stop contact and immediately inhibit I/O."""
@@ -213,6 +430,64 @@ class PendantApplication:
     def recover_estop(self):
         """Explicit recovery after the independently wired contact is safe."""
         self.state.clear_estop_latch()
+
+    def _machine_activity_blocks_network_association(self):
+        """Defer blocking CircuitPython Wi-Fi association during machine work."""
+        if (self.state.jog_active or self.state.deadman_enabled or
+                self.state.machine_state in ("jog", "run", "hold", "home",
+                                             "probe", "check")):
+            return True
+        if self.state.sd_job_state in ("streaming", "paused"):
+            return True
+        return any(len(item) > 1 and item[1] in ("jog", "stream")
+                   for item in getattr(self.controller, "queue", ()))
+
+    def deinit(self):
+        """Release optional services and peripheral ownership before reload."""
+        if getattr(self, "_deinitialized", False):
+            return
+        self._deinitialized = True
+        if self.mirror is not None:
+            try:
+                self.mirror.deinit()
+            except (OSError, RuntimeError):
+                pass
+            self.mirror = None
+        if hasattr(self.network_service, "deinit"):
+            try:
+                self.network_service.deinit()
+            except (OSError, RuntimeError):
+                pass
+        if self.sd_mount is not None and hasattr(self.sd_mount, "deinit"):
+            try:
+                self.sd_mount.deinit()
+            except (OSError, RuntimeError, ImportError):
+                pass
+            self.sd_mount = None
+        if self.touch_manager is not None and hasattr(self.touch_manager, "deinit"):
+            try:
+                self.touch_manager.deinit()
+            except (OSError, RuntimeError):
+                pass
+            self.touch_manager = None
+        if self.spi_bus is not None or hasattr(self.display, "display"):
+            try:
+                from src.display.round_ui.display import release_existing_displays
+                release_existing_displays()
+            except (ImportError, RuntimeError, AttributeError):
+                pass
+            if self.spi_bus is not None and hasattr(self.spi_bus, "deinit"):
+                try:
+                    self.spi_bus.deinit()
+                except (OSError, RuntimeError):
+                    pass
+            self.spi_bus = None
+        if self.i2c_bus is not None and hasattr(self.i2c_bus, "deinit"):
+            try:
+                self.i2c_bus.deinit()
+            except (OSError, RuntimeError):
+                pass
+            self.i2c_bus = None
 
     def handle_ui_event(self, event):
         """Route a normalized UI event and execute only its semantic result."""
@@ -231,6 +506,13 @@ class PendantApplication:
         if command is None:
             return None
         name = command.name
+        if (name in ("NETWORK_CONNECT", "NETWORK_SCAN", "NETWORK_TOGGLE",
+                     "NETWORK_SETUP_AP", "NETWORK_DISCONNECT") and
+                self._machine_activity_blocks_network_association()):
+            if name == "NETWORK_CONNECT":
+                command.value = None
+            self.ui.toast = "Wi-Fi changes wait until machine activity stops"
+            return False
         if name == "JOG":
             return self.actions.jog(command.value)
         if name == "ACTION":
@@ -299,22 +581,82 @@ class PendantApplication:
             return True
         if name == "RESTART":
             if sys.implementation.name == "circuitpython":
+                self.deinit()
                 import supervisor
                 supervisor.reload()
             return True
         return command
 
     def poll(self):
+        diag_started = self._diag_ticks_ms()
         started = self.clock()
-        self.network_service.poll()
         sample = self.input_manager.poll(started)
+        if (sample.selector_changed or sample.multiplier_changed or
+                sample.selectors_valid_changed or sample.input_valid_changed):
+            # The input manager drops detents spanning selector transitions.
+            # Clear retained visual/diagnostic activity as well so stale
+            # movement is not shown or later attributed to the new selection.
+            self.state.mpg_activity = 0
+            self.state.mpg_activity_timestamp = None
+            self._diag_encoder_delta = 0
+        if sample.encoder_overrun:
+            self.state.mpg_activity = 0
+            self.state.mpg_activity_timestamp = None
+            self._diag_encoder_delta = 0
+            emit("encoder_overrun", delta=sample.encoder_overrun_delta,
+                 max_detents=getattr(self.input_manager,
+                                     "MAX_ENCODER_DETENTS_PER_POLL", 4))
+        input_backend_configured = bool(
+            getattr(self.input_manager.adapter, "configured", True))
+        if (input_backend_configured and
+                (self._diag_last_input_valid is None or
+                 self._diag_last_input_valid != self.state.input_valid)):
+            emit("input_validity", domain="hardware",
+                 valid=self.state.input_valid,
+                 reason=self.state.input_error or "none")
+            self._diag_last_input_valid = self.state.input_valid
+        if sample.input_valid_changed and self.state.input_valid is False:
+            # A failed MCP23017 snapshot invalidates the deadman and every
+            # selector at once. Revoke both queued and active jog ownership.
+            queued_jog = any(item[1] == "jog"
+                             for item in getattr(self.controller, "queue", ()))
+            self.controller.discard_queued("jog")
+            if (isinstance(self.controller, C3WirelessController) or
+                    (self.transport.connected and
+                     (self.state.jog_active or queued_jog))):
+                self.controller.cancel_jog()
+            self.state.jog_active = False
+        if (input_backend_configured and
+                (self._diag_last_selectors_valid is None or
+                 self._diag_last_selectors_valid != self.state.selectors_valid)):
+            emit("input_validity", domain="selectors",
+                 valid=self.state.selectors_valid,
+                 reason=self.state.selector_error or "none")
+            self._diag_last_selectors_valid = self.state.selectors_valid
+        if self.state.input_valid is False:
+            for name in self.state.button_states:
+                self.state.button_states[name] = None
+        for name, active in sample.button_states.items():
+            active = bool(active)
+            self.state.button_states[name] = active
+            if self._diag_buttons.get(name) != active:
+                emit("input_state", input="button_" + name.lower(), active=active)
+                self._diag_buttons[name] = active
+        if self.state.error and self.state.error != self._diag_last_input_error:
+            emit("input_rejected", reason=self.state.error)
+            self._diag_last_input_error = self.state.error
         if sample.mpg_activity:
             self.state.mpg_activity = sample.mpg_activity
             self.state.mpg_activity_timestamp = started
+            self._diag_encoder_delta += int(sample.mpg_activity)
         elif (self.state.mpg_activity_timestamp is not None and
               started - self.state.mpg_activity_timestamp >= 0.20):
             self.state.mpg_activity = 0
         if sample.selector_changed:
+            emit("selector_state", axis=self.state.selected_axis or "OFF",
+                 selector_position=self.state.selected_physical_axis or "OFF",
+                 increment=self.state.selected_multiplier,
+                 axis_direction=sample.selector_direction)
             self._record_selector_transition(
                 "axis", sample.selector_direction, started)
             # Every physical selector transition revokes the previous motion
@@ -326,6 +668,10 @@ class PendantApplication:
             self.state.jog_active = False
             self.ui.apply_selector_context()
         if sample.multiplier_changed:
+            emit("selector_state", axis=self.state.selected_axis or "OFF",
+                 selector_position=self.state.selected_physical_axis or "OFF",
+                 increment=self.state.selected_multiplier,
+                 increment_direction=sample.multiplier_direction)
             # Resolution changes also revoke the previous handwheel command.
             # Never interpret wheel deltas across a multiplier transition.
             if isinstance(self.controller, C3WirelessController):
@@ -337,22 +683,138 @@ class PendantApplication:
             if timestamp is not None and started - timestamp >= 0.30:
                 setattr(self.state, kind + "_transition_direction", 0)
         if sample.estop_changed:
+            emit("input_state", input="estop_observe", active=sample.estop)
             self.observe_estop(sample.estop)
         if sample.deadman_changed and not self.state.deadman_enabled:
+            emit("input_state", input="deadman", active=False)
             queued_jog = any(item[1] == "jog" for item in self.controller.queue)
             if (self.transport.connected or isinstance(self.controller, C3WirelessController)) and (self.state.jog_active or queued_jog):
                 self.controller.cancel_jog()
+        elif sample.deadman_changed:
+            emit("input_state", input="deadman", active=True)
         for event in sample.events:
+            emit("operator_input", action=event,
+                 axis=self.state.selected_axis or "OFF",
+                 selector_position=self.state.selected_physical_axis or "OFF",
+                 increment=self.state.selected_multiplier)
             try:
                 self.handle_ui_event(event)
             except SafetyError as exc:
                 self.ui.toast = str(exc)
-        if self.touch_manager is not None:
-            for event in self.touch_manager.poll():
+        input_duration_ms = max(
+            0, _diag_ticks_diff_ms(self._diag_ticks_ms(), diag_started))
+        if input_duration_ms > self._diag_max_input_ms:
+            self._diag_max_input_ms = input_duration_ms
+        self._diag_total_input_ms += input_duration_ms
+        touch_poll_due = None
+        touch_sample_due = self.touch_manager is not None
+        if touch_sample_due:
+            touch_poll_due = getattr(self.touch_manager, "poll_due", None)
+            if callable(touch_poll_due):
+                touch_sample_due = touch_poll_due(started)
+            else:
+                touch_poll_due = None
+        touch_started = (self._diag_ticks_ms() if touch_sample_due else None)
+        touch_needs_render = False
+        touch_contact_log = None
+        touch_gesture_log = None
+        if self.touch_manager is not None and touch_sample_due:
+            touch_events = (self.touch_manager.poll(due=True)
+                            if touch_poll_due is not None else
+                            self.touch_manager.poll())
+            contact = getattr(self.touch_manager,
+                              "last_contact_transition", None)
+            if contact is not None:
+                # USB CDC output can block. Defer diagnostic writes until the
+                # immediate contact redraw has reached the display.
+                touch_contact_log = contact
+                if contact[0] == "down":
+                    touch_needs_render = True
+                    # Contact feedback is immediate, but navigation and
+                    # selection remain tied to the completed release gesture.
+                    if self.ui.current_screen != "HOME":
+                        preview = getattr(self.ui, "preview_touch", None)
+                        if preview is not None:
+                            touch_needs_render = (
+                                preview(contact[1], contact[2]) or
+                                touch_needs_render)
+                elif contact[0] == "up":
+                    release_feedback = getattr(self.display,
+                                               "touch_release", None)
+                    if release_feedback is not None:
+                        release_feedback(started)
+            for event in touch_events:
+                touch_needs_render = True
+                touch_gesture_log = (event.kind, event.x, event.y)
                 try:
                     self.handle_ui_event(event)
                 except SafetyError as exc:
                     self.ui.toast = str(exc)
+            if getattr(self.touch_manager, "consecutive_errors", 0) >= 3:
+                self.state.touch_error = "touch polling failed: " + self.touch_manager.last_error
+                self.state.subsystems["touch"] = "ERROR"
+                if self._diag_last_touch_error != self.touch_manager.last_error:
+                    emit("touch_error", error=self.touch_manager.last_error,
+                         consecutive=self.touch_manager.consecutive_errors)
+                    self._diag_last_touch_error = self.touch_manager.last_error
+            elif getattr(self.touch_manager, "last_error", None) is None:
+                self.state.touch_error = None
+                self.state.subsystems["touch"] = "OK"
+                if self._diag_last_touch_error is not None:
+                    emit("touch_recovered")
+                    self._diag_last_touch_error = None
+            # Feedback is visual only. No touch event can write controller I/O
+            # except through the existing safety-checked UI action dispatcher.
+            feedback = self.touch_manager.last_feedback
+            if feedback is not None:
+                if (feedback[2] == "contact" and
+                        hasattr(self.display, "touch_feedback")):
+                    self.display.touch_feedback(
+                        feedback[:2], self.touch_manager.feedback_until)
+                self.touch_manager.last_feedback = None
+            if (getattr(self.touch_manager, "feedback_active", False) and
+                    hasattr(self.display, "touch_hold")):
+                touch_move = getattr(self.display, "touch_move", None)
+                touch_point = getattr(self.touch_manager, "last_point", None)
+                if (touch_point is not None and callable(touch_move) and
+                        touch_move(touch_point, started)):
+                    touch_needs_render = True
+                self.display.touch_hold(self.touch_manager.feedback_until)
+        if hasattr(self.display, "animate"):
+            self.display.animate(started)
+        if touch_needs_render:
+            # A touch response must not wait behind Wi-Fi association or other
+            # lower-priority services later in this loop. Render only on touch
+            # activity, then let the normal end-of-loop pass pick up any later
+            # telemetry changes.
+            touch_display_started = self._diag_ticks_ms()
+            self._update_indicator()
+            self.display.render(self.state)
+            touch_display_duration_ms = max(
+                0, _diag_ticks_diff_ms(
+                    self._diag_ticks_ms(), touch_display_started))
+            self._diag_total_display_model_ms += getattr(
+                self.display, "last_model_ms", 0)
+            self._diag_total_display_update_ms += getattr(
+                self.display, "last_update_ms", 0)
+            self._diag_total_display_refresh_ms += getattr(
+                self.display, "last_refresh_ms", 0)
+        else:
+            touch_display_duration_ms = 0
+        # This measures the physical touch sample through its first visible
+        # update, excluding the optional USB diagnostic writes below.
+        touch_duration_ms = (max(
+            0, _diag_ticks_diff_ms(self._diag_ticks_ms(), touch_started))
+            if touch_started is not None else 0)
+        if touch_duration_ms > self._diag_max_touch_ms:
+            self._diag_max_touch_ms = touch_duration_ms
+        self._diag_total_touch_ms += touch_duration_ms
+        if touch_contact_log is not None:
+            emit("touch_contact", state=touch_contact_log[0],
+                 x=touch_contact_log[1], y=touch_contact_log[2])
+        if touch_gesture_log is not None:
+            emit("touch_gesture", kind=touch_gesture_log[0],
+                 x=touch_gesture_log[1], y=touch_gesture_log[2])
         if getattr(self.network_service, "scanning", False):
             if self.network_service.poll_scan():
                 self.ui.set_dynamic_items(
@@ -364,6 +826,7 @@ class PendantApplication:
                     self.ui.toast = "{} networks".format(
                         len(self.network_service.scan_results)
                     )
+        transport_started = self._diag_ticks_ms()
         self.controller.poll(started)
         if not isinstance(self.controller, (C3StatusController, C3WirelessController)):
             self.streamer.poll(started)
@@ -371,29 +834,248 @@ class PendantApplication:
         if "jog_timeout" in events and (self.transport.connected or isinstance(self.controller, C3WirelessController)):
             self.controller.cancel_jog()
         self.ui.refresh_context()
-        info = self.network_service.info()
-        self.state.wifi_state = info.get("state", "DISABLED")
-        self.state.wifi_ssid = info.get("ssid")
-        self.state.wifi_ip = info.get("ipv4_address")
-        self.state.wifi_rssi = info.get("rssi")
-        self.state.hostname = info.get("hostname")
-        self.state.network_error = info.get("last_error")
-        self.state.subsystems["wifi"] = self.state.wifi_state
+        display_state = (self.ui.current_screen, self.state.active_page)
+        if display_state != self._diag_last_display_state:
+            emit("display_navigation", screen=display_state[0],
+                 page=display_state[1])
+            self._diag_last_display_state = display_state
+        transport_duration_ms = max(
+            0, _diag_ticks_diff_ms(self._diag_ticks_ms(), transport_started))
+        if transport_duration_ms > self._diag_max_transport_ms:
+            self._diag_max_transport_ms = transport_duration_ms
+        self._diag_total_transport_ms += transport_duration_ms
+        # Give network transitions their turn after physical safety and
+        # transport processing; HTTP services themselves advance one bounded
+        # nonblocking operation per poll.
+        # CircuitPython's portable wifi.radio.connect() call is synchronous.
+        # Do not let a reconnect or setup-portal submission pause pendant
+        # servicing while a jog or job has authority on the machine.
+        wifi_started = self._diag_ticks_ms()
+        if (self._diag_last_network_poll is None or
+                started - self._diag_last_network_poll >=
+                _WIFI_SERVICE_POLL_INTERVAL):
+            if not self._machine_activity_blocks_network_association():
+                self.network_service.poll()
+            info = self.network_service.info()
+            self.state.wifi_state = info.get("state", "DISABLED")
+            self.state.wifi_ssid = info.get("ssid")
+            self.state.wifi_ip = info.get("ipv4_address")
+            self.state.wifi_rssi = info.get("rssi")
+            self.state.hostname = info.get("hostname")
+            self.state.network_error = info.get("last_error")
+            self.state.subsystems["wifi"] = self.state.wifi_state
+            if self.state.wifi_state != self._diag_last_wifi_state:
+                emit("wifi_state", state=self.state.wifi_state,
+                     connected=bool(info.get("connected", False)),
+                     ip=info.get("ipv4_address"))
+                self._diag_last_wifi_state = self.state.wifi_state
+            self._diag_last_network_poll = started
         self.state.subsystems["controller"] = (
             "DISABLED" if not self.state.controller_enabled else
             "CONNECTED" if self.state.connection_state == "connected" else
             "OFFLINE" if self.state.connection_state != "connecting" else
             "CONNECTING")
+        controller_state = "{}:{}".format(self.state.connection_state,
+                                           self.state.machine_state)
+        if controller_state != self._diag_last_controller_state:
+            previous_connection = (
+                self._diag_last_controller_state.split(":", 1)[0]
+                if self._diag_last_controller_state is not None else None)
+            if (previous_connection is not None and
+                    previous_connection != self.state.connection_state):
+                reset_encoder = getattr(self.input_manager,
+                                        "reset_encoder", None)
+                if reset_encoder is not None:
+                    reset_encoder()
+                self.state.mpg_activity = 0
+                self.state.mpg_activity_timestamp = None
+                self._diag_encoder_delta = 0
+            emit("controller_state", state=self.state.connection_state,
+                 machine=self.state.machine_state,
+                 link=getattr(self.state, "link_state", None))
+            self._diag_last_controller_state = controller_state
+        wifi_duration_ms = max(
+            0, _diag_ticks_diff_ms(self._diag_ticks_ms(), wifi_started))
+        if wifi_duration_ms > self._diag_max_wifi_ms:
+            self._diag_max_wifi_ms = wifi_duration_ms
+        self._diag_total_wifi_ms += wifi_duration_ms
+        display_started = self._diag_ticks_ms()
         self._update_indicator()
         self.display.render(self.state)
         self.state.render_count = getattr(self.display, "render_count", 0)
+        self._diag_total_display_model_ms += getattr(
+            self.display, "last_model_ms", 0)
+        self._diag_total_display_update_ms += getattr(
+            self.display, "last_update_ms", 0)
+        self._diag_total_display_refresh_ms += getattr(
+            self.display, "last_refresh_ms", 0)
+        display_duration_ms = touch_display_duration_ms + max(
+            0, _diag_ticks_diff_ms(self._diag_ticks_ms(), display_started))
+        if display_duration_ms > self._diag_max_display_ms:
+            self._diag_max_display_ms = display_duration_ms
+        self._diag_total_display_ms += display_duration_ms
+        # Low-priority, one-step nonblocking HTTP work runs only after safety,
+        # inputs, transport, UI and display refresh have had their turn.
+        mirror_started = self._diag_ticks_ms()
+        if self.mirror is not None:
+            self.mirror.poll()
+            self.state.mirror_clients = self.mirror.completed_requests
+            self.state.mirror_errors = self.mirror.client_errors
+            self.state.mirror_error = self.mirror.last_error
+        mirror_duration_ms = max(
+            0, _diag_ticks_diff_ms(self._diag_ticks_ms(), mirror_started))
+        if mirror_duration_ms > self._diag_max_mirror_ms:
+            self._diag_max_mirror_ms = mirror_duration_ms
+        self._diag_total_mirror_ms += mirror_duration_ms
         self.state.loop_count += 1
+        self._diag_profile_loops += 1
         finished = self.clock()
         self.state.last_loop_duration = max(0.0, finished - started)
+        self._diag_total_poll_ms += self.state.last_loop_duration * 1000.0
+        self._diag_loop_work_ms = max(
+            0, _diag_ticks_diff_ms(self._diag_ticks_ms(), diag_started))
+        if self._diag_loop_work_ms > self._diag_max_loop_work_ms:
+            self._diag_max_loop_work_ms = self._diag_loop_work_ms
+        if self._diag_loop_work_ms >= 10:
+            self._diag_loop_overruns += 1
         last = self.state.last_controller_response
         self.state.last_status_age = (None if last is None else
                                       max(0.0, finished - last))
-        self.state.free_heap = gc.mem_free() if hasattr(gc, "mem_free") else None
+        if self._diag_last_heartbeat is None or finished - self._diag_last_heartbeat >= 10.0:
+            # Heap inspection is comparatively expensive on CircuitPython and
+            # the value is only published with this ten-second runtime sample.
+            # Keep it out of the high-frequency input/render loop.
+            self.state.free_heap = (gc.mem_free()
+                                    if hasattr(gc, "mem_free") else None)
+            window_ms = (0 if self._diag_last_heartbeat is None else
+                         int((finished - self._diag_last_heartbeat) * 1000))
+            profiled_ms = (self._diag_total_input_ms +
+                           self._diag_total_touch_ms +
+                           self._diag_total_transport_ms +
+                           self._diag_total_wifi_ms +
+                           self._diag_total_display_ms +
+                           self._diag_total_mirror_ms)
+            loop_timing = loop_timing_fields(
+                self._diag_profile_loops, self._diag_total_poll_ms,
+                window_ms, profiled_ms)
+            input_backend_configured = bool(
+                getattr(self.input_manager.adapter, "configured", True))
+            deadman_configured = bool(
+                getattr(self.input_manager.adapter, "deadman_configured", True))
+            input_health = (
+                "unknown" if not input_backend_configured or
+                self.state.input_valid is None else
+                ("valid" if self.state.input_valid else "invalid"))
+            selector_health = (
+                "unknown" if not input_backend_configured else
+                ("valid" if self.state.selectors_valid else "invalid"))
+            if not input_backend_configured or self.state.input_valid is None:
+                axis_state = selector_position_state = "unknown"
+                increment_state = deadman_state = "unknown"
+            elif self.state.input_valid is False:
+                axis_state = selector_position_state = "unavailable"
+                increment_state = deadman_state = "unavailable"
+            else:
+                axis_state = (self.state.selected_axis or "OFF"
+                              if self.state.selectors_valid else "invalid")
+                selector_position_state = (
+                    self.state.selected_physical_axis or "OFF"
+                    if self.state.selectors_valid else "invalid")
+                increment_state = (self.state.selected_multiplier
+                                   if self.state.selectors_valid else "invalid")
+                deadman_state = (
+                    "unavailable" if not deadman_configured else
+                    ("active" if self.state.deadman_enabled else "inactive"))
+            if self._diag_encoder_delta:
+                emit("encoder_delta", delta=self._diag_encoder_delta,
+                     axis=self.state.selected_axis or "OFF",
+                     selector_position=(
+                         self.state.selected_physical_axis or "OFF"),
+                     increment=self.state.selected_multiplier,
+                     deadman=self.state.deadman_enabled)
+                self._diag_encoder_delta = 0
+            touch_source = (getattr(self.touch_manager, "source", None)
+                            if self.touch_manager is not None else None)
+            emit("runtime", loops=self.state.loop_count,
+                 renders=self.state.render_count,
+                 free_heap=self.state.free_heap,
+                 loop_work_ms=self._diag_loop_work_ms,
+                 max_loop_work_ms=self._diag_max_loop_work_ms,
+                 loop_overruns=self._diag_loop_overruns,
+                 profile_loops=self._diag_profile_loops,
+                 loop_hz=loop_timing["loop_hz"],
+                 poll_avg_us=loop_timing["poll_avg_us"],
+                 unprofiled_avg_us=loop_timing["unprofiled_avg_us"],
+                 loop_window_ms=loop_timing["loop_window_ms"],
+                 max_input_ms=self._diag_max_input_ms,
+                 total_input_ms=self._diag_total_input_ms,
+                 max_touch_ms=self._diag_max_touch_ms,
+                 total_touch_ms=self._diag_total_touch_ms,
+                 max_transport_ms=self._diag_max_transport_ms,
+                 total_transport_ms=self._diag_total_transport_ms,
+                 max_wifi_ms=self._diag_max_wifi_ms,
+                 total_wifi_ms=self._diag_total_wifi_ms,
+                 max_display_ms=self._diag_max_display_ms,
+                 total_display_ms=self._diag_total_display_ms,
+                 total_display_model_ms=self._diag_total_display_model_ms,
+                 total_display_update_ms=self._diag_total_display_update_ms,
+                 total_display_refresh_ms=self._diag_total_display_refresh_ms,
+                 max_mirror_ms=self._diag_max_mirror_ms,
+                 total_mirror_ms=self._diag_total_mirror_ms,
+                 touch_polls=getattr(self.touch_manager, "poll_count", 0)
+                             if self.touch_manager is not None else 0,
+                 touch_active_samples=getattr(
+                     self.touch_manager, "sample_count", 0)
+                     if self.touch_manager is not None else 0,
+                 touch_events=getattr(self.touch_manager, "event_count", 0)
+                              if self.touch_manager is not None else 0,
+                 touch_i2c_reads=getattr(touch_source, "read_count", 0),
+                 touch_i2c_busy=getattr(touch_source, "bus_busy_count", 0),
+                 touch_irq_idle=getattr(touch_source, "irq_idle_count", 0),
+                 touch_errors=getattr(self.touch_manager, "consecutive_errors", 0)
+                               if self.touch_manager is not None else 0,
+                 mcp23017_read_errors=sum(
+                     getattr(resource, "read_errors", 0)
+                     for resource in getattr(
+                         getattr(self.input_manager, "adapter", None),
+                         "resources", ())),
+                 input_backend=("configured" if input_backend_configured
+                                else "disabled"),
+                 input_validity=input_health,
+                 selector_validity=selector_health,
+                 axis=axis_state,
+                 selector_position=selector_position_state,
+                 increment=increment_state,
+                 deadman=deadman_state,
+                 screen=self.ui.current_screen,
+                 page=self.state.active_page,
+                 wifi=self.state.wifi_state,
+                 controller=self.state.connection_state)
+            self._diag_loop_overruns = 0
+            self._diag_profile_loops = 0
+            self._diag_total_poll_ms = 0.0
+            self._diag_max_loop_work_ms = 0
+            self._diag_max_input_ms = 0
+            self._diag_total_input_ms = 0
+            self._diag_max_touch_ms = 0
+            self._diag_total_touch_ms = 0
+            self._diag_max_transport_ms = 0
+            self._diag_total_transport_ms = 0
+            self._diag_max_wifi_ms = 0
+            self._diag_total_wifi_ms = 0
+            self._diag_max_display_ms = 0
+            self._diag_total_display_ms = 0
+            self._diag_total_display_model_ms = 0
+            self._diag_total_display_update_ms = 0
+            self._diag_total_display_refresh_ms = 0
+            self._diag_max_mirror_ms = 0
+            self._diag_total_mirror_ms = 0
+            self._diag_last_heartbeat = finished
+        if (self.state.free_heap is not None and self.state.free_heap < 32768 and
+                (self._last_heap_warning is None or
+                 finished - self._last_heap_warning >= 10.0)):
+            print("runtime heap warning:", self.state.free_heap, "bytes free")
+            self._last_heap_warning = finished
 
     def _record_selector_transition(self, kind, direction, now):
         setattr(self.state, kind + "_transition_direction", int(direction))

@@ -1,7 +1,3 @@
-Understood. I’ll keep that component out of the active hardware documentation and future design discussions.
-
-The Encoder Interface section of `hardware/README.md` should read:
-
 # CNC MPG Pendant — Hardware
 
 This directory contains the version-controlled mechanical and electrical design of the CNC MPG pendant.

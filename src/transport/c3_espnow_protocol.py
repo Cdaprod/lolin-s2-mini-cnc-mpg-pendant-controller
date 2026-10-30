@@ -12,6 +12,7 @@ PAIR = 0x01
 PAIR_ACK = 0x02
 HEARTBEAT = 0x03
 HEARTBEAT_ACK = 0x04
+SENSOR_ASSIGNMENT = 0x14
 UART_COMMAND = 0x20
 UART_ACK = 0x21
 UART_RESPONSE = 0x22
@@ -19,6 +20,13 @@ MPG_JOG = 0x30
 MPG_JOG_ACK = 0x31
 MPG_STOP = 0x32
 MPG_STOP_ACK = 0x33
+MPG_FEED_HOLD = 0x34
+MPG_FEED_HOLD_ACK = 0x35
+RESULT_ERROR = 0
+RESULT_OK = 1
+# STOP accepted by the C3 software lease, with physical UART cancel suppressed
+# in a disarmed/dry-run receiver build. This does not mean the machine stopped.
+RESULT_STOP_SUPPRESSED = 2
 ERROR = 0x7F
 
 DEVICE_BRIDGE = 1
@@ -81,8 +89,13 @@ def validate_pair_ack(raw, expected_session, expected_mac=None):
 
 def encode_mpg_jog(session, sequence, axis, distance_microns, feed_mm_min,
                    deadman):
-    """Explicit bounded MPG request. The C3 currently rejects it by design."""
-    if axis not in ("X", "Y", "Z"):
+    """Encode a bounded MPG request for the C3 admission/dry-run path.
+
+    A successful encode or radio ACK does not authorize physical motion; the
+    receiver's trusted-peer, session, sequence, controller-state, and motion
+    admission checks remain authoritative.
+    """
+    if axis not in ("X", "Y", "Z", "A"):
         raise ValueError("invalid MPG axis")
     if not isinstance(distance_microns, int) or not (-1000 <= distance_microns <= 1000) or distance_microns == 0:
         raise ValueError("invalid MPG microns")
@@ -98,3 +111,12 @@ def encode_mpg_jog(session, sequence, axis, distance_microns, feed_mm_min,
 
 def encode_mpg_stop(session, sequence):
     return encode(MPG_STOP, session, sequence)
+
+
+def encode_mpg_feed_hold(session, sequence):
+    """Request GRBL's feed-hold realtime byte through the C3.
+
+    This differs from MPG_STOP, which only cancels an active jog. The C3
+    remains responsible for authorization and UART ownership.
+    """
+    return encode(MPG_FEED_HOLD, session, sequence)

@@ -9,14 +9,39 @@ class _DisplayIOTextLine:
         self.width = width
         self.height = height
         self.font = font
+        self.font_y_metrics = None
+        get_bounding_box = getattr(font, "get_bounding_box", None)
+        if get_bounding_box is not None:
+            try:
+                _, font_height, _, font_y_offset = get_bounding_box()
+                self.font_y_metrics = (font_height, font_y_offset)
+            except (AttributeError, TypeError, ValueError):
+                pass
         self.centered = bool(centered)
         self.bitmap = displayio.Bitmap(width, height, 2)
         palette = displayio.Palette(2)
         palette[0] = 0x000000
         palette[1] = color
+        self.palette = palette
+        self.color = color
         palette.make_transparent(0)
         self.node = displayio.TileGrid(self.bitmap, pixel_shader=palette)
         self.text = None
+        try:
+            import bitmaptools
+            self._bitmap_blit = getattr(bitmaptools, "blit", None)
+        except ImportError:
+            # Keep the renderer usable on older CircuitPython builds and on
+            # host-side test doubles that do not provide bitmaptools.
+            self._bitmap_blit = None
+
+    def set_color(self, color):
+        """Recolor existing glyph pixels in place without bitmap rewriting."""
+        if self.color == color:
+            return False
+        self.palette[1] = color
+        self.color = color
+        return True
 
     def set_text(self, text):
         text = str(text)
@@ -30,24 +55,63 @@ class _DisplayIOTextLine:
                 glyph = self.font.get_glyph(ord(character))
                 if glyph is not None:
                     text_width += max(1, glyph.shift_x)
-        cursor = max(0, (self.width - text_width) // 2)
+        cursor = (max(0, (self.width - text_width) // 2)
+                  if self.centered else 0)
         for character in text:
             glyph = self.font.get_glyph(ord(character))
             if glyph is None:
                 continue
-            if cursor + glyph.width > self.width:
-                break
+            advance = max(1, glyph.shift_x)
+            # BDF spaces and other blank glyphs can have a zero-height
+            # displayio.Bitmap. CircuitPython treats that bitmap as
+            # deinitialized; whitespace only needs its advance width.
+            if glyph.width <= 0 or glyph.height <= 0:
+                cursor += advance
+                continue
             source = glyph.bitmap
-            columns = max(1, source.width // glyph.width)
+            columns = max(1, source.width // max(1, glyph.width))
             source_x = (glyph.tile_index % columns) * glyph.width
             source_y = (glyph.tile_index // columns) * glyph.height
-            for y in range(min(glyph.height, self.height)):
-                for x in range(glyph.width):
-                    if source[source_x + x, source_y + y]:
-                        target_x = cursor + x
-                        if target_x < self.width:
-                            self.bitmap[target_x, y] = 1
-            cursor += max(1, glyph.shift_x)
+            glyph_x = cursor + getattr(glyph, "dx", 0)
+            glyph_y = 0
+            if self.font_y_metrics is not None:
+                font_height, font_y_offset = self.font_y_metrics
+                glyph_y = (font_height + font_y_offset - glyph.height -
+                           getattr(glyph, "dy", 0))
+            if glyph_x < 0:
+                source_x -= glyph_x
+                glyph_width = glyph.width + glyph_x
+                glyph_x = 0
+            else:
+                glyph_width = min(glyph.width, self.width - glyph_x)
+            if glyph_y < 0:
+                source_y -= glyph_y
+                glyph_height = glyph.height + glyph_y
+                glyph_y = 0
+            else:
+                glyph_height = min(glyph.height, self.height - glyph_y)
+            if glyph_width <= 0 or glyph_height <= 0:
+                cursor += advance
+                continue
+            if self._bitmap_blit is not None:
+                # bitmaptools copies the glyph rectangle in native code.
+                # The text bitmap was cleared above, so skipping the atlas's
+                # transparent index preserves the prior pixel result while
+                # avoiding thousands of Python-level pixel accesses on the
+                # first render and on screen changes.
+                self._bitmap_blit(
+                    self.bitmap, source, glyph_x, glyph_y,
+                    x1=source_x, y1=source_y,
+                    x2=source_x + glyph_width,
+                    y2=source_y + glyph_height,
+                    skip_source_index=0,
+                )
+            else:
+                for y in range(glyph_height):
+                    for x in range(glyph_width):
+                        if source[source_x + x, source_y + y]:
+                            self.bitmap[glyph_x + x, glyph_y + y] = 1
+            cursor += advance
         return True
 
 
@@ -106,6 +170,12 @@ class DisplayIOBackend:
         self.overlay.node.y = max(0, (available_rows // 2) * self.line_height)
         self.overlay_group.append(self.overlay.node)
         self.display.root_group = self.root
+
+    def _refresh_if_manual(self):
+        """Let the DisplayIO background task refresh auto-refresh displays."""
+        if getattr(self.display, "auto_refresh", None) is True:
+            return
+        self.display.refresh(minimum_frames_per_second=0)
 
     def bind_ui(self, ui):
         self.ui = ui
@@ -168,7 +238,7 @@ class DisplayIOBackend:
         self.overlay.set_text(overlay)
         self.render_count += 1
         try:
-            self.display.refresh(minimum_frames_per_second=0)
+            self._refresh_if_manual()
         except (AttributeError, RuntimeError):
             # Auto-refresh displays need no explicit refresh; a busy display is
             # retried on a later cooperative poll rather than blocking.

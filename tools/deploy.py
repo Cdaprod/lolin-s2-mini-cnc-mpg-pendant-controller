@@ -2,6 +2,7 @@
 """Reconcile settings and deploy managed CircuitPython runtime files.
 
 Example: CIRCUITPY=/Volumes/CIRCUITPY ./deploy.sh --apply-local-settings
+Runtime-only update: CIRCUITPY=/Volumes/CIRCUITPY ./deploy.sh --runtime-only
 """
 
 import argparse
@@ -23,7 +24,7 @@ ASSIGNMENT = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+?)\s*$")
 BOARD_PROFILES = {"", "lolin_s2_mini_v1", "xiao_esp32s3"}
 DISPLAY_PROFILES = {"", "seeed_round_240"}
 PROFILE_DEPENDENCIES = {
-    "seeed_round_240": ("adafruit_gc9a01a",),
+    "seeed_round_240": ("adafruit_gc9a01a", "adafruit_bitmap_font"),
 }
 SECRET_MARKERS = ("PASSWORD", "SECRET", "TOKEN", "KEY")
 WIFI_CREDENTIALS = {"CIRCUITPY_WIFI_SSID", "CIRCUITPY_WIFI_PASSWORD"}
@@ -204,6 +205,12 @@ def reconcile(template_path, local_path, device_path, apply_local=False,
     outdated = {"MPG_PIN_A": ('"GPIO42"', '"GPIO39"'),
                 "MPG_PIN_B": ('"GPIO41"', '"GPIO40"'),
                 "MPG_TOUCH_ENABLED": ("false", "true")}
+    # These safe, repo-controlled defaults are authoritative during deployment
+    # even when the device has stale values from an earlier deployment.
+    # All unrelated device settings (especially credentials) are preserved.
+    DEPLOY_DEFAULTS = ("MPG_MIRROR_ENABLED", "MPG_SD_ENABLED")
+    # Preserve the user's explicit, ignored ./settings.toml overrides when
+    # --apply-local-settings is requested; otherwise use the tracked template.
     for key in all_keys:
         if key in device:
             value, action = device[key], "preserve"
@@ -211,6 +218,8 @@ def reconcile(template_path, local_path, device_path, apply_local=False,
                     value == outdated[key][0] and
                     not (apply_local and key in local)):
                 value, action = outdated[key][1], "migrate-default"
+            if key in DEPLOY_DEFAULTS and not (apply_local and key in local):
+                value, action = template[key], "sync-default"
             if apply_local and key in local and not is_secret(key):
                 value, action = local[key], "update"
             elif apply_secrets and key in local and is_secret(key):
@@ -285,6 +294,16 @@ def runtime_files(root=ROOT):
         paths.extend(path.relative_to(root) for path in sorted(lib.rglob("*"))
                      if path.is_file() and path.name != "README.md" and
                      "__pycache__" not in path.parts and not path.name.startswith("."))
+    fonts = root / "fonts"
+    if fonts.exists():
+        paths.extend(path.relative_to(root) for path in sorted(fonts.glob("*.bdf"))
+                     if path.is_file())
+    # Deploy only compact, generated 4bpp bezels. Development images remain
+    # on the host and never consume CircuitPython heap or flash.
+    bezels = root / "assets" / "round_hud" / "runtime"
+    if bezels.exists():
+        paths.extend(path.relative_to(root) for path in sorted(bezels.glob("*.4bpp"))
+                     if path.is_file())
     return [str(path) for path in paths]
 
 
@@ -296,18 +315,36 @@ def file_hash(path):
     return digest.hexdigest()
 
 
+def changed_runtime_files(files, target, root=ROOT):
+    """Return only managed files whose bytes differ from the deployment."""
+    target = Path(target)
+    root = Path(root)
+    return [relative for relative in files
+            if not (target.joinpath(relative).is_file() and
+                    file_hash(root / relative) ==
+                    file_hash(target / relative))]
+
+
+def runtime_write_order(files):
+    """Write dependencies first so CircuitPython's entry point is last."""
+    return sorted(files, key=lambda relative: (relative == "code.py", relative))
+
+
 def dependency_problems(settings, root=ROOT, target=None):
     profile = literal_value(settings.get("MPG_DISPLAY_PROFILE", '""'))
     problems = []
     display_enabled = literal_value(
         settings.get("MPG_DISPLAY_ENABLED", "false")).lower() == "true"
     modules = list(PROFILE_DEPENDENCIES.get(profile, ())) if display_enabled else []
-    if literal_value(settings.get("MPG_TOUCH_ENABLED", "false")).lower() == "true":
+    if (literal_value(settings.get("MPG_TOUCH_ENABLED", "false")).lower() == "true"
+            and literal_value(settings.get("MPG_TOUCH_DRIVER", '"chsc6x"')).lower()
+            == "cst8xx"):
         modules.append("adafruit_cst8xx")
     for module in modules:
         candidates = ("lib/{}.mpy".format(module), "lib/{}.py".format(module),
                       "lib/{}/__init__.py".format(module),
-                      "lib/{}/__init__.mpy".format(module))
+                      "lib/{}/__init__.mpy".format(module),
+                      "lib/{}/bitmap_font.mpy".format(module))
         bases = [Path(root)] if root is not None else []
         if target:
             bases.append(Path(target))
@@ -342,7 +379,12 @@ def managed_path(relative):
     if path.is_absolute() or ".." in path.parts:
         return False
     return (relative in ("code.py", "patterns.py") or
-            (path.parts and path.parts[0] in ("src", "lib")))
+            (path.parts and path.parts[0] in ("src", "lib")) or
+            (len(path.parts) == 4 and path.parts[:3] ==
+             ("assets", "round_hud", "runtime") and
+             path.suffix == ".4bpp") or
+            (len(path.parts) == 2 and path.parts[0] == "fonts" and
+             path.suffix.lower() == ".bdf"))
 
 
 def historical_managed_path(relative):
@@ -352,8 +394,13 @@ def historical_managed_path(relative):
 
 def target_is_writable(target):
     """Return whether the mounted target permits host-side deployment writes."""
+    statvfs = getattr(os, "statvfs", None)
+    if statvfs is None:
+        # Windows has no statvfs; os.access is the available preflight and
+        # each write remains protected by the normal atomic-write error path.
+        return os.access(str(target), os.W_OK)
     try:
-        flags = os.statvfs(str(target)).f_flag
+        flags = statvfs(str(target)).f_flag
     except OSError:
         return False
     readonly_flag = getattr(os, "ST_RDONLY", 1)
@@ -399,6 +446,13 @@ def verify(target, root=ROOT):
             errors.append("runtime mismatch: {}".format(relative))
     settings, _ = parse_settings(target / "settings.toml", required=True)
     validate_profiles(settings)
+    # The manifest records the effective values selected at deployment time,
+    # including deliberate local opt-ins, so verify checks the real device
+    # config instead of assuming every install uses the safe defaults.
+    expected_features = manifest.get("feature_flags", {})
+    for key, expected in expected_features.items():
+        if settings.get(key) != expected:
+            errors.append("configuration mismatch: {}".format(key))
     errors.extend(dependency_problems(settings, root=None, target=target))
     if errors:
         raise DeployError("verification failed:\n- " + "\n- ".join(errors))
@@ -431,6 +485,10 @@ def atomic_write(path, content, backup=False):
 def deploy(args):
     target = Path(os.environ.get("CIRCUITPY", "/Volumes/CIRCUITPY"))
     validate_target(target)
+    if args.runtime_only and (args.apply_local_settings or
+                              args.apply_local_secrets):
+        raise DeployError(
+            "--runtime-only cannot be combined with settings overrides")
     if not args.dry_run and not target_is_writable(target):
         raise DeployError(
             "CIRCUITPY is mounted read-only; deployment cannot write to the target"
@@ -438,9 +496,14 @@ def deploy(args):
     template = ROOT / "settings.toml.example"
     local = ROOT / "settings.toml"
     device = target / "settings.toml"
-    settings, order, actions = reconcile(
-        template, local, device, args.apply_local_settings,
-        args.apply_local_secrets)
+    if args.runtime_only:
+        settings, order = parse_settings(device, required=True)
+        actions = []
+    else:
+        settings, order, actions = reconcile(
+            template, local, device, args.apply_local_settings,
+            args.apply_local_secrets)
+    validate_profiles(settings)
     inspect_boot(target, settings)
     files = runtime_files()
     previous = read_manifest(target)
@@ -449,11 +512,14 @@ def deploy(args):
     for action, key in actions:
         print("settings: {:13} {}={}".format(
             action, key, "<redacted>" if is_secret(key) else settings[key]))
+    if args.runtime_only:
+        print("settings: preserve     settings.toml (runtime-only deployment)")
+    files_to_write = set(changed_runtime_files(files, target))
     for relative in files:
         destination = target / relative
-        action = "preserve" if (destination.is_file() and
-                                file_hash(ROOT / relative) == file_hash(destination)) else (
-                                    "change" if destination.exists() else "add")
+        unchanged = relative not in files_to_write
+        action = "preserve" if unchanged else (
+            "change" if destination.exists() else "add")
         print("runtime:  {:13} {}".format(action, relative))
     for relative in stale:
         print("runtime:  remove-managed {}".format(relative))
@@ -464,8 +530,9 @@ def deploy(args):
     if args.dry_run:
         print("Dry run complete; no files changed.")
         return
-    rendered = render_settings(template, settings, order)
-    for relative in files:
+    rendered = (None if args.runtime_only else
+                render_settings(template, settings, order))
+    for relative in runtime_write_order(files_to_write):
         destination = target / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         temporary = destination.with_name(destination.name + ".tmp")
@@ -480,7 +547,10 @@ def deploy(args):
         deployed = target / relative
         if deployed.is_file():
             deployed.unlink()
-    atomic_write(device, rendered, backup=True)
+    if rendered is not None and (
+            not device.exists() or
+            device.read_text(encoding="utf-8") != rendered):
+        atomic_write(device, rendered, backup=True)
     manifest = {
         "format": 1,
         "firmware_commit": git_value("rev-parse", "HEAD"),
@@ -488,6 +558,9 @@ def deploy(args):
         "deployed_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "board_profile": literal_value(settings.get("MPG_BOARD_PROFILE", '""')),
         "display_profile": literal_value(settings.get("MPG_DISPLAY_PROFILE", '""')),
+        "feature_flags": {key: settings[key] for key in
+                          ("MPG_MIRROR_ENABLED", "MPG_SD_ENABLED")
+                          if key in settings},
         "managed_files": files,
     }
     atomic_write(target / MANIFEST_NAME,
@@ -502,6 +575,8 @@ def parser():
                         help="show changes without writing to CIRCUITPY")
     result.add_argument("--verify", action="store_true",
                         help="verify the mounted deployment without changing it")
+    result.add_argument("--runtime-only", action="store_true",
+                        help="deploy managed runtime files and manifest without modifying settings.toml")
     result.add_argument("--apply-local-settings", action="store_true",
                         help="override device non-secret values from ./settings.toml")
     result.add_argument("--apply-local-secrets", action="store_true",

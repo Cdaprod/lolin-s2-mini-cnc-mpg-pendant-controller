@@ -13,6 +13,8 @@ class SafetyStateMachine:
         self.state = state
 
     def inhibit_reason(self, require_deadman=False):
+        if require_deadman and getattr(self.state, "input_valid", True) is not True:
+            return "physical input sample unavailable"
         if self.state.estop_observed or self.state.estop_latched:
             return "E-stop inhibited"
         if self.state.connection_state != "connected":
@@ -33,6 +35,8 @@ class SafetyStateMachine:
             raise SafetyError("jog disallowed in " + self.state.machine_state)
         if self.state.selected_axis is None:
             raise SafetyError("axis selector is OFF")
+        if not getattr(self.state, "selectors_valid", True):
+            raise SafetyError("axis or increment selector state is invalid")
 
     def require_command(self, motion=True):
         reason = self.inhibit_reason(require_deadman=motion)

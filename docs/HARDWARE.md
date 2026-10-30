@@ -147,10 +147,13 @@ purchased unit. Signal names in this table are also the names used by firmware.
 
 The switch inputs share `COM`. The firmware reports physical positions `OFF`,
 `X`, `Y`, `Z`, `4`, `5`, and `6` independently from their semantic mapping.
-The current three-axis profile maps X/Y/Z to motion and 4/5/6 to File Explorer,
-Configuration, and safe Preview respectively. A future six-axis profile can
-map those same contacts to A/B/C without rewiring. Multiplier contacts retain
-the ratios x1, x10, and x100.
+The active Doesbot four-axis profile maps X/Y/Z/4 to X/Y/Z/A motion; positions
+5 and 6 remain Configuration and safe Preview. Older three-axis configurations
+may still map position 4 to a UI function, so use the active profile in
+[`MASTER-HARNESS-TABLE.md`](MASTER-HARNESS-TABLE.md) and the `AXIS_A` default
+in `settings.toml.example` for the current pendant. A future six-axis profile
+can map positions 5 and 6 to B/C when the controller and bridge support them.
+Multiplier contacts retain the ratios x1, x10, and x100.
 `A-` and `B-` terminate in future verified receiver/interface circuitry; the
 application quadrature decoder consumes normalized A/B logic and therefore
 does not depend on the eventual receiver choice.

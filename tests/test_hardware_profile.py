@@ -1,18 +1,96 @@
 import os
+import re
 import sys
 import types
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
-from src.config import load_config
-from src.hardware_profiles import (LOLIN_S2_MINI_V1, SEEED_ROUND_240,
+from src.config import load_config, validate_input_config
+from src.hardware_profiles import (BOARD_PROFILES, LOLIN_S2_MINI_V1, SEEED_ROUND_240,
                                    XIAO_ESP32S3, apply_hardware_profile)
-from src.input.circuitpython import from_config, resolve_native_pin
+from src.input.circuitpython import (CircuitPythonInputAdapter, from_config,
+                                     resolve_native_pin)
 from src.input.mcp23017 import (MCP23017InputBank, parse_virtual_pin,
                                 virtual_pin_name)
 
 
 class HardwareProfileTests(unittest.TestCase):
+    def test_select_and_deadman_cannot_share_the_same_mcp23017_pin(self):
+        config = {
+            "selector_backend": "mcp23017",
+            "axis_pins": {}, "multiplier_pins": {},
+            "button_pins": {"SELECT": "GPB2"},
+            "deadman_pin": "GPB2",
+        }
+        with self.assertRaisesRegex(ValueError, "duplicate MCP23017"):
+            validate_input_config(config)
+
+    def test_circuitpython_adapter_exposes_deadman_configuration(self):
+        self.assertFalse(CircuitPythonInputAdapter({}, {}, {}, {}).deadman_configured)
+        self.assertTrue(CircuitPythonInputAdapter(
+            {}, {}, {}, {}, deadman_input=object()).deadman_configured)
+
+    def test_example_config_maps_selector_four_to_a_axis(self):
+        template = Path(__file__).resolve().parents[1] / "settings.toml.example"
+        values = {}
+        for line in template.read_text().splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            values[key.strip()] = value.strip().strip('"')
+        self.assertEqual(values["MPG_AXIS_MAP_4"], "AXIS_A")
+        self.assertEqual(values["MPG_CONTROLLER_MODE"], "disabled")
+        self.assertEqual(values["MPG_INPUTS_ENABLED"], "false")
+        self.assertEqual(values["MPG_SD_ENABLED"], "false")
+        self.assertEqual(values["MPG_PIN_BUTTON_SELECT"], "GPB2")
+        self.assertEqual(values["MPG_PIN_ESTOP_OBSERVE"], "GPB1")
+        self.assertEqual(values["MPG_PIN_DEADMAN"], "GPB6")
+        for key in ("MPG_PIN_BUTTON_BACK", "MPG_PIN_BUTTON_FN",
+                    "MPG_PIN_BUTTON_CANCEL"):
+            self.assertEqual(values[key], "")
+
+    def test_xiao_profile_and_example_match_canonical_harness_pin_map(self):
+        root = Path(__file__).resolve().parents[1]
+        docs = (root / "docs" / "MASTER-HARNESS-TABLE.md").read_text()
+        section = docs.split("FIRMWARE PIN MAP", 1)[1]
+        bindings = {
+            "MPG_PIN_A": BOARD_PROFILES[XIAO_ESP32S3]["mpg_a_pin"],
+            "MPG_PIN_B": BOARD_PROFILES[XIAO_ESP32S3]["mpg_b_pin"],
+            "MPG_PIN_ESTOP_OBSERVE": BOARD_PROFILES[XIAO_ESP32S3]["estop_observe_pin"],
+            "MPG_PIN_DEADMAN": BOARD_PROFILES[XIAO_ESP32S3]["deadman_pin"],
+        }
+        profile = BOARD_PROFILES[XIAO_ESP32S3]
+        for key, value in profile["axis_pins"].items():
+            bindings["MPG_PIN_AXIS_" + key] = value
+        for key, value in profile["multiplier_pins"].items():
+            bindings["MPG_PIN_MULTIPLIER_" + key] = value
+        for key, value in profile["button_pins"].items():
+            bindings["MPG_PIN_BUTTON_" + key] = value
+
+        template = {}
+        for line in (root / "settings.toml.example").read_text().splitlines():
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                key, value = line.split("=", 1)
+                template[key.strip()] = value.strip().strip('"')
+
+        found = set()
+        for line in section.splitlines():
+            match = re.match(r"^(MPG_PIN_[A-Z0-9_]+)\s+([^\s]+)(.*)$", line)
+            if not match or match.group(1) not in bindings:
+                continue
+            name, documented_pin, suffix = match.groups()
+            found.add(name)
+            if "RESERVED" in suffix:
+                self.assertEqual(bindings[name], "", name)
+                self.assertEqual(template[name], "", name)
+            else:
+                self.assertEqual(bindings[name], documented_pin, name)
+                self.assertEqual(template[name], documented_pin, name)
+        self.assertEqual(found, set(bindings))
+
     def test_current_environment_defaults_and_invalid_address(self):
         with patch.dict(os.environ, {
             "MPG_BOARD_PROFILE": XIAO_ESP32S3,
@@ -21,9 +99,10 @@ class HardwareProfileTests(unittest.TestCase):
         }, clear=True):
             config = load_config()
         self.assertEqual((config["mpg_a_pin"], config["mpg_b_pin"]),
-                         ("GPIO42", "GPIO41"))
+                         ("GPIO39", "GPIO40"))
         self.assertEqual(config["mcp23017_address"], 0x20)
         self.assertEqual(config["sd_cs_pin"], "D2")
+        self.assertEqual(config["axis_map"]["4"], "AXIS_A")
         self.assertFalse(config["inputs_enabled"])
         self.assertFalse(config["selector_interface_verified"])
         for address in ("not-an-address", "31", "40"):
@@ -79,12 +158,16 @@ class HardwareProfileTests(unittest.TestCase):
             "display_enabled": True,
         })
         self.assertNotIn("uart_tx_pin", config)
-        self.assertEqual(config["mpg_a_pin"], "GPIO42")
-        self.assertEqual(config["mpg_b_pin"], "GPIO41")
+        self.assertEqual(config["mpg_a_pin"], "GPIO39")
+        self.assertEqual(config["mpg_b_pin"], "GPIO40")
         self.assertEqual(config["axis_pins"]["X"], "GPA0")
         self.assertEqual(config["multiplier_pins"]["X100"], "GPB0")
         self.assertEqual(config["estop_observe_pin"], "GPB1")
         self.assertEqual(config["button_pins"]["SELECT"], "GPB2")
+        self.assertEqual(config["button_pins"]["BACK"], "")
+        self.assertEqual(config["button_pins"]["FN"], "")
+        self.assertEqual(config["button_pins"]["CANCEL"], "")
+        self.assertEqual(config["deadman_pin"], "GPB6")
         self.assertEqual(config["display_driver"], "gc9a01")
         self.assertEqual(config["display_renderer"], "round")
         self.assertEqual(config["display_width"], 240)
@@ -164,22 +247,67 @@ class MCP23017Tests(unittest.TestCase):
         self.assertEqual(bank.read_errors, 1)
 
 
+class CircuitPythonInputFailureTests(unittest.TestCase):
+    class Pin:
+        def __init__(self, value):
+            self.value = value
+
+    class Encoder:
+        position = 10
+
+    def test_failed_mcp_refresh_never_returns_cached_motion_inputs(self):
+        i2c = FakeI2C()
+        i2c.gpio = (0x08, 0xFF)  # X, X10, SELECT, and deadman active-low.
+        bank = MCP23017InputBank(i2c, pullup_mask=0x001F)
+        adapter = CircuitPythonInputAdapter(
+            inputs={},
+            axis_inputs={"X": bank.resolve("GPA0")},
+            multiplier_inputs={"X10": bank.resolve("GPA1")},
+            button_inputs={"SELECT": bank.resolve("GPA2")},
+            estop_input=bank.resolve("GPA3"),
+            deadman_input=bank.resolve("GPA4"),
+            encoder=self.Encoder(), selector_refresh=bank.refresh,
+        )
+        healthy = adapter.read()
+        self.assertTrue(healthy.valid)
+        self.assertEqual(healthy.axes, ("X",))
+        self.assertEqual(healthy.multipliers, ("X10",))
+        self.assertTrue(healthy.buttons["SELECT"])
+        self.assertTrue(healthy.deadman)
+        self.assertFalse(healthy.estop)
+
+        i2c.locked = True
+        sample = adapter.read()
+        self.assertFalse(sample.valid)
+        self.assertEqual(sample.valid_reason, "mcp23017_read_failed")
+        self.assertEqual(sample.axes, ())
+        self.assertEqual(sample.multipliers, ())
+        self.assertEqual(sample.buttons, {"SELECT": False})
+        self.assertFalse(sample.deadman)
+        self.assertTrue(sample.estop)
+        self.assertEqual(sample.mpg_delta, 0)
+
+
 class CurrentPendantInputTests(unittest.TestCase):
     def setUp(self):
         self.board = types.ModuleType("board")
-        self.board.GPIO42 = object()
-        self.board.GPIO41 = object()
+        self.board.GPIO39 = object()
+        self.board.GPIO40 = object()
         self.digitalio = types.ModuleType("digitalio")
         self.digitalio.Direction = types.SimpleNamespace(INPUT="input")
         self.digitalio.Pull = types.SimpleNamespace(UP="up", DOWN="down")
         self.digitalio.DigitalInOut = lambda pin: types.SimpleNamespace(
             pin=pin, direction=None, pull=None, value=True)
+        microcontroller = types.ModuleType("microcontroller")
+        microcontroller.pin = types.SimpleNamespace(
+            GPIO39=self.board.GPIO39, GPIO40=self.board.GPIO40)
         self.rotaryio = types.ModuleType("rotaryio")
         self.rotaryio.IncrementalEncoder = lambda a, b, divisor=1: \
             types.SimpleNamespace(a=a, b=b, divisor=divisor, position=0)
         self.modules = patch.dict(sys.modules, {
             "board": self.board, "digitalio": self.digitalio,
             "rotaryio": self.rotaryio,
+            "microcontroller": microcontroller,
         })
         self.modules.start()
 
@@ -190,7 +318,7 @@ class CurrentPendantInputTests(unittest.TestCase):
         return {
             "inputs_enabled": True, "selector_backend": "mcp23017",
             "selector_interface_verified": verified,
-            "mpg_a_pin": "GPIO42", "mpg_b_pin": "GPIO41",
+            "mpg_a_pin": "GPIO39", "mpg_b_pin": "GPIO40",
             "mpg_use_rotaryio": True, "mcp23017_address": 32,
             "i2c_sda_pin": "D4", "i2c_scl_pin": "D5",
             "axis_pins": {"X": "GPA0", "Y": "GPA1", "Z": "GPA2",
@@ -198,18 +326,18 @@ class CurrentPendantInputTests(unittest.TestCase):
             "multiplier_pins": {"X1": "GPA6", "X10": "GPA7",
                                 "X100": "GPB0"},
             "estop_observe_pin": "GPB1",
-            "button_pins": {"SELECT": "GPB2", "BACK": "GPB3",
-                            "FN": "GPB4", "CANCEL": "GPB5"},
+            "button_pins": {"SELECT": "GPB2", "BACK": "",
+                            "FN": "", "CANCEL": ""},
             "deadman_pin": "GPB6", "selector_active_low": True,
             "button_active_low": True, "estop_active_low": True,
             "deadman_active_low": True,
         }
 
     def test_native_resolution_does_not_accept_virtual_pins(self):
-        self.assertIs(resolve_native_pin(self.board, "GPIO42"),
-                      self.board.GPIO42)
-        self.assertIs(resolve_native_pin(self.board, "GPIO41"),
-                      self.board.GPIO41)
+        self.assertIs(resolve_native_pin(self.board, "GPIO39"),
+                      self.board.GPIO39)
+        self.assertIs(resolve_native_pin(self.board, "GPIO40"),
+                      self.board.GPIO40)
         with self.assertRaises(ValueError):
             resolve_native_pin(self.board, "GPA0")
         with self.assertRaises(ValueError):
@@ -227,17 +355,30 @@ class CurrentPendantInputTests(unittest.TestCase):
         adapter = from_config(self.config(), i2c)
         self.assertIs(adapter.resources[0].i2c, i2c)
         self.assertEqual(i2c.writes[0], (0x20, b"\x00\xff\xff"))
-        self.assertEqual(i2c.writes[1], (0x20, b"\x0c\xff\x7f"))
-        # Active-low GPA0 X, GPB0 x100, GPB1 remote stop, GPB2 SELECT.
-        i2c.gpio = (0xFE, 0xF8)
+        self.assertEqual(i2c.writes[1], (0x20, b"\x0c\xff\x47"))
+        # Active-low GPA0 X, GPB0 x100, GPB1 remote stop. The shared
+        # SELECT/hold-to-run switch is released: GPB2 and GPB6 are both high.
+        i2c.gpio = (0xFE, 0xFC)
         sample = adapter.read()
         self.assertEqual(sample.axes, ("X",))
         self.assertEqual(sample.multipliers, ("X100",))
         self.assertTrue(sample.estop)
-        self.assertTrue(sample.buttons["SELECT"])
+        self.assertFalse(sample.buttons["SELECT"])
         self.assertFalse(sample.deadman)
         self.assertEqual((adapter.encoder.a, adapter.encoder.b),
-                         (self.board.GPIO42, self.board.GPIO41))
+                         (self.board.GPIO39, self.board.GPIO40))
+
+        # One physical switch drives both distinct active-low MCP inputs.
+        # Pressing asserts UI SELECT and hold-to-run; release clears both on
+        # the next coherent snapshot and therefore removes motion authority.
+        i2c.gpio = (0xFE, 0xB8)  # GPB0/1/2/6 low.
+        pressed = adapter.read()
+        self.assertTrue(pressed.buttons["SELECT"])
+        self.assertTrue(pressed.deadman)
+        i2c.gpio = (0xFE, 0xFC)  # GPB2/6 return high via pull-ups.
+        released = adapter.read()
+        self.assertFalse(released.buttons["SELECT"])
+        self.assertFalse(released.deadman)
 
 
 if __name__ == "__main__":

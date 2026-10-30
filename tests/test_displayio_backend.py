@@ -68,6 +68,12 @@ class DisplayIOBackendTests(unittest.TestCase):
         self.assertEqual(sum(line.updates for line in renderer.body), first_updates)
         self.assertEqual(display.refreshes, 1)
 
+    def test_auto_refresh_display_skips_synchronous_refresh_call(self):
+        state, _, display, renderer = self.make_renderer()
+        display.auto_refresh = True
+        self.assertTrue(renderer.render(state))
+        self.assertEqual(display.refreshes, 0)
+
     def test_overlay_precedence_and_missing_long_coordinates(self):
         state, ui, _, renderer = self.make_renderer()
         state.work_position["X"] = 12345678901234567890.0

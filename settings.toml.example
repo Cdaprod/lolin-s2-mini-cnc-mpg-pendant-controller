@@ -13,17 +13,22 @@ CIRCUITPY_WIFI_PASSWORD=""
 
 # DHCP/mDNS-friendly hostname. Keep it lowercase and avoid spaces.
 MPG_HOSTNAME="cdaprod-cnc-pendant"
+# Opt-in LAN display-state mirror, separate from CircuitPython Web API port 80.
+# Remote navigation is off by default and never dispatches CNC commands.
+MPG_MIRROR_ENABLED="false"
+MPG_MIRROR_NAVIGATION="false"
+MPG_MIRROR_PORT="8080"
 # Automatic fallback setup AP lifetime in seconds; 0 disables expiry.
 MPG_NETWORK_AP_TIMEOUT="600"
 # Maximum time for an individual station connection attempt.
 MPG_NETWORK_CONNECT_TIMEOUT="15"
 
 # disabled | uart (direct GRBL) | mock | bridge (Protocol v1 over UART)
-# c3_espnow_bench (radio pairing diagnostics; NO CNC commands)
+# c3_espnow_bench (pairing/status only) | c3_espnow (dedicated MPG protocol)
 MPG_CONTROLLER_MODE="disabled"
-# Setting c3_espnow_bench only verifies radio pairing. It never enables jogging.
-# Bridge jog is bounded continuous movement, not exact per-detent stepping.
-# Keep disabled until host safety and real hardware are verified.
+# c3_espnow can send bounded MPG intents; the C3 firmware remains the final
+# admission gate. Keep this example disabled until commissioning is complete.
+# MPG_BRIDGE_MOTION_ENABLED applies only to mode=bridge, not c3_espnow.
 MPG_BRIDGE_MOTION_ENABLED="false"
 
 # Leave blank while mode=disabled.
@@ -59,7 +64,7 @@ MPG_DIRECTION="1"
 MPG_AXIS_MAP_X="AXIS_X"
 MPG_AXIS_MAP_Y="AXIS_Y"
 MPG_AXIS_MAP_Z="AXIS_Z"
-MPG_AXIS_MAP_4="FILES"
+MPG_AXIS_MAP_4="AXIS_A"
 MPG_AXIS_MAP_5="CONFIG"
 MPG_AXIS_MAP_6="PREVIEW"
 MPG_PIN_AXIS_X="GPA0"
@@ -74,12 +79,17 @@ MPG_PIN_MULTIPLIER_X100="GPB0"
 # LOCAL Orange/Black contact; LOCAL Pink/Black returns to common. These are
 # not the MAIN cable conductors with the same colors.
 MPG_PIN_BUTTON_SELECT="GPB2"
-MPG_PIN_BUTTON_BACK="GPB3"
-MPG_PIN_BUTTON_FN="GPB4"
-MPG_PIN_BUTTON_CANCEL="GPB5"
+# GPB3..GPB5 are reserved in the canonical harness and remain unassigned.
+MPG_PIN_BUTTON_BACK=""
+MPG_PIN_BUTTON_FN=""
+MPG_PIN_BUTTON_CANCEL=""
 # Firmware-observed remote stop only; not a safety-rated cabinet E-stop.
 MPG_PIN_ESTOP_OBSERVE="GPB1"
 MPG_ESTOP_ACTIVE_LOW="true"
+# The user-confirmed wiring plan routes the same local momentary contact to
+# SELECT (GPB2) and hold-to-run (GPB6). They remain separate MCP input pins,
+# both active-low; one switch drives both. This is not an independent safety
+# control. Keep inputs disabled until connected and verified.
 MPG_PIN_DEADMAN="GPB6"
 MPG_DEADMAN_ACTIVE_LOW="true"
 MPG_BUTTON_DEBOUNCE="0.03"
@@ -101,7 +111,7 @@ MPG_SPI_MISO_PIN="D9"
 # Display profile/controller settings remain independent of the board profile.
 # Round Display reservations: D0/GPIO1 battery sense, D7/GPIO44 touch IRQ;
 # touch and RTC share D4/D5 I2C with the MCP23017. Do not reuse these pins.
-MPG_DISPLAY_ENABLED="false"
+MPG_DISPLAY_ENABLED="true"
 MPG_DISPLAY_USE_BOARD_DISPLAY="false"
 MPG_DISPLAY_WIDTH="240"
 MPG_DISPLAY_HEIGHT="240"
@@ -117,10 +127,33 @@ MPG_DISPLAY_RESET_PIN=""
 MPG_DISPLAY_BACKLIGHT_PIN="D6"
 MPG_DISPLAY_TOUCH_SDA_PIN="D4"
 MPG_DISPLAY_TOUCH_SCL_PIN="D5"
+# Theme: industrial, ice, amber or spectrum
+MPG_UI_THEME="industrial"
+MPG_UI_BEZEL="cyan_reactor"
+MPG_UI_ANIMATIONS="true"
+# The outer bezel rotor is visual feedback only; it does not authorize motion.
+MPG_BEZEL_ROTATION_ENABLED=true
+MPG_BEZEL_AMBIENT_PERIOD_S=54
+MPG_BEZEL_ENCODER_GAIN=0.04
+MPG_BEZEL_MAX_SPEED_RAD_S=0.35
+MPG_BEZEL_INERTIA_S=0.9
+MPG_BEZEL_DIRECTION_CHANGE_MIN_S=20
+MPG_BEZEL_DIRECTION_CHANGE_MAX_S=40
+MPG_BEZEL_FRAME_RATE=24
 MPG_TOUCH_ENABLED=true
+# Seeed Round Display uses CHSC6X at I2C 0x2E, IRQ D7.
+MPG_TOUCH_DRIVER="chsc6x"
+MPG_TOUCH_IRQ_PIN="D7"
+# Touch orientation is independent of LCD rotation; calibrate with the test.
+# Touch rotation: 0, 90, 180, 270
+MPG_TOUCH_ROTATION="0"
+MPG_TOUCH_INVERT_X="false"
+MPG_TOUCH_INVERT_Y="false"
 
-# Optional physical SD mount. All four SPI pins are required when enabled.
+# Optional SD: default off until the installation's round-display wiring is commissioned.
 MPG_SD_ENABLED="false"
+# Optional one-shot mount-time write/read/remove diagnostic; never runs each frame.
+MPG_SD_WRITE_TEST="false"
 MPG_SD_SCK_PIN="D8"
 MPG_SD_MOSI_PIN="D10"
 MPG_SD_MISO_PIN="D9"

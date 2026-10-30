@@ -1,0 +1,32 @@
+name: Round UI host tests
+on:
+  pull_request:
+    paths:
+      - 'src/display/**'
+      - 'src/input/touch*'
+      - 'src/app.py'
+      - 'src/config.py'
+      - 'tests/**'
+      - '.github/workflows/round-ui-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/display/**'
+      - 'src/input/touch*'
+      - 'tests/**'
+      - '.github/workflows/round-ui-tests.yml'
+jobs:
+  host-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile modules
+        run: python -m compileall -q src tests
+      - name: Run focused round UI tests
+        run: |
+          python -m unittest discover -s tests -p 'test_touch_gestures.py' -v
+          python -m unittest discover -s tests -p 'test_ui.py' -v
+          python -m unittest discover -s tests -p 'test_round_ui.py' -v
