@@ -57,7 +57,26 @@ def main() -> int:
            "meshdir": str(stage_dir), "objects": expected,
            "linear": args.linear_deflection, "angular": args.angular_deflection}
     macro = r'''import FreeCAD as App, MeshPart, json, os, traceback
+from collections import Counter
 C=json.loads(@@CFG@@); d=None; errors=[]; rows=[]
+def edge_diagnostics(mesh):
+ points, facets = mesh.Topology
+ incidence = Counter()
+ midpoint = {}
+ for facet in facets:
+  for a,b in ((facet[0],facet[1]),(facet[1],facet[2]),(facet[2],facet[0])):
+   edge=tuple(sorted((a,b)))
+   incidence[edge]+=1
+   if edge not in midpoint:
+    pa,pb=points[a],points[b]
+    midpoint[edge]=((pa.x+pb.x)/2.0,(pa.y+pb.y)/2.0,(pa.z+pb.z)/2.0)
+ bad=[(edge,n) for edge,n in incidence.items() if n != 2]
+ bins=Counter(tuple(int(v//5) for v in midpoint[edge]) for edge,n in bad)
+ histogram={str(n):sum(1 for _,v in bad if v==n) for n in sorted(set(v for _,v in bad))}
+ return {'boundary_edges':sum(1 for _,n in bad if n==1),
+         'overincident_edges':sum(1 for _,n in bad if n>2),
+         'incidence_histogram':histogram,
+         'hotspots_5mm_bins':[{'bin':list(k),'edges':v} for k,v in bins.most_common(8)]}
 try:
  d=App.openDocument(C['assembly'])
  for item in C['objects']:
@@ -72,7 +91,8 @@ try:
   shape.translate(App.Vector(-(b.XMin+b.XMax)/2.0, -(b.YMin+b.YMax)/2.0, -b.ZMin))
   mesh=MeshPart.meshFromShape(Shape=shape, LinearDeflection=C['linear'], AngularDeflection=C['angular'], Relative=False)
   if mesh.CountFacets==0: raise RuntimeError('empty tessellation '+obj.Name)
-  if not mesh.isSolid(): raise RuntimeError('non-manifold mesh from CAD source '+obj.Name)
+  if not mesh.isSolid():
+   raise RuntimeError('non-manifold mesh from CAD source '+obj.Name+' '+json.dumps(edge_diagnostics(mesh),sort_keys=True))
   p=os.path.join(C['meshdir'],item['filename'])
   mesh.write(p)
   mb=mesh.BoundBox

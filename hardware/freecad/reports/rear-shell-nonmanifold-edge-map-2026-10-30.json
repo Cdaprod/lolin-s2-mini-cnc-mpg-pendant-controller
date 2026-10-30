@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-30",
+  "branch": "hardware-integration",
+  "assembly_source": "hardware/freecad/pendant-modular-assembly.FCStd",
+  "monolith_source": "hardware/freecad/pendant.FCStd",
+  "monolith_sha256": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881",
+  "freecad_version": "1.1.1",
+  "tessellation": {
+    "linear_deflection_mm": 0.08,
+    "angular_deflection_rad": 0.2,
+    "final_tip_boundary_edges": 335,
+    "final_tip_three_facet_edges": 12,
+    "first_defective_feature": "RearBossToWallLoadPaths",
+    "feature_boundary_edges": 325,
+    "feature_three_facet_edges": 12,
+    "downstream_tip": "RearBossWallRamps45",
+    "downstream_additional_boundary_edges": 10
+  },
+  "clusters_model_coordinates_mm": [
+    {
+      "region": "upper-left screw boss-to-wall path",
+      "x_range": [-28.2333, -25.3131],
+      "y_range": [56.4541, 60.5113],
+      "z_range": [-23.7202, -21.1299],
+      "boundary_edges": 33,
+      "three_facet_edges": 0
+    },
+    {
+      "region": "upper-right screw boss-to-wall path",
+      "x_range": [24.9780, 27.9514],
+      "y_range": [56.4532, 60.5309],
+      "z_range": [-24.5359, -21.6406],
+      "boundary_edges": 49,
+      "three_facet_edges": 0
+    },
+    {
+      "region": "lower-left screw boss-to-wall path",
+      "x_range": [-20.2116, -15.9498],
+      "y_range": [-22.2528, -13.2604],
+      "z_range": [-26.1457, -21.3817],
+      "boundary_edges": 185,
+      "three_facet_edges": 5
+    },
+    {
+      "region": "lower-right screw boss-to-wall path",
+      "x_range": [15.9521, 20.7808],
+      "y_range": [-19.7778, -13.4442],
+      "z_range": [-26.1456, -21.0867],
+      "boundary_edges": 58,
+      "three_facet_edges": 7
+    }
+  ],
+  "candidate_disposition": {
+    "historical_suppressed_lofts": "rejected; detached from current shell base and not equivalent to the active integrated reinforcement",
+    "mesh_fix_self_intersections": "rejected; splits the shell into four components and changes the mesh volume by approximately -211 mm3",
+    "hole_fill_and_nonmanifold_removal": "rejected; candidate remains open",
+    "production_model_changed": false,
+    "safe_repair_available": false,
+    "blocker": "active RearBossToWallLoadPaths is a stored-shape PartDesign::Feature without its native generation recipe"
+  }
+}

@@ -23,6 +23,23 @@ Read-only BREP snapshots were extracted from the authoritative FCStd archive and
 
 The load-path feature is stored as a generic `PartDesign::Feature` whose saved properties include `BaseFeature=Body002FullWidthSeat` and a design note describing four boss-to-wall transitions. It has no profile, native loft inputs, or regeneration method. The four reinforcing paths are load-bearing design geometry, so suppressing or dropping the feature is not an acceptable repair.
 
+## Spatial and historical localization
+
+The saved rear Tip mesh and the `RearBossToWallLoadPaths` mesh were mapped by triangle-edge incidence in FreeCAD's tessellation. The load-path feature has 325 one-facet boundary edges and 12 three-facet edges. They cluster around the four rear screw-boss-to-wall regions, rather than around the encoder pocket or hanger opening:
+
+| Region in model coordinates | Boundary edges | Three-facet edges |
+|---|---:|---:|
+| Upper left boss, X −28.24…−25.31, Y 56.45…60.52 mm | 33 | 0 |
+| Upper right boss, X 24.98…27.96, Y 56.45…60.54 mm | 49 | 0 |
+| Lower left boss, X −20.22…−15.95, Y −22.26…−13.25 mm | 185 | 5 |
+| Lower right boss, X 15.95…20.79, Y −19.78…−13.44 mm | 58 | 7 |
+
+The final `RearBossWallRamps45` Tip carries 335 boundary edges and the same 12 three-facet edges. Thus the later shoulder and wall-ramp operations preserve the original defect and add ten more open edges.
+
+Git history narrows the first appearance: `376b7c1` has a closed tessellation for its then-current `Body002FullWidthSeat` (40,589.289 mm³, 417 faces), while `e2be498` is the first later commit changing `pendant.FCStd`; that version contains the defective `RearBossToWallLoadPaths` output. The old `Body002FullWidthSeat` is a different, earlier design state and is not a safe substitute because it omits the current reinforced feature history.
+
+The protected pre-load-path backup contains four suppressed legacy additive-loft features. Their saved shape deltas do not match the active integrated reinforcement. Rebuilding those lofts directly from their stale sketches produces four detached solids when fused with the current shell base, so they are rejected as a repair source. Mesh `fixSelfIntersections` also splits the rear shell into four components and removes about 211 mm³; hole filling and non-manifold removal do not close it. Those mesh repairs are rejected because they alter or fragment load-bearing geometry.
+
 ## Repair trials rejected
 
 All trials used copies or extracted BREP snapshots; no production CAD file or STL was changed.
@@ -40,4 +57,9 @@ These outcomes rule out a safe one-click BREP cleanup or a slicer-side patch as 
 - `pendant.FCStd`, `pendant-master.FCStd`, `pendant-modular-assembly.FCStd`, `rear-shell.stl`, and the OrcaSlicer 3MF were not modified by this audit.
 - The user's pre-existing modified `pendant-orcaslicer.3mf` and untracked recovery files remain untouched.
 - `build_meshes.py` now stages a full candidate export and refuses to promote it unless every mesh passes FreeCAD's closed-solid test. This prevents a failed rear-shell mesh from silently overwriting the rest of the delivered print set.
+- The exporter now includes boundary/over-incident edge counts and local 5 mm hotspot bins in the failure message. Its disposable test reports the same 335 boundary plus 12 three-facet edges and leaves all tracked print meshes untouched.
 - No mesh healing in OrcaSlicer or FreeCAD was treated as a geometry repair.
+
+## Disposition
+
+The defect is in the saved FreeCAD load-path BREP, not in OrcaSlicer. No production geometry has been modified. The active feature contains no recoverable native generation recipe, and the historical loft source is not geometrically equivalent. A safe model-file repair therefore requires reconstructing the four active boss-to-wall transitions from their actual current geometry and clearances; replacing or suppressing them would discard the load-bearing paths. Keep the monolith and modular assembly unchanged until that reconstruction passes shape, clearance, cold-reopen, and closed-mesh validation.
