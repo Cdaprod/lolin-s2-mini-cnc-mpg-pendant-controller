@@ -223,12 +223,20 @@ class UIStateMachineTests(unittest.TestCase):
         self.assertIsNone(ui.handle(SELECT))
         self.assertEqual(ui.current_screen, "MAIN_MENU")
 
-    def test_disabled_entry_cannot_emit_command(self):
+    def test_settings_open_safe_read_only_details(self):
         _, ui = ready_ui()
         ui.enter("MAIN_MENU")
         ui.enter("SETTINGS")
+        ui.state.ui_settings = {"Display": (("Theme", "INDUSTRIAL"),)}
+        ui.focus["SETTINGS"] = 2
         self.assertIsNone(ui.handle(SELECT))
-        self.assertIn("not implemented", ui.toast)
+        self.assertEqual(ui.current_screen, "SETTINGS_INFO")
+        model = ui.view_model()
+        self.assertEqual(model["title"], "DISPLAY SETTINGS")
+        self.assertIn(("Theme", "INDUSTRIAL"), model["details"])
+        self.assertIn(("Edit settings", "use settings.toml"), model["details"])
+        self.assertIsNone(ui.handle(SELECT))
+        self.assertEqual(ui.current_screen, "SETTINGS_INFO")
 
     def test_touch_uses_existing_home_and_menu_navigation(self):
         _, ui = ready_ui()

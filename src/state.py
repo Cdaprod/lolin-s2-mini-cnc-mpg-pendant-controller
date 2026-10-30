@@ -61,6 +61,10 @@ class PendantState:
         self.touch_error = None
         self.board_profile = ""
         self.display_profile = ""
+        # Curated, password-free configuration snapshot for the on-device
+        # settings information pages. The live settings editor is intentionally
+        # not exposed by the UI; changes are made through settings.toml.
+        self.ui_settings = {}
         self.selector_backend = "disabled"
         self.deadman_input_configured = False
         self.button_states = {}
