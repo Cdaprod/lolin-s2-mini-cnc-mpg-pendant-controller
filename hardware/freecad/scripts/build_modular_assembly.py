@@ -77,7 +77,12 @@ def open_doc(path):
 def shape_info(obj):
     s=obj.Shape; b=s.BoundBox
     return {'valid':bool(s and not s.isNull() and s.isValid()),'solids':len(s.Solids),
-            'volume':s.Volume,'bbox':[b.XMin,b.XMax,b.YMin,b.YMax,b.ZMin,b.ZMax]}
+            'volume':s.Volume,'solid_volume_sum':sum(x.Volume for x in s.Solids),
+            'bbox':[b.XMin,b.XMax,b.YMin,b.YMax,b.ZMin,b.ZMax]}
+def solid_signature(shape):
+    return sorted((round(s.Volume,6),tuple(round(v,5) for v in
+        (s.BoundBox.XMin,s.BoundBox.XMax,s.BoundBox.YMin,s.BoundBox.YMax,s.BoundBox.ZMin,s.BoundBox.ZMax)))
+        for s in shape.Solids)
 def close_opened():
     names=list(opened)
     for name in reversed(names):
@@ -110,20 +115,30 @@ try:
     opened.append(d.Name)
     d.saveAs(CFG['output'])
     d.addProperty('App::PropertyString','MigrationStatus','Migration')
-    d.MigrationStatus='PARTIAL: five editable Bodies are linked; five legacy Bodies are static BREP interim representations.'
+    d.MigrationStatus='PARTIAL: five editable Body links plus four static interim solids (front/rear shells, upper faceplate, fused encoder faceplate/pocket).'
     d.addProperty('App::PropertyString','MonolithicSource','Migration')
     d.MonolithicSource='pendant.FCStd SHA256='+CFG['source_hash']+' (retained unchanged; this candidate does not replace it)'
     d.addProperty('App::PropertyString','RefreshInstructions','Migration')
     d.RefreshInstructions='Save edited component docs, close the assembly in the GUI, then run scripts/refresh_modular_assembly.py.'
     assembly=d.addObject('App::Part','AssemblyRoot'); assembly.Label='Pendant — Modular Linked Assembly'
-    editable=d.addObject('App::DocumentObjectGroup','EditableComponents'); editable.Label='Editable source component links'
-    interim=d.addObject('App::DocumentObjectGroup','InterimBrepComponents')
-    interim.Label='INTERIM static BREP — legacy histories not independently migrated'
-    assembly.addObject(editable); assembly.addObject(interim)
+    shell_module=d.addObject('App::Part','ShellModule')
+    shell_module.Label='Shell module — front + rear (INTERIM static BREP)'
+    shell_module.addProperty('App::PropertyString','ModuleStatus','Migration')
+    shell_module.ModuleStatus='Logical assembly grouping only. Front and rear shells remain static BREP snapshots until their coupled native histories pass extraction validation.'
+    faceplate_module=d.addObject('App::Part','FaceplateModule')
+    faceplate_module.Label='Faceplate module — upper + encoder + locators'
+    faceplate_module.addProperty('App::PropertyString','ModuleStatus','Migration')
+    faceplate_module.ModuleStatus='Logical assembly grouping. Upper faceplate and fused encoder faceplate/pocket remain static BREP snapshots; locator Bodies are live editable source links.'
+    editable=d.addObject('App::Part','OtherEditableComponents')
+    editable.Label='Other independently editable components'
+    editable.addProperty('App::PropertyString','ModuleStatus','Migration')
+    editable.ModuleStatus='Three live editable source links: display retainer, USB tethered cover, and breakout board.'
+    assembly.addObject(shell_module); assembly.addObject(faceplate_module); assembly.addObject(editable)
     for name,label in CFG['interim'].items():
         s=Part.Shape(); s.read(str(Path(CFG['brep_dir'])/(name+'.brep')))
         obj=d.addObject('Part::Feature','Interim_'+name)
-        obj.Label='INTERIM — '+label+' (static source BREP)'; obj.Shape=s; interim.addObject(obj)
+        obj.Label='INTERIM — '+label+' (static source BREP)'; obj.Shape=s
+        (shell_module if name in ('Body','Body002') else faceplate_module).addObject(obj)
         obj.addProperty('App::PropertyString','RepresentationStatus','Migration')
         obj.RepresentationStatus='Static, nonparametric BREP snapshot. Edit the original Body in pendant.FCStd; rebuild this assembly after migration.'
         obj.addProperty('App::PropertyString','SourceDocument','Migration'); obj.SourceDocument='pendant.FCStd'
@@ -136,7 +151,7 @@ try:
     s=Part.Shape(); s.read(str(unsplit))
     obj=d.addObject('Part::Feature','Interim_'+CFG['unsplit_encoder_object'])
     obj.Label='INTERIM — encoder faceplate + pocket (one fused solid)'
-    obj.Shape=s; interim.addObject(obj)
+    obj.Shape=s; faceplate_module.addObject(obj)
     obj.addProperty('App::PropertyString','RepresentationStatus','Migration')
     obj.RepresentationStatus='Static BREP handoff. The separate user-split file is a single solid; native source histories remain in pendant-encoder-fused-working.FCStd.'
     obj.addProperty('App::PropertyString','SourceDocument','Migration'); obj.SourceDocument=CFG['unsplit_encoder_source']
@@ -153,13 +168,21 @@ try:
             if target is None: raise RuntimeError('missing component Body: '+filename+'/'+body_name)
             link=d.addObject('App::Link','Editable_'+body_name)
             link.Label=target.Label+' — editable source link'
-            link.setLink(target); link.LinkPlacement=target.Placement; editable.addObject(link)
+            link.setLink(target); link.LinkPlacement=target.Placement
+            (faceplate_module if body_name.startswith('Body_FaceplateLocator_') else editable).addObject(link)
             report['links'].append(validate_link(link)); index+=1
     if len(report['links'])!=5 or len(report['interim'])!=4:
         raise RuntimeError('unexpected component count in assembly')
+    if (len(shell_module.Group)!=2 or len(faceplate_module.Group)!=4 or len(editable.Group)!=3):
+        raise RuntimeError('unexpected logical module membership')
+    if [x.Name for x in assembly.Group]!=['ShellModule','FaceplateModule','OtherEditableComponents']:
+        raise RuntimeError('assembly root must contain only the three logical modules')
     d.recompute()
     # Validate all links again after the assembly recompute.
     report['links']=[validate_link(d.getObject(x['name'])) for x in report['links']]
+    leaf_objects=[d.getObject(x['name']) for x in report['links']]+[d.getObject('Interim_'+n) for n in ('Body','Body002','Body003',CFG['unsplit_encoder_object'])]
+    if solid_signature(assembly.Shape)!=sorted(sig for obj in leaf_objects for sig in solid_signature(obj.Shape)):
+        raise RuntimeError('assembly root contains missing or duplicated solids')
     d.save()
     report['assembly_path']=d.FileName
     report['assembly_shape']=shape_info(assembly)
@@ -172,6 +195,21 @@ try:
     report['reopened_links']=[validate_link(o) for o in links]
     interim_objs=[o for o in d.Objects if o.Name.startswith('Interim_')]
     report['reopened_interim']=[{'name':o.Name,'shape':shape_info(o)} for o in interim_objs]
+    reopened_modules={o.Name:o for o in d.Objects if o.Name in ('ShellModule','FaceplateModule','OtherEditableComponents')}
+    memberships={name:[member.Name for member in reopened_modules[name].Group] for name in reopened_modules}
+    report['reopened_module_memberships']=memberships
+    expected_memberships={
+        'ShellModule':['Interim_Body','Interim_Body002'],
+        'FaceplateModule':['Interim_Body003','Interim_EncoderFaceplatePocketUnsplit','Editable_Body_FaceplateLocator_A','Editable_Body_FaceplateLocator_B'],
+        'OtherEditableComponents':['Editable_Body_DisplayRetainer_EditableV2','Editable_Body_USBTetheredCover','Editable_Body006'],
+    }
+    if memberships!=expected_memberships:
+        raise RuntimeError('assembly module membership changed after save/reopen: '+repr(memberships))
+    if [x.Name for x in d.getObject('AssemblyRoot').Group]!=['ShellModule','FaceplateModule','OtherEditableComponents']:
+        raise RuntimeError('assembly root module membership changed after save/reopen')
+    reopened_leaves=[d.getObject(x['name']) for x in report['reopened_links']]+[d.getObject('Interim_'+n) for n in ('Body','Body002','Body003',CFG['unsplit_encoder_object'])]
+    if solid_signature(d.getObject('AssemblyRoot').Shape)!=sorted(sig for obj in reopened_leaves for sig in solid_signature(obj.Shape)):
+        raise RuntimeError('reopened assembly root contains missing or duplicated solids')
     if len(links)!=5 or len(interim_objs)!=4 or any(not x['shape']['valid'] for x in report['reopened_interim']):
         raise RuntimeError('assembly failed save/reopen validation')
     report['reopen_ok']=True
