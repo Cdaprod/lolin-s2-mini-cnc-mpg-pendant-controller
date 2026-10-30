@@ -116,6 +116,29 @@ def property_link_edges(obj: ET.Element, known_objects: set[str]) -> list[dict[s
     return edges
 
 
+def context_xlinks(obj: ET.Element) -> list[dict[str, str]]:
+    """Decode non-geometric XLinks stored in an object's Context property.
+
+    FreeCAD ShapeBinder and related objects can retain a document/container
+    Context pointing to the monolith even when their geometric Support points
+    to objects in a candidate document. Keep these references separate from
+    the geometric dependency graph, but expose them for portability review.
+    """
+    prop = obj.find("./Properties/Property[@name='Context']")
+    if prop is None:
+        return []
+    rows = []
+    for node in prop.iter():
+        if node.tag not in ("XLink", "XLinkSub"):
+            continue
+        rows.append({"external_file": node.get("file", ""),
+                     "document_stamp": node.get("stamp", ""),
+                     "target_document_object": node.get("name", ""),
+                     "target_object_path": node.get("sub", ""),
+                     "serialized_tag": node.tag})
+    return rows
+
+
 def sketch_external_refs(obj: ET.Element) -> list[dict]:
     p = obj.find("./Properties/Property[@name='ExternalGeo']")
     constraints_prop = obj.find("./Properties/Property[@name='Constraints']")
@@ -425,6 +448,29 @@ def main() -> int:
             elif not row["external_file_is_relative"]:
                 uncertain.append({"kind": "nonportable_external_expression_path", **row})
 
+    # Context XLinks are intentionally excluded from geometric reachability:
+    # they describe the source document/container context, not the Support or
+    # Shape consumed by a feature. Still record active-tip-reachable paths so
+    # a candidate cannot appear portable merely because its geometry links
+    # resolve locally.
+    context_references = []
+    for name in sorted(visited):
+        for ref in context_xlinks(objects[name]):
+            external_path = Path(ref["external_file"]) if ref["external_file"] else None
+            resolved_path = (Path(os.path.normpath(str(source_argument.parent / external_path))).resolve()
+                             if external_path and not external_path.is_absolute()
+                             else external_path.resolve() if external_path else None)
+            context_references.append({"consumer_object": name,
+                                       "consumer_active_tip_reachable": True,
+                                       "tip_to_consumer_path": paths.get(name, []),
+                                       "property": "Context",
+                                       "dependency_role": "non_geometric_container_context",
+                                       "context_scope": "external_document" if ref["external_file"] else "same_document",
+                                       **ref,
+                                       "resolved_context_file": str(resolved_path) if resolved_path else None,
+                                       "context_file_exists": (bool(resolved_path.is_file()) if resolved_path else None),
+                                       "context_file_is_relative": (not Path(ref["external_file"]).is_absolute() if ref["external_file"] else None)})
+
     external_edges = []
     for row in sketch_records:
         for ref in row["external_geometry"]:
@@ -581,7 +627,7 @@ def main() -> int:
         binder_records.append({"name": name, "type": typ, "owners": owners.get(name, []), "properties_xml": props})
 
     manifest = {
-        "schema_version": 2,
+        "schema_version": 3,
         "source": {"filename": source.name, "sha256": digest,
                    "document_internal_name": "remove_warp_bypass",
                    "freecad_version_observed": "1.1.1 (0108fd4b4850cc46e625b60e53cea7a7bbe69f8d)"},
@@ -607,6 +653,7 @@ def main() -> int:
         "sketches": sketch_records,
         "external_geometry_references": external_edges,
         "property_link_edges": property_edges,
+        "context_references": context_references,
         "component_boundary_crossings": boundary_crossings,
         "extraction_readiness": readiness,
         "binders": binder_records,
@@ -618,7 +665,8 @@ def main() -> int:
         "limitations": [
             "FreeCAD 1.1.1 exposes ExternalGeometry (PropertyLinkSubList) and ExternalGeo (PropertyGeometryList), but the former can be empty while ExternalGeometryExtension Ref tokens are present in ExternalGeo serialization.",
             "This manifest reports exact serialized subelement tokens. Human-readable Edge/Face names may not exist for persistent element-map references.",
-            "App::Link and ShapeBinder/XLink property payloads are preserved in link_properties_xml; resolve their targets in FreeCAD before treating external paths as portable."
+            "App::Link and ShapeBinder/XLink property payloads are preserved in link_properties_xml; resolve their targets in FreeCAD before treating external paths as portable.",
+            "Context XLinks are reported separately as non-geometric container-context references. They do not enter the geometry closure, but should be reviewed when evaluating candidate portability or monolith independence."
         ]
     }
     text = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
