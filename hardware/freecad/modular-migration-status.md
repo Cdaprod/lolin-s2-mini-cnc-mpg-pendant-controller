@@ -4,6 +4,10 @@ Date: 2026-10-29
 Branch: `hardware-integration`
 Authoritative source retained unchanged: `pendant.FCStd`
 
+## Ongoing mechanical refinement workstream (2026-10-30)
+
+Mechanical design improvement is now tracked alongside modularization and parameterization in `mechanical-refinement-backlog.md`. The first priority is a controlled top-hanger refinement. Its initial audit is in `reports/top-hanger-refinement-initial-audit-2026-10-30.md` with machine-readable measurements in the adjacent JSON file. The initial 3.5 mm obround candidate was rejected because it left a very thin sampled rear transition and reduced clearance to the upper screw head seats. No production geometry was changed. The next candidate should reshape only the upper transition while retaining lower-edge screw clearance, and must pass full feature-chain and assembly validation before promotion.
+
 ## Baseline
 
 - FreeCAD 1.1.1, revision `0108fd4b4850cc46e625b60e53cea7a7bbe69f8d`.

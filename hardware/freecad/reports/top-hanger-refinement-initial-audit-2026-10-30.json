@@ -1,0 +1,73 @@
+{
+  "date": "2026-10-30",
+  "scope": "read-only baseline and disposable sketch/section candidate checks",
+  "production_geometry_modified": false,
+  "authoritative_file_sha256_before": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881",
+  "parameter_object": "HangerParameters",
+  "baseline_parameters_mm": {
+    "SlotCenterY": 81.0,
+    "SlotLength": 35.6,
+    "SlotWidth": 3.0
+  },
+  "shells": [
+    {
+      "body": "Body",
+      "role": "front",
+      "tip": "RestoreUpperFaceplateHoles",
+      "profile_sketch": "SmallHangerProfileBody",
+      "pocket": "SmallHangerPocketBody",
+      "pocket_length_mm": 37.0,
+      "sketch_placement_mm": [0.0, 81.0, 1.0],
+      "baseline_tip_volume_mm3": 37683.517480502655,
+      "sampled_min_web_at_current_upper_edge_mm": 0.1637,
+      "sample_location_approx_mm": [12.0, 83.5, -14.0]
+    },
+    {
+      "body": "Body002",
+      "role": "rear",
+      "tip": "RearBossWallRamps45",
+      "profile_sketch": "SmallHangerProfileBody002",
+      "pocket": "SmallHangerPocketBody002",
+      "pocket_length_mm": 22.0,
+      "sketch_placement_mm": [0.0, 81.0, -18.0],
+      "baseline_tip_volume_mm3": 40961.35900828918,
+      "sampled_min_web_at_current_upper_edge_mm": 0.2402,
+      "sample_location_approx_mm": [-12.0, 83.5, -24.0]
+    }
+  ],
+  "baseline_sketch_global_xy_bbox_mm": {
+    "x": [-17.8, 17.8],
+    "y": [80.5, 83.5],
+    "end_radius": 1.5,
+    "fully_constrained": true
+  },
+  "upper_screw_row": {
+    "centers_xy_mm": [[-16.97, 76.85], [16.97, 76.85]],
+    "passage_radius_mm": 1.15,
+    "head_seat_radius_mm": 2.05,
+    "head_seat_max_y_mm": 78.9,
+    "baseline_slot_lower_edge_y_mm": 80.5,
+    "baseline_vertical_gap_mm": 1.6
+  },
+  "rejected_candidate": {
+    "SlotCenterY_mm": 80.25,
+    "SlotLength_mm": 35.6,
+    "SlotWidth_mm": 3.5,
+    "profile_bbox_global_xy_mm": {
+      "x": [-17.8, 17.8],
+      "y": [79.5, 83.0],
+      "end_radius": 1.75
+    },
+    "front_shell_sampled_min_web_mm": 0.6637,
+    "rear_shell_sampled_min_web_mm": 0.2513,
+    "vertical_gap_to_head_seat_mm": 0.6,
+    "disposition": "rejected; disposable only; not saved/promoted"
+  },
+  "recompute": {
+    "sketch_only_recompute": "passed; both sketches fully constrained and aligned",
+    "full_monolith_candidate_recompute": "timed out after existing cross-Body link and Pad021.?Face97/suppressed Pad022 errors",
+    "full_shell_geometry_validation": "not completed",
+    "assembly_fit_validation": "not completed"
+  },
+  "next_step": "Investigate a symmetric sketch-level reshape of the upper cap while retaining the lower boundary; first measure full-perimeter 3D material and screw-seat clearances. Do not adopt a printer-specific wall target without printer/process requirements."
+}
