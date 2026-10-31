@@ -1,0 +1,90 @@
+{
+  "candidate": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-modular-locator-leadin-candidate.FCStd",
+  "links": [
+    {
+      "name": "Editable_Body_DisplayRetainer_EditableV2",
+      "target": "Body_DisplayRetainer_EditableV2",
+      "document": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-bodies/display-retainer-mounting-leadin-candidate.FCStd",
+      "placement_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "volume_mm3": 2050.3855204146566,
+      "solids": 1
+    },
+    {
+      "name": "Editable_Body_USBTetheredCover",
+      "target": "Body_USBTetheredCover",
+      "document": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-bodies/usb-tethered-cover.FCStd",
+      "placement_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "volume_mm3": 665.2206904482824,
+      "solids": 1
+    },
+    {
+      "name": "Editable_Body_FaceplateLocator_A",
+      "target": "Body_FaceplateLocator_A",
+      "document": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-bodies/faceplate-locators-leadin-candidate.FCStd",
+      "placement_mm": [
+        0.0,
+        0.0,
+        -1.5
+      ],
+      "volume_mm3": 88.21013732209859,
+      "solids": 1
+    },
+    {
+      "name": "Editable_Body_FaceplateLocator_B",
+      "target": "Body_FaceplateLocator_B",
+      "document": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-bodies/faceplate-locators-leadin-candidate.FCStd",
+      "placement_mm": [
+        0.0,
+        0.0,
+        -1.5
+      ],
+      "volume_mm3": 88.2101373220986,
+      "solids": 1
+    },
+    {
+      "name": "Editable_Body006",
+      "target": "Body006",
+      "document": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-bodies/breakout-board.FCStd",
+      "placement_mm": [
+        0.0,
+        0.0,
+        -13.2
+      ],
+      "volume_mm3": 2660.5453836083534,
+      "solids": 1
+    },
+    {
+      "name": "Interim_Body002",
+      "target": "RearShell",
+      "document": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-bodies/rear-shell-loadpath-repair-candidate.FCStd",
+      "placement_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "volume_mm3": 40609.693012380856,
+      "solids": 1
+    }
+  ],
+  "root": {
+    "valid": true,
+    "solids": 9,
+    "volume_mm3": 111841.7739735076,
+    "bounds_mm": [
+      -64.21622504107172,
+      64.21622504107174,
+      -92.36472522473227,
+      86.68910767539026,
+      -36.844984332370686,
+      5.000000000000091
+    ]
+  }
+}

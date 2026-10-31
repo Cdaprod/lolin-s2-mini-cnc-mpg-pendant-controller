@@ -32,14 +32,27 @@ The saved source and candidate are each a valid single solid. The candidate remo
 
 The retainer change is also linked into a disposable assembly copy, [pendant-modular-retainer-leadin-candidate.FCStd](../pendant-modular-retainer-leadin-candidate.FCStd). On cold reopen, all six external App::Links resolve to valid one-solid targets, the root is a valid nine-solid compound, and the display-retainer link retains its original placement. The rear shell and some faceplate representations in this assembly are still interim candidates; this does not promote those parts to fully editable modules.
 
+## Faceplate-locator screw-entry lead-ins
+
+Both native locator Bodies now have a small tapered entry at the exposed M2 passage. Each fully constrained profile drives a `PartDesign::Pocket` with `0.15 mm` radial expansion, `0.15 mm` depth, and a `-45°` taper. The existing larger screw-head seats remain untouched. This removes `0.084823 mm³` from each locator, leaves both exterior bounds and their `z = -1.5 mm` Body placements unchanged, and preserves zero interference against the nominal `2.30 mm` cylindrical screw-clearance gauge.
+
+The two candidates cold-open and recompute as valid single solids. Their tessellations are closed with zero boundary edges and zero over-incident edges (2,394 and 2,392 facets). The before/after plan previews show the uniform entry enlargement while preserving the locator outline.
+
+![Faceplate locator source and candidate screw entries](faceplate-locators-leadin-before-after.png)
+
+The change is present only in `faceplate-locators-leadin-candidate.FCStd`. A disposable assembly copy, [pendant-modular-locator-leadin-candidate.FCStd](../pendant-modular-locator-leadin-candidate.FCStd), redirects both locator links to the new native source. After close/reopen/recompute, all six external links resolve to valid one-solid targets; the root remains a valid nine-solid assembly with unchanged overall bounds. The production locator source and assembly are unchanged.
+
 ## Candidate files
 
 - `../pendant-modular-design-improvements-candidate.FCStd` — combined assembly candidate, saved beside its relative component links.
 - `../pendant-modular-retainer-leadin-candidate.FCStd` — follow-on assembly candidate with the display-retainer source link redirected to the new native lead-in component file.
 - `../pendant-bodies/display-retainer-mounting-leadin-candidate.FCStd` — native PartDesign candidate for the five retainer mounting entries.
+- `../pendant-bodies/faceplate-locators-leadin-candidate.FCStd` — native PartDesign candidate for both locator screw-entry lead-ins.
+- `../pendant-modular-locator-leadin-candidate.FCStd` — assembly candidate linking the retainer and locator refinements.
 - `pendant-display-bezel-fillet-candidate.FCStd` — full monolith-derived native bezel-filleting candidate (local disposable file; regenerate using `../scripts/create_display_bezel_candidate.py`).
 - `display-bezel-fillet-before-after.png` — preview.
 - `display-retainer-mounting-leadin-before-after.png` — preview for the retainer lead-ins.
+- `faceplate-locators-leadin-before-after.png` — preview for the locator lead-ins.
 - `rear-shell-loadpath-repair-candidate.stl` — exported mesh for candidate edge-incidence comparison.
 
 No production CAD or STL was overwritten.
