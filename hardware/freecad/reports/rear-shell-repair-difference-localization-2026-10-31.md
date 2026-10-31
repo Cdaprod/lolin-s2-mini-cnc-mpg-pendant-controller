@@ -4,7 +4,7 @@
 
 The current hybrid candidate is **351.665996 mm³ smaller** than the saved legacy rear-shell Tip (`40,609.693012` vs `40,961.359008 mm³`). Its native candidate Pad/Pocket chain recomputes to one valid solid, with the same outer bounds as the original. The source `Body002` also loads as a valid one-solid BREP, although its prior mesh audit found non-manifold edge incidence and the full legacy history has not completed a bounded recompute.
 
-The discrepancy is a **known, intentional reconstruction difference**, not an unexplained drift: the candidate starts from `Body002FullWidthSeat`, adds four newly modeled support profiles, and cuts the six M2 passages. It does not regenerate the original `RearBossShoulderTransitions` and `RearBossWallRamps45` geometry. The difference is therefore not yet approved as mechanically equivalent or acceptable.
+The discrepancy is a **known, intentional reconstruction difference**, not an unexplained drift: the candidate replaces the old `RearBossToWallLoadPaths → RearBossShoulderTransitions → RearBossWallRamps45` stored-shape sequence with a clean `Body002FullWidthSeat` base, four newly modeled support profiles, and a clearance Pocket. The upper two prisms reproduce the local upper ramp wedges, but the wider upstream load-path and shoulder material is not reconstructed. The two lower profiles add new material where the legacy final Tip has none. The difference is therefore not yet approved as mechanically equivalent or acceptable.
 
 | History stage | Volume (mm³) | Change from prior stage (mm³) |
 |---|---:|---:|
@@ -17,7 +17,7 @@ The discrepancy is a **known, intentional reconstruction difference**, not an un
 
 Localized intersections against the four declared triangular pad prisms show the upper-left and upper-right candidate intersections match the saved legacy Tip within `6.5e-7 mm³`. In the lower-left and lower-right prisms, the saved legacy Tip contains no material while the candidate adds about `10.56 mm³` over the clean base in each. The lower ribs are deliberate new geometry in this reconstruction recipe; their load-path value and clearance to nearby internal components are not established here.
 
-The old support and finishing chain contributes substantially more volume than the current replacement. The exact removed-material map outside the four local prisms remains unknown: whole-shell symmetric-difference Booleans on the defective legacy shell were unreliable or too slow, and prior full-history recomputation exceeded 170 seconds. This audit therefore does not claim exact BREP equivalence. It classifies the net difference as intentional but mechanically unresolved, with the omitted transition/ramp geometry as the primary design gap.
+The old support and finishing chain contributes substantially more volume than the current replacement. The exact removed-material map outside the four local prisms remains unknown: whole-shell symmetric-difference Booleans on the defective legacy shell were unreliable or too slow, and prior full-history recomputation exceeded 170 seconds. This audit therefore does not claim exact BREP equivalence. It classifies the net difference as intentional but mechanically unresolved, with the omitted upstream load-path and shoulder geometry as the primary design gap.
 
 ## Candidate assembly appearance
 
