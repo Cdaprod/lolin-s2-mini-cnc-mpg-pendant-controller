@@ -70,6 +70,21 @@
     "valid_single_solid": true,
     "closed_mesh": true
   },
+  "assembly_parameter_refresh_test": {
+    "disposable_copies_only": true,
+    "parameter": "UpperLeftSupportPad.Length",
+    "baseline_mm": 13.0,
+    "changed_mm": 13.2,
+    "baseline_linked_volume_mm3": 40608.354896949015,
+    "changed_linked_volume_mm3": 40608.53515894741,
+    "linked_volume_delta_mm3": 0.18026199839368928,
+    "changed_edit_survived_save_reopen": true,
+    "restored_mm": 13.0,
+    "restored_cold_open_volume_mm3": 40608.354896949015,
+    "restoration_error_mm3": 0.0,
+    "valid_one_solid_closed_mesh_for_all_states": true,
+    "repository_candidate_modified": false
+  },
   "legacy_geometry_gap": {
     "legacy_tip_minus_unfilleted_candidate_mm3": 351.6659959083,
     "legacy_tip_minus_filleted_candidate_mm3": 353.004111340135,

@@ -52,6 +52,8 @@ The measured overlap with the extracted magnet-pocket tool is unchanged relative
 
 The review assembly cold-opens and recomputes with six resolved App::Links. The rear link targets this filleted component, matches its source Body before tessellation, and remains a valid one-solid shape. Its tessellation has 15,418 facets, zero boundary edges, and zero over-incident edges. This validates link persistence and topology, not every assembly clearance.
 
+An additional source-to-assembly refresh test ran on disposable copies of the review assembly and component. Changing `UpperLeftSupportPad.Length` from 13.0 to 13.2 mm changed the linked assembly volume by +0.180262 mm³. The updated value survived saving, closing, and cold-opening the assembly. Restoring 13.0 mm returned the cold-open volume exactly to 40,608.354897 mm³. Every tested edited and restored state remained one valid solid with a closed mesh. The repository candidate component was not altered by this test.
+
 Machine-readable measurements are in [`rear-shell-reinforced-bottom-fillet-validation-2026-10-31.json`](rear-shell-reinforced-bottom-fillet-validation-2026-10-31.json).
 
 ## Design limits
