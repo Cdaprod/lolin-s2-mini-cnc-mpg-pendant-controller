@@ -1,0 +1,106 @@
+{
+  "date": "2026-10-31",
+  "status": "disposable_review_candidate_not_production",
+  "preferred_variant": "C",
+  "source_candidate": "hardware/freecad/pendant-bodies/rear-shell-loadpath-parametric-profile-bottom-fillet-candidate.FCStd",
+  "candidate_file": "hardware/freecad/pendant-bodies/rear-shell-anti-slip-contact-candidate.FCStd",
+  "protected_monolith_and_production_assembly_modified": false,
+  "rear_shell": {
+    "bottom_perimeter_fillet_radius_mm": 0.25,
+    "bottom_perimeter_fillet_edge_count": 19,
+    "base_volume_before_seats_mm3": 40608.35489940695,
+    "volume_after_seats_mm3": 40560.73429111245,
+    "seat_removed_volume_mm3": 47.6206082945,
+    "valid": true,
+    "solid_count": 1,
+    "mesh": {
+      "linear_deflection_mm": 0.08,
+      "triangles": 92486,
+      "boundary_edges": 0,
+      "overincident_edges": 0
+    },
+    "legacy_saved_tip_volume_mm3": 40961.359008,
+    "legacy_difference_before_seats_mm3": -351.665996,
+    "legacy_difference_after_seats_mm3": -400.624717,
+    "legacy_difference_note": "Hybrid support reconstruction remains below the legacy saved Tip; exact intended geometry and load-path suitability remain unresolved."
+  },
+  "variant_comparison": {
+    "A": {
+      "exposed_pad_contact_area_mm2": 231.1315617329191,
+      "min_seat_to_magnet_keepout_mm": 0.024855151723366754,
+      "min_seat_to_shell_edge_mm": 0.9505622074462767,
+      "min_seat_to_screw_keepout_mm": 4.4821531782962705,
+      "overlap": false,
+      "disposition": "rejected_for_near_tangent_magnet_margin"
+    },
+    "B": {
+      "exposed_pad_contact_area_mm2": 256.8994745861814,
+      "min_seat_to_magnet_keepout_mm": 0.37183691796746765,
+      "min_seat_to_shell_edge_mm": 0.4273088460778826,
+      "min_seat_to_screw_keepout_mm": 2.4806002185559364,
+      "overlap": false,
+      "disposition": "rejected_for_small_shell_edge_and_magnet_margins"
+    },
+    "C": {
+      "exposed_pad_contact_area_mm2": 225.59698780379105,
+      "seat_footprint_area_mm2": 238.11266057221352,
+      "upper_seat": {
+        "center_y_mm": 55.292321,
+        "inner_radius_mm": 16.0,
+        "outer_radius_mm": 21.0,
+        "sweep_degrees": [45.0, 135.0],
+        "seat_area_mm2": 172.5152970733746,
+        "exposed_contact_area_mm2": 165.09394658279084,
+        "min_magnet_keepout_clearance_mm": 1.0235487544324149,
+        "min_screw_keepout_clearance_mm": 3.6890272075062303,
+        "min_shell_edge_clearance_mm": 1.4282615312425155,
+        "sampled_remaining_wall_min_mm": 9.66030379934216
+      },
+      "lower_seat": {
+        "center_y_mm": -47.994806,
+        "inner_radius_mm": 12.2,
+        "outer_radius_mm": 14.8,
+        "sweep_degrees": [225.0, 315.0],
+        "seat_area_mm2": 65.59736349883892,
+        "exposed_contact_area_mm2": 60.50304122100021,
+        "min_magnet_keepout_clearance_mm": 1.6057649303340915,
+        "min_screw_keepout_clearance_mm": 36.658855901177716,
+        "min_shell_edge_clearance_mm": 1.150746738750206,
+        "sampled_remaining_wall_min_mm": 2.44117945891152
+      },
+      "seat_depth_mm": 0.2,
+      "pad_thickness_mm": 0.45,
+      "pad_protrusion_beyond_contact_plane_mm": 0.25,
+      "seat_edge_clearance_mm": 0.1,
+      "seat_face_coverage_ratio": 1.0,
+      "magnet_or_screw_interference": false,
+      "rear_shell_valid": true,
+      "rear_shell_solid_count": 1,
+      "rear_shell_mesh": {
+        "triangles": 92486,
+        "boundary_edges": 0,
+        "overincident_edges": 0
+      },
+      "upper_and_lower_pad_contact_planes_coplanar": true,
+      "pads_valid_single_solids": true,
+      "pad_meshes_closed": true,
+      "pads_separate_editable_partdesign_bodies": true,
+      "pad_profile_sketches_fully_constrained": true,
+      "cold_reopen_recompute": true,
+      "parameter_test": {
+        "baseline": [40560.73429111245, 74.29227596225604, 27.226368549450214],
+        "changed_seat_depth_mm": 0.25,
+        "changed_pad_thickness_mm": 0.5,
+        "changed_outputs": [40548.8286548751, 82.54697329139543, 30.25152061050018],
+        "restored_outputs": [40560.73429111245, 74.29227596225604, 27.226368549450214],
+        "restoration_error_mm3": [0.0, 0.0, 0.0]
+      },
+      "disposition": "preferred_disposable_review_candidate_not_approved"
+    }
+  },
+  "clearance_method": "Seat-outline distance from projected radius-10.5 mm magnet keepouts, screw passages enlarged by 1.5 mm, and outer wire of the planar rear contact face.",
+  "wall_method": "Nine normal section samples per crescent along its centerline; local samples only, not a global minimum-wall analysis.",
+  "material_strength_and_friction_validated": false,
+  "load_test_performed": false,
+  "assembly_link_integration_performed": false
+}
