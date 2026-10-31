@@ -54,6 +54,10 @@ Variant C's final values:
 - All features remain up to date after save, close, reopen, and full recompute.
 - Nine normal section samples along each crescent centerline found minimum remaining shell material of 9.66 mm at the upper pad and 2.44 mm at the lower pad. This is a local sample, not a global thickness guarantee.
 
+### Follow-up: lower-seat material location
+
+A cold, read-only section check localized the lower-seat web near the center of `PadProfileLower` (approximately X=0, Y=−59.51 mm). The shell section along global Z at that point spans about 2.00 mm between the sampled underside and inner boundary (Z≈−30.84 to −28.84 mm). The nearby final-Tip geometry is principally a broad planar face with small cylindrical blend faces; the section does not pass through a distinct boss or magnet pocket. This is a different section direction from the nine prior normal-to-surface samples, whose minimum was 2.44 mm, so the values are not interchangeable. Neither is a global minimum-thickness certification. No geometry was changed from this check; the seat stays a review candidate pending a specified minimum-wall target and structural review.
+
 The reversible parameter check changed seat depth 0.20→0.25 mm and pad thickness 0.45→0.50 mm, recomputed the shell and both pads, then restored the original values. All three volumes returned to within 1e-10 mm³ of baseline. The test passed again after saving and reopening.
 
 ## Limits and next steps
