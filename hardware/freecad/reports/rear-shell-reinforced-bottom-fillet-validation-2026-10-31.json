@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-31",
+  "component": "hardware/freecad/pendant-bodies/rear-shell-loadpath-parametric-profile-bottom-fillet-candidate.FCStd",
+  "review_assembly": "hardware/freecad/pendant-modular-rear-bottom-fillet-review-candidate.FCStd",
+  "native_feature": {
+    "name": "BottomPerimeterFinish",
+    "type": "PartDesign::Fillet",
+    "radius_mm": 0.25,
+    "selected_face_area_mm2": 4243.228864251401,
+    "selected_face_outer_edge_count": 19,
+    "selected_edge_names": [
+      "Edge99", "Edge100", "Edge101", "Edge56", "Edge61", "Edge55",
+      "Edge28", "Edge78", "Edge102", "Edge103", "Edge104", "Edge105",
+      "Edge106", "Edge107", "Edge108", "Edge109", "Edge110", "Edge111", "Edge112"
+    ],
+    "selection_method": "outer wire of largest lower contact plane; edge names mapped by topological identity"
+  },
+  "before": {
+    "volume_mm3": 40609.69301238085,
+    "area_mm2": 30634.260536984064,
+    "faces": 460,
+    "mesh_facets": 13600,
+    "valid_single_solid": true,
+    "closed_mesh": true
+  },
+  "after_save_reopen_recompute": {
+    "tip": "BottomPerimeterFinish",
+    "state": "Up-to-date",
+    "volume_mm3": 40608.354896949015,
+    "area_mm2": 30623.607808243447,
+    "faces": 478,
+    "mesh_facets": 15418,
+    "boundary_edges": 0,
+    "overincident_edges": 0,
+    "valid_single_solid": true,
+    "closed_mesh": true,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ]
+  },
+  "volume_removed_mm3": 1.338115431835,
+  "minimum_z_change_mm": -0.049483579739274,
+  "parameter_propagation": {
+    "sketch_constraint": "UpperLeftProfile.BossX",
+    "original_mm": -24.8,
+    "test_mm": -24.7,
+    "tip_volume_change_mm3": 0.723095951105,
+    "restored_volume_error_mm3": 0.0,
+    "fillet_recomputed": true,
+    "body_valid_single_solid_during_test": true
+  },
+  "clearance_comparison": {
+    "magnet_tool_intersection_before_mm3": 168.00028016072372,
+    "magnet_tool_intersection_after_mm3": 168.00028016072343,
+    "magnet_delta_mm3": -2.8421709430404007e-13,
+    "screw_tool_intersection_before_mm3": 0.0,
+    "screw_tool_intersection_after_mm3": 0.0,
+    "interpretation": "fillet did not change these tool-overlap metrics; magnet tool alignment remains unverified because its base intersection is nonzero"
+  },
+  "assembly_reopen": {
+    "app_link_count": 6,
+    "broken_links": 0,
+    "rear_link_source": "RearShell in rear-shell-loadpath-parametric-profile-bottom-fillet-candidate.FCStd",
+    "source_link_volume_match": true,
+    "valid_single_solid": true,
+    "closed_mesh": true
+  },
+  "legacy_geometry_gap": {
+    "legacy_tip_minus_unfilleted_candidate_mm3": 351.6659959083,
+    "legacy_tip_minus_filleted_candidate_mm3": 353.004111340135,
+    "original_load_path_and_transition_net_addition_over_clean_base_mm3": 475.70158000448,
+    "exact_spatial_equivalence": "not established",
+    "structural_capacity": "not established"
+  },
+  "production_documents_modified": false
+}
