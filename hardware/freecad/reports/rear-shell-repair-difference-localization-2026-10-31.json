@@ -1,0 +1,322 @@
+{
+  "date": "2026-10-31",
+  "candidate_only_read_only_audit": true,
+  "source_document": "pendant.FCStd",
+  "candidate_document": "pendant-bodies/rear-shell-loadpath-repair-candidate.FCStd",
+  "source_baseline": "saved Body002 active Tip shape; full legacy history was not recomputed because prior bounded runs exceeded 170 seconds",
+  "candidate_baseline": "RearShell native candidate recomputed in isolation from its imported static base and native pad/pocket history",
+  "saved_original_tip": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 40961.35900828918,
+    "area_mm2": 30590.90219664095,
+    "faces": 534,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.844984332370686,
+      0.0
+    ]
+  },
+  "saved_clean_base": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 40485.6574282847,
+    "area_mm2": 30525.353379738182,
+    "faces": 400,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.844984332370686,
+      0.0
+    ]
+  },
+  "recomputed_candidate_tip": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 40609.69301238085,
+    "area_mm2": 30634.260536984064,
+    "faces": 460,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.844984332370686,
+      0.0
+    ]
+  },
+  "candidate_minus_saved_original_volume_mm3": -351.66599590833357,
+  "original_history_volume_stages": [
+    {
+      "object": "Body002FullWidthSeat",
+      "saved_shape_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 40485.6574282847,
+        "area_mm2": 30525.353379738182,
+        "faces": 400,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ]
+      }
+    },
+    {
+      "object": "RearBossToWallLoadPaths",
+      "saved_shape_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 40869.39100368142,
+        "area_mm2": 30503.594658377384,
+        "faces": 506,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ]
+      }
+    },
+    {
+      "object": "RearBossShoulderTransitions",
+      "saved_shape_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 40854.429553998285,
+        "area_mm2": 30487.160797729823,
+        "faces": 509,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ]
+      }
+    },
+    {
+      "object": "RearBossWallRamps45",
+      "saved_shape_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 40961.35900828918,
+        "area_mm2": 30590.90219664095,
+        "faces": 534,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ]
+      }
+    }
+  ],
+  "candidate_native_history_stages": [
+    {
+      "object": "UpperLeftSupportPad",
+      "recomputed_shape_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 40546.24768551279,
+        "area_mm2": 30571.302180220453,
+        "faces": 411,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ]
+      }
+    },
+    {
+      "object": "UpperRightSupportPad",
+      "recomputed_shape_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 40606.85891131031,
+        "area_mm2": 30617.362800385217,
+        "faces": 422,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ]
+      }
+    },
+    {
+      "object": "LowerLeftSupportPad",
+      "recomputed_shape_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 40625.723613021226,
+        "area_mm2": 30615.521675134238,
+        "faces": 442,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ]
+      }
+    },
+    {
+      "object": "LowerRightSupportPad",
+      "recomputed_shape_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 40644.593131569236,
+        "area_mm2": 30613.686838293725,
+        "faces": 462,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ]
+      }
+    },
+    {
+      "object": "RearM2PassageClearance",
+      "recomputed_shape_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 40609.69301238085,
+        "area_mm2": 30634.260536984064,
+        "faces": 460,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ]
+      }
+    }
+  ],
+  "localized_native_profile_intersections": [
+    {
+      "profile": "upper-left",
+      "profile_bounds_mm": [
+        -30.0,
+        -24.8,
+        52.0,
+        65.0,
+        -31.5,
+        -26.3
+      ],
+      "profile_prism_volume_mm3": 175.75999999999993,
+      "clean_base_intersection_mm3": 115.17055367913143,
+      "saved_original_tip_intersection_mm3": 166.6195364010908,
+      "recomputed_candidate_tip_intersection_mm3": 166.61953640710942,
+      "legacy_added_over_base_in_prism_mm3": 51.44898272195938,
+      "candidate_added_over_base_in_prism_mm3": 51.44898272797799,
+      "candidate_minus_legacy_in_prism_mm3": 6.018609610691783e-09,
+      "intersection_solid_counts": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "profile": "upper-right",
+      "profile_bounds_mm": [
+        24.8,
+        30.0,
+        52.0,
+        65.0,
+        -31.5,
+        -26.3
+      ],
+      "profile_prism_volume_mm3": 175.76,
+      "clean_base_intersection_mm3": 115.1484841315895,
+      "saved_original_tip_intersection_mm3": 166.61953620352443,
+      "recomputed_candidate_tip_intersection_mm3": 166.61953684993466,
+      "legacy_added_over_base_in_prism_mm3": 51.471052071934935,
+      "candidate_added_over_base_in_prism_mm3": 51.47105271834516,
+      "candidate_minus_legacy_in_prism_mm3": 6.464102284553519e-07,
+      "intersection_solid_counts": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "profile": "lower-left",
+      "profile_bounds_mm": [
+        -20.0,
+        -16.0,
+        -22.0,
+        -13.5,
+        -24.0,
+        -20.0
+      ],
+      "profile_prism_volume_mm3": 68.0,
+      "clean_base_intersection_mm3": 49.133894780461446,
+      "saved_original_tip_intersection_mm3": 0.0,
+      "recomputed_candidate_tip_intersection_mm3": 59.69048732451563,
+      "legacy_added_over_base_in_prism_mm3": -49.133894780461446,
+      "candidate_added_over_base_in_prism_mm3": 10.556592544054183,
+      "candidate_minus_legacy_in_prism_mm3": 59.69048732451563,
+      "intersection_solid_counts": [
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "profile": "lower-right",
+      "profile_bounds_mm": [
+        16.0,
+        20.0,
+        -22.0,
+        -13.5,
+        -24.0,
+        -20.0
+      ],
+      "profile_prism_volume_mm3": 68.0,
+      "clean_base_intersection_mm3": 49.13366740673838,
+      "saved_original_tip_intersection_mm3": 0.0,
+      "recomputed_candidate_tip_intersection_mm3": 59.69048717595717,
+      "legacy_added_over_base_in_prism_mm3": -49.13366740673838,
+      "candidate_added_over_base_in_prism_mm3": 10.55681976921879,
+      "candidate_minus_legacy_in_prism_mm3": 59.69048717595717,
+      "intersection_solid_counts": [
+        1,
+        0,
+        1
+      ]
+    }
+  ],
+  "interpretation": {
+    "upper_pair": "Within the two explicitly reconstructed upper triangular support prisms, the candidate and saved original intersections match within numerical tolerance; this supports preservation of those local upper wedges only.",
+    "lower_pair": "The saved original Tip has no material in the two candidate lower support prisms; the recomputed candidate adds about 10.56 mm3 over the clean base in each. These are intentional new lower-rib regions in the reconstruction recipe, but their fit/load-path suitability is not established by this audit.",
+    "remaining_difference": "The legacy active history includes additional shoulder-transition and wall-ramp operations not reproduced by the four-rib candidate. The net volume loss is therefore an intentional simplification/reconstruction difference in the current candidate; its spatial distribution outside the localized profiles is not established because whole-shell Boolean symmetric-difference tests were unreliable or exceeded the bounded run."
+  },
+  "whole_shape_exact_equivalence": "not established",
+  "structural_capacity": "not established",
+  "cad_files_saved_or_modified": false
+}

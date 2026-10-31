@@ -231,6 +231,8 @@ def main() -> int:
                         help='Expected live App::Link count in the chosen assembly')
     parser.add_argument('--expected-interim', type=int, default=EXPECTED_INTERIM,
                         help='Expected Interim_* component count in the chosen assembly')
+    parser.add_argument('--assembly-label',
+                        help='Optional title for candidate previews; defaults to filename classification')
     args = parser.parse_args()
     if not args.assembly.is_file():
         parser.error('assembly file not found: ' + str(args.assembly))
@@ -291,8 +293,8 @@ def main() -> int:
     top_img = args.output_dir / 'pendant-modular-assembly-top.png'
     interim_img = args.output_dir / 'static-interim-components-bottom.png'
     is_repair_candidate = 'repair-candidate' in args.assembly.name
-    assembly_label = ('Rear-shell repair candidate assembly' if is_repair_candidate
-                      else 'Current modular pendant assembly')
+    assembly_label = args.assembly_label or ('Rear-shell repair candidate assembly' if is_repair_candidate
+                                             else 'Current modular pendant assembly')
     render_assembly(data['objects'], 'bottom', assembly_img, assembly_label)
     render_assembly(data['objects'], 'top', top_img, assembly_label)
     render_interim_sheet(data['objects'], interim_img)

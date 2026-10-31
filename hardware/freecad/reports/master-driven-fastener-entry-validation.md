@@ -10,6 +10,8 @@ The parameter was changed from `0.15 mm` to `0.20 mm` in a disposable copy. All 
 
 ![Faceplate-locator native lead-in preview](faceplate-locators-leadin-before-after.png)
 
+![Combined lead-in candidate assembly, underside](master-driven-leadins-assembly-preview/pendant-modular-assembly-bottom.png)
+
 The retainer and locator documents also opened individually from cold starts, each resolving the sibling candidate master and all master expressions. The combined candidate assembly cold-opened with six live component links, a valid nine-solid root, and unchanged overall bounds (`[-64.2162, 64.2162, -92.3647, 86.6891, -36.8450, 5.0000] mm`). A relocated copy also opened with every link resolving inside the relocated folder; a `0.15 → 0.20 → 0.15 mm` master change propagated and restored in that copy. The relocation test is reproducible with `scripts/test_master_driven_fastener_entry_relocation.py`.
 
 ## Scope and limits
