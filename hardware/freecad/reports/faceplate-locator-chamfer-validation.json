@@ -1,0 +1,138 @@
+{
+  "candidate": "faceplate-locators-chamfer-candidate.FCStd",
+  "source": "faceplate-locators.FCStd",
+  "feature": "PartDesign::Chamfer",
+  "size_mm": 0.15,
+  "bore_diameter_mm": 2.3,
+  "mouth_diameter_mm": 2.6,
+  "results": [
+    {
+      "body": "Body_FaceplateLocator_A",
+      "source_valid": true,
+      "candidate_valid": true,
+      "source_solids": 1,
+      "candidate_solids": 1,
+      "source_volume_mm3": 88.2949603237455,
+      "candidate_volume_mm3": 88.12531432045168,
+      "removed_volume_mm3": 0.1696460032938643,
+      "added_volume_mm3": 0.0,
+      "localized_removed_solids": [
+        {
+          "volume_mm3": 0.08482300164692586,
+          "bounds_mm": [
+            -30.060000000000002,
+            25.246299999999998,
+            -2.000000000000001,
+            -27.46,
+            27.8463,
+            -1.85
+          ]
+        },
+        {
+          "volume_mm3": 0.08482300164692591,
+          "bounds_mm": [
+            -30.060000000000002,
+            25.246299999999998,
+            0.5499999999999999,
+            -27.46,
+            27.8463,
+            0.7000000000000006
+          ]
+        }
+      ],
+      "save_reopen_recompute": "passed"
+    },
+    {
+      "body": "Body_FaceplateLocator_B",
+      "source_valid": true,
+      "candidate_valid": true,
+      "source_solids": 1,
+      "candidate_solids": 1,
+      "source_volume_mm3": 88.2949603237455,
+      "candidate_volume_mm3": 88.12531432045168,
+      "removed_volume_mm3": 0.16964600329386442,
+      "added_volume_mm3": 0.0,
+      "localized_removed_solids": [
+        {
+          "volume_mm3": 0.08482300164692586,
+          "bounds_mm": [
+            24.7,
+            63.7,
+            -2.000000000000001,
+            27.3,
+            66.3,
+            -1.85
+          ]
+        },
+        {
+          "volume_mm3": 0.08482300164692602,
+          "bounds_mm": [
+            24.7,
+            63.7,
+            0.5499999999999999,
+            27.3,
+            66.3,
+            0.7000000000000006
+          ]
+        }
+      ],
+      "save_reopen_recompute": "passed"
+    }
+  ],
+  "native_feature_validation": {
+    "type": "PartDesign::Chamfer",
+    "feature_names": [
+      "ScrewPassageLeadIn_A",
+      "ScrewPassageLeadIn_B"
+    ],
+    "body_tips_advanced": true,
+    "recompute": "passed",
+    "cold_save_reopen_recompute": "passed"
+  },
+  "mesh_validation": {
+    "Body_FaceplateLocator_A": {
+      "facets": 920,
+      "points": 460,
+      "edge_incidence_histogram": {
+        "2": 1380
+      },
+      "closed_two_manifold": true,
+      "degenerate_triangles": 0
+    },
+    "Body_FaceplateLocator_B": {
+      "facets": 920,
+      "points": 460,
+      "edge_incidence_histogram": {
+        "2": 1380
+      },
+      "closed_two_manifold": true,
+      "degenerate_triangles": 0
+    }
+  },
+  "assembly_validation": {
+    "disposable_assembly": "pendant-modular-assembly-locator-chamfer-candidate.FCStd",
+    "live_links_repointed": [
+      "Editable_Body_FaceplateLocator_A",
+      "Editable_Body_FaceplateLocator_B"
+    ],
+    "placements_preserved_mm": {
+      "A": [
+        0,
+        0,
+        -1.5
+      ],
+      "B": [
+        0,
+        0,
+        -1.5
+      ]
+    },
+    "save_close_reopen_recompute": "passed",
+    "production_assembly_file_modified": false
+  },
+  "scope_limitations": [
+    "Clearance fit was checked by live-link assembly reopen and material-removal locality; no screw hardware model was installed for direct interference analysis.",
+    "No load-bearing claim is made; this is a locator entry chamfer only.",
+    "The protected monolithic pendant.FCStd is unchanged."
+  ]
+}
