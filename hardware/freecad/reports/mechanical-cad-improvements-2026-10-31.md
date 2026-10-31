@@ -8,6 +8,8 @@ The resulting top flat annulus is about `1.9 mm` wide instead of `2.5 mm`. The g
 
 The original upper-faceplate Tip and filleted candidate are each one valid solid. Recomputing the original `Body003FullWidthSeat` first reproduced its saved shape exactly (symmetric difference `0 mm³`). The candidate then recomputed, saved, closed, reopened, and recomputed successfully. Its tessellated mesh is closed. Filleting removes `5.157565 mm³`, adds no material, and leaves the overall faceplate bounds unchanged. The before/after preview is `display-bezel-fillet-before-after.png`.
 
+![Display bezel before and after the R0.3 mm native fillet](display-bezel-fillet-before-after.png)
+
 A disposable full assembly candidate, `pendant-modular-design-improvements-candidate.FCStd`, replaces only the upper-faceplate interim shape with the filleted result and uses the existing rear load-path candidate. After save/reopen/recompute, the assembly root is valid with nine solids; component placements are unchanged and the five independently editable links resolve. The bezel remains an interim static shape in this assembly candidate; the native feature is preserved in the separate monolith-derived candidate.
 
 The protected monolith SHA-256 remains `dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881`.
@@ -20,11 +22,24 @@ The existing hybrid candidate `pendant-bodies/rear-shell-loadpath-repair-candida
 
 This is a deliberate redesign candidate, not an exact geometry-preserving repair: candidate rear-shell volume is `40,609.693 mm³` versus `40,961.359 mm³` in the defective original Tip, a reduction of `351.666 mm³` (`0.858%`). The candidate base is a static BREP and the old shoulder/ramp history is not reproduced. It is therefore **not promoted as a fully editable shell or as structurally proven**. A combined assembly candidate is supplied for review, but the protected production monolith and production assembly remain unchanged. The five-times-pendant-weight load target still requires mass, boundary-condition and physical-load validation.
 
+## Display-retainer mounting lead-ins
+
+The five M2 mounting passages in `Body_DisplayRetainer_EditableV2` now have a small sketch-defined conical lead-in on the accessible `z = -7.061467 mm` face. The native `PartDesign::Pocket` removes material from a fully constrained five-circle sketch, using `0.15 mm` radial expansion, `0.15 mm` depth, and a `-45°` taper so the opening returns to its existing nominal radius at the end of the lead-in. This sketch-based feature avoids the failed edge chamfer at one generated hole edge and treats all five passages uniformly.
+
+The saved source and candidate are each a valid single solid. The candidate removes `0.406960 mm³`, adds no material, and has exactly the same bounding box as the source. Exact-radius through-cylinder checks show `0 mm³` interference at all five original passage diameters (`2.30 mm` for two shell mounts and `2.20 mm` for three display mounts), before and after. The candidate mesh is closed before and after save/reopen/recompute (2,744 facets after reopen); the sketch is fully constrained. The source component and production assembly were not modified.
+
+![Display-retainer source and candidate, including a magnified M2 mouth](display-retainer-mounting-leadin-before-after.png)
+
+The retainer change is also linked into a disposable assembly copy, [pendant-modular-retainer-leadin-candidate.FCStd](../pendant-modular-retainer-leadin-candidate.FCStd). On cold reopen, all six external App::Links resolve to valid one-solid targets, the root is a valid nine-solid compound, and the display-retainer link retains its original placement. The rear shell and some faceplate representations in this assembly are still interim candidates; this does not promote those parts to fully editable modules.
+
 ## Candidate files
 
 - `../pendant-modular-design-improvements-candidate.FCStd` — combined assembly candidate, saved beside its relative component links.
+- `../pendant-modular-retainer-leadin-candidate.FCStd` — follow-on assembly candidate with the display-retainer source link redirected to the new native lead-in component file.
+- `../pendant-bodies/display-retainer-mounting-leadin-candidate.FCStd` — native PartDesign candidate for the five retainer mounting entries.
 - `pendant-display-bezel-fillet-candidate.FCStd` — full monolith-derived native bezel-filleting candidate (local disposable file; regenerate using `../scripts/create_display_bezel_candidate.py`).
 - `display-bezel-fillet-before-after.png` — preview.
+- `display-retainer-mounting-leadin-before-after.png` — preview for the retainer lead-ins.
 - `rear-shell-loadpath-repair-candidate.stl` — exported mesh for candidate edge-incidence comparison.
 
 No production CAD or STL was overwritten.
