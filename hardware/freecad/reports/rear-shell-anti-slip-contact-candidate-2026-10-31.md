@@ -60,7 +60,13 @@ The reversible parameter check changed seat depth 0.20→0.25 mm and pad thickne
 
 The candidate keeps the magnet pockets, hanger, screw passages, and shell interfaces in the source geometry; the seats were checked against projected keepout regions and do not overlap them. The broad shell Tip remains a hybrid static-base/native-feature model, not a fully native independent shell module. The pad Bodies have no validated TPU material model, adhesive/retention method, measured magnet force, friction coefficient, assembled center of mass, or tabletop stability test. No claim is made about magnetic holding performance or load capacity.
 
-Next, link the candidate rear shell and two pad Bodies into a disposable review assembly, verify placements and refresh behavior, and review clearances against the actual electronics and mating shell. Keep the protected monolith and production assembly unchanged until the shell reconstruction discrepancy and mechanical fit are resolved.
+## Disposable assembly integration
+
+The candidate rear shell and both pad Bodies are linked into [pendant-modular-rear-anti-slip-review-candidate.FCStd](../pendant-modular-rear-anti-slip-review-candidate.FCStd). After save, close, reopen, and recompute, all eight App::Links resolve. The assembly root is valid with 11 solids; the shell module is valid with four solids (front interim representation, rear shell, and two inserts). The rear shell link matches its source volume within `2.5e-6 mm³`. Both pad links resolve to valid single solids, and each has `0 mm³` volumetric intersection with the rear shell at the seat-floor contact.
+
+A separate disposable refresh test edited the component spreadsheet from 0.20/0.45 mm to 0.25/0.50 mm. The rear-shell link changed from 40,560.734289 to 40,548.828652 mm³, and the upper/lower pad links changed from 74.292276/27.226369 to 82.546973/30.251521 mm³. Closing and reopening the assembly retained those updates; restoring the original dimensions and cold-reopening recovered all three baseline volumes within `1e-10 mm³`. This tested refresh in the repository directory; relocation of the full linked package was not tested.
+
+The shell fit to the front counterpart and internal electronics still needs review. Keep the protected monolith and production assembly unchanged until the shell reconstruction discrepancy and mechanical fit are resolved.
 
 Candidate file: [rear-shell-anti-slip-contact-candidate.FCStd](../pendant-bodies/rear-shell-anti-slip-contact-candidate.FCStd).
 
