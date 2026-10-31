@@ -1,0 +1,98 @@
+{
+  "status": "passed_parameter_refresh_and_restore",
+  "component_file": "master-driven-leadins-candidate/pendant-bodies/upper-faceplate-bezel-hybrid-candidate.FCStd",
+  "assembly_file": "master-driven-leadins-candidate/pendant-modular-assembly-live-bezel-candidate.FCStd",
+  "native_tip": "DisplayBezelSoftEdge",
+  "radius_expression": "BezelParameters.DisplayBezelFilletRadius",
+  "nominal_radius_mm": 0.3,
+  "perturbed_radius_mm": 0.35,
+  "nominal_link": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 13358.173073210684,
+    "bounds_mm": [
+      -64.21622504107172,
+      64.21622504107174,
+      -41.666577146181105,
+      79.1773324592688,
+      -27.499999999999996,
+      5.000000000000091
+    ]
+  },
+  "perturbed_link": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 13356.310619566795,
+    "bounds_mm": [
+      -64.21622504107172,
+      64.21622504107174,
+      -41.666577146181105,
+      79.1773324592688,
+      -27.499999999999996,
+      5.000000000000091
+    ]
+  },
+  "restored_link_symdiff_mm3": 0.0,
+  "nominal_root": {
+    "valid": true,
+    "solids": 9,
+    "volume_mm3": 111841.7739735077,
+    "bounds_mm": [
+      -64.21622504107172,
+      64.21622504107174,
+      -92.36472522473227,
+      86.68910767539026,
+      -36.844984332370686,
+      5.000000000000091
+    ]
+  },
+  "perturbed_root": {
+    "valid": true,
+    "solids": 9,
+    "volume_mm3": 111839.91152043364,
+    "bounds_mm": [
+      -64.21622504107172,
+      64.21622504107174,
+      -92.36472522473227,
+      86.68910767539026,
+      -36.844984332370686,
+      5.000000000000091
+    ]
+  },
+  "restored_root": {
+    "valid": true,
+    "solids": 9,
+    "volume_mm3": 111841.7739735077,
+    "bounds_mm": [
+      -64.21622504107172,
+      64.21622504107174,
+      -92.36472522473227,
+      86.68910767539026,
+      -36.844984332370686,
+      5.000000000000091
+    ]
+  },
+  "links": 7,
+  "static_interim_shapes": 2,
+  "assembly_root_solids": 9,
+  "cold_open_recompute": "verified separately in a fresh FreeCADCmd process",
+  "production_documents_modified": false,
+  "candidate_type": "hybrid: imported static upper-faceplate base with native, spreadsheet-driven PartDesign bezel fillet",
+  "unfilleted_production_interim_volume_mm3": 13363.330856364399,
+  "nominal_candidate_volume_removed_mm3": 5.157565382879,
+  "nominal_candidate_volume_added_mm3": 0.0,
+  "candidate_matches_existing_leadin_assembly_faceplate_symdiff_mm3": 0.0,
+  "production_baseline_is_intentionally_unfilleted": true,
+  "cold_open_root_valid": true,
+  "cold_open_root_volume_mm3": 111841.7739735077,
+  "cold_open_root_solids": 9,
+  "preview_manifest": "live-bezel-assembly-preview/preview-manifest.json",
+  "scope_limitations": [
+    "The upper-faceplate base is imported static geometry; only the bezel treatment is native and parameter-editable.",
+    "The nominal R0.30 fillet intentionally removes 5.157565 mm3 relative to the unfilleted production interim shape.",
+    "Two static interim shapes remain, including the fused encoder faceplate/pocket handoff.",
+    "The approximately 351.666 mm3 rear-shell candidate difference remains unresolved for mechanical acceptance.",
+    "No overall hanger load capacity or complete assembly interference acceptance is claimed."
+  ],
+  "protected_monolith_sha256": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881"
+}
