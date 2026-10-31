@@ -42,6 +42,10 @@ The two candidates cold-open and recompute as valid single solids. Their tessell
 
 The change is present only in `faceplate-locators-leadin-candidate.FCStd`. A disposable assembly copy, [pendant-modular-locator-leadin-candidate.FCStd](../pendant-modular-locator-leadin-candidate.FCStd), redirects both locator links to the new native source. After close/reopen/recompute, all six external links resolve to valid one-solid targets; the root remains a valid nine-solid assembly with unchanged overall bounds. The production locator source and assembly are unchanged.
 
+## Master-driven lead-in dimensions
+
+The existing retainer and locator lead-in sketches/pockets now have a second disposable variant driven by `InternalHardware.FastenerEntryRadialDepth` in a candidate copy of `pendant-master.FCStd`. A reversible `0.15 → 0.20 → 0.15 mm` change altered all three native bodies; returning to `0.15 mm` restored them with zero measured symmetric difference. The default geometry remains unchanged. The feature relationship keeps the radial expansion equal to pocket depth with the existing `-45°` taper, so the nominal bore is retained at the end of the lead-in. Cold-open assembly checks retained six live links, nine valid solids and unchanged assembly bounds; a relocated-folder test resolved all six links and repeated the reversible master update. This remains a candidate only, with three interim static assembly representations and the hybrid rear shell. Validation notes embed the related previews in [master-driven-fastener-entry-validation.md](master-driven-fastener-entry-validation.md), with machine-readable results in [JSON](master-driven-fastener-entry-validation.json).
+
 ## Candidate files
 
 - `../pendant-modular-design-improvements-candidate.FCStd` — combined assembly candidate, saved beside its relative component links.

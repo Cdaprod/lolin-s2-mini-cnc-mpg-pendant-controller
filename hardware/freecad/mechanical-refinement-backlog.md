@@ -2,6 +2,11 @@
 
 This is a permanent workstream alongside the modularization and parameterization work recorded in `modular-migration-status.md`. Keep the original `pendant.FCStd` as the geometry/history baseline. Make intentional design changes only in disposable candidates first, record the reason and affected features, and promote only after native recompute, save/reopen, geometry, fit, and manufacturing checks pass.
 
+## Latest validated CAD milestone — 2026-10-31
+
+- Created a disposable combined assembly package with master-driven display-retainer and faceplate-locator screw-entry lead-ins. The shared `InternalHardware.FastenerEntryRadialDepth` drives each sketch's radial expansion and the matching pocket depth at the existing −45° taper. The reversible 0.15→0.20→0.15 mm test changed all three native bodies and restored them with 0 mm³ symmetric difference; individual component cold-open, six live links, relocated-folder resolution, and assembly-root validation passed. The protected monolith and production assembly remain unchanged. See `reports/master-driven-fastener-entry-validation.md` and its JSON evidence.
+- Next concrete CAD task: compare the repaired rear shell with a freshly recomputed original around the 351.666 mm³ change, map added/removed regions to the four boss-to-wall paths and active mounting geometry, and determine whether differences are intended. Keep the hybrid repair candidate unpromoted; do not use total volume alone as acceptance evidence.
+
 ## Priorities
 
 1. **Top hanger opening (first mechanical refinement).** Measure both shell cuts and the remaining material/load paths; refine the opening and upper transitions while preserving alignment and screw/mating geometry. Do not use a simple global enlargement if it thins the shell or approaches the upper screw seats.
