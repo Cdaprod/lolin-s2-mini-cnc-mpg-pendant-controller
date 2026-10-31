@@ -34,6 +34,23 @@ A separate disposable study starts from the clean `Body002FullWidthSeat` shape, 
 
 This study's base is a stored reference BREP; only the fillet feature is native and editable. It omits the unresolved legacy load-path/shoulder features and is **not** a replacement rear shell. The 0.25 mm treatment is therefore retained as a tested finishing option, not applied to the structural reconstruction candidate. Do not promote until the load paths are reconstructed and their clearances and wall sections are checked.
 
+## Four-rib candidate assembly fit check
+
+The already-saved four-rib hybrid candidate was checked against the components in `pendant-modular-repair-candidate.FCStd`. All intersections below were computed as FreeCAD shape Booleans in the saved assembly coordinate frame:
+
+| Other component | Candidate rear-shell intersection (mm³) |
+| --- | ---: |
+| Front shell | 0 |
+| Upper faceplate | 0 |
+| Fused encoder faceplate/pocket | 0 |
+| Display retainer | 0 |
+| Faceplate locator A | 0 |
+| Faceplate locator B | 0 |
+| Breakout board | 0 |
+| USB tethered cover | 0.780472 |
+
+The same 0.780472 mm³ USB-cover intersection occurs against the clean original `Body002FullWidthSeat` base, so the native support Pads did not create or increase it. This small overlap/contact remains a separate pre-existing assembly fit issue; it has not been waived as acceptable. The support reconstruction introduced no new component collisions in this check.
+
 Candidate: [`rear-shell-bottom-perimeter-fillet-study-2026-10-31.FCStd`](rear-shell-bottom-perimeter-fillet-study-2026-10-31.FCStd)
 
 ## Visual comparison
