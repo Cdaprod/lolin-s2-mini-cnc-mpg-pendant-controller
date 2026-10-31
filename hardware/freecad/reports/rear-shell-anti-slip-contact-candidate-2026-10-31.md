@@ -72,6 +72,10 @@ A separate disposable refresh test edited the component spreadsheet from 0.20/0.
 
 The shell fit to the front counterpart and internal electronics still needs review. Keep the protected monolith and production assembly unchanged until the shell reconstruction discrepancy and mechanical fit are resolved.
 
+### Follow-up: USB-cover overlap baseline
+
+A pairwise BREP check found two small positive-volume intersections between the rear shell and the linked USB-tethered cover: 0.491428 mm³ near (X≈30.15, Y≈7.81, Z≈−19.53) and 0.289042 mm³ near (X≈29.59, Y≈−2.25, Z≈−19.14), for 0.780472 mm³ total. The same two regions and volume are present against both `Body002FullWidthSeat` and the saved monolithic `Body002` Tip, and the intersection is unchanged across the candidate's reinforcement, fillet, and anti-slip features. It is therefore a pre-existing mating/fit condition, not introduced by this candidate. Whether it is an intentional press-fit/overlap or an interference defect is not established; preserve it pending inspection of the cover's intended engagement geometry.
+
 Candidate file: [rear-shell-anti-slip-contact-candidate.FCStd](../pendant-bodies/rear-shell-anti-slip-contact-candidate.FCStd).
 
 Machine-readable evidence: [rear-shell-anti-slip-contact-candidate-2026-10-31.json](rear-shell-anti-slip-contact-candidate-2026-10-31.json).

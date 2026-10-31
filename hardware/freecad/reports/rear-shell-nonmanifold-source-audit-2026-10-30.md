@@ -51,7 +51,29 @@ All trials used copies or extracted BREP snapshots; no production CAD file or ST
 - Boolean extraction of the new load-path material with `RearBossToWallLoadPaths.cut(Body002FullWidthSeat)` returned a null shape, so the saved result cannot be cleanly separated into the original base and reinforcement solids by that operation.
 - Changing mesh deflection and using direct BREP tessellation did not produce a closed mesh.
 
-These outcomes rule out a safe one-click BREP cleanup or a slicer-side patch as the repair. The required next CAD task is to reconstruct `RearBossToWallLoadPaths` in a disposable FreeCAD candidate with native, recomputing operations, preserving all four boss-to-wall load paths and their screw/magnet clearances. Then recompute the downstream rear features and verify save/reopen, geometry, and zero non-manifold mesh edges before replacing any interim model or STL.
+These outcomes rule out a safe one-click BREP cleanup or a slicer-side patch as the repair.
+
+## Follow-up: native reconstruction and healing tests (2026-10-31)
+
+A disposable hybrid candidate now replaces the stored reinforcement chain with four fully constrained sketch profiles, four native PartDesign Pads, and a native six-hole M2 clearance Pocket. After recompute and save/reopen, its Tip is one valid solid and its mesh has 13,600 facets, zero boundary edges, and zero over-incident edges. The constrained upper-left boss coordinate also passed a reversible edit/restore test. The [candidate validation](rear-shell-parametric-support-profile-candidate-validation-2026-10-31.md) embeds the underside preview:
+
+![Native support-profile candidate around all four rear screw-boss regions](rear-shell-parametric-support-profiles-candidate.png)
+
+This is tangible topology progress, not a production replacement: the hybrid candidate retains `Body002FullWidthSeat` as a static imported base and is 351.665996 mm³ below the saved legacy Tip. It adds 158.935703 mm³ through the four Pads before the M2 clearance Pocket and finishes 124.035584 mm³ above the clean base. The historical stage deltas are +383.733575 mm³ at `RearBossToWallLoadPaths`, −14.961450 mm³ at `RearBossShoulderTransitions`, and +106.929454 mm³ at `RearBossWallRamps45`, for a net +475.701580 mm³ over the clean base. This total is feature-stage accounting; it is not a spatially partitioned volume of sound reinforcement.
+
+The best available localized native-profile prism comparison shows the two upper candidate wedges matching the legacy Tip within 6.5×10⁻⁷ mm³. In the lower comparison prisms, the legacy saved Tip is about 49.134 mm³ below the clean base on each side, while the candidate adds about 10.557 mm³ per side. The legacy lower subtraction is not copied into the candidate because it intersects the known defective stored-shape history and is not evidence of intentional load-path removal. These local numbers do not explain all 351.666 mm³; whole-shape and localized Boolean differences through defective stored shapes remain unreliable. The mesh-edge map still identifies the four boss-to-wall zones as the defect locations and the feature labels/history indicate their intended function is screw-boss reinforcement into the shell wall.
+
+Additional detached-shape cleanup trials on the saved `RearBossToWallLoadPaths` and final Tip did not repair the mesh. At 0.08 mm / 0.2 rad meshing and 0.00001 mm weld tolerance:
+
+| Operation | Shape | Volume change (mm³) | Boundary edges | Over-incident edges | Result |
+|---|---|---:|---:|---:|---|
+| Baseline | Load-path feature | — | 325 | 12 | Defective mesh |
+| `removeSplitter()` | Load-path feature | +0.016311 | 325 | 12 | No topology improvement |
+| `Shape.fix()` | Load-path feature | +0.334033 | 327 | 12 | Worse mesh |
+| `ShapeFix.Shape.perform()` | Final Tip | −88.904591 | 337 | 12 | Worse mesh; rejected |
+| `removeSplitter()` | Final Tip | −248.110866 | 333 | 8 | Invalid shape and still defective; rejected |
+
+Welding the tessellation at tolerances from 0.001 to 0.1 mm also reduced some boundary counts while rapidly creating 88 to 1,969 over-incident edges and degenerate triangles; increasing the weld tolerance is not a valid repair. A global-Z section through the lower comparison region shows discontinuous/open loops in the saved load-path feature, consistent with malformed stored geometry; clipped local Booleans do not provide a trustworthy exact material map. Preserve the native candidate and do not treat the 475.701580 mm³ feature delta as wholly usable reinforcement. Next, reconstruct the still-unmatched support/shoulder geometry as native operations from stable shell and boss references, with a regional material map and unchanged screw/magnet clearances, then cold-reopen and repeat the one-solid/manifold checks.
 
 ## Files and validation state
 
@@ -63,4 +85,4 @@ These outcomes rule out a safe one-click BREP cleanup or a slicer-side patch as 
 
 ## Disposition
 
-The defect is in the saved FreeCAD load-path BREP, not in OrcaSlicer. No production geometry has been modified. The active feature contains no recoverable native generation recipe, and the historical loft source is not geometrically equivalent. A safe model-file repair therefore requires reconstructing the four active boss-to-wall transitions from their actual current geometry and clearances; replacing or suppressing them would discard the load-bearing paths. Keep the monolith and modular assembly unchanged until that reconstruction passes shape, clearance, cold-reopen, and closed-mesh validation.
+The defect is in the saved FreeCAD load-path BREP, not in OrcaSlicer. No production geometry has been modified. The active feature contains no recoverable native generation recipe, and the historical loft source is not geometrically equivalent. A first native, manifold reconstruction candidate exists, but its difference from the legacy Tip remains mechanically unresolved; do not replace or suppress the legacy reinforcement in production. Continue in disposable files until the remaining support geometry, internal clearances, shell fit, and load path are validated.
