@@ -1,0 +1,204 @@
+{
+  "status": "disposable combined finishing review; not production approved",
+  "assembly": "hardware/freecad/master-driven-leadins-candidate/pendant-modular-combined-finishing-review-2026-11-01.FCStd",
+  "source_assembly": "hardware/freecad/master-driven-leadins-candidate/pendant-modular-assembly-bezel-r0p50-review.FCStd",
+  "rear_shell_source": "hardware/freecad/pendant-bodies/rear-shell-fresh-fuse-structural-review-2026-11-01.FCStd",
+  "anti_slip_source": "hardware/freecad/pendant-bodies/rear-shell-anti-slip-crescent-pads-parametric-review-2026-10-31.FCStd",
+  "live_link_count": 9,
+  "static_interim_components": [
+    "Interim_Body",
+    "Interim_EncoderFaceplatePocketUnsplit"
+  ],
+  "assembly_root_after_reopen": {
+    "valid": true,
+    "solid_count": 11,
+    "volume_mm3": 112285.00978165865,
+    "area_mm2": 85701.02596051036,
+    "faces": 1541,
+    "bounds_mm": [
+      -64.21622504107172,
+      64.21622504107174,
+      -92.36472522473227,
+      86.68910767539026,
+      -37.5756271003805,
+      5.000000000000091
+    ]
+  },
+  "rear_shell": {
+    "before_save": {
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40847.86169758013,
+      "area_mm2": 30826.046428494166,
+      "faces": 522,
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.31234947270411,
+        86.68846292863208,
+        -36.89446791210996,
+        0.0
+      ]
+    },
+    "after_reopen": {
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40847.86169758013,
+      "area_mm2": 30826.046428494166,
+      "faces": 522,
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.31234947270411,
+        86.68846292863208,
+        -36.89446791210996,
+        0.0
+      ]
+    },
+    "mesh": {
+      "closed": true,
+      "facets": 16050,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_facets": 0
+    },
+    "placement_preserved": true
+  },
+  "r050_bezel_link": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 13349.004070174205,
+    "area_mm2": 13400.874406498768,
+    "faces": 227,
+    "bounds_mm": [
+      -64.21622504107172,
+      64.21622504107174,
+      -41.666577146181105,
+      79.1773324592688,
+      -27.499999999999996,
+      5.000000000000091
+    ]
+  },
+  "anti_slip_pads": {
+    "Review_AntiSlipPadUpper": {
+      "shape": {
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 155.26376736603706,
+        "area_mm2": 412.05740278669657,
+        "faces": 6,
+        "bounds_mm": [
+          -15.682714237495915,
+          15.682714237495915,
+          65.7401379594506,
+          76.39668293873657,
+          -37.5756271003805,
+          -36.212922916237545
+        ]
+      },
+      "rear_shell_overlap_mm3": 0.0,
+      "contact_plane": {
+        "face": 6,
+        "area_mm2": 172.51529707337434,
+        "normal": [
+          0.0,
+          0.043619387365336416,
+          0.9990482215818579
+        ],
+        "center_mm": [
+          -1.4268913741538602e-14,
+          71.47308154962093,
+          -37.36237203844935
+        ],
+        "constant_mm": -34.209199308785365
+      }
+    },
+    "Review_AntiSlipPadLower": {
+      "shape": {
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 59.0376271489551,
+        "area_mm2": 177.2926921209791,
+        "faces": 6,
+        "bounds_mm": [
+          -10.946608584388663,
+          10.946608584388654,
+          -62.92970150989232,
+          -56.13705169356974,
+          -31.789079279147465,
+          -30.59507640111913
+        ]
+      },
+      "rear_shell_overlap_mm3": 0.0,
+      "contact_plane": {
+        "face": 6,
+        "area_mm2": 65.59736349883913,
+        "normal": [
+          0.0,
+          0.04361938736533663,
+          0.9990482215818578
+        ],
+        "center_mm": [
+          -2.1062524554332773e-14,
+          -59.9390474884721,
+          -31.62479457503112
+        ],
+        "constant_mm": -34.2091993087854
+      }
+    }
+  },
+  "anti_slip_contact_plane_angle_deg": 0.0,
+  "anti_slip_contact_plane_offset_mm": 3.552713678800501e-14,
+  "rear_neighbor_intersections_mm3": [
+    {
+      "neighbor": "Interim_Body",
+      "volume_mm3": 0.0
+    },
+    {
+      "neighbor": "Interim_EncoderFaceplatePocketUnsplit",
+      "volume_mm3": 0.0
+    },
+    {
+      "neighbor": "Editable_Body_DisplayRetainer_EditableV2",
+      "volume_mm3": 0.0
+    },
+    {
+      "neighbor": "Editable_Body_USBTetheredCover",
+      "volume_mm3": 0.780471884577827
+    },
+    {
+      "neighbor": "Editable_Body_FaceplateLocator_A",
+      "volume_mm3": 0.0
+    },
+    {
+      "neighbor": "Editable_Body_FaceplateLocator_B",
+      "volume_mm3": 0.0
+    },
+    {
+      "neighbor": "Editable_Body006",
+      "volume_mm3": 0.0
+    },
+    {
+      "neighbor": "Editable_UpperFaceplateBezel",
+      "volume_mm3": 0.0
+    }
+  ],
+  "save_close_reopen_recompute": "passed",
+  "protected_monolith_and_production_assembly_modified": false,
+  "limitations": [
+    "Rear shell is a hybrid review Body with a stored-shape base.",
+    "Legacy 475.701580 mm3 cached-stage volume delta is not a spatial material map.",
+    "The original cached rear-shell feature chain has BRep/mesh defects.",
+    "No PLA strength rating or 5x pendant proof-load claim is established."
+  ],
+  "anti_slip_pad_profiles": {
+    "UpperCrescentAntiSlipProfile": {
+      "fully_constrained": true,
+      "constraint_count": 4
+    },
+    "LowerCrescentAntiSlipProfile": {
+      "fully_constrained": true,
+      "constraint_count": 4
+    }
+  }
+}
