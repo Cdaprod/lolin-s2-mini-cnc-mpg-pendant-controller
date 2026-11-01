@@ -42,7 +42,9 @@ The final volume, area, face count, and edge count match the previous review can
 
 ### Disposable assembly fit check
 
-I replaced the rear-shell link in memory in the saved eight-link review assembly, preserved its original `LinkPlacement`, recomputed, and checked positive-volume intersections. The root remained a valid 11-solid assembly and the rear link remained one valid solid. The rear shell had zero common volume with the front shell, upper faceplate, fused encoder interim, display retainer, both faceplate locators, breakout board, and both TPU crescent inserts. The existing USB cover engagement remained `0.780472 mm³`. This was a read-only in-memory check; the review assembly was not saved. It does not establish physical fit or tolerance margins.
+I replaced the rear-shell link in memory in the saved eight-link review assembly, preserved its original `LinkPlacement`, recomputed, and checked positive-volume intersections. The root remained a valid 11-solid assembly and the rear link remained one valid solid. The rear shell had zero common volume with the front shell, upper faceplate, fused encoder interim, display retainer, both faceplate locators, breakout board, and both TPU crescent inserts. The existing USB cover engagement remained `0.780472 mm³`.
+
+I also changed the component-local `UpperBossXAbs` parameter from `24.8` to `24.9 mm`, then restored it. The component Tip and assembly link both changed by `−1.483425 mm³`; the assembly root changed by `−1.483451 mm³`. Restoring the parameter returned the component and link volumes exactly to baseline and the root within `3e−11 mm³`. This was a read-only in-memory check; the review assembly was not saved. It confirms this parameter reaches the linked assembly, but does not establish physical fit, tolerance margins, or structural capacity.
 
 ## What the 475.702 mm³ figure means
 

@@ -80,7 +80,19 @@
       "upper_tpu_crescent": 0.0,
       "lower_tpu_crescent": 0.0
     },
-    "evidence_scope": "in-memory placement and Boolean common-volume checks only; no saved assembly modification, dimensional tolerance analysis, or physical fit test"
+    "reversible_native_parameter_propagation": {
+      "parameter": "UpperBossXAbs",
+      "values_mm": [24.8, 24.9, 24.8],
+      "component_tip_volume_delta_mm3": -1.4834245223,
+      "assembly_link_volume_delta_mm3": -1.4834245223,
+      "assembly_root_volume_delta_mm3": -1.4834505189,
+      "component_restoration_error_mm3": 0.0,
+      "link_restoration_error_mm3": 0.0,
+      "root_restoration_error_mm3": -0.0000000000291,
+      "placement_preserved": true,
+      "assembly_saved": false
+    },
+    "evidence_scope": "in-memory placement, Boolean common-volume, and reversible component-parameter propagation checks; no saved assembly modification, dimensional tolerance analysis, or physical fit test"
   },
   "comparison": {
     "previous_review_tip_volume_mm3": 40847.86169758013,
