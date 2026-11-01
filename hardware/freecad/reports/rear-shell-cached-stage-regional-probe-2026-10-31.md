@@ -38,4 +38,6 @@ A follow-up 20 mm grid tiled the complete `Body002FullWidthSeat` bounding box (4
 
 Therefore the box-common results above are **not accepted as a material accounting map**. A valid flag on each intersection is insufficient for these cached shapes. The exact location of the global difference remains unresolved; use a validated tessellation-based occupancy method or reconstruct the suspect feature from native operations before drawing spatial conclusions.
 
+A later mesh-ray occupancy study provides a bounded approximate localization around the four boss transitions; it does not repair the conservation problem or claim exact BRep equivalence. See [`rear-shell-mesh-occupancy-localization-2026-10-31.md`](rear-shell-mesh-occupancy-localization-2026-10-31.md) and its embedded heatmap.
+
 Machine-readable measurements: [`rear-shell-cached-stage-regional-probe-2026-10-31.json`](rear-shell-cached-stage-regional-probe-2026-10-31.json).
