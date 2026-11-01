@@ -4,6 +4,10 @@ Date: 2026-11-01
 Branch: `hardware-integration`
 Authoritative source retained unchanged: `pendant.FCStd`
 
+## Legacy rear reinforcement stage audit (2026-11-01)
+
+A read-only check of the saved monolith confirms the disputed +475.701580 mm³ is the net of the three cached load-path, shoulder-transition, and ramp stages. The four root-to-wall paths correspond to screw-boss reinforcement; a 0.5 mm mesh occupancy estimate localizes changes around all four, but the open legacy mesh does not account for the exact BRep delta. Saved BOP findings are 336 in the baseline, 2,440 after the load-path stage, and 740 after the shoulder transition and final ramp. Do not remove the reinforcement based on this audit. The monolith was not recomputed or saved. See [the detailed audit and embedded map](reports/rear-shell-legacy-stage-topology-audit-2026-11-01.md).
+
 ## Rear-shell mesh repair and shell-module review candidate (2026-11-01)
 
 ## Separate native crescent contact-pad review component (2026-11-01)
