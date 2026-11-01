@@ -74,6 +74,20 @@
     "clean_brep": false,
     "notes": "Residual OpenCascade BOP findings remain; no production promotion."
   },
+  "rejected_healing_probes": {
+    "removeSplitter_on_fused_base": {
+      "volume_delta_mm3": -0.040521,
+      "bop_errors_before": 12,
+      "bop_errors_after": 26,
+      "disposition": "rejected; worsened topology checks and was not saved"
+    },
+    "shape_fix_0p01_0p001_0p1": {
+      "base_bop_errors_after": 12,
+      "pre_seat_reinforced_bop_errors_after": 40,
+      "pre_seat_volume_delta_mm3": 0.025047,
+      "disposition": "rejected; did not resolve topology checks and was not saved"
+    }
+  },
   "limitations": [
     "The fused clean base remains a stored-shape PartDesign::Feature.",
     "No full assembly-link or TPU pad contact validation was performed.",

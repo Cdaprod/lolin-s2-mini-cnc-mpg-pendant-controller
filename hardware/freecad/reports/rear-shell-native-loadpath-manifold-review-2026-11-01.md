@@ -58,10 +58,13 @@ The final BRep reports 42 OpenCascade BOP-check findings, including self-interse
 
 The mesh export bounds also do not span the full saved BRep bounding box; the same tessellation envelope is present in the archived clean-base mesh. This candidate fixes the STL edge-incidence defect in the tested export, but that envelope difference and the BOP findings remain explicit review items.
 
+Two isolated healing probes did not improve the BRep and were discarded. `removeSplitter()` on the fused base changed the volume by −0.040521 mm³ and increased BOP findings from 12 to 26. `Shape.fix(0.01, 0.001, 0.1)` left the base at 12 findings; on the pre-seat reinforced shape it left 40 findings and changed volume by only +0.025047 mm³. Neither result was saved into the candidate.
+
 ## Files
 
 - [Native rear-shell review component](../pendant-bodies/rear-shell-native-loadpath-manifold-review-2026-11-01.FCStd)
 - [Machine-readable validation record](rear-shell-native-loadpath-manifold-review-2026-11-01.json)
+- [Disposable linked-assembly review](rear-shell-native-loadpath-assembly-review-2026-11-01.md)
 - [Existing R0.25 mm fillet study](rear-shell-bottom-perimeter-fillet-validation-2026-10-31.md)
 - [Existing crescent-pad design study](rear-shell-anti-slip-contact-candidate-2026-10-31.md)
 
