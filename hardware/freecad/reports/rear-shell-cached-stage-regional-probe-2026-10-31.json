@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-31",
+  "status": "read-only cached-shape probe; diagnostic, not exact difference map",
+  "source": "hardware/freecad/pendant.FCStd",
+  "saved_stages": ["Body002FullWidthSeat", "RearBossToWallLoadPaths", "RearBossShoulderTransitions", "RearBossWallRamps45"],
+  "recomputed_source_history": false,
+  "modified_or_saved_cad": false,
+  "global_net_change_mm3": 475.70158000448,
+  "regions": [
+    {
+      "name": "upper-left boss/wall",
+      "bbox_mm": [-38, -18, 44, 72, -37, -15],
+      "stage_common_volume_mm3": [3990.765095639539, 0.0, 3985.5514351052043, 4037.0007658521035],
+      "stage_delta_mm3": [-3990.765095639539, 3985.5514351052043, 51.44933074689925],
+      "all_intersections_valid": true
+    },
+    {
+      "name": "upper-right boss/wall",
+      "bbox_mm": [18, 38, 44, 72, -37, -15],
+      "stage_common_volume_mm3": [3994.468362151028, 3997.1988647385188, 3989.424988045462, 4040.895869672856],
+      "stage_delta_mm3": [2.7305025874907187, -7.773876693056536, 51.47088162739374],
+      "all_intersections_valid": true
+    },
+    {
+      "name": "lower-left boss/wall",
+      "bbox_mm": [-29, -8, -31, -7, -37, -15],
+      "stage_common_volume_mm3": [1407.9496142657783, 1491.9650225768844, 1491.9650225768835, 1491.9650225768835],
+      "stage_delta_mm3": [84.01540831110606, -9.094947017729282e-13, 0.0],
+      "all_intersections_valid": true
+    },
+    {
+      "name": "lower-right boss/wall",
+      "bbox_mm": [8, 29, -31, -7, -37, -15],
+      "stage_common_volume_mm3": [1407.7405524063868, 1509.594405322944, 1509.5944053229432, 1509.5944053229432],
+      "stage_delta_mm3": [101.85385291655734, -9.094947017729282e-13, 0.0],
+      "all_intersections_valid": true
+    }
+  ],
+  "interpretation": "Regional cached-shape changes are nonlocal and do not account for the global +475.70158 mm3 net. Upper-left load-path-stage common volume drops to zero within its diagnostic envelope and is largely restored by the shoulder stage. Do not interpret this as exact added/removed reinforcement until the stored history behavior is explained.",
+  "known_mesh_defect_locations": "four screw-boss-to-wall transitions; see rear-shell-nonmanifold-edge-map-2026-10-30.json"
+}
