@@ -38,6 +38,12 @@ The fresh base reduces BRep-check errors from 336 to 12. The native finishing ch
 
 A disposable `Refine=False` probe on the support Pads was rejected: it reduced the first Pad's local BRep error count, but applying it across the full support/web chain raised the final count from 42 to 48. The verified `Refine=True` settings are retained.
 
+### Where the remaining BRep errors are located
+
+Face-level BOP checks localize the fresh-base candidate's inherited 12 errors to three cylindrical faces around the side USB tether passage/conformal seat, centered on the X axis at approximately `Y=3.031`, `Z=−13.445 mm` (radii `7.75`, `9.0`, and `10.25 mm`). The same surfaces occur in `USBEnclosureTetherPassage`, `USBConformalCoverSeatBody002`, `SmallHangerPocketBody002`, and `Body002FullLandTransferTool`. This issue is separate from the 475.702 mm³ cached volume delta, which belongs to the rear screw-boss load-path/shoulder/ramp stages.
+
+The final candidate's 42 BOP error lines also localize to cylindrical faces around the screw-boss/support regions. The extra reported lines relative to the base are associated with those mounting regions and nearby blends. The trace identifies where to investigate next; it does not prove these surface errors caused the original open mesh or justify deleting reinforcement. The native mesh remains manifold despite these deeper BRep warnings.
+
 The final volume, area, face count, and edge count match the previous review candidate's measured values. This supports preservation at the measured level but does not establish exact BRep identity. The production monolith and modular assembly were not modified.
 
 ### Disposable assembly fit check

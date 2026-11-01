@@ -113,6 +113,34 @@
     "full_chain_tip_bop_errors": 48,
     "validated_setting_retained": "Refine=True"
   },
+  "bop_error_localization": {
+    "error_class": "BOPAlgo_InvalidCurveOnSurface",
+    "base_error_count": 12,
+    "base_problem_faces": [
+      {"face": "Face202", "radius_mm": 9.0, "axis": "X", "axis_center_mm": [20.0, 3.031095, -13.444532], "reported_error_lines": 8},
+      {"face": "Face388", "radius_mm": 10.25, "axis": "X", "axis_center_mm": [19.294499, 3.031095, -13.444532], "reported_error_lines": 2},
+      {"face": "Face402", "radius_mm": 7.75, "axis": "X", "axis_center_mm": [45.0, 3.031095, -13.444532], "reported_error_lines": 2}
+    ],
+    "base_feature_correspondence": [
+      "USBEnclosureTetherPassage",
+      "USBConformalCoverSeatBody002",
+      "SmallHangerPocketBody002",
+      "Body002FullLandTransferTool"
+    ],
+    "base_error_function": "Side USB tether passage and conformal seat cylinders; this inherited topology issue is separate from the screw-boss load-path volume difference.",
+    "final_error_count": 42,
+    "new_error_lines_after_support_chain": 30,
+    "support_region_cylinders": [
+      {"radius_mm": 2.05, "axis": "Z", "center_xy_mm": [-27.0, 58.5]},
+      {"radius_mm": 1.15, "axis": "Z", "center_xy_mm": [-16.97, 76.85]},
+      {"radius_mm": 1.15, "axis": "Z", "center_xy_mm": [16.97, 76.85]},
+      {"radius_mm": 7.0, "axis": "Z", "center_xy_mm": [27.0, 58.5]},
+      {"radius_mm": 2.05, "axis": "Z", "center_xy_mm": [-18.0, -17.7566]},
+      {"radius_mm": 1.15, "axis": "Z", "center_xy_mm": [-18.0, -17.7566]},
+      {"radius_mm": 1.15, "axis": "Z", "center_xy_mm": [27.0, 58.5]}
+    ],
+    "interpretation": "The inherited 12 lines are spatially associated with the side USB passage. The additional 30 lines are localized to cylindrical screw-boss/support regions. This localizes BOP diagnostics but does not prove those surfaces cause the non-manifold legacy mesh or justify modifying the mechanical features."
+  },
   "material_function_investigation": {
     "features": {
       "RearBossToWallLoadPaths": 383.733575396684,
