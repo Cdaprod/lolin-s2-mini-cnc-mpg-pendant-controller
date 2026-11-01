@@ -1,5 +1,5 @@
 {
-  "status": "validated_disposable_linked_assembly_not_production_approved",
+  "status": "validated_disposable_linkage_with_front_shell_fit_interference_not_production_approved",
   "date": "2026-11-01",
   "branch": "hardware-integration",
   "source_assembly": "hardware/freecad/master-driven-leadins-candidate/pendant-modular-combined-finishing-0p6-parametric-chamfer-review-2026-11-01.FCStd",
@@ -24,6 +24,13 @@
   "anti_slip_pad_links": {
     "Review_AntiSlipPadUpper_intersection_mm3": 0.0,
     "Review_AntiSlipPadLower_intersection_mm3": 0.0
+  },
+  "shell_mating": {
+    "candidate_rear_front_common_volume_mm3": 300.811621,
+    "previous_rear_front_common_volume_mm3": 0.0,
+    "fit_result": "failed; candidate introduces front-shell interference",
+    "overlap_stage_localization": "incomplete; stagewise Boolean check exceeded bounded runtime",
+    "usb_cover_common_volume_mm3": 0.780472
   },
   "parameter_propagation": {
     "alias": "BottomPerimeterFilletRadius",

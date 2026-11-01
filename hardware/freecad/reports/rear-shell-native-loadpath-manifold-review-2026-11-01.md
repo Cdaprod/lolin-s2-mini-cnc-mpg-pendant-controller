@@ -1,6 +1,6 @@
 # Rear shell — native load paths and manifold-export review
 
-Status: **validated disposable CAD candidate; not production-approved.** The protected monolith and modular assembly were not changed.
+Status: **validated disposable mesh-repair candidate; not production-approved or mating-fit approved.** The protected monolith and production modular assembly were not changed.
 
 ## Preview
 
@@ -49,8 +49,9 @@ The closed hanger and original shell envelope remain in the stored base shape; t
 - Cold-open and full recompute: passed in a separate FreeCAD headless process.
 - FreeCAD `Mesh.export` of the candidate: 94,342 triangles. An independent edge-incidence count found 141,513 edges used twice, **zero boundary edges**, and **zero edges used by more than two triangles**.
 - The repository's current `rear-shell.stl` snapshot contains 335 boundary edges and 12 edges used by three triangles. (A slicer may display a different combined non-manifold count.)
+- A later assembly Boolean check found **300.811621 mm³ of overlap with the front-shell representation**. The previous rear-shell link had zero overlap against that same front shell, so this candidate introduces a real mating interference and must not replace the link yet. The overlap spans the seam/land region. Stage-by-stage localization was deferred after the relevant Boolean exceeded the bounded headless runtime. The fresh-fused base includes front-derived land-transfer geometry and is the leading suspect, not a proven sole cause.
 - The magnet-clearance intersection is inherited from the existing feature sequence and did not change; it is not a new collision.
-- No full pendant assembly-link, TPU insert contact, load-path FEM, or physical 5× proof-load validation was performed.
+- The disposable link preserves placement and both crescent inserts remain clear, but this does **not** establish shell mating: the front-shell overlap above is a failed fit check. No load-path FEM or physical 5× proof-load validation was performed.
 
 ### Remaining geometry-integrity limitation
 
@@ -70,4 +71,4 @@ Two isolated healing probes did not improve the BRep and were discarded. `remove
 
 ## Next step
 
-Keep this candidate separate. Determine whether the 42 BOP findings originate in the stored fused base surfaces or in specific Loft interfaces, then validate the candidate against the modular assembly with its separate crescent inserts. Do not replace the production shell until those checks pass.
+Keep this candidate separate. Determine whether the front overlap originates in the fused base or the support features, then resolve the BOP findings. Do not replace the production shell until the fit and topology checks pass.

@@ -1,5 +1,5 @@
 {
-  "status": "validated_disposable_review_candidate_not_production_approved",
+  "status": "validated_disposable_mesh_repair_candidate_with_front_shell_interference_not_production_approved",
   "date": "2026-11-01",
   "branch": "hardware-integration",
   "protected_files_modified": false,
@@ -54,7 +54,12 @@
   "clearances": {
     "m2_keepout_intersection_mm3": 0.0,
     "magnet_keepout_intersection_mm3": 168.000373,
-    "magnet_intersection_change_mm3": 0.0
+    "magnet_intersection_change_mm3": 0.0,
+    "front_shell_intersection_mm3": 300.811621,
+    "previous_rear_link_front_shell_intersection_mm3": 0.0,
+    "front_shell_fit": "failed; new interference",
+    "overlap_stage_localization": "incomplete; candidate fresh-fused base includes front-derived land-transfer geometry, but per-stage Boolean localization exceeded bounded headless runtime",
+    "usb_cover_intersection_mm3": 0.780472
   },
   "mesh_export": {
     "method": "FreeCAD Mesh.export from review component Body",
