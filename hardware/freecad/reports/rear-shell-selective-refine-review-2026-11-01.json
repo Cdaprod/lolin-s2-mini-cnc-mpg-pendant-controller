@@ -69,6 +69,20 @@
     "mesh_overincident_edges": 0,
     "disposition": "no BOP or volume change; did not address the remaining curve-on-surface findings"
   },
-  "assembly_fit": "not retested for this variant; do not replace the linked rear-shell review assembly yet",
+  "review_assembly": "pendant-modular-rear-loadpath-selective-refine-review-2026-11-01.FCStd",
+  "assembly_fit": {
+    "cold_open_recompute": "passed",
+    "resolved_live_links": 9,
+    "rear_shell_link_source": "pendant-bodies/rear-shell-native-loadpath-selective-refine-review-2026-11-01.FCStd",
+    "rear_shell_link_placement": "preserved as identity LinkPlacement",
+    "upper_and_lower_pad_links": "resolve to dedicated two-Body crescent pad source",
+    "front_and_rear_shapes_valid_single_solids": true,
+    "front_rear_minimum_distance_mm": 0.0,
+    "front_rear_common_result_valid": true,
+    "front_rear_common_volume_mm3": 0.0,
+    "front_rear_common_solid_count": 0,
+    "interpretation": "No volumetric overlap in the candidate's recomputed shell pair; zero distance indicates touching/coincident regions and does not establish positive clearance or contact area.",
+    "remaining_static_interim_faceplate_representations": 2
+  },
   "structural_capacity": "unverified; no FEM or physical 5x proof test"
 }

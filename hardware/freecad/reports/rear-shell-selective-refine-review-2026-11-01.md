@@ -30,8 +30,14 @@ An exact BRep Boolean comparison failed its conservation check: `common()` repor
 
 A read-only BOP pass over the saved selective candidate shows where the remaining invalid-curve findings first appear: the fused base has 12; the middle-left support stays at 12; the middle-right support raises the count to 22; the lower-left raises it to 26; the lower-right stays at 26; and the final shallow-seat Tip has 28. All 28 are `BOPAlgo_InvalidCurveOnSurface`. Setting `Ruled=True` on the middle-right loft leaves the final count at 28 and the volume unchanged, so that alternate two-section loft mode does not address the defect. The current evidence points to the middle-right and lower-left fusion regions as the next geometry targets, while the base itself carries 12 inherited findings.
 
+## Assembly integration check
+
+The selective-refine rear component was linked into a new review assembly copy. The rear link retained its identity `LinkPlacement`, the assembly cold-opened and recomputed with nine live links, and both pad links still resolve to the dedicated two-Body crescent source. The recomputed front and rear shell shapes are valid single solids. Their common result is valid and contains zero volume; the measured minimum distance is 0 mm, consistent with touching/coincident regions. This establishes no volumetric shell interference in this candidate, while positive clearance and actual contact area remain unmeasured. Two interim faceplate representations remain static.
+
+![Front and rear shell underside review with load-path receiver geometry](images/rear-loadpath-receiver-review-2026-11-01/front-rear-bottom-review.png)
+
 ## Disposition
 
-Keep the selective candidate separate from the review assembly. Its BOP and manifold mesh results are improved, but its front/rear mating clearance has not been retested and exact BRep equivalence is unresolved. The protected monolith, master, and production assembly were not modified. No FEM or physical 5× proof-load test was performed.
+Keep the selective candidate in this separate review assembly, not the production assembly. Its BOP and manifold mesh results are improved and the new shell pair has zero common volume, but exact equivalence to the previous rear shape, positive mating clearance, and contact area remain unproven. The protected monolith, master, and production assembly were not modified. No FEM or physical 5× proof-load test was performed.
 
 Run the cold-open validator with [validate_rear_shell_selective_refine.py](../scripts/validate_rear_shell_selective_refine.py). The full measurements and trial results are in the [machine-readable validation record](rear-shell-selective-refine-review-2026-11-01.json).

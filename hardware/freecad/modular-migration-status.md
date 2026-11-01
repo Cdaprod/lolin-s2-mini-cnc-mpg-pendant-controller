@@ -6,7 +6,7 @@ Authoritative source retained unchanged: `pendant.FCStd`
 
 ## Rear-shell selective loft refinement study (2026-11-01)
 
-A single `Refine=False` setting on the middle-left native support loft reduced the review candidate's BOP findings from 42 to 28 and retained a one-solid Tip with a closed manifold mesh after save/reopen/recompute. Bounds are unchanged and BRep volume/area changes are 0.000103 mm³ and −4.8×10⁻⁷ mm². The saved-feature audit shows the middle-right loft adds 10 curve-on-surface findings and the lower-left adds four; a ruled-loft probe made no difference. Exact Boolean equivalence failed conservation, and mating clearance has not been retested, so the selective candidate remains separate from the assembly link. See [the embedded preview and full validation limits](reports/rear-shell-selective-refine-review-2026-11-01.md).
+A single `Refine=False` setting on the middle-left native support loft reduced the review candidate's BOP findings from 42 to 28 and retained a one-solid Tip with a closed manifold mesh after save/reopen/recompute. Bounds are unchanged and BRep volume/area changes are 0.000103 mm³ and −4.8×10⁻⁷ mm². The saved-feature audit shows the middle-right loft adds 10 curve-on-surface findings and the lower-left adds four; a ruled-loft probe made no difference. A separate review assembly cold-opens with nine links and zero common volume between its front/rear shell pair (0 mm minimum distance). Exact rear-shape equivalence and positive fit clearance remain unproven, so the selective candidate has not replaced any production link. See [the embedded previews and full validation limits](reports/rear-shell-selective-refine-review-2026-11-01.md).
 
 ## Legacy rear reinforcement stage audit (2026-11-01)
 
