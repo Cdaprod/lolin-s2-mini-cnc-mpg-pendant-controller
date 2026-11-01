@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-01",
+  "status": "disposable review assembly; not production-approved",
+  "assembly": "hardware/freecad/pendant-modular-rear-shell-structural-support-param-review-assembly-2026-11-01.FCStd",
+  "builder": "hardware/freecad/scripts/integrate_rear_support_param_candidate_review_assembly.py",
+  "source_assembly": "hardware/freecad/pendant-modular-rear-shell-tpu-parametric-crescent-review-assembly-2026-10-31.FCStd",
+  "rear_component": "hardware/freecad/pendant-bodies/rear-shell-structural-support-parameter-review-2026-11-01.FCStd",
+  "checks": {
+    "shell_link": {
+      "name": "Interim_Body002",
+      "placement_preserved": true,
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40847.86169758013,
+      "faces": 522,
+      "bounds_mm": [-39.909661329020054, 39.87917913641778, -88.31234947270411, 86.68846292863208, -36.89446791210996, 0.0]
+    },
+    "component_to_assembly_parameter_propagation": {
+      "parameter": "UpperBossXAbs",
+      "from_mm": 24.8,
+      "to_mm": 24.9,
+      "edited_link_volume_mm3": 40846.37827305781,
+      "restored_volume_mm3": 40847.86169758013,
+      "restoration_error_mm3": 0.0
+    },
+    "crescent_pad_intersections_with_rear_shell_mm3": {
+      "Review_AntiSlipPadUpper": 0.0,
+      "Review_AntiSlipPadLower": 0.0
+    },
+    "assembly_links": {
+      "before_save": 8,
+      "after_cold_reopen": 8,
+      "broken_after_cold_reopen": 0
+    },
+    "cold_reopen_shell": {
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40847.86169758013,
+      "faces": 522
+    }
+  },
+  "production_assembly_modified": false,
+  "known_limitations": [
+    "Review-only assembly; not the production modular assembly.",
+    "Rear shell is a hybrid review component: its clean base remains a stored-shape feature, while the support and finishing features are native and editable.",
+    "The 113.497311 mm3 difference to the cached legacy rear Tip is unresolved; this link is not a validated production replacement."
+  ]
+}
