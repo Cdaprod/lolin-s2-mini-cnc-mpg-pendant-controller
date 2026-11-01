@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-31",
+  "status": "disposable review candidate; not production-approved",
+  "component": "hardware/freecad/pendant-bodies/rear-shell-webs-dimensioned-sketches-review-candidate.FCStd",
+  "assembly": "hardware/freecad/pendant-modular-rear-webs-dimensioned-sketches-review-candidate.FCStd",
+  "feature_change": {
+    "sketches": ["LowerLeftInnerWebProfile", "LowerRightInnerWebProfile"],
+    "constraints_each": 15,
+    "fully_constrained": true,
+    "scheme": "5 Coincident constraints plus 10 named DistanceX/DistanceY constraints",
+    "names": "WebP0X through WebP4Z",
+    "pad_length_mm": 8.5,
+    "geometry_intent": "preserve combined lower-web candidate geometry while replacing segment Block constraints with editable dimensions"
+  },
+  "cold_reopen_component": {
+    "tip": "LowerRightInnerWebPad",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40847.86169758017,
+    "area_mm2": 30826.046428494166,
+    "face_count": 522,
+    "mesh_facets": 92560,
+    "mesh_closed": true,
+    "edge_incidence": {
+      "welded_edges": 138840,
+      "boundary": 0,
+      "over_incident": 0,
+      "degenerate": 0
+    }
+  },
+  "reversible_parameter_probe": {
+    "constraint": "LowerLeftInnerWebProfile.WebP0X",
+    "from_mm": -13.9,
+    "to_mm": -13.8,
+    "tip_delta_mm3": -1.5465980703374953,
+    "restored_volume_error_mm3": 0.0
+  },
+  "assembly_refresh": {
+    "links": 8,
+    "broken_links": 0,
+    "valid_root": true,
+    "root_solid_count": 11,
+    "baseline_link_volume_mm3": 40847.86169758016,
+    "edited_link_volume_mm3": 40846.31509950984,
+    "restored_link_volume_mm3": 40847.86169758016,
+    "restoration_error_mm3": 0.0
+  },
+  "mesh_hashes_identical": false,
+  "production_documents_modified": false,
+  "remaining_limitations": [
+    "candidate shell is hybrid and not a fully native reconstruction",
+    "legacy boss-to-wall geometry difference remains unresolved",
+    "master spreadsheet control is not implemented for these web dimensions",
+    "structural capacity and PLA 5x proof load are not established",
+    "magnet clearance diagnostic remains unresolved"
+  ],
+  "previews": [
+    "images/rear-shell-webs-bottom-fillet-anti-slip-before/pendant-modular-assembly-bottom.png",
+    "images/rear-shell-webs-bottom-fillet-anti-slip-assembly/pendant-modular-assembly-bottom.png",
+    "images/rear-shell-lower-inner-web-section-review.png"
+  ]
+}
