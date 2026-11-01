@@ -65,6 +65,18 @@
     "parameterized_candidate_to_legacy_tip_gap_mm3": 113.49731070905,
     "interpretation": "The native profile reconstruction yields a valid one-solid closed mesh, but it does not spatially or volumetrically explain the saved legacy feature stages. Remaining material is not classified as redundant or safe to omit."
   },
+  "legacy_remesh_probe": {
+    "method": "Remesh the four cached source stage shapes in memory with FreeCAD MeshPart; do not save or change the source document.",
+    "linear_deflection_mm": [0.2, 0.08, 0.05, 0.02],
+    "angular_deflection_rad": 0.35,
+    "results": {
+      "Body002FullWidthSeat": {"facets": [10146, 12928, 16188, 29440], "closed": [true, true, true, true]},
+      "RearBossToWallLoadPaths": {"facets": [12207, 14780, 17941, 31577], "closed": [false, false, false, false]},
+      "RearBossShoulderTransitions": {"facets": [12265, 14832, 18005, 31774], "closed": [false, false, false, false]},
+      "RearBossWallRamps45": {"facets": [12891, 15472, 18631, 32370], "closed": [false, false, false, false]}
+    },
+    "interpretation": "The mesh defect first appears with the cached RearBossToWallLoadPaths stage and persists over the tested mesh resolutions. Changing mesh resolution alone does not close the mesh."
+  },
   "preservation": {
     "protected_monolith_modified": false,
     "production_assembly_modified": false,

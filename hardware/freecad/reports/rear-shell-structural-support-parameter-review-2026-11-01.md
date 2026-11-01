@@ -31,4 +31,8 @@ The archived four-profile reconstruction produces `+124.036209 mm³` over the cl
 
 The profile recreation therefore demonstrates a manifold native construction method, but does **not** account for all old material or prove the remaining difference is redundant. The prior occupancy maps place much of the sampled change near the four boss-to-wall transitions, while BRep/mesh volume disagreement and failed whole-shape Booleans prevent exact spatial classification. Do not remove or promote geometry on the basis of these volume comparisons alone.
 
+A focused in-memory remesh check confirms the issue is not resolved by tessellation density alone. The clean base `Body002FullWidthSeat` meshed closed at linear deflections 0.20, 0.08, 0.05, and 0.02 mm. The first cached reinforcement stage, `RearBossToWallLoadPaths`, and both downstream cached stages remained open at every tested setting. The native reconstructed candidate remains closed at its validated 0.08 mm setting. This supports replacing the defective stored-shape feature chain in the model rather than relying on slicer repair or a finer export mesh.
+
+The original native-profile reconstruction routine is available as [`regenerate_rear_boss_wall_loadpaths.py`](../regenerate_rear_boss_wall_loadpaths.py); its four triangular profiles explain only part of the saved legacy volume and are not treated as a complete replacement for the original geometry.
+
 Structural capacity, including the 5× complete-pendant proof-load target, remains unverified. This review candidate is a parametric repair study, not the production rear shell.
