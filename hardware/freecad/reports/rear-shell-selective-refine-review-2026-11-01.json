@@ -52,6 +52,23 @@
     {"settings": "LowerRightNativeLoadPath.Refine=false only", "bop_findings": 42, "boundary_edges": 0, "result": "no topology improvement"},
     {"settings": "MiddleLeft and MiddleRight Refine=false", "bop_findings": 28, "boundary_edges": 0, "result": "no further improvement over MiddleLeft alone"}
   ],
+  "saved_candidate_stage_bop_trace": [
+    {"stage": "FreshFusedBase", "bop_findings": 12, "type_counts": {"BOPAlgo_InvalidCurveOnSurface": 12}},
+    {"stage": "MiddleLeftNativeLoadPath", "bop_findings": 12, "type_counts": {"BOPAlgo_InvalidCurveOnSurface": 12}},
+    {"stage": "MiddleRightNativeLoadPath", "bop_findings": 22, "type_counts": {"BOPAlgo_InvalidCurveOnSurface": 22}},
+    {"stage": "LowerLeftNativeLoadPath", "bop_findings": 26, "type_counts": {"BOPAlgo_InvalidCurveOnSurface": 26}},
+    {"stage": "LowerRightNativeLoadPath", "bop_findings": 26, "type_counts": {"BOPAlgo_InvalidCurveOnSurface": 26}},
+    {"stage": "RearCrescentAntiSlipSeatPocket", "bop_findings": 28, "type_counts": {"BOPAlgo_InvalidCurveOnSurface": 28}}
+  ],
+  "ruled_loft_probe": {
+    "feature": "MiddleRightNativeLoadPath",
+    "setting": "Ruled=true",
+    "tip_volume_mm3": 41080.89424651942,
+    "tip_bop_findings": 28,
+    "mesh_boundary_edges": 0,
+    "mesh_overincident_edges": 0,
+    "disposition": "no BOP or volume change; did not address the remaining curve-on-surface findings"
+  },
   "assembly_fit": "not retested for this variant; do not replace the linked rear-shell review assembly yet",
   "structural_capacity": "unverified; no FEM or physical 5x proof test"
 }

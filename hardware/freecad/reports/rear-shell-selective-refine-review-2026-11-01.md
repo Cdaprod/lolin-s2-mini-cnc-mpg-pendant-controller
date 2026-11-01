@@ -26,6 +26,10 @@ Turning refinement off on all four lofts lowered the BOP count to 30 but introdu
 
 An exact BRep Boolean comparison failed its conservation check: `common()` reported zero volume for nearly identical solids, and the first cut returned more volume than its entire input. The symmetric-difference operation then exceeded the 170-second limit. Those Boolean results were discarded. Exact geometry equivalence remains unproven.
 
+## Remaining error locations in the feature chain
+
+A read-only BOP pass over the saved selective candidate shows where the remaining invalid-curve findings first appear: the fused base has 12; the middle-left support stays at 12; the middle-right support raises the count to 22; the lower-left raises it to 26; the lower-right stays at 26; and the final shallow-seat Tip has 28. All 28 are `BOPAlgo_InvalidCurveOnSurface`. Setting `Ruled=True` on the middle-right loft leaves the final count at 28 and the volume unchanged, so that alternate two-section loft mode does not address the defect. The current evidence points to the middle-right and lower-left fusion regions as the next geometry targets, while the base itself carries 12 inherited findings.
+
 ## Disposition
 
 Keep the selective candidate separate from the review assembly. Its BOP and manifold mesh results are improved, but its front/rear mating clearance has not been retested and exact BRep equivalence is unresolved. The protected monolith, master, and production assembly were not modified. No FEM or physical 5× proof-load test was performed.
