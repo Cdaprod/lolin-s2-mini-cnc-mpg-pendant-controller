@@ -318,5 +318,49 @@
   },
   "whole_shape_exact_equivalence": "not established",
   "structural_capacity": "not established",
-  "cad_files_saved_or_modified": false
+  "cad_files_saved_or_modified": false,
+  "legacy_mesh_stage_audit": {
+    "method": "Cold-open source BREP shapes tessellated at 0.08 mm linear deflection and 0.35 rad angular deflection; unique triangle edges counted by rounded endpoint coordinates.",
+    "source_shapes_modified": false,
+    "stages": [
+      {
+        "feature": "Body002FullWidthSeat",
+        "net_volume_change_mm3": null,
+        "facets": 12928,
+        "boundary_edges": 0,
+        "overincident_edges": 0,
+        "degenerate_facets": 0,
+        "mesh_closed": true
+      },
+      {
+        "feature": "RearBossToWallLoadPaths",
+        "net_volume_change_mm3": 383.733575,
+        "facets": 14780,
+        "boundary_edges": 303,
+        "overincident_edges": 3,
+        "degenerate_facets": 0,
+        "mesh_closed": false
+      },
+      {
+        "feature": "RearBossShoulderTransitions",
+        "net_volume_change_mm3": -14.96145,
+        "facets": 14832,
+        "boundary_edges": 313,
+        "overincident_edges": 3,
+        "degenerate_facets": 0,
+        "mesh_closed": false
+      },
+      {
+        "feature": "RearBossWallRamps45",
+        "net_volume_change_mm3": 106.929454,
+        "facets": 15472,
+        "boundary_edges": 313,
+        "overincident_edges": 3,
+        "degenerate_facets": 0,
+        "mesh_closed": false
+      }
+    ],
+    "interpretation": "The first stored boss-to-wall load-path feature is where the exported mesh first becomes non-manifold; the later shoulder and ramp features retain the defects. These features align by name and approximate regional occupancy with the four screw-boss-to-wall load paths. Exact changed-material surfaces remain unclassified because direct BREP difference Booleans on these shapes returned null or invalid multi-solid shapes.",
+    "direct_boolean_difference_attempt": "Unusable for exact classification: first two adjacent-stage added/removed cuts returned null; the final stage pair returned invalid results with 20 added and 17 removed solids."
+  }
 }
