@@ -4,6 +4,14 @@ This is a permanent workstream alongside the modularization and parameterization
 
 ## Latest validated CAD milestone — 2026-11-01
 
+### Independent native crescent contact-pad source — review only
+
+Separated the upper/lower swept-crescent contact inserts into `pendant-bodies/crescent-contact-pads-native-review-2026-11-01.FCStd`, with two native PartDesign Bodies and a local `SeatDepth + PadProudHeight` parameter expression. The review assembly cold-opens with nine live links and points both pad links at this dedicated two-Body source; two static interim faceplate representations remain. A reversible 0.25→0.35→0.25 mm proud-height edit recomputed through both live links and restored their volumes within 1.5×10⁻¹⁴ mm³. The pads match the previous review geometry by zero symmetric difference and retain the earlier measured zero common volume against the shell shapes. Their contact areas are about 165.09 mm² and 60.50 mm², with coplanar contact faces. Keep this review-only: material grip, wear, magnet force, tabletop stability, and structural capacity are untested; 0.25 mm proud height adds the same amount of magnet-to-steel separation. The production assembly and protected monolith are unchanged.
+
+![Rear shell underside with the separate crescent contact pads](reports/images/rear-shell-crescents-review-2026-11-01/rear-shell-with-crescent-pads-bottom.png)
+
+See `reports/crescent-contact-pad-native-review-2026-11-01.md` and its JSON result. Rerun the cold-open and parameter check with `scripts/validate_crescent_contact_pad_review.py`.
+
 ### Rear shell mesh repair and load-path receiver — review candidate
 
 - Rebuilt the four rear boss-to-wall load paths as native PartDesign AdditiveLofts, retained the six M2 passages, the validated **R0.25 mm** bottom-perimeter fillet, and **0.10 mm** crescent-pad seats. At the recorded 0.12 mm mesh setting the rear candidate is a valid single solid with **0 boundary and 0 overincident mesh edges**. It remains a hybrid because its base is a stored fused BREP; the BRep still has 42 OpenCascade BOP findings (12 already in that base), so it is not production-approved.
