@@ -20,7 +20,7 @@ Use `scripts/refresh_modular_assembly.py` only when the FreeCAD GUI is closed. I
 
 The branch omits the large set of dated candidate/review models, duplicate assemblies, the generated STEP export, FreeCAD backups, and recovery files. The complete pre-migration `hardware/freecad/` folder was preserved locally at:
 
-`/private/tmp/pendant-cad-pre-clean-branch-archive-2026-11-01.tar.gz`
+`/Users/davidcannan/Documents/Codex/archives/pendant-cad-pre-clean-branch-archive-2026-11-01.tar.gz`
 
 Archive SHA-256: `d317a86bc968d9a9d8aaa13d14b6d0aa42e9a7dcf25dfcfa0e05b276e78b37d9`.
 

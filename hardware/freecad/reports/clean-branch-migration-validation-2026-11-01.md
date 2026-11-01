@@ -6,7 +6,7 @@ Date: 2026-11-01
 
 `hardware-integration-clean` starts at `839c47b` (`Remove old Python tests workflow and add backup file`), the parent of `7a805d5`, the first commit that added CAD models to this repository. The base contains the project infrastructure and has no `hardware/freecad` tree. The clean branch then records one current-tree snapshot from `hardware-integration`, with the FreeCAD model inventory reduced to the selected files below. It does not inherit the sequence of large CAD snapshots from `hardware-integration`.
 
-The source branch, its commits, and all existing worktrees were left unchanged. Before constructing the branch, the full local `hardware/freecad/` folder—including tracked and untracked candidates, backups, reports, and the locally modified preview script—was copied to `/private/tmp/pendant-cad-pre-clean-branch-archive-2026-11-01.tar.gz` and archive-stream verified. SHA-256: `d317a86bc968d9a9d8aaa13d14b6d0aa42e9a7dcf25dfcfa0e05b276e78b37d9`.
+The source branch, its commits, and all existing worktrees were left unchanged. Before constructing the branch, the full local `hardware/freecad/` folder—including tracked and untracked candidates, backups, reports, and the locally modified preview script—was copied to `/Users/davidcannan/Documents/Codex/archives/pendant-cad-pre-clean-branch-archive-2026-11-01.tar.gz` and archive-stream verified. SHA-256: `d317a86bc968d9a9d8aaa13d14b6d0aa42e9a7dcf25dfcfa0e05b276e78b37d9`.
 
 The archive is outside Git and must be retained. The original `hardware-integration` branch also remains available. This migration does not delete that branch or rewrite `main`.
 
