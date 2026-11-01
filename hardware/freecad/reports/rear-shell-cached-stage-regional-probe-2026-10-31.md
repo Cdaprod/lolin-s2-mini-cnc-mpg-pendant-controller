@@ -32,4 +32,10 @@ This was a read-only headless FreeCAD run over saved shapes. It did not recomput
 
 This does not establish exact symmetric difference, intended manufactured geometry, stress capacity, or mesh repair. Continue to use the recomputing native candidate as the manifold review path while investigating the legacy stages. Preserve both the saved source and current candidate.
 
+### Conservation check of a finer BRep box map
+
+A follow-up 20 mm grid tiled the complete `Body002FullWidthSeat` bounding box (4 × 9 × 2 cells) and intersected every cell with both the clean base and final cached Tip. Although all individual `common()` results reported valid, the cell sums failed to conserve the parent shapes: clean-base intersections summed to `39,970.299511 mm³` versus `40,485.657428 mm³` (−`515.357918 mm³`), while final-Tip intersections summed to `45,358.083440 mm³` versus `40,961.359008 mm³` (+`4,396.724432 mm³`). The summed cell deltas were `+5,387.783929 mm³`, not the known global `+475.701580 mm³`. Some cells reported implausibly large local gains and losses.
+
+Therefore the box-common results above are **not accepted as a material accounting map**. A valid flag on each intersection is insufficient for these cached shapes. The exact location of the global difference remains unresolved; use a validated tessellation-based occupancy method or reconstruct the suspect feature from native operations before drawing spatial conclusions.
+
 Machine-readable measurements: [`rear-shell-cached-stage-regional-probe-2026-10-31.json`](rear-shell-cached-stage-regional-probe-2026-10-31.json).

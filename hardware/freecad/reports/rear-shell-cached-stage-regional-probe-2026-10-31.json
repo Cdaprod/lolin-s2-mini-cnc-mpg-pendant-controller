@@ -37,5 +37,20 @@
     }
   ],
   "interpretation": "Regional cached-shape changes are nonlocal and do not account for the global +475.70158 mm3 net. Upper-left load-path-stage common volume drops to zero within its diagnostic envelope and is largely restored by the shoulder stage. Do not interpret this as exact added/removed reinforcement until the stored history behavior is explained.",
-  "known_mesh_defect_locations": "four screw-boss-to-wall transitions; see rear-shell-nonmanifold-edge-map-2026-10-30.json"
+  "known_mesh_defect_locations": "four screw-boss-to-wall transitions; see rear-shell-nonmanifold-edge-map-2026-10-30.json",
+  "followup_conservation_check": {
+    "method": "20 mm axis-aligned BRep box grid tiling the complete clean-base bounding box; common() intersections individually reported valid",
+    "grid_shape": [4, 9, 2],
+    "cell_count": 72,
+    "base_brep_volume_mm3": 40485.6574282847,
+    "base_cell_intersection_sum_mm3": 39970.29951068372,
+    "base_sum_error_mm3": -515.3579176009807,
+    "final_brep_volume_mm3": 40961.35900828918,
+    "final_cell_intersection_sum_mm3": 45358.083440232345,
+    "final_sum_error_mm3": 4396.724431943163,
+    "global_tip_minus_base_mm3": 475.7015800044828,
+    "sum_of_cell_deltas_mm3": 5387.783928647166,
+    "accepted_as_exact_spatial_accounting": false,
+    "interpretation": "Individual BRep common() validity does not guarantee conservation for these cached shapes. Reject this box-common method as a material difference map; require a validated tessellation occupancy method or native feature reconstruction."
+  }
 }
