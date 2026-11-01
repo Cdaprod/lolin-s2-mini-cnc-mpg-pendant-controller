@@ -18,6 +18,10 @@ The candidate imports the saved `Body002FullWidthSeat` output as its base, adds 
 
 The fillet follows the support geometry. It selects the 19 edges of the broad downward-facing contact face's outer wire by face/edge identity. The source face is `4,243.228864 mm²` with normal `(0, −0.043619, −0.999048)`. The fillet removes `1.338439 mm³`. The later seat Pocket removes `23.809526 mm³`.
 
+Current candidate, captured directly from FreeCAD in bottom view:
+
+![Base-preserving rear-shell candidate showing its underside, screw bosses, support ribs, and crescent anti-slip seats](images/rear-shell-structural-first-fillet-base-preserving-bottom-view-2026-10-31.png)
+
 The before/after pictures below are the existing preview of the same perimeter treatment on this contact face. The new structural-first component independently repeats the selection and passes cold-open validation.
 
 Before:
