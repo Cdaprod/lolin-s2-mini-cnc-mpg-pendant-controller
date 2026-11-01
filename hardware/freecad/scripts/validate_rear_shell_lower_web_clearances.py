@@ -72,6 +72,25 @@ def mesh_topology(shape, linear_deflection=0.1, merge_tolerance=1e-6):
     }
 
 
+def contact_plane(body):
+    if body is None or body.Tip is None or not body.Shape.isValid() or len(body.Shape.Solids) != 1:
+        raise RuntimeError("anti-slip pad Body is missing or invalid")
+    candidates = []
+    for face in body.Shape.Faces:
+        if "Plane" not in str(type(face.Surface)):
+            continue
+        center = face.CenterOfMass
+        normal = face.normalAt(0, 0)
+        if normal.z < -0.9:
+            normal.normalize()
+            candidates.append((face.Area, normal, center, normal.dot(center)))
+    if not candidates:
+        raise RuntimeError(body.Name + " has no downward-facing planar contact face")
+    area, normal, center, offset = max(candidates, key=lambda item: item[0])
+    return {"contact_area_mm2": float(area), "normal": [float(normal.x), float(normal.y), float(normal.z)],
+            "plane_offset_mm": float(offset), "center_mm": [float(center.x), float(center.y), float(center.z)]}
+
+
 def clearance(prism, tool):
     common = prism.common(tool)
     if common.isNull() or not common.isValid():
@@ -100,6 +119,12 @@ try:
     topology = mesh_topology(body.Tip.Shape)
     if topology["boundary_edges"] or topology["over_incident_edges"] or topology["degenerate_triangles"]:
         raise RuntimeError("recomputed RearShell Tip mesh is not manifold: {}".format(topology))
+    upper_contact = contact_plane(candidate.getObject("AntiSlipPadUpper"))
+    lower_contact = contact_plane(candidate.getObject("AntiSlipPadLower"))
+    normal_dot = sum(a * b for a, b in zip(upper_contact["normal"], lower_contact["normal"]))
+    plane_offset_delta = abs(upper_contact["plane_offset_mm"] - lower_contact["plane_offset_mm"])
+    if normal_dot < 1.0 - 1e-8 or plane_offset_delta > 0.01:
+        raise RuntimeError("upper/lower anti-slip contact planes are not coplanar")
     profiles = {
         "left": profile_prism(candidate.getObject("LowerLeftInnerWebProfile"), candidate.getObject("LowerLeftInnerWebPad")),
         "right": profile_prism(candidate.getObject("LowerRightInnerWebProfile"), candidate.getObject("LowerRightInnerWebPad")),
@@ -119,9 +144,12 @@ try:
         "monolith_sha256": digest(MONOLITH),
         "candidate_tip": summary(body.Tip.Shape),
         "candidate_tip_mesh_topology": topology,
+        "anti_slip_contact_planes": {"upper": upper_contact, "lower": lower_contact,
+                                     "normal_dot": normal_dot, "offset_difference_mm": plane_offset_delta,
+                                     "coplanar_within_0p01_mm": True},
         "web_prisms": {side: summary(shape) for side, shape in profiles.items()},
         "clearances": checks,
-        "scope": "geometric keep-out validation only; not structural certification or full legacy equivalence",
+        "scope": "local keep-outs, candidate mesh topology, and anti-slip contact-plane geometry only; not structural certification or full legacy equivalence",
     }
     print("REAR_SHELL_LOWER_WEB_CLEARANCE_AUDIT=" + json.dumps(result, sort_keys=True))
 finally:
