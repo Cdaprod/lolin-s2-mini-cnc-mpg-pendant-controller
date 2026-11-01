@@ -1,0 +1,172 @@
+{
+  "status": "PASS_REVIEW_CANDIDATE",
+  "assembly": "pendant-modular-rear-loadpath-receiver-r0p4-review-2026-11-01.FCStd",
+  "front_component": "pendant-bodies/front-shell-rear-loadpath-receiver-r0p4-review-2026-11-01.FCStd",
+  "rear_component": "pendant-bodies/rear-shell-native-loadpath-manifold-review-2026-11-01.FCStd",
+  "links": {
+    "count": 7,
+    "front_target": "front_shell_rear_loadpath_receiver_r0p4_review_2026_11_01#FrontShellBody",
+    "rear_target": "rear_shell_native_loadpath_manifold_review_2026_11_01#RearShellBody",
+    "shell_group_children": [
+      "Editable_FrontShell_Receiver",
+      "Editable_RearShell_Loadpaths"
+    ],
+    "static_shell_placeholders_remaining": [],
+    "placements": [
+      "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]"
+    ]
+  },
+  "front_shell": {
+    "valid": true,
+    "solids": 1,
+    "baseline_volume_mm3": 37683.517480502655,
+    "candidate_volume_mm3": 37134.512037065506,
+    "receiver_cut_volume_mm3": 549.0054434371486,
+    "baseline_bounds": [
+      -42.77437713757541,
+      42.81020751811004,
+      -92.36472522473227,
+      86.68910767539026,
+      -19.00000000000015,
+      0.0
+    ],
+    "candidate_bounds": [
+      -42.77437713757541,
+      42.81020751811004,
+      -92.36472522473227,
+      86.68910767539026,
+      -19.000000000135632,
+      0.0
+    ],
+    "bounds_delta_mm": 1.354827361410571e-10,
+    "baseline_mesh": {
+      "triangles": 31104,
+      "boundary_edges": 0,
+      "overincident_edges": 0
+    },
+    "candidate_mesh": {
+      "triangles": 32290,
+      "boundary_edges": 0,
+      "overincident_edges": 0
+    },
+    "screw_engagement_zone": {
+      "z_from_mm": -14.0,
+      "radius_mm": 1.15,
+      "length_mm": 14.0,
+      "baseline_intersection_mm3": 125.14985655199283,
+      "candidate_intersection_mm3": 125.14985655199283
+    },
+    "receivers": {
+      "MiddleLeftReceiver": {
+        "state": [
+          "Up-to-date"
+        ],
+        "valid": true,
+        "solids": 1
+      },
+      "MiddleRightReceiver": {
+        "state": [
+          "Up-to-date"
+        ],
+        "valid": true,
+        "solids": 1
+      },
+      "LowerLeftReceiver": {
+        "state": [
+          "Up-to-date"
+        ],
+        "valid": true,
+        "solids": 1
+      },
+      "LowerRightReceiver": {
+        "state": [
+          "Up-to-date"
+        ],
+        "valid": true,
+        "solids": 1
+      }
+    },
+    "sketches": {
+      "MiddleLeftEntrance": {
+        "fully_constrained": true,
+        "geometry_count": 1,
+        "expression_count": 1
+      },
+      "MiddleLeftWallEnd": {
+        "fully_constrained": true,
+        "geometry_count": 1,
+        "expression_count": 1
+      },
+      "MiddleRightEntrance": {
+        "fully_constrained": true,
+        "geometry_count": 1,
+        "expression_count": 1
+      },
+      "MiddleRightWallEnd": {
+        "fully_constrained": true,
+        "geometry_count": 1,
+        "expression_count": 1
+      },
+      "LowerLeftEntrance": {
+        "fully_constrained": true,
+        "geometry_count": 1,
+        "expression_count": 1
+      },
+      "LowerLeftWallEnd": {
+        "fully_constrained": true,
+        "geometry_count": 1,
+        "expression_count": 1
+      },
+      "LowerRightEntrance": {
+        "fully_constrained": true,
+        "geometry_count": 1,
+        "expression_count": 1
+      },
+      "LowerRightWallEnd": {
+        "fully_constrained": true,
+        "geometry_count": 1,
+        "expression_count": 1
+      }
+    }
+  },
+  "rear_shell": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 41080.89414399071,
+    "bounds": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ],
+    "mesh": {
+      "triangles": 30910,
+      "boundary_edges": 0,
+      "overincident_edges": 0
+    },
+    "tip": "RearCrescentAntiSlipSeatPocket",
+    "included_finishes": [
+      "R0.25 mm native bottom perimeter fillet",
+      "0.10 mm crescent seat pocket"
+    ],
+    "body_history_limitation": "The base is a stored fused BREP; the support and finishing steps are native PartDesign features.",
+    "bop_check_limitation": "The rear BREP retains the BOP findings recorded in the native load-path review; this is not a BOP-clean production shell."
+  },
+  "mating": {
+    "rear_front_common_mm3": 0.0,
+    "common_solids": 0
+  },
+  "assembly_refresh_probe": {
+    "parameter": "MiddleBossRootClearance",
+    "baseline_volume_mm3": 37134.512037065506,
+    "changed_volume_mm3": 37131.713367946686,
+    "restored_volume_mm3": 37134.5120370655,
+    "change_mm3": -2.7986691188198165,
+    "restore_error_mm3": -7.275957614183426e-12,
+    "values_restored_in_memory": true,
+    "CAD_files_saved_by_validator": false
+  }
+}

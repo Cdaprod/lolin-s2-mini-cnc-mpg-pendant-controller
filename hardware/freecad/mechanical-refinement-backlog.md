@@ -2,7 +2,27 @@
 
 This is a permanent workstream alongside the modularization and parameterization work recorded in `modular-migration-status.md`. Keep the original `pendant.FCStd` as the geometry/history baseline. Make intentional design changes only in disposable candidates first, record the reason and affected features, and promote only after native recompute, save/reopen, geometry, fit, and manufacturing checks pass.
 
-## Latest validated CAD milestone — 2026-10-31
+## Latest validated CAD milestone — 2026-11-01
+
+### Rear shell mesh repair and load-path receiver — review candidate
+
+- Rebuilt the four rear boss-to-wall load paths as native PartDesign AdditiveLofts, retained the six M2 passages, the validated **R0.25 mm** bottom-perimeter fillet, and **0.10 mm** crescent-pad seats. At the recorded 0.12 mm mesh setting the rear candidate is a valid single solid with **0 boundary and 0 overincident mesh edges**. It remains a hybrid because its base is a stored fused BREP; the BRep still has 42 OpenCascade BOP findings (12 already in that base), so it is not production-approved.
+- Stage-by-stage geometry analysis showed the clean rear base has zero front-shell common volume; the four reconstructed supports created **477.368 mm³** of front-shell overlap. The 475.702 mm³ legacy figure is a net difference across stages and is not a safe-to-delete material region. All four load paths remain in the review candidate.
+- Added four fully constrained native front-shell receiving SubtractiveLofts. A clearance study selected 0.40 mm at the middle roots and all wall ends, 0.25 mm at the lower roots, and receiver ends at the corresponding rear support wall planes. This removes 549.005 mm³ from the front shell (about 1.46%); it is an intentional mating-interface change for review. It retains the source outer bounds, leaves the tested screw-engagement volume above Z = −14 mm unchanged, and yields zero rear/front common volume.
+- The front receiver component and assembly cold-opened and recomputed. A reversible 0.40→0.45→0.40 mm parameter edit changed the linked front-shell volume and restored it within 7.3×10⁻¹² mm³. The review assembly replaces both static shell placeholders with live links; seven links resolve and two unrelated static interim faceplate representations remain.
+- Existing front/faceplate, front/encoder, front/USB, rear/USB, and front/locator intersections measured the same before and after; they are inherited assembly conditions still awaiting intentional-fit review. No FEM or physical 5× load test has been performed. Keep the new shell component links as review candidates and preserve the protected monolith and production assembly.
+
+![Front receiver reliefs and rear-shell reinforcement, underside review](reports/images/rear-loadpath-receiver-review-2026-11-01/front-rear-bottom-review.png)
+
+See `reports/rear-shell-loadpath-receiver-review-2026-11-01.md` and its JSON evidence. The repeatable validator is `scripts/validate_rear_shell_receiver_review.py`.
+
+### Remaining rear-shell work
+
+- Review the 549.005 mm³ front receiver cut as a structural/mating change and measure remaining local walls around the receiver ends. Treat the BRep self-intersection/curve-on-surface findings as a separate topology problem; closed mesh incidence is not a substitute for BOP-clean geometry.
+- Revisit inherited USB/faceplate/locator overlaps and compare each with intended assembly contact. Do not infer fit from the shell-to-shell zero-common result alone.
+- Keep the closed hanger and 5× complete-pendant proof-load target unclaimed until total mass, load direction/contact, material assumptions, and physical loading tests are established.
+
+## Prior validated CAD milestones — 2026-10-31
 
 - Combined finish review assembly: replaced the upper faceplate's static interim member with the cold-open-validated R0.50 native-bezel component link in a disposable copy of the structural-first rear-shell assembly. The combined assembly cold-opens/recomputes with 11 valid solids and nine resolved links; crescent inserts remain separate links, and the rear shell retains the R0.25 bottom fillet. Faceplate bounds and neighbor intersection measurements are unchanged; the known 12.955740 mm³ front-shell overlap was present before and after. The rear shell remains unapproved with its unresolved 113.497 mm³ cached-tip difference. See `reports/combined-rear-fillet-bezel-review-assembly-2026-10-31.md`, which embeds both the rear underside and bezel previews.
 - Display-bezel finish follow-up: created a separate R0.50 mm native `PartDesign::Fillet` candidate by changing `BezelParameters.DisplayBezelFilletRadius` from the validated R0.30 value. Component save/reopen/recompute, one-solid validity, closed manifold mesh, unchanged overall bounds, seven resolved assembly links, and zero bezel intersections with the six other linked parts passed. The 20 mm cylindrical bore and 22.5 mm rim radii remain; the local straight cylindrical lips shorten by 0.20 mm, leaving about 1.5 mm of flat annulus between the two blends. Kept as a visual/tactile review option; the imported upper-faceplate base remains static and the production documents are unchanged. Before/after preview is embedded in `reports/upper-faceplate-bezel-r050-review-validation-2026-10-31.md`.

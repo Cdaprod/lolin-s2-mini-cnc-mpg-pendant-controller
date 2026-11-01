@@ -1,8 +1,18 @@
 # FreeCAD modular migration status
 
-Date: 2026-10-29
+Date: 2026-11-01
 Branch: `hardware-integration`
 Authoritative source retained unchanged: `pendant.FCStd`
+
+## Rear-shell mesh repair and shell-module review candidate (2026-11-01)
+
+The new review assembly replaces both shell placeholders with live component links in a disposable copy. It cold-opens with seven resolved links, no static shell placeholders, and two unrelated interim faceplate representations. The front and rear shell Shapes are each valid single solids and have **0 mm³** common volume. The front receiver cuts preserve the original front-shell bounding box to 1.4×10⁻¹⁰ mm and leave the measured four-boss screw-engagement cylinders at Z ≥ −14 mm unchanged. A reversible middle-root-clearance edit refreshed through the external link and restored its volume within 7.3×10⁻¹² mm³.
+
+The rear-shell repair candidate retains four native boss-to-wall AdditiveLoft supports, native M2 passages, the R0.25 mm bottom perimeter fillet, and 0.10 mm crescent seats. Its exported test mesh has zero boundary and zero overincident edges. The front component adds four fully constrained receiver SubtractiveLofts with 0.40 mm middle-root and wall-end clearance, 0.25 mm lower-root clearance, and endpoints aligned with the corresponding support wall planes. Those reliefs remove 549.005 mm³ from the front baseline, so this is an intentional mating-interface change under review. Both shell components still have stored-BREP bases; the rear BRep retains the documented 42 BOP findings. No production file has been replaced.
+
+The other front/faceplate, encoder, USB-cover, and locator overlaps tested in the candidate match the original assembly's measured overlaps. They remain open fit-review items rather than being classified as either intentional or defective. No 5× proof-load validation was performed. Full geometry measurements, candidate paths, known limits, and embedded previews are in [the rear load-path receiver review](reports/rear-shell-loadpath-receiver-review-2026-11-01.md) and its [machine-readable result](reports/rear-shell-loadpath-receiver-review-2026-11-01.json).
+
+![Front receiver reliefs and rear-shell support paths, underside views](reports/images/rear-loadpath-receiver-review-2026-11-01/front-rear-bottom-review.png)
 
 ## Disposable rear-shell load-path repair candidate (2026-10-30)
 
