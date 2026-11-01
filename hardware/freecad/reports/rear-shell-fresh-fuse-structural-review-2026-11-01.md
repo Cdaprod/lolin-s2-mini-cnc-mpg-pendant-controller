@@ -40,6 +40,10 @@ A disposable `Refine=False` probe on the support Pads was rejected: it reduced t
 
 The final volume, area, face count, and edge count match the previous review candidate's measured values. This supports preservation at the measured level but does not establish exact BRep identity. The production monolith and modular assembly were not modified.
 
+### Disposable assembly fit check
+
+I replaced the rear-shell link in memory in the saved eight-link review assembly, preserved its original `LinkPlacement`, recomputed, and checked positive-volume intersections. The root remained a valid 11-solid assembly and the rear link remained one valid solid. The rear shell had zero common volume with the front shell, upper faceplate, fused encoder interim, display retainer, both faceplate locators, breakout board, and both TPU crescent inserts. The existing USB cover engagement remained `0.780472 mm³`. This was a read-only in-memory check; the review assembly was not saved. It does not establish physical fit or tolerance margins.
+
 ## What the 475.702 mm³ figure means
 
 `475.701580 mm³` is the **net volume difference between saved cached Shapes** for `RearBossWallRamps45` and `Body002FullWidthSeat`:

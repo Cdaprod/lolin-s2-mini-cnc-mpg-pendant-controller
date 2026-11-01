@@ -59,6 +59,29 @@
     "mesh_overincident_edges": 0,
     "mesh_degenerate_facets": 0
   },
+  "disposable_review_assembly_fit": {
+    "source_assembly": "pendant-modular-rear-shell-tpu-parametric-crescent-review-assembly-2026-10-31.FCStd",
+    "saved": false,
+    "production_assembly_modified": false,
+    "root_valid": true,
+    "root_solid_count": 11,
+    "resolved_link_count": 8,
+    "rear_link_valid_single_solid": true,
+    "rear_link_placement_preserved": true,
+    "positive_volume_intersections_mm3": {
+      "front_shell": 0.0,
+      "upper_faceplate": 0.0,
+      "encoder_faceplate_pocket_interim": 0.0,
+      "display_retainer": 0.0,
+      "usb_tethered_cover_intended_engagement": 0.7804718846,
+      "faceplate_locator_a": 0.0,
+      "faceplate_locator_b": 0.0,
+      "breakout_board": 0.0,
+      "upper_tpu_crescent": 0.0,
+      "lower_tpu_crescent": 0.0
+    },
+    "evidence_scope": "in-memory placement and Boolean common-volume checks only; no saved assembly modification, dimensional tolerance analysis, or physical fit test"
+  },
   "comparison": {
     "previous_review_tip_volume_mm3": 40847.86169758013,
     "fresh_fuse_review_tip_volume_delta_mm3": 0.0,
