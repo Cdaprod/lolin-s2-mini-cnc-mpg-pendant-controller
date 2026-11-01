@@ -4,6 +4,10 @@ Date: 2026-11-01
 Branch: `hardware-integration`
 Authoritative source retained unchanged: `pendant.FCStd`
 
+## Rear-shell selective loft refinement study (2026-11-01)
+
+A single `Refine=False` setting on the middle-left native support loft reduced the review candidate's BOP findings from 42 to 28 and retained a one-solid Tip with a closed manifold mesh after save/reopen/recompute. Bounds are unchanged and BRep volume/area changes are 0.000103 mm³ and −4.8×10⁻⁷ mm². Exact Boolean equivalence failed conservation, and mating clearance has not been retested, so the selective candidate remains separate from the assembly link. See [the embedded preview and full validation limits](reports/rear-shell-selective-refine-review-2026-11-01.md).
+
 ## Legacy rear reinforcement stage audit (2026-11-01)
 
 A read-only check of the saved monolith confirms the disputed +475.701580 mm³ is the net of the three cached load-path, shoulder-transition, and ramp stages. The four root-to-wall paths correspond to screw-boss reinforcement; a 0.5 mm mesh occupancy estimate localizes changes around all four, but the open legacy mesh does not account for the exact BRep delta. Saved BOP findings are 336 in the baseline, 2,440 after the load-path stage, and 740 after the shoulder transition and final ramp. Do not remove the reinforcement based on this audit. The monolith was not recomputed or saved. See [the detailed audit and embedded map](reports/rear-shell-legacy-stage-topology-audit-2026-11-01.md).

@@ -4,6 +4,10 @@ This is a permanent workstream alongside the modularization and parameterization
 
 ## Latest validated CAD milestone — 2026-11-01
 
+### Rear load-path loft topology refinement — review candidate
+
+In a disposable copy, disabling `Refine` on only `MiddleLeftNativeLoadPath` reduced BOP findings 42→28, with the remaining 28 all invalid-curve-on-surface findings. After save/reopen/recompute the Tip remained one valid solid with zero mesh boundary, overincident, or degenerate edges; all six bounds were unchanged, BRep volume differed by 0.000103 mm³, and BRep area by 4.8×10⁻⁷ mm². The R0.25 mm bottom fillet remains upstream of the seat pocket. Neighboring loft flag trials either did not improve BOP findings or opened the mesh. Exact BRep equivalence and front/rear clearance remain unverified: the exact Boolean comparison failed volume conservation and timed out, so this variant has not replaced the review assembly link. Preserve as a separate review candidate. See `reports/rear-shell-selective-refine-review-2026-11-01.md` and its embedded underside preview.
+
 ### Legacy reinforcement stages and BRep integrity audit
 
 Read-only checks on saved `pendant.FCStd` cached shapes confirm the +475.701580 mm³ is the net of `RearBossToWallLoadPaths` (+383.733575), `RearBossShoulderTransitions` (−14.961450), and `RearBossWallRamps45` (+106.929454), not one removable feature. The profile locations show four screw-boss-to-wall load paths. BOP findings are already present in the cached base (336), rise to 2,440 at the load-path stage, then fall to 740 at the shoulder stage and remain there at the ramp Tip. A prior non-watertight mesh occupancy map localizes likely support material around all four boss-wall regions, but it does not reconcile exact BRep volume because the legacy mesh under-represents the BRep. Preserve reinforcement; exact material equivalence and capacity remain unproven. No source file was recomputed or saved. See `reports/rear-shell-legacy-stage-topology-audit-2026-11-01.md` (with embedded occupancy preview) and JSON.
