@@ -1,0 +1,242 @@
+{
+  "date": "2026-10-31",
+  "status": "disposable native reconstruction review; not production-approved",
+  "source_document": "hardware/freecad/pendant.FCStd",
+  "candidate_document": "hardware/freecad/pendant-bodies/rear-shell-recovered-screw-pad-review-candidate-2026-10-31.FCStd",
+  "assembly_document": "hardware/freecad/pendant-modular-recovered-screw-pad-review-assembly-2026-10-31.FCStd",
+  "source_recomputed_or_saved": false,
+  "candidate_saved_by_validator": false,
+  "protected_saved_source": {
+    "tip": "RearBossWallRamps45",
+    "tip_shape": {
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40961.35900828918,
+      "surface_area_mm2": 30590.90219664095,
+      "face_count": 534,
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.31234947270411,
+        86.68846292863208,
+        -36.844984332370686,
+        0.0
+      ]
+    },
+    "tip_mesh": {
+      "facet_count": 15472,
+      "mesh_reports_solid": false,
+      "boundary_edges": 313,
+      "overincident_edges": 3,
+      "degenerate_facets": 0
+    },
+    "clean_base": {
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40485.6574282847,
+      "surface_area_mm2": 30525.353379738182,
+      "face_count": 400,
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.31234947270411,
+        86.68846292863208,
+        -36.844984332370686,
+        0.0
+      ]
+    },
+    "stage_net_addition_mm3": 475.7015800044828,
+    "stage_deltas_mm3": {
+      "RearBossToWallLoadPaths": 383.733575,
+      "RearBossShoulderTransitions": -14.96145,
+      "RearBossWallRamps45": 106.929454
+    },
+    "stages_source": "previously recorded saved feature-stage measurements; source document deliberately not recomputed"
+  },
+  "candidate": {
+    "body": "RearShell",
+    "tip": "RecoveredRearM2Clearance",
+    "body_state": [
+      "Up-to-date"
+    ],
+    "tip_shape": {
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 41211.57993352023,
+      "surface_area_mm2": 30778.49233993363,
+      "face_count": 532,
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.31234947270411,
+        86.68846292863208,
+        -36.89446791210996,
+        0.0
+      ]
+    },
+    "tip_mesh": {
+      "facet_count": 16258,
+      "mesh_reports_solid": true,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_facets": 0
+    },
+    "reinforcement_sketch": {
+      "geometry_count": 6,
+      "constraint_count": 16,
+      "fully_constrained": true,
+      "plane_z_mm": -19.0
+    },
+    "native_pad": {
+      "feature": "RecoveredRearMountReinforcementPad",
+      "type": "PartDesign::Pad",
+      "length_mm": 6.0,
+      "reversed": true,
+      "state": [
+        "Up-to-date"
+      ],
+      "shape": {
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 41361.15088877736,
+        "surface_area_mm2": 30568.22554427464,
+        "face_count": 538,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.89446791210996,
+          0.0
+        ]
+      }
+    },
+    "m2_clearance_pocket": {
+      "feature": "RecoveredRearM2Clearance",
+      "length_mm": 20.0,
+      "state": [
+        "Up-to-date"
+      ],
+      "shape": {
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 41211.57993352023,
+        "surface_area_mm2": 30778.49233993363,
+        "face_count": 532,
+        "bounds_mm": [
+          -36.1370833694447,
+          36.137089549450465,
+          -85.56427270479894,
+          86.68756339293195,
+          -36.83748635331705,
+          -14.585725687686601
+        ]
+      }
+    },
+    "delta_vs_saved_legacy_tip_mm3": 250.22092523104948,
+    "delta_vs_clean_base_mm3": 725.9225052355323,
+    "reversible_parameter_probe": {
+      "parameter": "RecoveredRearMountReinforcementPad.Length",
+      "values_mm": [
+        6.0,
+        6.1,
+        6.0
+      ],
+      "change_delta_mm3": 23.653667850281636,
+      "restored_volume_delta_mm3": 1.4551915228366852e-11,
+      "restored_tip_valid_one_solid": true,
+      "scope": "volume and native recomputation only; no exact BRep equivalence claim"
+    }
+  },
+  "review_assembly": {
+    "root": "AssemblyRoot",
+    "root_valid": true,
+    "root_solid_count": 11,
+    "link_count": 8,
+    "links": [
+      {
+        "name": "Editable_Body_DisplayRetainer_EditableV2",
+        "target": "Body_DisplayRetainer_EditableV2",
+        "target_document": "display_retainer",
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 2050.792480333789,
+        "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]"
+      },
+      {
+        "name": "Editable_Body_USBTetheredCover",
+        "target": "Body_USBTetheredCover",
+        "target_document": "usb_tethered_cover",
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 665.2206904482824,
+        "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]"
+      },
+      {
+        "name": "Editable_Body_FaceplateLocator_A",
+        "target": "Body_FaceplateLocator_A",
+        "target_document": "faceplate_locators",
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 88.12531432045166,
+        "placement": "Placement [Pos=(0,0,-1.5), Yaw-Pitch-Roll=(0,0,0)]"
+      },
+      {
+        "name": "Editable_Body_FaceplateLocator_B",
+        "target": "Body_FaceplateLocator_B",
+        "target_document": "faceplate_locators",
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 88.12531432045165,
+        "placement": "Placement [Pos=(0,0,-1.5), Yaw-Pitch-Roll=(0,0,0)]"
+      },
+      {
+        "name": "Editable_Body006",
+        "target": "Body006",
+        "target_document": "breakout_board",
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 2660.5453836083534,
+        "placement": "Placement [Pos=(0,0,-13.2), Yaw-Pitch-Roll=(0,0,0)]"
+      },
+      {
+        "name": "Interim_Body002",
+        "target": "RearShell",
+        "target_document": "rear_shell_recovered_screw_pad_review_candidate_2026_10_31",
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 41211.5799311429,
+        "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]"
+      },
+      {
+        "name": "Review_AntiSlipPadUpper",
+        "target": "AntiSlipPadUpper",
+        "target_document": "rear_shell_anti_slip_shallow_parametric_seat_candidate",
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 57.782881303977035,
+        "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]"
+      },
+      {
+        "name": "Review_AntiSlipPadLower",
+        "target": "AntiSlipPadLower",
+        "target_document": "rear_shell_anti_slip_shallow_parametric_seat_candidate",
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 21.17606442735022,
+        "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]"
+      }
+    ],
+    "candidate_rear_link_present": true,
+    "previous_pairwise_check": {
+      "new_intersections_from_candidate": 0,
+      "existing_usb_cover_rear_overlap_mm3": 0.7804718846,
+      "scope": "previous disposable pairwise comparison; overlap unchanged; not recalculated by this script"
+    }
+  },
+  "interpretation": {
+    "regional_material_map": "Prior 0.5 mm mesh occupancy sampling located +262.875 mm3 net in four screw-boss-to-wall regions: upper-left +42.750, upper-right +40.625, lower-left +90.625, lower-right +88.875 mm3. This is approximate occupancy, not exact material partitioning.",
+    "unresolved_difference": "The 475.701580 mm3 saved-stage BRep delta is not fully spatially accounted for. The legacy Tip mesh is non-watertight, and sampled occupancy is not an exact BRep difference.",
+    "decision": "Keep candidate review-only. It is one valid solid with a closed mesh and has native, editable support pads, but it is not geometrically equivalent to the saved legacy Tip and has no validated load rating."
+  }
+}
