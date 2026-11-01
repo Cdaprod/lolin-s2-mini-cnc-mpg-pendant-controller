@@ -39,6 +39,39 @@ def summary(shape):
     return {"valid": bool(shape.isValid()), "solid_count": len(shape.Solids), "volume_mm3": float(shape.Volume)}
 
 
+def mesh_topology(shape, linear_deflection=0.1, merge_tolerance=1e-6):
+    points, triangles = shape.tessellate(linear_deflection)
+    vertex_ids = {}
+    ids = []
+    for point in points:
+        key = (round(point.x / merge_tolerance), round(point.y / merge_tolerance), round(point.z / merge_tolerance))
+        if key not in vertex_ids:
+            vertex_ids[key] = len(vertex_ids)
+        ids.append(vertex_ids[key])
+    incidence = {}
+    degenerate_triangles = 0
+    for a, b, c in triangles:
+        tri = (ids[a], ids[b], ids[c])
+        if len(set(tri)) < 3:
+            degenerate_triangles += 1
+        for u, v in ((tri[0], tri[1]), (tri[1], tri[2]), (tri[2], tri[0])):
+            edge = (u, v) if u < v else (v, u)
+            incidence[edge] = incidence.get(edge, 0) + 1
+    counts = {}
+    for uses in incidence.values():
+        counts[uses] = counts.get(uses, 0) + 1
+    return {
+        "linear_deflection_mm": linear_deflection,
+        "vertex_merge_tolerance_mm": merge_tolerance,
+        "triangle_count": len(triangles),
+        "unique_vertex_count": len(vertex_ids),
+        "edge_incidence_counts": {str(k): v for k, v in sorted(counts.items())},
+        "boundary_edges": counts.get(1, 0),
+        "over_incident_edges": sum(v for k, v in counts.items() if k > 2),
+        "degenerate_triangles": degenerate_triangles,
+    }
+
+
 def clearance(prism, tool):
     common = prism.common(tool)
     if common.isNull() or not common.isValid():
@@ -62,6 +95,11 @@ try:
     body = candidate.getObject("RearShell")
     if body is None or body.Tip is None:
         raise RuntimeError("RearShell Body or active Tip is missing")
+    if not body.Tip.Shape.isValid() or len(body.Tip.Shape.Solids) != 1:
+        raise RuntimeError("recomputed RearShell Tip is not one valid solid")
+    topology = mesh_topology(body.Tip.Shape)
+    if topology["boundary_edges"] or topology["over_incident_edges"] or topology["degenerate_triangles"]:
+        raise RuntimeError("recomputed RearShell Tip mesh is not manifold: {}".format(topology))
     profiles = {
         "left": profile_prism(candidate.getObject("LowerLeftInnerWebProfile"), candidate.getObject("LowerLeftInnerWebPad")),
         "right": profile_prism(candidate.getObject("LowerRightInnerWebProfile"), candidate.getObject("LowerRightInnerWebPad")),
@@ -80,6 +118,7 @@ try:
         "candidate_sha256": digest(CANDIDATE),
         "monolith_sha256": digest(MONOLITH),
         "candidate_tip": summary(body.Tip.Shape),
+        "candidate_tip_mesh_topology": topology,
         "web_prisms": {side: summary(shape) for side, shape in profiles.items()},
         "clearances": checks,
         "scope": "geometric keep-out validation only; not structural certification or full legacy equivalence",
