@@ -1,0 +1,74 @@
+{
+  "date": "2026-11-01",
+  "status": "validated disposable CAD study; not production-approved",
+  "candidate": "hardware/freecad/pendant-bodies/rear-shell-structural-support-parameter-review-2026-11-01.FCStd",
+  "source_candidate": "hardware/freecad/pendant-bodies/rear-shell-lower-web-named-parameter-review-2026-10-31.FCStd",
+  "builder": "hardware/freecad/scripts/build_rear_shell_structural_support_parameter_review.py",
+  "tip": "FinishOrder_AntiSlipSeatPocket",
+  "change": {
+    "description": "Move the four reconstructed boss-to-wall support sketches and two lower-web sketches onto one component-local parameter sheet. All six native PartDesign Pad spans are expression-driven.",
+    "parameters": 21,
+    "expressions": 42,
+    "profiles_fully_constrained": 6,
+    "component_parameter_sheet": "Rear support and web parameters"
+  },
+  "baseline": {
+    "volume_mm3": 40847.86169758013,
+    "area_mm2": 30826.046428494166,
+    "faces": 522,
+    "edges": 1509,
+    "bounds_mm": [-39.909661329020054, 39.87917913641778, -88.31234947270411, 86.68846292863208, -36.89446791210996, 0.0],
+    "valid": true,
+    "solid_count": 1
+  },
+  "reversible_profile_probe": {
+    "parameter": "UpperBossXAbs",
+    "from_mm": 24.8,
+    "to_mm": 24.9,
+    "perturbed_volume_mm3": 40846.37827305781,
+    "restored_volume_mm3": 40847.86169758013,
+    "restoration_error_mm3": 0.0,
+    "perturbed_valid_single_solid": true
+  },
+  "reversible_span_probe": {
+    "parameter": "UpperSupportPadSpan",
+    "from_mm": 13.0,
+    "to_mm": 13.1,
+    "perturbed_volume_mm3": 40848.04319164982,
+    "restored_volume_mm3": 40847.86169758013,
+    "restoration_error_mm3": 0.0,
+    "perturbed_valid_single_solid": true
+  },
+  "cold_reopen_recompute": {
+    "volume_mm3": 40847.86169758013,
+    "area_mm2": 30826.046428494166,
+    "faces": 522,
+    "edges": 1509,
+    "bounds_mm": [-39.909661329020054, 39.87917913641778, -88.31234947270411, 86.68846292863208, -36.89446791210996, 0.0],
+    "valid": true,
+    "solid_count": 1,
+    "mesh_closed": true,
+    "mesh_facets": 16020
+  },
+  "legacy_material_accounting": {
+    "clean_base_mm3": 40485.657428284736,
+    "legacy_loadpath_stage_mm3": 40869.39100368142,
+    "legacy_loadpath_net_mm3": 383.733575396684,
+    "legacy_shoulder_stage_mm3": 40854.429553998285,
+    "legacy_shoulder_net_mm3": -14.961449683135,
+    "legacy_final_tip_mm3": 40961.35900828918,
+    "legacy_ramp_net_mm3": 106.929454290895,
+    "legacy_total_net_mm3": 475.701580004483,
+    "reconstructed_four_profile_support_addition_over_base_mm3": 124.036208883762,
+    "four_profile_rebuild_volume_mm3": 40609.69363716832,
+    "four_profile_rebuild_to_legacy_tip_gap_mm3": 351.66537112086,
+    "parameterized_candidate_to_legacy_tip_gap_mm3": 113.49731070905,
+    "interpretation": "The native profile reconstruction yields a valid one-solid closed mesh, but it does not spatially or volumetrically explain the saved legacy feature stages. Remaining material is not classified as redundant or safe to omit."
+  },
+  "preservation": {
+    "protected_monolith_modified": false,
+    "production_assembly_modified": false,
+    "structural_capacity_verified": false,
+    "5x_pendant_proof_load_verified": false
+  }
+}
