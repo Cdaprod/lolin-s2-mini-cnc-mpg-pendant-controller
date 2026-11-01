@@ -63,7 +63,7 @@
     "four_profile_rebuild_volume_mm3": 40609.69363716832,
     "four_profile_rebuild_to_legacy_tip_gap_mm3": 351.66537112086,
     "parameterized_candidate_to_legacy_tip_gap_mm3": 113.49731070905,
-    "interpretation": "The native profile reconstruction yields a valid one-solid closed mesh, but it does not spatially or volumetrically explain the saved legacy feature stages. Remaining material is not classified as redundant or safe to omit."
+    "interpretation": "These are signed volume differences between saved cached Shapes, not a validated exact material symmetric difference. The source Shapes fail BOPCheck, so this 475.701580 mm3 figure must not be interpreted as a precise amount of physically added material. The native profile reconstruction does not spatially account for the saved stages; nothing is classified as redundant or safe to omit."
   },
   "legacy_remesh_probe": {
     "method": "Remesh the four cached source stage shapes in memory with FreeCAD MeshPart; do not save or change the source document.",
@@ -76,6 +76,48 @@
       "RearBossWallRamps45": {"facets": [12891, 15472, 18631, 32370], "closed": [false, false, false, false]}
     },
     "interpretation": "The mesh defect first appears with the cached RearBossToWallLoadPaths stage and persists over the tested mesh resolutions. Changing mesh resolution alone does not close the mesh."
+  },
+  "brep_bop_check": {
+    "method": "FreeCAD Shape.check(runBopCheck=True) on saved cached shapes; distinct from Shape.isValid() and mesh closure.",
+    "legacy_stages": {
+      "Body002FullWidthSeat": {"isValid": true, "bop_errors": 336, "self_intersect_vertices": 287, "self_intersect_edges": 15, "too_small_edges": 8, "invalid_curve_edges": 13, "invalid_curve_faces": 13},
+      "RearBossToWallLoadPaths": {"isValid": true, "bop_errors": 2440, "self_intersect_vertices": 2225, "self_intersect_edges": 76, "self_intersect_faces": 73, "too_small_edges": 28, "invalid_curve_edges": 19, "invalid_curve_faces": 19},
+      "RearBossShoulderTransitions": {"isValid": true, "bop_errors": 740, "self_intersect_vertices": 604, "self_intersect_edges": 57, "self_intersect_faces": 33, "too_small_edges": 22, "invalid_curve_edges": 12, "invalid_curve_faces": 12},
+      "RearBossWallRamps45": {"isValid": true, "bop_errors": 740, "self_intersect_vertices": 604, "self_intersect_edges": 57, "self_intersect_faces": 33, "too_small_edges": 22, "invalid_curve_edges": 12, "invalid_curve_faces": 12}
+    },
+    "native_candidate": {
+      "CleanRearShellBase": {"isValid": true, "bop_errors": 336},
+      "FinishOrder_UpperLeftSupportPad": {"isValid": true, "bop_errors": 348},
+      "FinishOrder_LowerRightInnerWebPad": {"isValid": true, "bop_errors": 354},
+      "FinishOrder_AntiSlipSeatPocket": {"isValid": true, "bop_errors": 352},
+      "final_mesh_closed": true
+    },
+    "copy_fix_probe": {
+      "applied_to_document": false,
+      "working_precision_mm": 0.000001,
+      "minimum_precision_mm": 0.0000001,
+      "maximum_precision_mm": 0.001,
+      "returned_success": true,
+      "volume_delta_mm3": 0.025943222019,
+      "bop_errors_before_after": [336, 334],
+      "interpretation": "Shape.fix changed the disposable BRep slightly but left nearly all BOPCheck errors; it was not adopted."
+    },
+    "earlier_feature_chain": {
+      "RearMatchedInnerCavity": {"bop_errors": 0},
+      "Pad007": {"bop_errors": 0},
+      "Pocket": {"bop_errors": 0},
+      "Pad019": {"bop_errors": 0},
+      "Pocket015": {"bop_errors": 0},
+      "RemoveWarpProneTongues": {"bop_errors": 0},
+      "RearMountReinforcement": {"bop_errors": 0},
+      "ConformRearReinforcementToLoft": {"bop_errors": 2, "invalid_curve_edge": 1, "invalid_curve_face": 1},
+      "RearTaperedSeats": {"bop_errors": 2},
+      "Pocket018": {"bop_errors": 2},
+      "Pocket019": {"bop_errors": 2},
+      "USBConformalCoverSeatBody002": {"bop_errors": 2},
+      "SmallHangerPocketBody002": {"bop_errors": 12, "invalid_curve_edges": 6, "invalid_curve_faces": 6}
+    },
+    "interpretation": "Shape.isValid() and a closed mesh are not sufficient proof of BOP validity. The native reconstruction reduces BOPCheck errors from 740 at the legacy final Tip to 352 at the candidate Tip and yields a closed mesh, but it retains inherited clean-base errors plus support-seam errors. It remains review-only."
   },
   "preservation": {
     "protected_monolith_modified": false,
