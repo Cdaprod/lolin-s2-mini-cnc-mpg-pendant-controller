@@ -141,6 +141,38 @@
     ],
     "interpretation": "The inherited 12 lines are spatially associated with the side USB passage. The additional 30 lines are localized to cylindrical screw-boss/support regions. This localizes BOP diagnostics but does not prove those surfaces cause the non-manifold legacy mesh or justify modifying the mechanical features."
   },
+  "hanger_pocket_rebuild_probe": {
+    "disposable_only": true,
+    "saved_documents_modified": false,
+    "base_source": "USBConformalCoverSeatBody002.Shape",
+    "base_bop_errors": 2,
+    "profile_sketch": "SmallHangerProfileBody002",
+    "profile_geometry_count": 4,
+    "profile_constraint_count": 14,
+    "profile_fully_constrained": true,
+    "native_feature": "PartDesign::Pocket, length 22 mm, one side, Refine=True",
+    "saved_pocket": {
+      "volume_mm3": 38207.25187571011,
+      "surface_area_mm2": 29173.1974356438,
+      "faces": 191,
+      "edges": 545,
+      "bop_errors": 12,
+      "mesh_facets": 8908
+    },
+    "rebuilt_pocket": {
+      "volume_mm3": 38207.2518757101,
+      "surface_area_mm2": 29173.197435643797,
+      "faces": 191,
+      "edges": 545,
+      "bop_errors": 12,
+      "mesh_facets": 8908,
+      "mesh_facet_signature_matches_saved": true,
+      "mesh_boundary_edges": 0,
+      "mesh_overincident_edges": 0
+    },
+    "result": "Native feature recomputation reproduces the saved geometry but does not reduce the BOPCheck errors; do not promote this as a repair or repeat an equivalent pocket-only rebuild.",
+    "next_target": "Investigate the upstream USB-seat/base surfaces and the BOP-invalid curve-on-surface subelements before changing the hanger pocket."
+  },
   "material_function_investigation": {
     "features": {
       "RearBossToWallLoadPaths": 383.733575396684,

@@ -44,6 +44,8 @@ Face-level BOP checks localize the fresh-base candidate's inherited 12 errors to
 
 The final candidate's 42 BOP error lines also localize to cylindrical faces around the screw-boss/support regions. The extra reported lines relative to the base are associated with those mounting regions and nearby blends. The trace identifies where to investigate next; it does not prove these surface errors caused the original open mesh or justify deleting reinforcement. The native mesh remains manifold despite these deeper BRep warnings.
 
+I rebuilt `SmallHangerPocketBody002` as a native `PartDesign::Pocket` in an isolated disposable document using the same 4-geometry, 14-constraint fully constrained sketch and the saved 22 mm one-sided Pocket settings. The rebuilt result matched the saved shape's volume (`−1.46×10⁻¹¹ mm³` delta), area (`−3.64×10⁻¹² mm²` delta), 191 faces, 545 edges, and 8,908-facet mesh signature. It still reported the same 12 BOP errors. No document was saved or changed. This rules out a stale Pocket shape as the explanation and shows that rebuilding only the hanger Pocket does not repair the upstream invalid surface geometry; no such rebuild was promoted.
+
 The final volume, area, face count, and edge count match the previous review candidate's measured values. This supports preservation at the measured level but does not establish exact BRep identity. The production monolith and modular assembly were not modified.
 
 ### Disposable assembly fit check
