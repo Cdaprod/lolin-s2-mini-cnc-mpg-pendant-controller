@@ -191,6 +191,17 @@ try:
             "shell_intersection_mm3": intersection.Volume,
         })
 
+    # Snapshot source-document properties now; later cold-open validation closes
+    # these source documents, so the report must not retain dead FreeCAD objects.
+    m2_passage_summary = {
+        "profile_fully_constrained": bool(m2_profile.FullyConstrained),
+        "profile_count": len(circles),
+        "nominal_diameter_mm": 2.30,
+        "tested_shank_diameter_mm": 2.00,
+        "nominal_radial_clearance_mm": 0.15,
+        "full_shell_axis_gauge_intersections": list(m2_shank_clearance),
+    }
+
     # Check both saved magnet regions against the final shell. The upper
     # "Magnet Clearance" cutter has a pre-existing overlap in the source
     # base, so compare the same region at source and candidate stages instead
@@ -341,6 +352,8 @@ try:
     links = [obj for obj in assembly.Objects if obj.TypeId == "App::Link"]
     static_interims = [obj.Name for obj in assembly.Objects
                        if obj.Name.startswith("Interim_") and obj.TypeId == "Part::Feature"]
+    interim_labelled_live_links = [obj.Name for obj in assembly.Objects
+                                   if obj.Name.startswith("Interim_") and obj.TypeId == "App::Link"]
     if any(not obj.LinkedObject or obj.Shape.isNull() or not obj.Shape.isValid()
            for obj in links):
         raise RuntimeError("At least one live assembly link is unresolved")
@@ -388,17 +401,11 @@ try:
         "anti_slip_source": str(PAD_SOURCE.relative_to(ROOT)),
         "live_link_count": len(links),
         "static_interim_components": static_interims,
+        "interim_labelled_live_links": interim_labelled_live_links,
         "assembly_root_after_reopen": root_summary,
         "rear_shell": {"before_save": rear_stats, "after_reopen": cold_shell,
                        "mesh": cold_mesh, "placement_preserved": True},
-        "m2_passages": {
-            "profile_fully_constrained": bool(m2_profile.FullyConstrained),
-            "profile_count": len(circles),
-            "nominal_diameter_mm": 2.30,
-            "tested_shank_diameter_mm": 2.00,
-            "nominal_radial_clearance_mm": 0.15,
-            "full_shell_axis_gauge_intersections": m2_shank_clearance,
-        },
+        "m2_passages": m2_passage_summary,
         "magnet_keepouts": magnet_metrics,
         "r050_bezel_link": summary(faceplate_link.Shape),
         "anti_slip_pad_profiles": pad_profile_stats,
