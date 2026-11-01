@@ -227,5 +227,95 @@
     "test_method": "Disposable copy of the combined assembly; both component parameter values were restored before saving, then cold-opened and recomputed.",
     "assembly_volume_after_restore_mm3": 112285.00978165866,
     "assembly_volume_restoration_error_mm3": 1.4551915228366852e-11
+  },
+  "m2_passages": {
+    "profile_fully_constrained": true,
+    "profile_count": 6,
+    "nominal_diameter_mm": 2.3,
+    "tested_shank_diameter_mm": 2.0,
+    "nominal_radial_clearance_mm": 0.15,
+    "full_shell_axis_gauge_intersections": [
+      {
+        "profile_index": 0,
+        "center_mm": [
+          -16.97,
+          76.85
+        ],
+        "passage_radius_mm": 1.15,
+        "tested_shank_radius_mm": 1.0,
+        "shell_intersection_mm3": 0.0,
+        "intersection_valid": true
+      },
+      {
+        "profile_index": 1,
+        "center_mm": [
+          16.97,
+          76.85
+        ],
+        "passage_radius_mm": 1.15,
+        "tested_shank_radius_mm": 1.0,
+        "shell_intersection_mm3": 0.0,
+        "intersection_valid": true
+      },
+      {
+        "profile_index": 2,
+        "center_mm": [
+          -27.0,
+          58.5
+        ],
+        "passage_radius_mm": 1.15,
+        "tested_shank_radius_mm": 1.0,
+        "shell_intersection_mm3": 0.0,
+        "intersection_valid": true
+      },
+      {
+        "profile_index": 3,
+        "center_mm": [
+          27.0,
+          58.5
+        ],
+        "passage_radius_mm": 1.15,
+        "tested_shank_radius_mm": 1.0,
+        "shell_intersection_mm3": 0.0,
+        "intersection_valid": true
+      },
+      {
+        "profile_index": 4,
+        "center_mm": [
+          18.0,
+          -17.75661828744584
+        ],
+        "passage_radius_mm": 1.15,
+        "tested_shank_radius_mm": 1.0,
+        "shell_intersection_mm3": 0.0,
+        "intersection_valid": true
+      },
+      {
+        "profile_index": 5,
+        "center_mm": [
+          -18.0,
+          -17.75661828744584
+        ],
+        "passage_radius_mm": 1.15,
+        "tested_shank_radius_mm": 1.0,
+        "shell_intersection_mm3": 0.0,
+        "intersection_valid": true
+      }
+    ],
+    "method": "Each 2.00 mm diameter cylinder spans the full rear-shell Z bounds with 5 mm extra at both ends; intersection checked against the final tip after all reinforcement and finishing features."
+  },
+  "magnet_keepouts": {
+    "upper_magnet_clearance_tool_volume_mm3": 523.8899613583418,
+    "upper_magnet_clearance_intersections_mm3": {
+      "SmallHangerPocketBody002": 168.0003731388091,
+      "Body002FullWidthSeat": 168.00037313880952,
+      "legacy_rear_tip": 168.00037313880856,
+      "fresh_fuse_base": 168.00037313880952,
+      "final_rear_tip": 168.00037313880938
+    },
+    "upper_condition": "The 168.000373 mm3 intersection is already present in the source hanger body and remains unchanged through the candidate; its absolute magnet-fit meaning is unresolved.",
+    "lower_magnet_slot_tool_volume_mm3": 4071.5040790523813,
+    "lower_magnet_slot_candidate_overlap_mm3": 0.0,
+    "lower_magnet_slot_candidate_overlap_valid": true
   }
 }

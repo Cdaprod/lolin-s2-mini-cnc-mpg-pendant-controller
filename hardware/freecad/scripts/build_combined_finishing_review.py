@@ -11,12 +11,14 @@ from pathlib import Path
 
 import FreeCAD as App
 import MeshPart
+import Part
 
 
 ROOT = Path(__file__).resolve().parents[3]
 ASSEMBLY_SOURCE = ROOT / "hardware/freecad/master-driven-leadins-candidate/pendant-modular-assembly-bezel-r0p50-review.FCStd"
 REAR_SOURCE = ROOT / "hardware/freecad/pendant-bodies/rear-shell-fresh-fuse-structural-review-2026-11-01.FCStd"
 PAD_SOURCE = ROOT / "hardware/freecad/pendant-bodies/rear-shell-anti-slip-crescent-pads-parametric-review-2026-10-31.FCStd"
+MONOLITH_SOURCE = ROOT / "hardware/freecad/pendant.FCStd"
 OUTPUT = ROOT / "hardware/freecad/master-driven-leadins-candidate/pendant-modular-combined-finishing-review-2026-11-01.FCStd"
 REPORT_JSON = ROOT / "hardware/freecad/reports/combined-finishing-review-2026-11-01.json"
 REPORT_MD = ROOT / "hardware/freecad/reports/combined-finishing-review-2026-11-01.md"
@@ -81,7 +83,7 @@ def close(document):
         App.closeDocument(document.Name)
 
 
-for source_path in (ASSEMBLY_SOURCE, REAR_SOURCE, PAD_SOURCE):
+for source_path in (ASSEMBLY_SOURCE, REAR_SOURCE, PAD_SOURCE, MONOLITH_SOURCE):
     if not source_path.is_file():
         raise FileNotFoundError(source_path)
 for output_path in (OUTPUT, REPORT_JSON, REPORT_MD):
@@ -92,6 +94,7 @@ shutil.copy2(ASSEMBLY_SOURCE, OUTPUT)
 assembly = App.openDocument(str(OUTPUT))
 rear_doc = None
 pad_doc = None
+monolith_doc = None
 try:
     assembly.recompute()
     root = assembly.getObject("AssemblyRoot")
@@ -109,6 +112,7 @@ try:
 
     rear_doc = App.openDocument(str(REAR_SOURCE))
     pad_doc = App.openDocument(str(PAD_SOURCE))
+    monolith_doc = App.openDocument(str(MONOLITH_SOURCE))
     rear_doc.recompute()
     pad_doc.recompute()
     rear_body = rear_doc.getObject("RearShellStructuralFirstNoDuplicatePad")
@@ -161,6 +165,67 @@ try:
             or not rear_mesh["closed"] or rear_mesh["boundary_edges"]
             or rear_mesh["overincident_edges"] or rear_mesh["degenerate_facets"]):
         raise RuntimeError("Fresh-fuse rear shell failed the manifold one-solid check")
+
+    m2_profile = rear_doc.getObject("FinishOrder_M2PassagesProfile")
+    if m2_profile is None or not m2_profile.FullyConstrained:
+        raise RuntimeError("Six-hole M2 passage profile is missing or under-constrained")
+    circles = [geometry for geometry in m2_profile.Geometry
+               if hasattr(geometry, "Radius")]
+    if len(circles) != 6 or any(abs(circle.Radius - 1.15) > 1e-7 for circle in circles):
+        raise RuntimeError("Expected six 2.30 mm M2 passage profiles")
+    bbox = rear_shape.BoundBox
+    m2_shank_clearance = []
+    for index, circle in enumerate(circles):
+        center = m2_profile.Placement.multVec(circle.Center)
+        gauge = Part.makeCylinder(1.0, bbox.ZLength + 10.0,
+                                  App.Vector(center.x, center.y, bbox.ZMin - 5.0),
+                                  App.Vector(0, 0, 1))
+        intersection = rear_shape.common(gauge)
+        if not intersection.isValid() or intersection.Volume > 1e-7:
+            raise RuntimeError("2.00 mm screw-shank gauge intersects rear shell at hole %d" % index)
+        m2_shank_clearance.append({
+            "profile_index": index,
+            "center_mm": [center.x, center.y],
+            "passage_radius_mm": circle.Radius,
+            "tested_shank_radius_mm": 1.0,
+            "shell_intersection_mm3": intersection.Volume,
+        })
+
+    # Check both saved magnet regions against the final shell. The upper
+    # "Magnet Clearance" cutter has a pre-existing overlap in the source
+    # base, so compare the same region at source and candidate stages instead
+    # of mistaking that inherited condition for a newly introduced collision.
+    upper_tool = (monolith_doc.getObject("Pad007").Shape
+                  .cut(monolith_doc.getObject("Pocket").Shape))
+    lower_tool = (monolith_doc.getObject("Pad019").Shape
+                  .cut(monolith_doc.getObject("Pocket015").Shape))
+    source_body = monolith_doc.getObject("SmallHangerPocketBody002").Shape
+    source_base = monolith_doc.getObject("Body002FullWidthSeat").Shape
+    fresh_base = rear_doc.getObject("CleanRearShellBase").Shape
+    upper_common = {
+        "SmallHangerPocketBody002": source_body.common(upper_tool),
+        "Body002FullWidthSeat": source_base.common(upper_tool),
+        "legacy_rear_tip": monolith_doc.getObject("Body002").Shape.common(upper_tool),
+        "fresh_fuse_base": fresh_base.common(upper_tool),
+        "final_rear_tip": rear_shape.common(upper_tool),
+    }
+    if (not upper_tool.isValid() or not lower_tool.isValid()
+            or any(not shape.isValid() for shape in upper_common.values())):
+        raise RuntimeError("Upper magnet-clearance comparison produced an invalid BRep")
+    upper_volumes = {name: shape.Volume for name, shape in upper_common.items()}
+    if max(upper_volumes.values()) - min(upper_volumes.values()) > 1e-6:
+        raise RuntimeError("Rear reconstruction changed the inherited upper magnet-clearance intersection")
+    lower_common = rear_shape.common(lower_tool)
+    if not lower_tool.isValid() or not lower_common.isValid() or lower_common.Volume > 1e-7:
+        raise RuntimeError("Final rear shell intrudes into the saved lower magnet-slot tool")
+    magnet_metrics = {
+        "upper_magnet_clearance_tool_volume_mm3": upper_tool.Volume,
+        "upper_magnet_clearance_intersections_mm3": upper_volumes,
+        "upper_condition": "168.000373 mm3 is present in the source hanger body and unchanged through the candidate; its absolute magnet-fit meaning remains unresolved.",
+        "lower_magnet_slot_tool_volume_mm3": lower_tool.Volume,
+        "lower_magnet_slot_candidate_overlap_mm3": lower_common.Volume,
+        "lower_magnet_slot_candidate_overlap_valid": bool(lower_common.isValid()),
+    }
 
     pad_stats = {}
     for link in pad_links:
@@ -269,6 +334,7 @@ finally:
     close(assembly)
     close(rear_doc)
     close(pad_doc)
+    close(monolith_doc)
 
 # Cold-open in a fresh document state and ensure both source modules resolve.
 check = App.openDocument(str(OUTPUT))
@@ -308,6 +374,15 @@ try:
         "assembly_root_after_reopen": root_summary,
         "rear_shell": {"before_save": rear_stats, "after_reopen": cold_shell,
                        "mesh": cold_mesh, "placement_preserved": True},
+        "m2_passages": {
+            "profile_fully_constrained": bool(m2_profile.FullyConstrained),
+            "profile_count": len(circles),
+            "nominal_diameter_mm": 2.30,
+            "tested_shank_diameter_mm": 2.00,
+            "nominal_radial_clearance_mm": 0.15,
+            "full_shell_axis_gauge_intersections": m2_shank_clearance,
+        },
+        "magnet_keepouts": magnet_metrics,
         "r050_bezel_link": summary(faceplate_link.Shape),
         "anti_slip_pad_profiles": pad_profile_stats,
         "anti_slip_pads": pad_stats,
@@ -338,7 +413,7 @@ try:
         ],
     }
     REPORT_JSON.write_text(json.dumps(result, indent=2) + "\n")
-    REPORT_MD.write_text("""# Combined pendant finishing review\n\nStatus: **validated disposable assembly; not production approved.**\n\nThis review combines the live hybrid upper-faceplate component with its native R0.50 mm bezel fillet, the fresh-fuse rear-shell candidate with its native 0.25 mm bottom-perimeter fillet, and separate upper/lower TPU crescent pad links. It preserves the source placements and leaves the protected monolith and production assembly unchanged.\n\n## Previews\n\n![Combined finishing review assembly, underside view](images/combined-finishing-review-2026-11-01/assembly-bottom.png)\n\n![Combined finishing review assembly, front view](images/combined-finishing-review-2026-11-01/assembly-top.png)\n\n![Rear-shell candidate underside with native supports, bottom edge finish, and crescent seats](images/rear-shell-fresh-fuse-structural-review-bottom-2026-11-01.png)\n\n![Display-bezel edge before and after the R0.50 mm native fillet](images/display-bezel-r0p50/before-after.png)\n\n## Reversible parameter propagation\n\nOn a disposable copy of the combined assembly, `LowerWebP2XAbs` changed from 9.9 to 10.0 mm and restored; the rear link and assembly root updated, then returned to baseline volume. `DisplayBezelFilletRadius` changed from 0.50 to 0.55 mm and restored; the faceplate link and assembly root updated, then returned to baseline. The source component documents were not saved. The test copy was saved, closed, reopened, and recomputed with all nine links valid. Full measurements are in the [JSON validation](combined-finishing-review-2026-11-01.json).\n\n## Validation\n\nThe combined assembly was recomputed, saved, closed, reopened, and recomputed. Its live links resolve. The rear shell is one valid solid with a closed manifold mesh; both crescent pads remain separate and have zero positive-volume overlap with the shell. Their exposed contact planes are coplanar. The assembly-level rear neighbor intersections are recorded in the [machine-readable validation](combined-finishing-review-2026-11-01.json).\n\nThe rear shell remains a hybrid review Body with a stored-shape base. Its legacy 475.701580 mm³ cached-stage volume delta is not an exact material map, and its structural equivalence and PLA load capacity remain unverified. Keep this assembly as a review candidate.\n\n## Files\n\n- [Combined review assembly](../master-driven-leadins-candidate/pendant-modular-combined-finishing-review-2026-11-01.FCStd)\n- [Reusable builder and validator](../scripts/build_combined_finishing_review.py)\n- [JSON results](combined-finishing-review-2026-11-01.json)\n""", encoding="utf-8")
+    REPORT_MD.write_text("""# Combined pendant finishing review\n\nStatus: **validated disposable assembly; not production approved.**\n\nThis review combines the live hybrid upper-faceplate component with its native R0.50 mm bezel fillet, the fresh-fuse rear-shell candidate with its native 0.25 mm bottom-perimeter fillet, and separate upper/lower TPU crescent pad links. It preserves the source placements and leaves the protected monolith and production assembly unchanged.\n\n## Previews\n\n![Combined finishing review assembly, underside view](images/combined-finishing-review-2026-11-01/assembly-bottom.png)\n\n![Combined finishing review assembly, front view](images/combined-finishing-review-2026-11-01/assembly-top.png)\n\n![Rear-shell candidate underside with native supports, bottom edge finish, and crescent seats](images/rear-shell-fresh-fuse-structural-review-bottom-2026-11-01.png)\n\n![Display-bezel edge before and after the R0.50 mm native fillet](images/display-bezel-r0p50/before-after.png)\n\n## Reversible parameter propagation\n\nOn a disposable copy of the combined assembly, `LowerWebP2XAbs` changed from 9.9 to 10.0 mm and restored; the rear link and assembly root updated, then returned to baseline volume. `DisplayBezelFilletRadius` changed from 0.50 to 0.55 mm and restored; the faceplate link and assembly root updated, then returned to baseline. The source component documents were not saved. The test copy was saved, closed, reopened, and recomputed with all nine links valid. Full measurements are in the [JSON validation](combined-finishing-review-2026-11-01.json).\n\n## Validation\n\nThe combined assembly was recomputed, saved, closed, reopened, and recomputed. Its live links resolve. The rear shell is one valid solid with a closed manifold mesh; both crescent pads remain separate and have zero positive-volume overlap with the shell. Their exposed contact planes are coplanar. The assembly-level rear neighbor intersections are recorded in the [machine-readable validation](combined-finishing-review-2026-11-01.json).\n\nThe rear shell remains a hybrid review Body with a stored-shape base. Six constrained M2 passages have 2.30 mm nominal diameters; 2.00 mm diameter shank gauges pass through the full shell thickness with zero BRep intersection, leaving 0.15 mm nominal radial clearance in the model. This geometric check does not account for print tolerance or screw-head seating. The legacy 475.701580 mm³ cached-stage volume delta is not an exact material map, and structural equivalence and PLA load capacity remain unverified. Keep this assembly as a review candidate.\n\nThe saved lower magnet-slot tool has zero BRep overlap with the final rear Tip. The separate upper “Magnet Clearance” tool overlaps the original `SmallHangerPocketBody002` by 168.000373 mm³, and the same overlap remains in `Body002FullWidthSeat`, the legacy Tip, the fresh-fuse base, and this candidate Tip. That inherited overlap is unchanged by the reconstruction, but its absolute magnet-fit meaning remains unresolved; this is not a blanket magnet-clearance pass.\n\n## Files\n\n- [Combined review assembly](../master-driven-leadins-candidate/pendant-modular-combined-finishing-review-2026-11-01.FCStd)\n- [Reusable builder and validator](../scripts/build_combined_finishing_review.py)\n- [JSON results](combined-finishing-review-2026-11-01.json)\n""", encoding="utf-8")
     print(json.dumps(result, indent=2))
 finally:
     close(check)

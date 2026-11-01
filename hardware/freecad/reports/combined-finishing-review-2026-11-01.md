@@ -22,7 +22,9 @@ On a disposable copy of the combined assembly, `LowerWebP2XAbs` changed from 9.9
 
 The combined assembly was recomputed, saved, closed, reopened, and recomputed. Its live links resolve. The rear shell is one valid solid with a closed manifold mesh; both crescent pad sketches remain fully constrained in their separate component document, and the pads have zero positive-volume overlap with the shell. Their exposed contact planes are coplanar. The assembly-level rear neighbor intersections are recorded in the [machine-readable validation](combined-finishing-review-2026-11-01.json).
 
-The rear shell remains a hybrid review Body with a stored-shape base. Its legacy 475.701580 mm³ cached-stage volume delta is not an exact material map, and its structural equivalence and PLA load capacity remain unverified. Keep this assembly as a review candidate.
+The rear shell remains a hybrid review Body with a stored-shape base. Six constrained M2 passages have 2.30 mm nominal diameters; 2.00 mm diameter shank gauges pass through the full shell thickness with zero BRep intersection, leaving 0.15 mm nominal radial clearance in the model. This geometric check does not account for print tolerance or screw-head seating. The legacy 475.701580 mm³ cached-stage volume delta is not an exact material map, and structural equivalence and PLA load capacity remain unverified. Keep this assembly as a review candidate.
+
+The saved lower magnet-slot tool has zero BRep overlap with the final rear Tip. The separate upper “Magnet Clearance” tool overlaps the original `SmallHangerPocketBody002` by 168.000373 mm³, and the same overlap remains in `Body002FullWidthSeat`, the legacy Tip, the fresh-fuse base, and this candidate Tip. That inherited overlap is unchanged by the reconstruction, but its absolute magnet-fit meaning remains unresolved; this is not a blanket magnet-clearance pass.
 
 ## Files
 
