@@ -313,9 +313,59 @@
       "fresh_fuse_base": 168.00037313880952,
       "final_rear_tip": 168.00037313880938
     },
-    "upper_condition": "The 168.000373 mm3 intersection is already present in the source hanger body and remains unchanged through the candidate; its absolute magnet-fit meaning is unresolved.",
-    "lower_magnet_slot_tool_volume_mm3": 4071.5040790523813,
-    "lower_magnet_slot_candidate_overlap_mm3": 0.0,
-    "lower_magnet_slot_candidate_overlap_valid": true
+    "upper_condition": "The Pocket removes the initial clearance volume; Pad019 (Mag Bulk) restores part of it; Pocket015 (Magnet Slot) removes part again. The residual 168.000373 mm3 is already in the downstream source and remains unchanged in the candidate, consistent with this construction sequence.",
+    "upper_magnet_clearance_feature_history": [
+      {
+        "feature": "Pad007",
+        "intersection_mm3": 523.8899613583418
+      },
+      {
+        "feature": "Pocket",
+        "intersection_mm3": 0.0
+      },
+      {
+        "feature": "Pad019",
+        "intersection_mm3": 447.27339945010806
+      },
+      {
+        "feature": "Pocket015",
+        "intersection_mm3": 168.00037313880944
+      },
+      {
+        "feature": "Pad020",
+        "intersection_mm3": 168.00037313880944
+      },
+      {
+        "feature": "SmallHangerPocketBody002",
+        "intersection_mm3": 168.0003731388091
+      },
+      {
+        "feature": "Body002FullWidthSeat",
+        "intersection_mm3": 168.00037313880952
+      },
+      {
+        "feature": "RearBossToWallLoadPaths",
+        "intersection_mm3": 83.94558225767145
+      },
+      {
+        "feature": "RearBossShoulderTransitions",
+        "intersection_mm3": 168.00037313880912
+      },
+      {
+        "feature": "RearBossWallRamps45",
+        "intersection_mm3": 168.00037313880912
+      },
+      {
+        "feature": "fresh_fuse_candidate_final_tip",
+        "intersection_mm3": 168.00037313880938
+      }
+    ],
+    "pocket015_magnet_slot_tool_volume_mm3": 4071.5040790523813,
+    "pocket015_magnet_slot_candidate_overlap_mm3": 0.0,
+    "pocket015_magnet_slot_candidate_overlap_valid": true,
+    "upper_magnet_clearance_feature_history_source": "Saved cached stage Shapes and profile operation labels; the complete original shell feature history was not recomputed for this comparison.",
+    "upper_magnet_clearance_readded_by_pad019_mm3": 447.27339945010806,
+    "upper_magnet_clearance_removed_again_by_pocket015_mm3": 279.2730263112986,
+    "pocket015_magnet_slot_tool_solid_count": 4
   }
 }

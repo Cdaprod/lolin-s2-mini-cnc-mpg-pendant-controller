@@ -24,7 +24,7 @@ The combined assembly was recomputed, saved, closed, reopened, and recomputed. I
 
 The rear shell remains a hybrid review Body with a stored-shape base. Six constrained M2 passages have 2.30 mm nominal diameters; 2.00 mm diameter shank gauges pass through the full shell thickness with zero BRep intersection, leaving 0.15 mm nominal radial clearance in the model. This geometric check does not account for print tolerance or screw-head seating. The legacy 475.701580 mm³ cached-stage volume delta is not an exact material map, and structural equivalence and PLA load capacity remain unverified. Keep this assembly as a review candidate.
 
-The saved lower magnet-slot tool has zero BRep overlap with the final rear Tip. The separate upper “Magnet Clearance” tool overlaps the original `SmallHangerPocketBody002` by 168.000373 mm³, and the same overlap remains in `Body002FullWidthSeat`, the legacy Tip, the fresh-fuse base, and this candidate Tip. That inherited overlap is unchanged by the reconstruction, but its absolute magnet-fit meaning remains unresolved; this is not a blanket magnet-clearance pass.
+The saved `Pocket015 - Magnet Slot` removal tool (4,071.504079 mm³) has zero BRep overlap with the final rear Tip. The earlier upper “Magnet Clearance” region follows a multi-step history: `Pocket` removes 523.889961 mm³; `Pad019 - Mag Bulk` restores 447.273399 mm³ there; and `Pocket015 - Magnet Slot` removes part again, leaving 168.000373 mm³ intersecting that earlier tool. The same residual carries through the saved downstream shell and the fresh-fuse candidate, consistent with the feature sequence. This is not a new collision from the reconstruction; actual magnet fit and tolerance still need verification.
 
 ## Files
 
