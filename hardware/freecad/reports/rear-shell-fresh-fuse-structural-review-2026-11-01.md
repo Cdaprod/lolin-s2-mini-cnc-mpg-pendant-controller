@@ -36,6 +36,8 @@ The candidate then recomputes the existing native sequence: four boss-to-wall su
 
 The fresh base reduces BRep-check errors from 336 to 12. The native finishing chain raises that count to 42; this candidate is therefore **not BRep-clean**. The STL-style mesh generated from the cold-reopened Tip is manifold under the edge-incidence check, which addresses the slicer-reported non-manifold mesh symptom for this candidate. These two checks are distinct.
 
+A disposable `Refine=False` probe on the support Pads was rejected: it reduced the first Pad's local BRep error count, but applying it across the full support/web chain raised the final count from 42 to 48. The verified `Refine=True` settings are retained.
+
 The final volume, area, face count, and edge count match the previous review candidate's measured values. This supports preservation at the measured level but does not establish exact BRep identity. The production monolith and modular assembly were not modified.
 
 ## What the 475.702 mm³ figure means

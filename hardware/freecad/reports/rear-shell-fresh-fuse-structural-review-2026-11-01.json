@@ -71,6 +71,13 @@
     "cached_legacy_tip_minus_candidate_volume_delta_mm3": 113.49731070905,
     "warning": "These are saved-shape volume deltas, not exact material symmetric-difference volumes. The legacy final Tip is non-manifold when meshed and fails BOPCheck; do not interpret its cached volume as an unquestioned target."
   },
+  "refinement_probe": {
+    "tested": "PartDesign Pad Refine=False on support Pads",
+    "result": "rejected",
+    "first_pad_bop_errors": 12,
+    "full_chain_tip_bop_errors": 48,
+    "validated_setting_retained": "Refine=True"
+  },
   "material_function_investigation": {
     "features": {
       "RearBossToWallLoadPaths": 383.733575396684,
