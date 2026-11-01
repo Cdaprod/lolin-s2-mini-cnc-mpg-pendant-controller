@@ -14,6 +14,10 @@ This review combines the live hybrid upper-faceplate component with its native R
 
 ![Display-bezel edge before and after the R0.50 mm native fillet](images/display-bezel-r0p50/before-after.png)
 
+## Reversible parameter propagation
+
+On a disposable copy of the combined assembly, `LowerWebP2XAbs` changed from 9.9 to 10.0 mm and restored; the rear link and assembly root updated, then returned to baseline volume. `DisplayBezelFilletRadius` changed from 0.50 to 0.55 mm and restored; the faceplate link and assembly root updated, then returned to baseline. The source component documents were not saved. The test copy was saved, closed, reopened, and recomputed with all nine links valid. Full measurements are in the [JSON validation](combined-finishing-review-2026-11-01.json).
+
 ## Validation
 
 The combined assembly was recomputed, saved, closed, reopened, and recomputed. Its live links resolve. The rear shell is one valid solid with a closed manifold mesh; both crescent pad sketches remain fully constrained in their separate component document, and the pads have zero positive-volume overlap with the shell. Their exposed contact planes are coplanar. The assembly-level rear neighbor intersections are recorded in the [machine-readable validation](combined-finishing-review-2026-11-01.json).

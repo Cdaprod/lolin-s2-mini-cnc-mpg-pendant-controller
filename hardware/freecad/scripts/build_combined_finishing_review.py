@@ -183,6 +183,58 @@ try:
     if angle > 0.1 or plane_offset > 0.01:
         raise RuntimeError("Upper and lower anti-slip contact planes do not match")
 
+    # Exercise both native component sources through their live assembly links.
+    # These edits remain in memory and are restored before saving the assembly;
+    # the source component documents are never saved by this script.
+    bezel_doc = faceplate_link.LinkedObject.Document
+    rear_parameters = rear_doc.getObject("StructuralSupportParameters")
+    bezel_parameters = bezel_doc.getObject("BezelParameters")
+    if rear_parameters is None or bezel_parameters is None:
+        raise RuntimeError("A finishing component parameter sheet is missing")
+    rear_cell = rear_parameters.getCellFromAlias("LowerWebP2XAbs")
+    bezel_cell = bezel_parameters.getCellFromAlias("DisplayBezelFilletRadius")
+    baseline_parameters = {
+        "rear": summary(shell_link.Shape),
+        "bezel": summary(faceplate_link.Shape),
+        "assembly": summary(root.Shape),
+    }
+    rear_parameters.set(rear_cell, "10.0")
+    rear_doc.recompute()
+    assembly.recompute()
+    rear_parameter_probe = {
+        "rear": summary(shell_link.Shape),
+        "assembly": summary(root.Shape),
+    }
+    if abs(rear_parameter_probe["rear"]["volume_mm3"]
+           - baseline_parameters["rear"]["volume_mm3"]) < 1e-4:
+        raise RuntimeError("Rear lower-web parameter did not propagate through its live link")
+
+    bezel_parameters.set(bezel_cell, "0.55 mm")
+    bezel_doc.recompute()
+    assembly.recompute()
+    bezel_parameter_probe = {
+        "bezel": summary(faceplate_link.Shape),
+        "assembly": summary(root.Shape),
+    }
+    if abs(bezel_parameter_probe["bezel"]["volume_mm3"]
+           - baseline_parameters["bezel"]["volume_mm3"]) < 1e-4:
+        raise RuntimeError("Bezel radius did not propagate through its live link")
+
+    rear_parameters.set(rear_cell, "9.9")
+    rear_doc.recompute()
+    bezel_parameters.set(bezel_cell, "0.50 mm")
+    bezel_doc.recompute()
+    assembly.recompute()
+    restored_parameters = {
+        "rear": summary(shell_link.Shape),
+        "bezel": summary(faceplate_link.Shape),
+        "assembly": summary(root.Shape),
+    }
+    for key in ("rear", "bezel", "assembly"):
+        if abs(restored_parameters[key]["volume_mm3"]
+               - baseline_parameters[key]["volume_mm3"]) > 1e-7:
+            raise RuntimeError("Restoring the component parameters changed " + key)
+
     # Retain known assembly contact at the USB cover; report all other
     # intersections so the combined review does not hide fit issues.
     intersections = []
@@ -261,6 +313,20 @@ try:
         "anti_slip_pads": pad_stats,
         "anti_slip_contact_plane_angle_deg": angle,
         "anti_slip_contact_plane_offset_mm": plane_offset,
+        "reversible_component_parameter_propagation": {
+            "rear": {"parameter": "LowerWebP2XAbs", "change": "9.9 -> 10.0 -> 9.9 mm",
+                     "baseline": baseline_parameters["rear"],
+                     "edited": rear_parameter_probe["rear"],
+                     "restored": restored_parameters["rear"]},
+            "bezel": {"parameter": "DisplayBezelFilletRadius",
+                      "change": "0.50 -> 0.55 -> 0.50 mm",
+                      "baseline": baseline_parameters["bezel"],
+                      "edited": bezel_parameter_probe["bezel"],
+                      "restored": restored_parameters["bezel"]},
+            "assembly_volume_baseline_mm3": baseline_parameters["assembly"]["volume_mm3"],
+            "assembly_volume_after_restore_mm3": restored_parameters["assembly"]["volume_mm3"],
+            "source_component_documents_saved": False,
+        },
         "rear_neighbor_intersections_mm3": intersections,
         "save_close_reopen_recompute": "passed",
         "protected_monolith_and_production_assembly_modified": False,
@@ -272,7 +338,7 @@ try:
         ],
     }
     REPORT_JSON.write_text(json.dumps(result, indent=2) + "\n")
-    REPORT_MD.write_text("""# Combined pendant finishing review\n\nStatus: **validated disposable assembly; not production approved.**\n\nThis review combines the live hybrid upper-faceplate component with its native R0.50 mm bezel fillet, the fresh-fuse rear-shell candidate with its native 0.25 mm bottom-perimeter fillet, and separate upper/lower TPU crescent pad links. It preserves the source placements and leaves the protected monolith and production assembly unchanged.\n\n## Previews\n\n![Combined finishing review assembly, underside view](images/combined-finishing-review-2026-11-01/assembly-bottom.png)\n\n![Combined finishing review assembly, front view](images/combined-finishing-review-2026-11-01/assembly-top.png)\n\n![Rear-shell candidate underside with native supports, bottom edge finish, and crescent seats](images/rear-shell-fresh-fuse-structural-review-bottom-2026-11-01.png)\n\n![Display-bezel edge before and after the R0.50 mm native fillet](images/display-bezel-r0p50/before-after.png)\n\n## Validation\n\nThe combined assembly was recomputed, saved, closed, reopened, and recomputed. Its live links resolve. The rear shell is one valid solid with a closed manifold mesh; both crescent pads remain separate and have zero positive-volume overlap with the shell. Their exposed contact planes are coplanar. The assembly-level rear neighbor intersections are recorded in the [machine-readable validation](combined-finishing-review-2026-11-01.json).\n\nThe rear shell remains a hybrid review Body with a stored-shape base. Its legacy 475.701580 mm³ cached-stage volume delta is not an exact material map, and its structural equivalence and PLA load capacity remain unverified. Keep this assembly as a review candidate.\n\n## Files\n\n- [Combined review assembly](../master-driven-leadins-candidate/pendant-modular-combined-finishing-review-2026-11-01.FCStd)\n- [Reusable builder and validator](../scripts/build_combined_finishing_review.py)\n- [JSON results](combined-finishing-review-2026-11-01.json)\n""", encoding="utf-8")
+    REPORT_MD.write_text("""# Combined pendant finishing review\n\nStatus: **validated disposable assembly; not production approved.**\n\nThis review combines the live hybrid upper-faceplate component with its native R0.50 mm bezel fillet, the fresh-fuse rear-shell candidate with its native 0.25 mm bottom-perimeter fillet, and separate upper/lower TPU crescent pad links. It preserves the source placements and leaves the protected monolith and production assembly unchanged.\n\n## Previews\n\n![Combined finishing review assembly, underside view](images/combined-finishing-review-2026-11-01/assembly-bottom.png)\n\n![Combined finishing review assembly, front view](images/combined-finishing-review-2026-11-01/assembly-top.png)\n\n![Rear-shell candidate underside with native supports, bottom edge finish, and crescent seats](images/rear-shell-fresh-fuse-structural-review-bottom-2026-11-01.png)\n\n![Display-bezel edge before and after the R0.50 mm native fillet](images/display-bezel-r0p50/before-after.png)\n\n## Reversible parameter propagation\n\nOn a disposable copy of the combined assembly, `LowerWebP2XAbs` changed from 9.9 to 10.0 mm and restored; the rear link and assembly root updated, then returned to baseline volume. `DisplayBezelFilletRadius` changed from 0.50 to 0.55 mm and restored; the faceplate link and assembly root updated, then returned to baseline. The source component documents were not saved. The test copy was saved, closed, reopened, and recomputed with all nine links valid. Full measurements are in the [JSON validation](combined-finishing-review-2026-11-01.json).\n\n## Validation\n\nThe combined assembly was recomputed, saved, closed, reopened, and recomputed. Its live links resolve. The rear shell is one valid solid with a closed manifold mesh; both crescent pads remain separate and have zero positive-volume overlap with the shell. Their exposed contact planes are coplanar. The assembly-level rear neighbor intersections are recorded in the [machine-readable validation](combined-finishing-review-2026-11-01.json).\n\nThe rear shell remains a hybrid review Body with a stored-shape base. Its legacy 475.701580 mm³ cached-stage volume delta is not an exact material map, and its structural equivalence and PLA load capacity remain unverified. Keep this assembly as a review candidate.\n\n## Files\n\n- [Combined review assembly](../master-driven-leadins-candidate/pendant-modular-combined-finishing-review-2026-11-01.FCStd)\n- [Reusable builder and validator](../scripts/build_combined_finishing_review.py)\n- [JSON results](combined-finishing-review-2026-11-01.json)\n""", encoding="utf-8")
     print(json.dumps(result, indent=2))
 finally:
     close(check)

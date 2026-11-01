@@ -200,5 +200,32 @@
       "fully_constrained": true,
       "constraint_count": 4
     }
+  },
+  "reversible_component_parameter_propagation": {
+    "rear": {
+      "parameter": "LowerWebP2XAbs",
+      "change": "9.9 -> 10.0 -> 9.9 mm",
+      "baseline_volume_mm3": 40847.86169758013,
+      "edited_volume_mm3": 40842.00696134979,
+      "restored_volume_mm3": 40847.86169758013,
+      "assembly_volume_baseline_mm3": 112285.00978165865,
+      "assembly_volume_after_edit_mm3": 112279.15505029612,
+      "assembly_volume_edited_mm3": 112279.15505029612
+    },
+    "bezel": {
+      "parameter": "DisplayBezelFilletRadius",
+      "change": "0.50 -> 0.55 -> 0.50 mm",
+      "baseline_volume_mm3": 13349.004070174205,
+      "edited_volume_mm3": 13345.995490889669,
+      "restored_volume_mm3": 13349.004070174205,
+      "assembly_volume_after_edit_mm3": 112276.14647154664,
+      "assembly_volume_after_rear_and_bezel_edits_mm3": 112276.14647154664
+    },
+    "assembly_volume_baseline_mm3": 112285.00978165865,
+    "assembly_volume_restored_mm3": 112285.00978165866,
+    "source_component_documents_saved": false,
+    "test_method": "Disposable copy of the combined assembly; both component parameter values were restored before saving, then cold-opened and recomputed.",
+    "assembly_volume_after_restore_mm3": 112285.00978165866,
+    "assembly_volume_restoration_error_mm3": 1.4551915228366852e-11
   }
 }
