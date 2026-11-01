@@ -115,5 +115,35 @@
     ]
   },
   "interpretation": "Mesh occupancy localizes most sampled change to all four screw-boss-to-wall regions and places added samples around the boss/web transitions. The 1 mm whole-shell occupancy net (+258 mm3) is far below the exact BRep net (+475.702 mm3). The final mesh is non-watertight and has mesh volume 223.155 mm3 below the saved BRep, so this study cannot assign the unresolved volume or prove exact reinforcement equivalence.",
-  "visual": "images/rear-shell-loadpath-mesh-occupancy-2026-10-31.png"
+  "visual": "images/rear-shell-loadpath-mesh-occupancy-2026-10-31.png",
+  "native_candidate_vs_legacy_mesh": {
+    "candidate_component": "pendant-bodies/rear-shell-webs-dimensioned-sketches-review-candidate.FCStd",
+    "candidate_tip": "LowerRightInnerWebPad",
+    "candidate_brep_valid_one_solid": true,
+    "candidate_brep_volume_mm3": 40847.86169995908,
+    "candidate_mesh_faces": 27756,
+    "candidate_mesh_watertight": true,
+    "candidate_processed_mesh_volume_mm3": 40829.369299005324,
+    "legacy_processed_mesh_volume_mm3": 40738.20363905264,
+    "legacy_brep_volume_mm3": 40961.35900828918,
+    "candidate_minus_legacy_brep_mm3": -113.4973083301,
+    "candidate_minus_legacy_mesh_volume_mm3": 91.165659952684,
+    "whole_shell_1mm_occupancy": {
+      "added_mm3": 173,
+      "removed_mm3": 104,
+      "net_candidate_minus_legacy_mm3": 69,
+      "z_bands": [
+        {"z_mm": [-36.84, -25.0], "added_mm3": 54, "removed_mm3": 58, "net_mm3": -4},
+        {"z_mm": [-25.0, -14.5857], "added_mm3": 119, "removed_mm3": 46, "net_mm3": 73}
+      ]
+    },
+    "boss_regions_1mm_occupancy": [
+      {"region": "upper-left", "added_mm3": 3, "removed_mm3": 1, "net_candidate_minus_legacy_mm3": 2},
+      {"region": "upper-right", "added_mm3": 2, "removed_mm3": 3, "net_candidate_minus_legacy_mm3": -1},
+      {"region": "lower-left", "added_mm3": 47, "removed_mm3": 16, "net_candidate_minus_legacy_mm3": 31},
+      {"region": "lower-right", "added_mm3": 49, "removed_mm3": 17, "net_candidate_minus_legacy_mm3": 32}
+    ],
+    "interpretation": "The upper support candidate is close to the legacy mesh locally; lower candidate webs carry more sampled occupancy than the legacy mesh in the broad lower boss zones. Because the legacy mesh is not watertight and BRep/mesh volume comparisons disagree in sign, this is approximate evidence only.",
+    "visual": "images/rear-shell-candidate-vs-legacy-occupancy-2026-10-31.png"
+  }
 }
