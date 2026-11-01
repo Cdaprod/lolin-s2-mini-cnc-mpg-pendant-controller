@@ -1,0 +1,68 @@
+{
+  "date": "2026-11-01",
+  "branch": "hardware-integration",
+  "status": "validated_disposable_master_driven_review_candidate",
+  "protected_monolith_modified": false,
+  "production_master_modified": false,
+  "production_assembly_modified": false,
+  "master": "pendant-master.FCStd",
+  "component": "pendant-bodies/rear-shell-native-loadpath-master-radius-review-2026-11-01.FCStd",
+  "review_assembly": "pendant-modular-rear-loadpath-master-radius-review-2026-11-01.FCStd",
+  "expressions": {
+    "master_reference": "pendant_master#<<InternalHardware>>.MiddleSupportRadius",
+    "sketch_constraints": [
+      {"sketch": "MiddleLeftRoot", "constraint": "Constraints[2]", "kind": "Radius"},
+      {"sketch": "MiddleRightRoot", "constraint": "Constraints[2]", "kind": "Radius"}
+    ],
+    "center_positions": "remain explicit dimensional constraints at the existing stored-base coordinates",
+    "external_reference_storage": "repo-relative ../pendant-master.FCStd"
+  },
+  "baseline_component": {
+    "valid": true,
+    "solid_count": 1,
+    "tip": "RearCrescentAntiSlipSeatPocket",
+    "volume_mm3": 41080.89424651939,
+    "area_mm2": 30697.513987678416,
+    "bounds_mm": [-39.909661329020054, 39.87917913641778, -88.31234947270411, 86.68846292863208, -36.89446791210996, 0.0],
+    "bop_findings": 28,
+    "bop_finding_types": ["BOPAlgo_InvalidCurveOnSurface"],
+    "mesh": {"facets": 31174, "closed": true, "boundary_edges": 0, "overincident_edges": 0, "degenerate_facets": 0},
+    "bottom_fillet": "StructuralBottomPerimeterFillet, R0.25 mm"
+  },
+  "component_parameter_probe": {
+    "method": "cold-open master, then component; recompute after each master edit",
+    "radius_mm": [7.0, 7.05, 7.0],
+    "volume_mm3": [41080.89424651939, 41095.4828992937, 41080.89424651942],
+    "changed_shape_valid_one_solid": true,
+    "restoration_error_mm3": 2.9103830456733704e-11
+  },
+  "assembly_parameter_probe": {
+    "cold_open_recompute": "passed",
+    "live_link_count": 9,
+    "rear_link_placement": "identity preserved",
+    "radius_mm": [7.0, 7.05, 7.0],
+    "rear_link_volume_mm3": [41080.89424651872, 41095.48289929278, 41080.89424651878],
+    "changed_shape_valid_one_solid": true,
+    "restoration_error_mm3": 5.820766091346741e-11,
+    "front_rear_common_result_valid": true,
+    "front_rear_common_volume_mm3": 0.0,
+    "front_rear_minimum_distance_mm": 0.0,
+    "interpretation": "No volumetric overlap; zero distance indicates touching/coincident regions and does not establish positive clearance or contact area.",
+    "static_interim_faceplate_representations": 2
+  },
+  "rejected_positional_master_probe": {
+    "parameter": "InternalHardware.MiddleScrewHalfSpacing",
+    "change_mm": [27.0, 27.05, 27.0],
+    "observed_failure": "LowerLeftNativeLoadPath and downstream saved-shell features reported invalid shapes while the support roots moved relative to the stored base.",
+    "restoration": "restored valid one-solid baseline",
+    "disposition": "root center coordinates remain fixed to match the stored shell base until that base can regenerate parametrically"
+  },
+  "limits": [
+    "The base shell is still a stored-shape PartDesign feature, not a complete native history.",
+    "The 28 residual curve-on-surface BOP findings remain.",
+    "Exact BRep equivalence to the previous rear candidate is not established; a rear/rear Boolean test failed volume conservation.",
+    "The assembly mating common check found no overlap but 0 mm minimum distance; positive clearance and contact area were not measured.",
+    "No FEM or physical 5x proof-load test was performed."
+  ],
+  "validator": "scripts/validate_rear_shell_master_radius_review.py"
+}

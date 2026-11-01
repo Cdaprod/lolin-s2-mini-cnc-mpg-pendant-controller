@@ -4,6 +4,10 @@ Date: 2026-11-01
 Branch: `hardware-integration`
 Authoritative source retained unchanged: `pendant.FCStd`
 
+## Master-driven rear root radius (2026-11-01)
+
+A separate component and review assembly drive the two middle support-root radii from the existing master alias. Reversible 7.00→7.05→7.00 mm tests propagated through both the component Tip and assembly `App::Link`, restoring their baseline volumes within 5.9×10⁻¹¹ mm³. The baseline Tip remains one valid solid with a closed test mesh. A 0.05 mm screw-spacing change invalidated the lower-left load-path feature against the stored shell base, so root centers remain fixed and that broader parameterization was rejected. The candidate retains 28 BOP findings and is not production-ready. See [the embedded preview and test limits](reports/rear-shell-master-driven-radius-review-2026-11-01.md).
+
 ## Rear-shell selective loft refinement study (2026-11-01)
 
 A single `Refine=False` setting on the middle-left native support loft reduced the review candidate's BOP findings from 42 to 28 and retained a one-solid Tip with a closed manifold mesh after save/reopen/recompute. Bounds are unchanged and BRep volume/area changes are 0.000103 mm³ and −4.8×10⁻⁷ mm². The saved-feature audit shows the middle-right loft adds 10 curve-on-surface findings and the lower-left adds four; a ruled-loft probe made no difference. A separate review assembly cold-opens with nine links and zero common volume between its front/rear shell pair (0 mm minimum distance). Exact rear-shape equivalence and positive fit clearance remain unproven, so the selective candidate has not replaced any production link. See [the embedded previews and full validation limits](reports/rear-shell-selective-refine-review-2026-11-01.md).
