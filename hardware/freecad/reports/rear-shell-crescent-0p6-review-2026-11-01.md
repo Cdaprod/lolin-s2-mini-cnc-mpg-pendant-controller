@@ -24,6 +24,7 @@ The native pad Bodies retain their fully constrained profiles and 0.10 mm seat e
 | Rear shell after assembly cold reopen | Valid, one solid |
 | Rear-shell mesh at 0.08 mm / 0.35 rad | 16,050 facets; 0 boundary, 0 over-incident edges |
 | Assembly links after cold reopen | 8, all valid |
+| `UpperPadProtrusion` 0.60 → 0.70 → 0.60 mm | Component and live link changed by the expected 17.251530 mm³ and restored within 3×10⁻¹⁴ mm³ |
 | Relocated assembly with prior 0.80 mm pad source omitted | Re-linked to 0.60 mm component and cold-opened successfully |
 
 This variant reduces magnet stand-off by 0.20 mm relative to the 0.80 mm baseline while retaining the same planform. The thinner pad may reduce compliance, wear life, or grip. The comparison is a geometric candidate only; TPU grade, adhesion/retention, magnet holding force, complete pendant mass, and physical testing remain unresolved.

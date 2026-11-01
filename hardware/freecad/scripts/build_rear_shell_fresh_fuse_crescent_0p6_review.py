@@ -11,6 +11,7 @@ from pathlib import Path
 
 import FreeCAD as App
 import MeshPart
+import Part
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -133,6 +134,40 @@ if angle > 0.1 or offset > 0.01:
 if any(row["shell_common_volume_mm3"] > 1e-7 for row in pad_metrics.values()):
     raise RuntimeError("A crescent pad intersects the rear shell")
 
+upper_body = pads_doc.getObject("UpperCrescentAntiSlipPadBody")
+upper_profile = pads_doc.getObject("UpperCrescentAntiSlipProfile")
+upper_link = assembly.getObject("Review_AntiSlipPadUpper")
+profile_area = Part.Face(upper_profile.Shape.Wires[0]).Area
+base_component_volume = upper_body.Tip.Shape.Volume
+base_link_volume = upper_link.Shape.Volume
+params.UpperPadProtrusion = 0.7
+pads_doc.recompute()
+assembly.recompute()
+changed_component_volume = upper_body.Tip.Shape.Volume
+changed_link_volume = upper_link.Shape.Volume
+expected_parameter_delta = profile_area * 0.1
+params.UpperPadProtrusion = 0.6
+pads_doc.recompute()
+assembly.recompute()
+restored_component_volume = upper_body.Tip.Shape.Volume
+restored_link_volume = upper_link.Shape.Volume
+parameter_test = {
+    "parameter": "AntiSlipDesignParameters.UpperPadProtrusion",
+    "baseline_mm": 0.6,
+    "test_mm": 0.7,
+    "expected_volume_delta_mm3": expected_parameter_delta,
+    "component_delta_mm3": changed_component_volume - base_component_volume,
+    "assembly_link_delta_mm3": changed_link_volume - base_link_volume,
+    "component_restore_error_mm3": restored_component_volume - base_component_volume,
+    "assembly_link_restore_error_mm3": restored_link_volume - base_link_volume,
+    "saved_with_test_value": False,
+}
+if (abs(parameter_test["component_delta_mm3"] - expected_parameter_delta) > 1e-5
+        or abs(parameter_test["assembly_link_delta_mm3"] - expected_parameter_delta) > 1e-5
+        or abs(parameter_test["component_restore_error_mm3"]) > 1e-7
+        or abs(parameter_test["assembly_link_restore_error_mm3"]) > 1e-7):
+    raise RuntimeError("Reversible pad parameter did not propagate through the assembly link")
+
 assembly.recompute()
 assembly.save()
 assembly_name, pads_name, rear_name = assembly.Name, pads_doc.Name, rear_doc.Name
@@ -187,6 +222,7 @@ result = {
     "native_pad_bodies": pad_metrics,
     "contact_plane_normal_angle_deg": angle,
     "contact_plane_offset_mm": offset,
+    "reversible_parameter_propagation": parameter_test,
     "cold_reopen_rear_shell": mesh,
     "cold_reopen_link_count": len(links),
     "protected_monolith_and_production_assembly_modified": False,

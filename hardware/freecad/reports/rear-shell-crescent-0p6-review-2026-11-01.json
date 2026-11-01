@@ -42,7 +42,7 @@
           0.9990482215818578
         ],
         "center_mm": [
-          -2.1062524554332773e-14,
+          -2.149577174245798e-14,
           -59.93032361099904,
           -31.42498493071475
         ],
@@ -52,6 +52,17 @@
   },
   "contact_plane_normal_angle_deg": 0.0,
   "contact_plane_offset_mm": 2.842170943040401e-14,
+  "reversible_parameter_propagation": {
+    "parameter": "AntiSlipDesignParameters.UpperPadProtrusion",
+    "baseline_mm": 0.6,
+    "test_mm": 0.7,
+    "expected_volume_delta_mm3": 17.251529707337443,
+    "component_delta_mm3": 17.25152970733717,
+    "assembly_link_delta_mm3": 17.251529707337184,
+    "component_restore_error_mm3": 2.842170943040401e-14,
+    "assembly_link_restore_error_mm3": -1.4210854715202004e-14,
+    "saved_with_test_value": false
+  },
   "cold_reopen_rear_shell": {
     "valid": true,
     "solids": 1,
