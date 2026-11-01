@@ -1,0 +1,82 @@
+{
+  "status": "disposable review assembly; not production-approved",
+  "candidate_assembly": "/private/tmp/pendant-cnc-freecad-candidate/hardware/freecad/pendant-modular-fresh-fuse-tpu-crescent-shoulder-chamfer-review-2026-11-01.FCStd",
+  "source_assembly": "/private/tmp/pendant-cnc-freecad-candidate/hardware/freecad/pendant-modular-fresh-fuse-tpu-crescent-0p6-review-2026-11-01.FCStd",
+  "source_component": "/private/tmp/pendant-cnc-freecad-candidate/hardware/freecad/pendant-bodies/rear-shell-native-shoulder-chamfer-review-2026-11-01.FCStd",
+  "updated_link": "Interim_Body002",
+  "linked_body": "RearShellStructuralFirstNoDuplicatePad",
+  "linked_component_file": "/private/tmp/pendant-cnc-freecad-candidate/hardware/freecad/pendant-bodies/rear-shell-native-shoulder-chamfer-review-2026-11-01.FCStd",
+  "link_placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+  "link_placement_preserved": true,
+  "resolved_app_links": [
+    "Editable_Body_DisplayRetainer_EditableV2",
+    "Editable_Body_USBTetheredCover",
+    "Editable_Body_FaceplateLocator_A",
+    "Editable_Body_FaceplateLocator_B",
+    "Editable_Body006",
+    "Interim_Body002",
+    "Review_AntiSlipPadUpper",
+    "Review_AntiSlipPadLower"
+  ],
+  "unresolved_app_links": [],
+  "other_component_intersection_volumes_before_mm3": {
+    "Interim_Body": 0.0,
+    "Interim_Body003": 0.0,
+    "Interim_EncoderFaceplatePocketUnsplit": 0.0,
+    "Editable_Body_DisplayRetainer_EditableV2": 0.0,
+    "Editable_Body_USBTetheredCover": 0.780471884577827,
+    "Editable_Body_FaceplateLocator_A": 0.0,
+    "Editable_Body_FaceplateLocator_B": 0.0,
+    "Editable_Body006": 0.0,
+    "Review_AntiSlipPadUpper": 0.0,
+    "Review_AntiSlipPadLower": 0.0
+  },
+  "other_component_intersection_volumes_after_mm3": {
+    "Interim_Body": 0.0,
+    "Interim_Body003": 0.0,
+    "Interim_EncoderFaceplatePocketUnsplit": 0.0,
+    "Editable_Body_DisplayRetainer_EditableV2": 0.0,
+    "Editable_Body_USBTetheredCover": 0.7804718845778238,
+    "Editable_Body_FaceplateLocator_A": 0.0,
+    "Editable_Body_FaceplateLocator_B": 0.0,
+    "Editable_Body006": 0.0,
+    "Review_AntiSlipPadUpper": 0.0,
+    "Review_AntiSlipPadLower": 0.0
+  },
+  "intersection_deltas_mm3": {
+    "Interim_Body": 0.0,
+    "Interim_Body003": 0.0,
+    "Interim_EncoderFaceplatePocketUnsplit": 0.0,
+    "Editable_Body_DisplayRetainer_EditableV2": 0.0,
+    "Editable_Body_USBTetheredCover": -3.219646771412954e-15,
+    "Editable_Body_FaceplateLocator_A": 0.0,
+    "Editable_Body_FaceplateLocator_B": 0.0,
+    "Editable_Body006": 0.0,
+    "Review_AntiSlipPadUpper": 0.0,
+    "Review_AntiSlipPadLower": 0.0
+  },
+  "pre_save_link_mesh": {
+    "mesh_closed": true,
+    "facets": 16116,
+    "boundary_edges": 0,
+    "overincident_edges": 0,
+    "degenerate_facets": 0
+  },
+  "cold_reopen_link": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40832.352285899346,
+    "mesh_closed": true,
+    "facets": 16116,
+    "boundary_edges": 0,
+    "overincident_edges": 0,
+    "degenerate_facets": 0
+  },
+  "assembly_root": {
+    "valid": true,
+    "solid_count": 11,
+    "volume_mm3": 112236.47036784141
+  },
+  "production_assembly_modified": false,
+  "protected_monolith_modified": false
+}

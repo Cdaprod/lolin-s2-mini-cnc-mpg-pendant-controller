@@ -1,0 +1,103 @@
+{
+  "status": "disposable parameter propagation candidate; not production-approved",
+  "source": "/private/tmp/pendant-cnc-freecad-candidate/hardware/freecad/pendant-bodies/rear-shell-native-shoulder-chamfer-review-2026-11-01.FCStd",
+  "candidate": "/private/tmp/pendant-cnc-freecad-candidate/hardware/freecad/pendant-bodies/rear-shell-native-support-propagation-review-2026-11-01.FCStd",
+  "parameter": {
+    "alias": "LowerWebP2XAbs",
+    "cell": "B6",
+    "baseline_value": "9.9",
+    "test_value": "10.0",
+    "meaning": "inner lower-web profile point X magnitude, mirrored left/right"
+  },
+  "baseline_tip": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 40832.352288278475,
+    "area_mm2": 30809.612565586773,
+    "faces": 525,
+    "edges": 1517,
+    "bounds": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ],
+    "mesh_closed": true,
+    "mesh_facets": 16116,
+    "mesh_boundary": 0,
+    "mesh_overincident": 0,
+    "mesh_degenerate": 0
+  },
+  "perturbed_tip": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 40826.49755204104,
+    "area_mm2": 30807.57135380761,
+    "faces": 525,
+    "edges": 1517,
+    "bounds": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ],
+    "mesh_closed": true,
+    "mesh_facets": 16096,
+    "mesh_boundary": 0,
+    "mesh_overincident": 0,
+    "mesh_degenerate": 0
+  },
+  "perturbed_volume_delta_mm3": -5.854736237437464,
+  "restored_tip": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 40832.352288278475,
+    "area_mm2": 30809.612565586773,
+    "faces": 525,
+    "edges": 1517,
+    "bounds": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ],
+    "mesh_closed": true,
+    "mesh_facets": 16094,
+    "mesh_boundary": 0,
+    "mesh_overincident": 0,
+    "mesh_degenerate": 0
+  },
+  "restored_symmetric_difference_mm3": 0.0,
+  "cold_reopen_tip": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 40832.352288278475,
+    "area_mm2": 30809.612565586773,
+    "faces": 525,
+    "edges": 1517,
+    "bounds": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ],
+    "mesh_closed": true,
+    "mesh_facets": 16116,
+    "mesh_boundary": 0,
+    "mesh_overincident": 0,
+    "mesh_degenerate": 0
+  },
+  "cold_reopen_symmetric_difference_mm3": 0.0,
+  "all_reinforcement_sketches_fully_constrained": true,
+  "partdesign_features_up_to_date": true,
+  "protected_monolith_modified": false,
+  "production_assembly_modified": false
+}

@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-29",
+  "component": "faceplate-locators.FCStd",
+  "master_document": "pendant-master.FCStd",
+  "assembly_document": "pendant-modular-assembly.FCStd",
+  "candidate_sha256": {
+    "pendant-master.FCStd": "a2990a24c9b4fa140e25c1c5ef721fe65a6cb36f48a55cc168a11778421e56cb",
+    "pendant-bodies/faceplate-locators.FCStd": "e191ea5c842227c4d55cbf296f1676f8fc7edf16d42eafc4227842cf2d49fa54",
+    "pendant-modular-assembly.FCStd": "d727c69f3e3bc68857fc29aa29438fc2a6f7a59954a6f64b3766d466fa57bbdb"
+  },
+  "checks": {
+    "native_expressions": "All three concentric profile sketches for each locator report Valid expressions; sketches remain fully constrained.",
+    "assembly_refresh": "Component-scoped refresh recomputed the locator source, validated all five live links and four static interim solids, saved and reopened the assembly.",
+    "exact_original_geometry_restored": "Both fresh-process BREP symmetric-difference checks returned 0.0 mm3 in both directions.",
+    "unchanged_original_geometry_at_parameter_values": "Locator A/B dimensions and placements remained at original values outside reversible tests; reference Body geometry preserved by initial candidate symmetric-difference 0.0 mm3.",
+    "sketch_constraints": {
+      "count": 6,
+      "fully_constrained": true,
+      "degrees_of_freedom_each": 0,
+      "sketches": [
+        "LocatorPassageProfile0",
+        "LocatorUpperProfile0",
+        "LocatorLowerProfile0",
+        "LocatorPassageProfile1",
+        "LocatorUpperProfile1",
+        "LocatorLowerProfile1"
+      ]
+    }
+  },
+  "tests": [
+    {
+      "alias": "FaceplateLocatorA_X",
+      "original_value": "-28.76 mm",
+      "test_value": "-28.66 mm",
+      "master_cell": "B19",
+      "baseline_bbox_mm": [
+        -32.36,
+        -25.16,
+        22.946299999999997,
+        30.1463,
+        -3.5,
+        -0.7999999999999998
+      ],
+      "changed_bbox_mm": [
+        -32.26,
+        -25.06,
+        22.946299999999997,
+        30.1463,
+        -3.5,
+        -0.7999999999999998
+      ],
+      "restored_bbox_mm": [
+        -32.36,
+        -25.16,
+        22.946299999999997,
+        30.1463,
+        -3.5,
+        -0.7999999999999998
+      ],
+      "baseline_volume_mm3": 88.29496032374551,
+      "changed_volume_mm3": 88.29496032374551,
+      "restored_volume_mm3": 88.29496032374551,
+      "expressions_valid": true,
+      "live_link_matches_source": true,
+      "restored_symmetric_difference_mm3": 0.0,
+      "result": "PASS"
+    },
+    {
+      "alias": "FaceplateLocatorB_Y",
+      "original_value": "65.0 mm",
+      "test_value": "65.1 mm",
+      "master_cell": "B22",
+      "baseline_bbox_mm": [
+        22.4,
+        29.6,
+        61.4,
+        68.6,
+        -3.5,
+        -0.7999999999999998
+      ],
+      "changed_bbox_mm": [
+        22.4,
+        29.6,
+        61.49999999999999,
+        68.69999999999999,
+        -3.5,
+        -0.7999999999999998
+      ],
+      "restored_bbox_mm": [
+        22.4,
+        29.6,
+        61.4,
+        68.6,
+        -3.5,
+        -0.7999999999999998
+      ],
+      "baseline_volume_mm3": 88.29496032374553,
+      "changed_volume_mm3": 88.29496032374551,
+      "restored_volume_mm3": 88.29496032374553,
+      "expressions_valid": true,
+      "live_link_matches_source": true,
+      "restored_symmetric_difference_mm3": 0.0,
+      "result": "PASS"
+    }
+  ],
+  "limitations": [
+    "These tests validate locator source Bodies and their assembly links; they do not validate structural strength of the closed hanger.",
+    "Unrelated component feature histories are not recomputed by the component-scoped refresh, though all assembly links are shape-validated."
+  ]
+}

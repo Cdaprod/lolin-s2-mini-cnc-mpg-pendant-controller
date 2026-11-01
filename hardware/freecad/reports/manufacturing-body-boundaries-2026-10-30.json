@@ -1,0 +1,4903 @@
+{
+  "bodies": [
+    {
+      "active_sketcher_external_reference_count": 19,
+      "body": "Body",
+      "conservative_blocker_count": 41,
+      "conservative_readiness": "BLOCKED",
+      "cross_manufacturing_body_edge_count": 5,
+      "cross_manufacturing_body_edges": [
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body002"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body",
+          "source_object": "RearFullLandProfile0",
+          "source_owners": [
+            "Body",
+            "RearFullLandCutter"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "WidthControlled_RearMatchedProfile0",
+          "target_owners": [
+            "Body002"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RestoreUpperFaceplateHoles",
+            "FrontHighToLowTransitions",
+            "FrontBossToWallLoadPaths",
+            "FrontFullWidthReceiver",
+            "RearFullWidthReceiver",
+            "RearFullLandCutter",
+            "RearFullWidthSeatLoft",
+            "RearFullLandProfile0"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body002"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body",
+          "source_object": "RearFullLandProfile1",
+          "source_owners": [
+            "Body",
+            "RearFullLandCutter"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "WidthControlled_RearMatchedProfile0",
+          "target_owners": [
+            "Body002"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RestoreUpperFaceplateHoles",
+            "FrontHighToLowTransitions",
+            "FrontBossToWallLoadPaths",
+            "FrontFullWidthReceiver",
+            "RearFullWidthReceiver",
+            "RearFullLandCutter",
+            "RearFullWidthSeatLoft",
+            "RearFullLandProfile1"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body002"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body",
+          "source_object": "RearEnvelopeForUSBCoverSource",
+          "source_owners": [
+            "FrontExteriorEnvelope",
+            "RearEnvelopeForUSBCover"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "RearEnvelopeBackThickness",
+          "target_owners": [
+            "Body002",
+            "RearExteriorEnvelope"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RestoreUpperFaceplateHoles",
+            "FrontHighToLowTransitions",
+            "FrontBossToWallLoadPaths",
+            "FrontFullWidthReceiver",
+            "RearFullWidthReceiver",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope",
+            "RearEnvelopeForUSBCover",
+            "RearEnvelopeForUSBCoverSource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body",
+          "source_object": "FrontFullLandProfile0",
+          "source_owners": [
+            "FrontFullLandCutter"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "WidthControlled_StableFaceplateBaseOutline",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RestoreUpperFaceplateHoles",
+            "FrontHighToLowTransitions",
+            "FrontBossToWallLoadPaths",
+            "FrontFullWidthReceiver",
+            "FrontRestrictedCutTool",
+            "BaseFeature001",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile0"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body",
+          "source_object": "FrontFullLandProfile1",
+          "source_owners": [
+            "FrontFullLandCutter"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "WidthControlled_StableFaceplateBaseOutline",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RestoreUpperFaceplateHoles",
+            "FrontHighToLowTransitions",
+            "FrontBossToWallLoadPaths",
+            "FrontFullWidthReceiver",
+            "FrontRestrictedCutTool",
+            "BaseFeature001",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile1"
+          ]
+        }
+      ],
+      "expanded_dependency_count": 129,
+      "ordinary_dependency_count": 82,
+      "tip": "RestoreUpperFaceplateHoles",
+      "uncertainty_count": 19
+    },
+    {
+      "active_sketcher_external_reference_count": 31,
+      "body": "Body002",
+      "conservative_blocker_count": 124,
+      "conservative_readiness": "BLOCKED",
+      "cross_manufacturing_body_edge_count": 8,
+      "cross_manufacturing_body_edges": [
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body002",
+              "Body"
+            ]
+          ],
+          "property": "Base",
+          "root_body": "Body002",
+          "source_object": "RearFullLandTransfer",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "SmallHangerPocketBody",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RearBossWallRamps45",
+            "RearBossShoulderTransitions",
+            "RearBossToWallLoadPaths",
+            "Body002FullWidthSeat",
+            "Body002FullLandTransferTool",
+            "RearSeatScrewPassageRelief",
+            "BaseFeature",
+            "RearFullLandTransfer"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body002",
+              "Body"
+            ]
+          ],
+          "property": "Tool",
+          "root_body": "Body002",
+          "source_object": "RearFullLandTransfer",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "RearFullLandCutter",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RearBossWallRamps45",
+            "RearBossShoulderTransitions",
+            "RearBossToWallLoadPaths",
+            "Body002FullWidthSeat",
+            "Body002FullLandTransferTool",
+            "RearSeatScrewPassageRelief",
+            "BaseFeature",
+            "RearFullLandTransfer"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body002",
+              "Body"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body002",
+          "source_object": "FrontExteriorLimitSource",
+          "source_owners": [
+            "Body",
+            "FrontExteriorLimitTool"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "FrontEnvelopeLoft",
+          "target_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RearBossWallRamps45",
+            "RearBossShoulderTransitions",
+            "RearBossToWallLoadPaths",
+            "Body002FullWidthSeat",
+            "Body002FullLandTransferTool",
+            "RearSeatScrewPassageRelief",
+            "BaseFeature",
+            "RearFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool",
+            "FrontExteriorLimitSource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body002"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body002",
+          "source_object": "RearFullLandProfile0",
+          "source_owners": [
+            "Body",
+            "RearFullLandCutter"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "WidthControlled_RearMatchedProfile0",
+          "target_owners": [
+            "Body002"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RearBossWallRamps45",
+            "RearBossShoulderTransitions",
+            "RearBossToWallLoadPaths",
+            "Body002FullWidthSeat",
+            "Body002FullLandTransferTool",
+            "RearSeatScrewPassageRelief",
+            "BaseFeature",
+            "RearFullLandTransfer",
+            "RearFullLandCutter",
+            "RearFullWidthSeatLoft",
+            "RearFullLandProfile0"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body002"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body002",
+          "source_object": "RearFullLandProfile1",
+          "source_owners": [
+            "Body",
+            "RearFullLandCutter"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "WidthControlled_RearMatchedProfile0",
+          "target_owners": [
+            "Body002"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RearBossWallRamps45",
+            "RearBossShoulderTransitions",
+            "RearBossToWallLoadPaths",
+            "Body002FullWidthSeat",
+            "Body002FullLandTransferTool",
+            "RearSeatScrewPassageRelief",
+            "BaseFeature",
+            "RearFullLandTransfer",
+            "RearFullLandCutter",
+            "RearFullWidthSeatLoft",
+            "RearFullLandProfile1"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body002",
+              "Body"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body002",
+          "source_object": "USBSeatToolForBodySource",
+          "source_owners": [
+            "Body",
+            "USBSeatToolForBody"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "USBConformalSeatToolBounded",
+          "target_owners": [
+            "USBConformalSeatTool"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RearBossWallRamps45",
+            "RearBossShoulderTransitions",
+            "RearBossToWallLoadPaths",
+            "Body002FullWidthSeat",
+            "Body002FullLandTransferTool",
+            "RearSeatScrewPassageRelief",
+            "BaseFeature",
+            "RearFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body002",
+              "Body"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body002",
+          "source_object": "Binder016",
+          "source_owners": [
+            "Body002"
+          ],
+          "source_suppressed": false,
+          "subelement": "Sketch019.",
+          "suppressed_objects_on_tip_path": [
+            "Pad022",
+            "Pad021"
+          ],
+          "target_object": "Sketch019",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RearBossWallRamps45",
+            "RearBossShoulderTransitions",
+            "RearBossToWallLoadPaths",
+            "Body002FullWidthSeat",
+            "SmallHangerPocketBody002",
+            "USBConformalCoverSeatBody002",
+            "USB15mmCableAccessBody002",
+            "SideButtonRearNutRelief",
+            "SideButtonRearHeadRelief",
+            "Pocket019",
+            "Pocket018",
+            "RearTaperedSeats",
+            "ConformRearReinforcementToLoft",
+            "USBRearRecessStructuralBulk",
+            "RearMountReinforcement",
+            "RemoveWarpProneTongues",
+            "Pad022",
+            "Pad021",
+            "Binder016"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body002",
+              "Body"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body002",
+          "source_object": "RearScrewAlignmentBinder",
+          "source_owners": [
+            "Body002"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch020",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "RearBossWallRamps45",
+            "RearBossShoulderTransitions",
+            "RearBossToWallLoadPaths",
+            "Body002FullWidthSeat",
+            "SmallHangerPocketBody002",
+            "USBConformalCoverSeatBody002",
+            "USB15mmCableAccessBody002",
+            "SideButtonRearNutRelief",
+            "SideButtonRearHeadRelief",
+            "Pocket019",
+            "RearAlignedHeadSeatSketch",
+            "RearScrewAlignmentBinder"
+          ]
+        }
+      ],
+      "expanded_dependency_count": 166,
+      "ordinary_dependency_count": 51,
+      "tip": "RearBossWallRamps45",
+      "uncertainty_count": 19
+    },
+    {
+      "active_sketcher_external_reference_count": 29,
+      "body": "Body003",
+      "conservative_blocker_count": 153,
+      "conservative_readiness": "BLOCKED",
+      "cross_manufacturing_body_edge_count": 26,
+      "cross_manufacturing_body_edges": [
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "Base",
+          "root_body": "Body003",
+          "source_object": "FrontFullLandTransfer",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "SmallHangerPocketBody",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "Body003FullLandTransferTool",
+            "Body003LandSplit",
+            "BaseFeature002",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body003",
+          "source_object": "FrontOriginalMatingLand",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "Face13",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "SmallHangerPocketBody",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "Body003FullLandTransferTool",
+            "Body003LandSplit",
+            "BaseFeature002",
+            "FrontFullLandTransferRestricted",
+            "FrontMatingLandProjection",
+            "FrontOriginalMatingLand"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body003",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Origin003",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body003",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "XY_Plane001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body003",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "XZ_Plane001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body003",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "X_Axis001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body003",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "YZ_Plane001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body003",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Y_Axis001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body003",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Z_Axis001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [],
+          "external_geometry_order": 2,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body003",
+          "sketcher_geometry_index": -5,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g29;SKT",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [
+            {
+              "index": 13,
+              "name": "",
+              "type": "6"
+            },
+            {
+              "index": 15,
+              "name": "",
+              "type": "14"
+            }
+          ],
+          "external_geometry_order": 3,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body003",
+          "sketcher_geometry_index": -6,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g30;SKT",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [],
+          "external_geometry_order": 4,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body003",
+          "sketcher_geometry_index": -7,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g28;SKT",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [
+            {
+              "index": 19,
+              "name": "",
+              "type": "6"
+            }
+          ],
+          "external_geometry_order": 5,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body003",
+          "sketcher_geometry_index": -8,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g27;SKT",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [
+            {
+              "index": 0,
+              "name": "",
+              "type": "18"
+            },
+            {
+              "index": 1,
+              "name": "",
+              "type": "1"
+            },
+            {
+              "index": 2,
+              "name": "",
+              "type": "6"
+            },
+            {
+              "index": 10,
+              "name": "",
+              "type": "6"
+            }
+          ],
+          "external_geometry_order": 0,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body003",
+          "sketcher_geometry_index": -3,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g31;SKT",
+          "suppressed_objects_on_tip_path": [
+            "EmergencyStopBelowPanelHousingClearance",
+            "ControlAntiRotationKeyClearances",
+            "MultiplierAssemblyClearanceKnobSeat",
+            "AxisSelectorAssemblyClearanceKnobSeat",
+            "EmergencyStopFlangeSeat",
+            "MultiplierAssemblyClearance",
+            "AxisSelectorAssemblyClearance",
+            "FaceplateTaperedLocators",
+            "Pocket012"
+          ],
+          "target_object": "Sketch016",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "LEDLightAperture",
+            "LEDRearRecess",
+            "RemovableLocatorSockets",
+            "EmergencyStopBelowPanelHousingClearance",
+            "ControlAntiRotationKeyClearances",
+            "MultiplierAssemblyClearanceKnobSeat",
+            "MultiplierAssemblyClearanceNeckPassage",
+            "AxisSelectorAssemblyClearanceKnobSeat",
+            "AxisSelectorAssemblyClearanceNeckPassage",
+            "EmergencyStopFlangeSeat",
+            "EmergencyStopAssemblyClearance",
+            "MultiplierAssemblyClearance",
+            "AxisSelectorAssemblyClearance",
+            "DisplayGlassAssemblyClearance",
+            "UpperEncoderCaptureSeats",
+            "FaceplateHeadSeats",
+            "FaceplateM2Passages",
+            "FaceplateHeadBearingPads",
+            "FaceplateTaperedLocators",
+            "UpperEncoderCrownClearance",
+            "UpperDisplayFaceplateSplit",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Pocket011",
+            "Pocket010",
+            "Pad012",
+            "Sketch016"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [],
+          "external_geometry_order": 0,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body003",
+          "sketcher_geometry_index": -3,
+          "source_object": "Sketch001",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g92;SKT",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [],
+          "external_geometry_order": 1,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body003",
+          "sketcher_geometry_index": -4,
+          "source_object": "Sketch001",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g57;SKT",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body003",
+          "source_object": "FrontExteriorLimitSource",
+          "source_owners": [
+            "Body",
+            "FrontExteriorLimitTool"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "FrontEnvelopeLoft",
+          "target_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "Body003FullLandTransferTool",
+            "Body003LandSplit",
+            "BaseFeature002",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool",
+            "FrontExteriorLimitSource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body003",
+          "source_object": "USBSeatToolForBodySource",
+          "source_owners": [
+            "Body",
+            "USBSeatToolForBody"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "USBConformalSeatToolBounded",
+          "target_owners": [
+            "USBConformalSeatTool"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "Body003FullLandTransferTool",
+            "Body003LandSplit",
+            "BaseFeature002",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "ObjectDeps_or_expression",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "",
+          "root_body": "Body003",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch001",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body003",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge3",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body003",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge4",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body003",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge2",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body003",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge1",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body003",
+          "source_object": "Sketch016",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge5",
+          "suppressed_objects_on_tip_path": [
+            "EmergencyStopBelowPanelHousingClearance",
+            "ControlAntiRotationKeyClearances",
+            "MultiplierAssemblyClearanceKnobSeat",
+            "AxisSelectorAssemblyClearanceKnobSeat",
+            "EmergencyStopFlangeSeat",
+            "MultiplierAssemblyClearance",
+            "AxisSelectorAssemblyClearance",
+            "FaceplateTaperedLocators",
+            "Pocket012"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "LEDLightAperture",
+            "LEDRearRecess",
+            "RemovableLocatorSockets",
+            "EmergencyStopBelowPanelHousingClearance",
+            "ControlAntiRotationKeyClearances",
+            "MultiplierAssemblyClearanceKnobSeat",
+            "MultiplierAssemblyClearanceNeckPassage",
+            "AxisSelectorAssemblyClearanceKnobSeat",
+            "AxisSelectorAssemblyClearanceNeckPassage",
+            "EmergencyStopFlangeSeat",
+            "EmergencyStopAssemblyClearance",
+            "MultiplierAssemblyClearance",
+            "AxisSelectorAssemblyClearance",
+            "DisplayGlassAssemblyClearance",
+            "UpperEncoderCaptureSeats",
+            "FaceplateHeadSeats",
+            "FaceplateM2Passages",
+            "FaceplateHeadBearingPads",
+            "FaceplateTaperedLocators",
+            "UpperEncoderCrownClearance",
+            "UpperDisplayFaceplateSplit",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Pocket011",
+            "Pocket010",
+            "Pad012",
+            "Sketch016"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body003",
+          "source_object": "Clone",
+          "source_owners": [
+            "Body003",
+            "Body005"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "EmergencyStopBelowPanelHousingClearance",
+            "ControlAntiRotationKeyClearances",
+            "MultiplierAssemblyClearanceKnobSeat",
+            "AxisSelectorAssemblyClearanceKnobSeat",
+            "EmergencyStopFlangeSeat",
+            "MultiplierAssemblyClearance",
+            "AxisSelectorAssemblyClearance",
+            "FaceplateTaperedLocators",
+            "Pocket012"
+          ],
+          "target_object": "FrontMatchedInnerCavity",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "InsetTaperedControlPadBackPocket",
+            "RestoredOriginalTaperedControlPad",
+            "LEDLightAperture",
+            "LEDRearRecess",
+            "RemovableLocatorSockets",
+            "EmergencyStopBelowPanelHousingClearance",
+            "ControlAntiRotationKeyClearances",
+            "MultiplierAssemblyClearanceKnobSeat",
+            "MultiplierAssemblyClearanceNeckPassage",
+            "AxisSelectorAssemblyClearanceKnobSeat",
+            "AxisSelectorAssemblyClearanceNeckPassage",
+            "EmergencyStopFlangeSeat",
+            "EmergencyStopAssemblyClearance",
+            "MultiplierAssemblyClearance",
+            "AxisSelectorAssemblyClearance",
+            "DisplayGlassAssemblyClearance",
+            "UpperEncoderCaptureSeats",
+            "FaceplateHeadSeats",
+            "FaceplateM2Passages",
+            "FaceplateHeadBearingPads",
+            "FaceplateTaperedLocators",
+            "UpperEncoderCrownClearance",
+            "UpperDisplayFaceplateSplit",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body002"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body003",
+          "source_object": "RearEnvelopeForUSBCoverSource",
+          "source_owners": [
+            "FrontExteriorEnvelope",
+            "RearEnvelopeForUSBCover"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "RearEnvelopeBackThickness",
+          "target_owners": [
+            "Body002",
+            "RearExteriorEnvelope"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "Body003FullWidthSeat",
+            "Body003FullLandTransferTool",
+            "Body003LandSplit",
+            "BaseFeature002",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope",
+            "RearEnvelopeForUSBCover",
+            "RearEnvelopeForUSBCoverSource"
+          ]
+        }
+      ],
+      "expanded_dependency_count": 200,
+      "ordinary_dependency_count": 81,
+      "tip": "Body003FullWidthSeat",
+      "uncertainty_count": 19
+    },
+    {
+      "active_sketcher_external_reference_count": 29,
+      "body": "Body_EncoderFacePlate",
+      "conservative_blocker_count": 193,
+      "conservative_readiness": "BLOCKED",
+      "cross_manufacturing_body_edge_count": 34,
+      "cross_manufacturing_body_edges": [
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body"
+            ]
+          ],
+          "property": "Base",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "FrontFullLandTransfer",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "SmallHangerPocketBody",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "FrontOriginalMatingLand",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "Face13",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "SmallHangerPocketBody",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontMatingLandProjection",
+            "FrontOriginalMatingLand"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "constraints": [],
+          "external_geometry_order": 0,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "sketcher_geometry_index": -3,
+          "source_object": "Pocket005",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": ";#23ce:1b;:G#15754;CUT;:H-a44:d,E",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch017",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Sketch017"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "constraints": [],
+          "external_geometry_order": 1,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "sketcher_geometry_index": -4,
+          "source_object": "Pocket005",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": ";#24a4:59;:Ha42,E",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch017",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Sketch017"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "constraints": [
+            {
+              "index": 3,
+              "name": "",
+              "type": "6"
+            }
+          ],
+          "external_geometry_order": 2,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "sketcher_geometry_index": -5,
+          "source_object": "Pocket005",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": ";#24a4:60;:Ha42,E",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch017",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Sketch017"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body_EncoderPocket"
+            ]
+          ],
+          "property": "Base",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "EncoderPocketShellRelease",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "EncoderPocketWallM2Countersink",
+          "target_owners": [
+            "Body_EncoderPocket"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderPocketShellRelease"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Origin003",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "XY_Plane001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "XZ_Plane001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "X_Axis001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "YZ_Plane001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Y_Axis001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Z_Axis001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [],
+          "external_geometry_order": 2,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "sketcher_geometry_index": -5,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g29;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [
+            {
+              "index": 13,
+              "name": "",
+              "type": "6"
+            },
+            {
+              "index": 15,
+              "name": "",
+              "type": "14"
+            }
+          ],
+          "external_geometry_order": 3,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "sketcher_geometry_index": -6,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g30;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [],
+          "external_geometry_order": 4,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "sketcher_geometry_index": -7,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g28;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [
+            {
+              "index": 19,
+              "name": "",
+              "type": "6"
+            }
+          ],
+          "external_geometry_order": 5,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "sketcher_geometry_index": -8,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g27;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [
+            {
+              "index": 0,
+              "name": "",
+              "type": "18"
+            },
+            {
+              "index": 1,
+              "name": "",
+              "type": "1"
+            },
+            {
+              "index": 2,
+              "name": "",
+              "type": "6"
+            },
+            {
+              "index": 10,
+              "name": "",
+              "type": "6"
+            }
+          ],
+          "external_geometry_order": 0,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "sketcher_geometry_index": -3,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g31;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch016",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Pocket011",
+            "Pocket010",
+            "Pad012",
+            "Sketch016"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [],
+          "external_geometry_order": 0,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "sketcher_geometry_index": -3,
+          "source_object": "Sketch001",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g92;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [],
+          "external_geometry_order": 1,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "sketcher_geometry_index": -4,
+          "source_object": "Sketch001",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g57;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "FrontExteriorLimitSource",
+          "source_owners": [
+            "Body",
+            "FrontExteriorLimitTool"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "FrontEnvelopeLoft",
+          "target_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool",
+            "FrontExteriorLimitSource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "USBSeatToolForBodySource",
+          "source_owners": [
+            "Body",
+            "USBSeatToolForBody"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "USBConformalSeatToolBounded",
+          "target_owners": [
+            "USBConformalSeatTool"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "ObjectDeps_or_expression",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch001",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge3",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge4",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge2",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge1",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Sketch016",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge5",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Pocket011",
+            "Pocket010",
+            "Pad012",
+            "Sketch016"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "Clone",
+          "source_owners": [
+            "Body003",
+            "Body005"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "FrontMatchedInnerCavity",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body003"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "EncoderFaceplateSource",
+          "source_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "EncoderNutReliefs",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body_EncoderFacePlate"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "EncoderPocketSourceBase",
+          "source_owners": [
+            "Body_EncoderPocket"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Body_EncoderFacePlateFullWidthSeat",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderPocketShellRelease",
+            "EncoderPocketWallM2Countersink",
+            "EncoderPocketWallM2_3x120",
+            "EncoderPocketSplit",
+            "EncoderPocketSourceBase"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body002"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "RearEnvelopeForUSBCoverSource",
+          "source_owners": [
+            "FrontExteriorEnvelope",
+            "RearEnvelopeForUSBCover"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "RearEnvelopeBackThickness",
+          "target_owners": [
+            "Body002",
+            "RearExteriorEnvelope"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope",
+            "RearEnvelopeForUSBCover",
+            "RearEnvelopeForUSBCoverSource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body003"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "FrontFullLandProfile0",
+          "source_owners": [
+            "FrontFullLandCutter"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "WidthControlled_StableFaceplateBaseOutline",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile0"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body003"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body_EncoderFacePlate",
+          "source_object": "FrontFullLandProfile1",
+          "source_owners": [
+            "FrontFullLandCutter"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "WidthControlled_StableFaceplateBaseOutline",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile1"
+          ]
+        }
+      ],
+      "expanded_dependency_count": 183,
+      "ordinary_dependency_count": 147,
+      "tip": "EncoderFaceplateReceiverM2Hole",
+      "uncertainty_count": 19
+    },
+    {
+      "active_sketcher_external_reference_count": 29,
+      "body": "Body_EncoderPocket",
+      "conservative_blocker_count": 203,
+      "conservative_readiness": "BLOCKED",
+      "cross_manufacturing_body_edge_count": 40,
+      "cross_manufacturing_body_edges": [
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body"
+            ]
+          ],
+          "property": "Base",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "FrontFullLandTransfer",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "SmallHangerPocketBody",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "FrontOriginalMatingLand",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "Face13",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "SmallHangerPocketBody",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontMatingLandProjection",
+            "FrontOriginalMatingLand"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "constraints": [],
+          "external_geometry_order": 0,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "sketcher_geometry_index": -3,
+          "source_object": "Pocket005",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": ";#23ce:1b;:G#15754;CUT;:H-a44:d,E",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch017",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Sketch017"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "constraints": [],
+          "external_geometry_order": 1,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "sketcher_geometry_index": -4,
+          "source_object": "Pocket005",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": ";#24a4:59;:Ha42,E",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch017",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Sketch017"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "constraints": [
+            {
+              "index": 3,
+              "name": "",
+              "type": "6"
+            }
+          ],
+          "external_geometry_order": 2,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "sketcher_geometry_index": -5,
+          "source_object": "Pocket005",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": ";#24a4:60;:Ha42,E",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Sketch017",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Sketch017"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body_EncoderFacePlate"
+            ]
+          ],
+          "property": "Base",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "EncoderCaptureLipTransfer",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "EncoderCaptureLedge",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body_EncoderFacePlate"
+            ]
+          ],
+          "property": "Tool",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "EncoderCaptureLipTransfer",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "EncoderCrownGlassBackClearance",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body_EncoderFacePlate"
+            ]
+          ],
+          "property": "Base",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "EncoderShellTrimTool",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "EncoderFaceplateSplitProfile",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderPocketShellRelease",
+            "EncoderShellTrimTool"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body_EncoderFacePlate"
+            ]
+          ],
+          "property": "Base",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "RC16NativeFaceplateWithLand",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "EncoderFrontM2Countersink",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body_EncoderFacePlate"
+            ]
+          ],
+          "property": "Base",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "EncoderFaceplateRetentionKeep",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Body_EncoderFacePlateLandSplit",
+          "target_owners": [
+            "Body_EncoderFacePlate",
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body_EncoderFacePlate"
+            ]
+          ],
+          "property": "Tool",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "RC16NativeFaceplateWithLand",
+          "source_owners": [],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Body_EncoderFacePlateLandSplit",
+          "target_owners": [
+            "Body_EncoderFacePlate",
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Origin003",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "XY_Plane001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "XZ_Plane001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "X_Axis001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "YZ_Plane001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Y_Axis001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body"
+            ]
+          ],
+          "property": "OriginFeatures",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Origin002",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Z_Axis001",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch001",
+            "Origin002"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [],
+          "external_geometry_order": 2,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "sketcher_geometry_index": -5,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g29;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [
+            {
+              "index": 13,
+              "name": "",
+              "type": "6"
+            },
+            {
+              "index": 15,
+              "name": "",
+              "type": "14"
+            }
+          ],
+          "external_geometry_order": 3,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "sketcher_geometry_index": -6,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g30;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [],
+          "external_geometry_order": 4,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "sketcher_geometry_index": -7,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g28;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [
+            {
+              "index": 19,
+              "name": "",
+              "type": "6"
+            }
+          ],
+          "external_geometry_order": 5,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "sketcher_geometry_index": -8,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g27;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [
+            {
+              "index": 0,
+              "name": "",
+              "type": "18"
+            },
+            {
+              "index": 1,
+              "name": "",
+              "type": "1"
+            },
+            {
+              "index": 2,
+              "name": "",
+              "type": "6"
+            },
+            {
+              "index": 10,
+              "name": "",
+              "type": "6"
+            }
+          ],
+          "external_geometry_order": 0,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "sketcher_geometry_index": -3,
+          "source_object": "Sketch",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g31;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch016",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Pocket011",
+            "Pocket010",
+            "Pad012",
+            "Sketch016"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [],
+          "external_geometry_order": 0,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "sketcher_geometry_index": -3,
+          "source_object": "Sketch001",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g92;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "constraints": [],
+          "external_geometry_order": 1,
+          "kind": "sketcher_external_geometry",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body",
+              "Body003"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "sketcher_geometry_index": -4,
+          "source_object": "Sketch001",
+          "source_owners": [
+            "Body"
+          ],
+          "source_suppressed": false,
+          "subelement": ";g57;SKT",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch014",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "FrontExteriorLimitSource",
+          "source_owners": [
+            "Body",
+            "FrontExteriorLimitTool"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "FrontEnvelopeLoft",
+          "target_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool",
+            "FrontExteriorLimitSource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "USBSeatToolForBodySource",
+          "source_owners": [
+            "Body",
+            "USBSeatToolForBody"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "USBConformalSeatToolBounded",
+          "target_owners": [
+            "USBConformalSeatTool"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "ObjectDeps_or_expression",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch001",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge3",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge4",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge2",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Sketch014",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge1",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "ExternalGeometry",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Sketch016",
+          "source_owners": [
+            "Body003"
+          ],
+          "source_suppressed": false,
+          "subelement": "Edge5",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Pocket011",
+            "Pocket010",
+            "Pad012",
+            "Sketch016"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body003",
+              "Body"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "Clone",
+          "source_owners": [
+            "Body003",
+            "Body005"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [
+            "Pocket012"
+          ],
+          "target_object": "FrontMatchedInnerCavity",
+          "target_owners": [
+            "Body"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderFacePlate",
+              "Body003"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "EncoderFaceplateSource",
+          "source_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "EncoderNutReliefs",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body_EncoderFacePlate"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "BaseFeature003",
+          "source_owners": [
+            "Body_EncoderFacePlate",
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "FrontFullLandTransferRestricted",
+          "target_owners": [],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003"
+          ]
+        },
+        {
+          "boundary_pair_basis": "direct_physical_owner_crossing",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body_EncoderFacePlate"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "EncoderPocketSourceBase",
+          "source_owners": [
+            "Body_EncoderPocket"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "Body_EncoderFacePlateFullWidthSeat",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderPocketShellRelease",
+            "EncoderPocketWallM2Countersink",
+            "EncoderPocketWallM2_3x120",
+            "EncoderPocketSplit",
+            "EncoderPocketSourceBase"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body002"
+            ]
+          ],
+          "property": "BaseFeature",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "RearEnvelopeForUSBCoverSource",
+          "source_owners": [
+            "FrontExteriorEnvelope",
+            "RearEnvelopeForUSBCover"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "RearEnvelopeBackThickness",
+          "target_owners": [
+            "Body002",
+            "RearExteriorEnvelope"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope",
+            "RearEnvelopeForUSBCover",
+            "RearEnvelopeForUSBCoverSource"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body003"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "FrontFullLandProfile0",
+          "source_owners": [
+            "FrontFullLandCutter"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "WidthControlled_StableFaceplateBaseOutline",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile0"
+          ]
+        },
+        {
+          "boundary_pair_basis": "root_tip_context_for_helper_or_unowned_endpoint",
+          "edge_kind": "property_link",
+          "kind": "object_property_or_dependency",
+          "manufacturing_body_boundary_pairs": [
+            [
+              "Body_EncoderPocket",
+              "Body003"
+            ]
+          ],
+          "property": "Support",
+          "root_body": "Body_EncoderPocket",
+          "source_object": "FrontFullLandProfile1",
+          "source_owners": [
+            "FrontFullLandCutter"
+          ],
+          "source_suppressed": false,
+          "subelement": "",
+          "suppressed_objects_on_tip_path": [],
+          "target_object": "WidthControlled_StableFaceplateBaseOutline",
+          "target_owners": [
+            "Body003"
+          ],
+          "target_suppressed": false,
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile1"
+          ]
+        }
+      ],
+      "expanded_dependency_count": 183,
+      "ordinary_dependency_count": 147,
+      "tip": "EncoderPocketShellM2Hole",
+      "uncertainty_count": 19
+    }
+  ],
+  "method": "Runs the Tip-rooted object and Sketcher external-geometry auditor for each manufacturing Body, then reports either directed edges whose endpoints have distinct physical Body owners or contextual root-to-foreign-Body edges where a helper/unowned endpoint prevents direct owner assignment. The basis is recorded for every edge.",
+  "physical_body_roots": [
+    "Body",
+    "Body002",
+    "Body003",
+    "Body_EncoderFacePlate",
+    "Body_EncoderPocket"
+  ],
+  "readiness_caveat": "Conservative readiness is not an extraction verdict without a component-specific allowlist. It may count intended helper groups, master parameters, and suppressed/historical dependencies. Edge records include suppression flags and Tip paths for review.",
+  "schema_version": 1,
+  "source": {
+    "filename": "pendant.FCStd",
+    "sha256": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881"
+  }
+}

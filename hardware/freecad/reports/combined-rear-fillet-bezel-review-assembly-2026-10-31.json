@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-31",
+  "status": "validated disposable assembly candidate; not production-approved",
+  "assembly": "hardware/freecad/pendant-modular-structural-first-fillet-bezel-r0p50-review-assembly-2026-10-31.FCStd",
+  "base_assembly": "hardware/freecad/pendant-modular-structural-first-fillet-no-duplicate-review-assembly-2026-10-31.FCStd",
+  "faceplate_component": "hardware/freecad/master-driven-leadins-candidate/pendant-bodies/upper-faceplate-bezel-hybrid-r0p50-review.FCStd",
+  "rear_shell_component": "hardware/freecad/pendant-bodies/rear-shell-structural-first-fillet-no-duplicate-pad-2026-10-31.FCStd",
+  "assembly_before": {
+    "valid": true,
+    "solids": 11,
+    "volume_mm3": 112164.25006810634,
+    "bounds_mm": [-64.21622504107172, 64.21622504107174, -92.36472522473227, 86.68910767539026, -37.02178448421963, 5.000000000000091]
+  },
+  "assembly_after_cold_reopen_recompute": {
+    "valid": true,
+    "solids": 11,
+    "volume_mm3": 112149.92005138088,
+    "bounds_mm": [-64.21622504107172, 64.21622504107174, -92.36472522473227, 86.68910767539026, -37.02178448421963, 5.000000000000091]
+  },
+  "links": {
+    "count": 9,
+    "broken": [],
+    "members": [
+      "display retainer", "USB tethered cover", "faceplate locator A", "faceplate locator B",
+      "breakout board", "rear shell review candidate", "upper anti-slip crescent",
+      "lower anti-slip crescent", "upper faceplate R0.50 review candidate"
+    ]
+  },
+  "faceplate_replacement": {
+    "old_static_volume_mm3": 13363.330856364399,
+    "new_link_volume_mm3": 13349.004070174205,
+    "direct_volume_delta_mm3": -14.326786190193161,
+    "root_aggregate_volume_delta_mm3": -14.330016725463793,
+    "aggregate_minus_direct_delta_mm3": -0.003230535270631919,
+    "bounds_match_within_mm": 0.000001,
+    "native_fillet_radius_mm": 0.5
+  },
+  "neighbor_intersections_mm3": {
+    "encoder_faceplate_pocket_interim": {"before": 0.0, "after": 0.0},
+    "locator_a": {"before": 0.0, "after": 0.0},
+    "locator_b": {"before": 0.0, "after": 0.0},
+    "display_retainer": {"before": 0.0, "after": 0.0},
+    "USB_cover": {"before": 0.0, "after": 0.0},
+    "breakout_board": {"before": 0.0, "after": 0.0},
+    "rear_shell": {"before": 0.0, "after": 0.0},
+    "upper_anti_slip_pad": {"before": 0.0, "after": 0.0},
+    "lower_anti_slip_pad": {"before": 0.0, "after": 0.0},
+    "front_shell": {"before": 12.955740111034268, "after": 12.955740111034268}
+  },
+  "rear_shell_remaining_gap_to_cached_legacy_tip_mm3": 113.497308,
+  "production_monolith_modified": false,
+  "production_modular_assembly_modified": false,
+  "preview_images": [
+    "hardware/freecad/reports/images/rear-shell-structural-first-fillet-base-preserving-bottom-view-2026-10-31.png",
+    "hardware/freecad/reports/images/display-bezel-r0p50/before-after.png"
+  ]
+}

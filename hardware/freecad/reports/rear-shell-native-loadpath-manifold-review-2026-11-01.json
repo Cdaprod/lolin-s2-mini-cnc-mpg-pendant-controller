@@ -1,0 +1,102 @@
+{
+  "status": "validated_disposable_mesh_repair_candidate_with_front_shell_interference_not_production_approved",
+  "date": "2026-11-01",
+  "branch": "hardware-integration",
+  "protected_files_modified": false,
+  "candidate": "hardware/freecad/pendant-bodies/rear-shell-native-loadpath-manifold-review-2026-11-01.FCStd",
+  "body": "RearShellBody",
+  "tip": "RearCrescentAntiSlipSeatPocket",
+  "source_net_legacy_stage_volume_delta_mm3": 475.701580,
+  "reconstructed_loadpath_additions_before_cuts_mm3": 650.358324,
+  "historical_fused_loadpath_preview_addition_mm3": 650.492897,
+  "historical_preview_volume_delta_mm3": -0.094115,
+  "reconstruction_features": [
+    "MiddleLeftNativeLoadPath",
+    "MiddleRightNativeLoadPath",
+    "LowerLeftNativeLoadPath",
+    "LowerRightNativeLoadPath"
+  ],
+  "native_features": {
+    "m2_passage_sketch": "RearM2ClearanceSketch",
+    "m2_passage_pocket": "RearM2ClearancePocket",
+    "bottom_perimeter_fillet": "StructuralBottomPerimeterFillet",
+    "crescent_seat_sketch": "RearCrescentAntiSlipSeatProfiles",
+    "crescent_seat_pocket": "RearCrescentAntiSlipSeatPocket"
+  },
+  "parameters": {
+    "BottomPerimeterFilletRadius": {
+      "baseline_mm": 0.25,
+      "probe_mm": 0.30,
+      "probe_volume_delta_mm3": -0.589326,
+      "restoration": "exact within 1e-6 mm3"
+    },
+    "MiddleLeftRootRadius": {
+      "baseline_mm": 7.0,
+      "probe_mm": 7.1,
+      "probe_volume_delta_mm3": 4.374123,
+      "restoration": "exact within 1e-6 mm3"
+    },
+    "CrescentSeatDepth": {
+      "baseline_mm": 0.10,
+      "probe_mm": 0.12,
+      "probe_volume_delta_mm3": -4.762242,
+      "restoration": "exact within 1e-6 mm3"
+    }
+  },
+  "final_shape": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 41080.894144,
+    "area_mm2": 30697.513988,
+    "bounds_mm": [-39.9097, 39.8792, -88.3123, 86.6885, -36.8945, 0.0],
+    "save_reopen_recompute": "passed"
+  },
+  "clearances": {
+    "m2_keepout_intersection_mm3": 0.0,
+    "magnet_keepout_intersection_mm3": 168.000373,
+    "magnet_intersection_change_mm3": 0.0,
+    "front_shell_intersection_mm3": 300.811621,
+    "previous_rear_link_front_shell_intersection_mm3": 0.0,
+    "front_shell_fit": "failed; new interference",
+    "overlap_stage_localization": "incomplete; candidate fresh-fused base includes front-derived land-transfer geometry, but per-stage Boolean localization exceeded bounded headless runtime",
+    "usb_cover_intersection_mm3": 0.780472
+  },
+  "mesh_export": {
+    "method": "FreeCAD Mesh.export from review component Body",
+    "triangle_count": 94342,
+    "edge_incidence_two": 141513,
+    "boundary_edges": 0,
+    "overincident_edges": 0,
+    "watertight": true,
+    "legacy_repository_stl_boundary_edges": 335,
+    "legacy_repository_stl_overincident_edges": 12
+  },
+  "brep_check": {
+    "shape_is_valid": true,
+    "solid_count": 1,
+    "bop_error_count": 42,
+    "base_bop_error_count": 12,
+    "clean_brep": false,
+    "notes": "Residual OpenCascade BOP findings remain; no production promotion."
+  },
+  "rejected_healing_probes": {
+    "removeSplitter_on_fused_base": {
+      "volume_delta_mm3": -0.040521,
+      "bop_errors_before": 12,
+      "bop_errors_after": 26,
+      "disposition": "rejected; worsened topology checks and was not saved"
+    },
+    "shape_fix_0p01_0p001_0p1": {
+      "base_bop_errors_after": 12,
+      "pre_seat_reinforced_bop_errors_after": 40,
+      "pre_seat_volume_delta_mm3": 0.025047,
+      "disposition": "rejected; did not resolve topology checks and was not saved"
+    }
+  },
+  "limitations": [
+    "The fused clean base remains a stored-shape PartDesign::Feature.",
+    "No full assembly-link or TPU pad contact validation was performed.",
+    "No FEM or physical 5x proof-load validation was performed.",
+    "The exported mesh bounds do not span the full saved BRep bounds; this tessellation envelope is also present in the archived clean-base mesh."
+  ]
+}

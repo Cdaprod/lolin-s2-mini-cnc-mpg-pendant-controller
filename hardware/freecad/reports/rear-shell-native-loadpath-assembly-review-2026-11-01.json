@@ -1,0 +1,67 @@
+{
+  "status": "validated_disposable_linkage_with_front_shell_fit_interference_not_production_approved",
+  "date": "2026-11-01",
+  "branch": "hardware-integration",
+  "source_assembly": "hardware/freecad/master-driven-leadins-candidate/pendant-modular-combined-finishing-0p6-parametric-chamfer-review-2026-11-01.FCStd",
+  "candidate_assembly": "hardware/freecad/master-driven-leadins-candidate/pendant-modular-combined-finishing-native-loadpath-review-2026-11-01.FCStd",
+  "rear_component": "hardware/freecad/pendant-bodies/rear-shell-native-loadpath-manifold-review-2026-11-01.FCStd",
+  "protected_production_files_modified": false,
+  "assembly": {
+    "root": "AssemblyRoot",
+    "valid": true,
+    "solid_count": 11,
+    "resolved_app_links": 9,
+    "cold_open_recompute": "passed"
+  },
+  "rear_shell_link": {
+    "object": "Interim_Body002",
+    "linked_body": "RearShellBody",
+    "placement_preserved": true,
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 41080.894144
+  },
+  "anti_slip_pad_links": {
+    "Review_AntiSlipPadUpper_intersection_mm3": 0.0,
+    "Review_AntiSlipPadLower_intersection_mm3": 0.0
+  },
+  "shell_mating": {
+    "candidate_rear_front_common_volume_mm3": 300.811621,
+    "previous_rear_front_common_volume_mm3": 0.0,
+    "fit_result": "failed; candidate introduces front-shell interference",
+    "overlap_stage_localization": "incomplete; stagewise Boolean check exceeded bounded runtime",
+    "usb_cover_common_volume_mm3": 0.780472
+  },
+  "parameter_propagation": {
+    "alias": "BottomPerimeterFilletRadius",
+    "source_mm": 0.25,
+    "probe_mm": 0.30,
+    "assembly_link_volume_delta_mm3": -0.589326,
+    "restored_mm": 0.25,
+    "restore_volume_error_mm3": 2.91e-11,
+    "assembly_root_valid_after_probe": true,
+    "assembly_root_solids_after_probe": 11
+  },
+  "brep_limitations": {
+    "final_component_bop_findings": 42,
+    "base_bop_findings": 12,
+    "remove_splitter_probe": {
+      "base_findings_before": 12,
+      "base_findings_after": 26,
+      "result": "rejected; worsened topology checks"
+    },
+    "shape_fix_probe": {
+      "parameters_mm": [0.01, 0.001, 0.1],
+      "base_findings_after": 12,
+      "pre_seat_reinforced_findings_after": 40,
+      "pre_seat_volume_delta_mm3": 0.025047,
+      "result": "rejected; did not resolve topology findings"
+    },
+    "saved_candidate_changed_by_probes": false
+  },
+  "limitations": [
+    "The rear-shell base remains a stored-shape PartDesign feature.",
+    "No full shell mating, full fastener stack, FEM, or physical proof-load test was completed.",
+    "The candidate remains review-only until the BRep topology findings are resolved."
+  ]
+}

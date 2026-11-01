@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-31",
+  "status": "disposable candidate clearance validation; not production-approved",
+  "candidate": "hardware/freecad/pendant-bodies/rear-shell-webs-dimensioned-sketches-review-candidate.FCStd",
+  "tip": "LowerRightInnerWebPad",
+  "tip_valid": true,
+  "tip_solids": 1,
+  "tip_volume_mm3": 40847.86169995908,
+  "profile_prisms": [
+    {
+      "profile": "LowerLeftInnerWebProfile",
+      "placement_y_mm": -13.5,
+      "pad_length_mm": 8.5,
+      "direction": [0.0, -1.0, 0.0],
+      "raw_prism_volume_mm3": 204.85,
+      "raw_prism_bounds_mm": [-13.9, -9.9, -22.0, -13.5, -28.7, -18.6]
+    },
+    {
+      "profile": "LowerRightInnerWebProfile",
+      "placement_y_mm": -13.5,
+      "pad_length_mm": 8.5,
+      "direction": [0.0, -1.0, 0.0],
+      "raw_prism_volume_mm3": 204.85,
+      "raw_prism_bounds_mm": [9.9, 13.9, -22.0, -13.5, -28.7, -18.6]
+    }
+  ],
+  "cutters": {
+    "magnet_clearance": {
+      "definition": "Pad007.Shape cut Pocket.Shape",
+      "valid": true,
+      "solids": 2,
+      "volume_mm3": 523.8899613583418,
+      "left_common_mm3": 0.0,
+      "right_common_mm3": 0.0,
+      "left_min_distance_mm": 60.514559922612754,
+      "right_min_distance_mm": 60.51455992261306
+    },
+    "magnet_slot": {
+      "definition": "Pad019.Shape cut Pocket015.Shape",
+      "valid": true,
+      "solids": 4,
+      "volume_mm3": 4071.5040790523813,
+      "left_common_mm3": 0.0,
+      "right_common_mm3": 0.0,
+      "left_min_distance_mm": 18.66066653140961,
+      "right_min_distance_mm": 18.66066653162527
+    },
+    "six_m2_passages": {
+      "definition": "RearTaperedSeats.Shape cut Pocket018.Shape",
+      "valid": true,
+      "solids": 6,
+      "volume_mm3": 302.4033136684388,
+      "left_common_mm3": 0.0,
+      "right_common_mm3": 0.0,
+      "left_min_distance_mm": 2.9499999999999975,
+      "right_min_distance_mm": 2.9499999868851514
+    }
+  },
+  "method": "Raw profile-wire extrusions were constructed independently and checked with OpenCascade common() and distToShape() against removed-volume tools from saved source feature pairs. The cumulative Body Shape was not used as the new material prism.",
+  "cad_files_modified": false,
+  "structural_capacity_proven": false,
+  "legacy_geometry_equivalence_proven": false,
+  "previews": [
+    "images/rear-shell-candidate-vs-legacy-occupancy-2026-10-31.png",
+    "images/rear-shell-lower-inner-web-section-review.png"
+  ]
+}

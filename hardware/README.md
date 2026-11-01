@@ -148,7 +148,7 @@ Temporary component-level STEP exports are permitted for integration, but are no
 
 The Git repository maintains the history of the entire hardware design.
 
-The `main` branch represents the accepted baseline. Development changes should be reviewed and integrated through the repository’s normal branch and pull-request workflow.
+The `hardware-integration` branch contains the authoritative native hardware engineering sources. The `main` branch contains firmware, public documentation, and reviewed generated preview artifacts. Do not merge this engineering branch wholesale into `main`; publish an explicit allowlist of validated SVG, PNG, and PDF artifacts through a review pull request.
 
 Keep related changes together:
 

@@ -1,0 +1,89 @@
+{
+  "status": "disposable 0.6 mm-proud review candidate; not production-approved",
+  "pad_component": "/private/tmp/pendant-cnc-freecad-candidate/hardware/freecad/pendant-bodies/rear-shell-anti-slip-crescent-pads-parametric-0p6-review-2026-11-01.FCStd",
+  "assembly": "/private/tmp/pendant-cnc-freecad-candidate/hardware/freecad/pendant-modular-fresh-fuse-tpu-crescent-0p6-review-2026-11-01.FCStd",
+  "protrusion_mm": 0.6,
+  "pad_total_length_mm": 0.7,
+  "protrusion_reduction_from_0p8_mm": 0.2,
+  "approximate_magnet_to_wall_distance_reduction_mm": 0.2,
+  "native_pad_bodies": {
+    "Review_AntiSlipPadUpper": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 120.76070795136236,
+      "shell_common_volume_mm3": 0.0,
+      "contact_plane": {
+        "face": 6,
+        "area_mm2": 172.5152970733745,
+        "normal": [
+          0.0,
+          0.043619387365336416,
+          0.9990482215818579
+        ],
+        "center_mm": [
+          -1.3486336613438565e-14,
+          71.48180542709397,
+          -37.16256239413298
+        ],
+        "constant_mm": -34.00919930878537
+      }
+    },
+    "Review_AntiSlipPadLower": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 45.91815444918735,
+      "shell_common_volume_mm3": 0.0,
+      "contact_plane": {
+        "face": 6,
+        "area_mm2": 65.59736349883913,
+        "normal": [
+          0.0,
+          0.04361938736533663,
+          0.9990482215818578
+        ],
+        "center_mm": [
+          -2.149577174245798e-14,
+          -59.93032361099904,
+          -31.42498493071475
+        ],
+        "constant_mm": -34.0091993087854
+      }
+    }
+  },
+  "contact_plane_normal_angle_deg": 0.0,
+  "contact_plane_offset_mm": 2.842170943040401e-14,
+  "reversible_parameter_propagation": {
+    "parameter": "AntiSlipDesignParameters.UpperPadProtrusion",
+    "baseline_mm": 0.6,
+    "test_mm": 0.7,
+    "expected_volume_delta_mm3": 17.251529707337443,
+    "component_delta_mm3": 17.25152970733717,
+    "assembly_link_delta_mm3": 17.251529707337184,
+    "component_restore_error_mm3": 2.842170943040401e-14,
+    "assembly_link_restore_error_mm3": -1.4210854715202004e-14,
+    "saved_with_test_value": false
+  },
+  "cold_reopen_rear_shell": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 40847.86169758013,
+    "faces": 522,
+    "edges": 1509,
+    "mesh_is_solid": true,
+    "mesh_facets": 16050,
+    "mesh_boundary_edges": 0,
+    "mesh_overincident_edges": 0,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ]
+  },
+  "cold_reopen_link_count": 8,
+  "protected_monolith_and_production_assembly_modified": false,
+  "structural_capacity_verified": false,
+  "physical_grip_and_TPU_durability_verified": false
+}

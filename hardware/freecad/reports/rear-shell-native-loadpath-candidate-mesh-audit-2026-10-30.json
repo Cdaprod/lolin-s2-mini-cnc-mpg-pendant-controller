@@ -1,0 +1,85 @@
+{
+  "results": [
+    {
+      "file": "/tmp/pendant-native-ribs/export-linked/meshes/display-retainer.stl",
+      "triangles": 1856,
+      "unique_welded_edges": 2784,
+      "boundary_edges": 0,
+      "edges_with_more_than_two_incident_facets": 0,
+      "degenerate_triangles": 0,
+      "weld_tolerance_mm": 1e-05,
+      "closed_two_manifold_mesh": true
+    },
+    {
+      "file": "/tmp/pendant-native-ribs/export-linked/meshes/encoder-faceplate-pocket-fused.stl",
+      "triangles": 7356,
+      "unique_welded_edges": 11034,
+      "boundary_edges": 0,
+      "edges_with_more_than_two_incident_facets": 0,
+      "degenerate_triangles": 0,
+      "weld_tolerance_mm": 1e-05,
+      "closed_two_manifold_mesh": true
+    },
+    {
+      "file": "/tmp/pendant-native-ribs/export-linked/meshes/faceplate-locator-a.stl",
+      "triangles": 884,
+      "unique_welded_edges": 1326,
+      "boundary_edges": 0,
+      "edges_with_more_than_two_incident_facets": 0,
+      "degenerate_triangles": 0,
+      "weld_tolerance_mm": 1e-05,
+      "closed_two_manifold_mesh": true
+    },
+    {
+      "file": "/tmp/pendant-native-ribs/export-linked/meshes/faceplate-locator-b.stl",
+      "triangles": 884,
+      "unique_welded_edges": 1326,
+      "boundary_edges": 0,
+      "edges_with_more_than_two_incident_facets": 0,
+      "degenerate_triangles": 0,
+      "weld_tolerance_mm": 1e-05,
+      "closed_two_manifold_mesh": true
+    },
+    {
+      "file": "/tmp/pendant-native-ribs/export-linked/meshes/front-shell.stl",
+      "triangles": 31638,
+      "unique_welded_edges": 47457,
+      "boundary_edges": 0,
+      "edges_with_more_than_two_incident_facets": 0,
+      "degenerate_triangles": 0,
+      "weld_tolerance_mm": 1e-05,
+      "closed_two_manifold_mesh": true
+    },
+    {
+      "file": "/tmp/pendant-native-ribs/export-linked/meshes/rear-shell.stl",
+      "triangles": 19126,
+      "unique_welded_edges": 28689,
+      "boundary_edges": 0,
+      "edges_with_more_than_two_incident_facets": 0,
+      "degenerate_triangles": 0,
+      "weld_tolerance_mm": 1e-05,
+      "closed_two_manifold_mesh": true
+    },
+    {
+      "file": "/tmp/pendant-native-ribs/export-linked/meshes/upper-faceplate.stl",
+      "triangles": 13850,
+      "unique_welded_edges": 20775,
+      "boundary_edges": 0,
+      "edges_with_more_than_two_incident_facets": 0,
+      "degenerate_triangles": 0,
+      "weld_tolerance_mm": 1e-05,
+      "closed_two_manifold_mesh": true
+    },
+    {
+      "file": "/tmp/pendant-native-ribs/export-linked/meshes/usb-cover.stl",
+      "triangles": 1854,
+      "unique_welded_edges": 2781,
+      "boundary_edges": 0,
+      "edges_with_more_than_two_incident_facets": 0,
+      "degenerate_triangles": 0,
+      "weld_tolerance_mm": 1e-05,
+      "closed_two_manifold_mesh": true
+    }
+  ],
+  "all_closed_two_manifold": true
+}

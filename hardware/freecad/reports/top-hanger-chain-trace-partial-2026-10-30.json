@@ -1,0 +1,451 @@
+{
+  "base_commit": "e26de2e",
+  "branch": "hardware-integration",
+  "candidate": "/tmp/pendant-hanger-chain-propagation-20261030/pendant-hanger-chain.FCStd",
+  "candidate_saved": false,
+  "current_stage_at_timeout": "FrontFullWidthReceiver",
+  "date": "2026-10-30",
+  "evidence": {
+    "FrontBossToWallLoadPaths": {
+      "completed": false,
+      "reason": "Not reached in this run."
+    },
+    "FrontFullWidthReceiver": {
+      "completed": false,
+      "reason": "FreeCADCmd process reached the external 170-second hard timeout during recompute; no completed output signature."
+    },
+    "RearBossToWallLoadPaths": {
+      "completed": false,
+      "reason": "Not reached in this run."
+    },
+    "RearFullWidthReceiver": {
+      "candidate_shape_updated_during_dependency_recompute": true,
+      "completed": true,
+      "explicit_recompute_seconds": 8.2195,
+      "input_base": "SmallHangerPocketBody",
+      "saved_state_after": [
+        "Touched"
+      ],
+      "saved_state_before": [
+        "Touched"
+      ]
+    },
+    "SmallHangerPocketBody": {
+      "baseline_mesh_sha256": "02adb160c40f88cfe7bb5934a2784aa2ec455e76f0db57eb8aaca12230902bfe",
+      "baseline_volume_mm3": 40859.167820751,
+      "candidate_mesh_sha256": "",
+      "candidate_volume_mm3": 40840.132944318,
+      "completed": true
+    },
+    "SmallHangerPocketBody002": {
+      "baseline_volume_mm3": 38207.25187571,
+      "candidate_volume_mm3": 38187.764070192,
+      "completed": true,
+      "seconds": 82.0523
+    },
+    "SmallHangerProfileBody": {
+      "bounds_mm": [
+        -17.8,
+        17.8,
+        80.5,
+        83.6,
+        1.0,
+        1.0
+      ],
+      "completed": true
+    },
+    "SmallHangerProfileBody002": {
+      "bounds_mm": [
+        -17.8,
+        17.8,
+        80.5,
+        83.6,
+        -18.0,
+        -18.0
+      ],
+      "completed": true
+    },
+    "front_and_rear_body_tips": {
+      "completed": false,
+      "reason": "Not reached in this run."
+    }
+  },
+  "freecad_version": [
+    "1",
+    "1",
+    "1",
+    "20260414 (Git shallow)",
+    "Unknown",
+    "2026/04/14 22:09:59",
+    "(HEAD detached at 0108fd4b4)",
+    "0108fd4b4850cc46e625b60e53cea7a7bbe69f8d"
+  ],
+  "interpretation": "Partial evidence only. The sketches and pocket cuts update locally; the rear receiver output changes as dependencies recompute. This bounded run did not reach the front receiver, stored-shape load-path features, downstream transitions, or either final Tip. It neither establishes nor refutes final Tip propagation. Prior controlled evidence remains that FrontBossToWallLoadPaths and RearBossToWallLoadPaths are generic stored PartDesign::Feature objects with no proxy or regeneration property and their cached outputs did not change in the earlier feature-level candidate test.",
+  "last_completed_stage": "RearFullWidthReceiver",
+  "method": "Disposable byte-for-byte monolith copy; set HangerParameters.SlotWidth 3.0 to 3.1 mm and SlotCenterY 81.0 to 81.05 mm (lower edge held at Y=80.5 mm); force recompute selected features in dependency order; no save.",
+  "next_step": "Do not repeat this full-history recompute unchanged. In an isolated smaller dependency context, identify and recover the missing construction recipe for the front/rear boss-to-wall load-path features, then test local regeneration. Preserve both shell Tips and the monolith until a bounded end-to-end test can complete.",
+  "raw_final_cached_feature_snapshots": {},
+  "raw_selected_stage_records": [
+    {
+      "after": {
+        "base_feature": null,
+        "label": "SmallHangerProfileBody",
+        "name": "SmallHangerProfileBody",
+        "profile": null,
+        "proxy": null,
+        "shape": {
+          "area": 0.0,
+          "bbox": [
+            -17.8,
+            17.8,
+            80.5,
+            83.6,
+            1.0,
+            1.0
+          ],
+          "edges": 4,
+          "faces": 0,
+          "mesh_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "mesh_triangles": 0,
+          "solids": 0,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 0.0
+        },
+        "state": [
+          "Up-to-date"
+        ],
+        "type": "Sketcher::SketchObject"
+      },
+      "before": {
+        "base_feature": null,
+        "label": "SmallHangerProfileBody",
+        "name": "SmallHangerProfileBody",
+        "profile": null,
+        "proxy": null,
+        "shape": {
+          "area": 0.0,
+          "bbox": [
+            -17.79953377,
+            17.79953377,
+            80.5,
+            83.5,
+            1.0,
+            1.0
+          ],
+          "edges": 4,
+          "faces": 0,
+          "mesh_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "mesh_triangles": 0,
+          "solids": 0,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 0.0
+        },
+        "state": [
+          "Up-to-date"
+        ],
+        "type": "Sketcher::SketchObject"
+      },
+      "name": "SmallHangerProfileBody",
+      "recompute_return": "2",
+      "seconds": 0.007,
+      "start": 1793369527.2806861
+    },
+    {
+      "after": {
+        "base_feature": null,
+        "label": "SmallHangerProfileBody002",
+        "name": "SmallHangerProfileBody002",
+        "profile": null,
+        "proxy": null,
+        "shape": {
+          "area": 0.0,
+          "bbox": [
+            -17.8,
+            17.8,
+            80.5,
+            83.6,
+            -18.0,
+            -18.0
+          ],
+          "edges": 4,
+          "faces": 0,
+          "mesh_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "mesh_triangles": 0,
+          "solids": 0,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 0.0
+        },
+        "state": [
+          "Up-to-date"
+        ],
+        "type": "Sketcher::SketchObject"
+      },
+      "before": {
+        "base_feature": null,
+        "label": "SmallHangerProfileBody002",
+        "name": "SmallHangerProfileBody002",
+        "profile": null,
+        "proxy": null,
+        "shape": {
+          "area": 0.0,
+          "bbox": [
+            -17.79953377,
+            17.79953377,
+            80.5,
+            83.5,
+            -18.0,
+            -18.0
+          ],
+          "edges": 4,
+          "faces": 0,
+          "mesh_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "mesh_triangles": 0,
+          "solids": 0,
+          "state": [
+            "Touched"
+          ],
+          "valid": true,
+          "volume": 0.0
+        },
+        "state": [
+          "Touched"
+        ],
+        "type": "Sketcher::SketchObject"
+      },
+      "name": "SmallHangerProfileBody002",
+      "recompute_return": "1",
+      "seconds": 0.0023,
+      "start": 1793369527.28948
+    },
+    {
+      "after": {
+        "Suppressed": "False",
+        "base_feature": "PreserveOriginalFrontExterior",
+        "label": "Hanger \u2014 Small Rear-to-Front Slot",
+        "name": "SmallHangerPocketBody",
+        "profile": null,
+        "proxy": null,
+        "shape": {
+          "area": 25837.558106207,
+          "bbox": [
+            -42.77437714,
+            42.81020752,
+            -92.36472522,
+            86.68910768,
+            -19.0,
+            0.0
+          ],
+          "edges": 1033,
+          "faces": 339,
+          "mesh_sha256": "20866591545f33ac60d0ea02ad885e1bb456567569fb0b955561aca7b5ea1793",
+          "mesh_triangles": 53412,
+          "solids": 1,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 40840.132944318
+        },
+        "state": [
+          "Up-to-date"
+        ],
+        "type": "PartDesign::Pocket"
+      },
+      "before": {
+        "Suppressed": "False",
+        "base_feature": "PreserveOriginalFrontExterior",
+        "label": "Hanger \u2014 Small Rear-to-Front Slot",
+        "name": "SmallHangerPocketBody",
+        "profile": null,
+        "proxy": null,
+        "shape": {
+          "area": 25856.57003698,
+          "bbox": [
+            -39.75028639,
+            39.77770485,
+            -89.46314876,
+            86.68756339,
+            -19.0,
+            0.0
+          ],
+          "edges": 1033,
+          "faces": 339,
+          "mesh_sha256": "02adb160c40f88cfe7bb5934a2784aa2ec455e76f0db57eb8aaca12230902bfe",
+          "mesh_triangles": 53420,
+          "solids": 1,
+          "state": [
+            "Touched"
+          ],
+          "valid": true,
+          "volume": 40859.167820751
+        },
+        "state": [
+          "Touched"
+        ],
+        "type": "PartDesign::Pocket"
+      },
+      "name": "SmallHangerPocketBody",
+      "recompute_return": "1",
+      "seconds": 2.8719,
+      "start": 1793369530.3038101
+    },
+    {
+      "after": {
+        "Suppressed": "False",
+        "base_feature": "USBConformalCoverSeatBody002",
+        "label": "Hanger \u2014 Small Rear-to-Front Slot001",
+        "name": "SmallHangerPocketBody002",
+        "profile": null,
+        "proxy": null,
+        "shape": {
+          "area": 29155.008078385,
+          "bbox": [
+            -36.23326223,
+            36.23327222,
+            -85.5642727,
+            86.68846293,
+            -36.84498433,
+            -18.2
+          ],
+          "edges": 545,
+          "faces": 191,
+          "mesh_sha256": "1f28ddc4a3dc0b85e11fbe3ca197480242d7eb0ebe54639e66c8be852699f4e7",
+          "mesh_triangles": 28688,
+          "solids": 1,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 38187.764070192
+        },
+        "state": [
+          "Up-to-date"
+        ],
+        "type": "PartDesign::Pocket"
+      },
+      "before": {
+        "Suppressed": "False",
+        "base_feature": "USBConformalCoverSeatBody002",
+        "label": "Hanger \u2014 Small Rear-to-Front Slot001",
+        "name": "SmallHangerPocketBody002",
+        "profile": null,
+        "proxy": null,
+        "shape": {
+          "area": 29173.197435644,
+          "bbox": [
+            -36.14279788,
+            36.14280109,
+            -85.5642727,
+            86.68756339,
+            -36.84498433,
+            -18.2
+          ],
+          "edges": 545,
+          "faces": 191,
+          "mesh_sha256": "5f5ad95d40d382845832ba97a236b3dc635570a3597224471fae270fbd5e4ea7",
+          "mesh_triangles": 28660,
+          "solids": 1,
+          "state": [
+            "Touched"
+          ],
+          "valid": true,
+          "volume": 38207.25187571
+        },
+        "state": [
+          "Touched"
+        ],
+        "type": "PartDesign::Pocket"
+      },
+      "name": "SmallHangerPocketBody002",
+      "recompute_return": "35",
+      "seconds": 82.0523,
+      "start": 1793369536.984349
+    },
+    {
+      "after": {
+        "Suppressed": "False",
+        "base_feature": "SmallHangerPocketBody",
+        "label": "RearFullWidthReceiver",
+        "name": "RearFullWidthReceiver",
+        "profile": null,
+        "proxy": null,
+        "shape": {
+          "area": 24612.996275755,
+          "bbox": [
+            -42.77437714,
+            42.81020752,
+            -92.36472522,
+            86.68910768,
+            -19.0,
+            0.0
+          ],
+          "edges": 1338,
+          "faces": 442,
+          "mesh_sha256": "e0168452c08254ce10103e955c22b14b78a80de85eda6bfc95b92a2f694f5703",
+          "mesh_triangles": 53584,
+          "solids": 1,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 38540.319026095
+        },
+        "state": [
+          "Up-to-date"
+        ],
+        "type": "PartDesign::Boolean"
+      },
+      "before": {
+        "Suppressed": "False",
+        "base_feature": "SmallHangerPocketBody",
+        "label": "RearFullWidthReceiver",
+        "name": "RearFullWidthReceiver",
+        "profile": null,
+        "proxy": null,
+        "shape": {
+          "area": 24612.996275755,
+          "bbox": [
+            -42.77437714,
+            42.81020752,
+            -92.36472522,
+            86.68910768,
+            -19.0,
+            0.0
+          ],
+          "edges": 1338,
+          "faces": 442,
+          "mesh_sha256": "e0168452c08254ce10103e955c22b14b78a80de85eda6bfc95b92a2f694f5703",
+          "mesh_triangles": 53584,
+          "solids": 1,
+          "state": [
+            "Up-to-date"
+          ],
+          "valid": true,
+          "volume": 38540.319026095
+        },
+        "state": [
+          "Up-to-date"
+        ],
+        "type": "PartDesign::Boolean"
+      },
+      "name": "RearFullWidthReceiver",
+      "recompute_return": "1",
+      "seconds": 8.2195,
+      "start": 1793369622.668941
+    }
+  ],
+  "schema_version": 1,
+  "source_document": "hardware/freecad/pendant.FCStd",
+  "source_sha256": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881",
+  "timed_out": true,
+  "timeout_seconds": 170
+}

@@ -1,0 +1,75 @@
+{
+  "result": "validated_disposable_candidate",
+  "branch_base": "a328503",
+  "component": "hardware/freecad/pendant-bodies/rear-shell-loadpath-repair-candidate.FCStd",
+  "assembly": "hardware/freecad/pendant-modular-repair-candidate.FCStd",
+  "body": "RearShell",
+  "tip": "RearM2PassageClearance",
+  "base_geometry": "static imported BREP from pendant.FCStd:Body002FullWidthSeat",
+  "native_features": {
+    "pads": [
+      "UpperLeftSupportPad",
+      "UpperRightSupportPad",
+      "LowerLeftSupportPad",
+      "LowerRightSupportPad"
+    ],
+    "pocket": "RearM2PassageClearance"
+  },
+  "component_reopen_validation": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40609.693012380856,
+    "face_count": 460,
+    "closed_mesh": true,
+    "mesh_facets": 19076
+  },
+  "clearance_comparison_to_imported_base": {
+    "m2_passage_delta_mm3": 0.0,
+    "magnet_clearance_delta_mm3": 5.115907697472721e-13
+  },
+  "reversible_parameter_probe": {
+    "feature": "UpperLeftSupportPad.Length",
+    "baseline_mm": 13.0,
+    "test_mm": 13.2,
+    "test_tip_volume_mm3": 40609.87327446223,
+    "volume_delta_mm3": 0.18026208138,
+    "restored_tip_volume_mm3": 40609.6930125098,
+    "restored_delta_from_baseline_mm3": 1.28944e-7,
+    "test_mesh_closed": true,
+    "restored_mesh_closed": true
+  },
+  "assembly_reopen_validation": {
+    "live_link_count": 6,
+    "broken_links": [],
+    "rear_link_target": "RearShell",
+    "rear_shape_valid": true,
+    "rear_solid_count": 1,
+    "rear_mesh_closed": true,
+    "front_shell_intersection_mm3": 0.0
+  },
+  "component_edit_to_assembly_refresh_test": {
+    "result": "passed_in_disposable_relocated_copy",
+    "source_parameter": "UpperLeftSupportPad.Length",
+    "baseline_mm": 13.0,
+    "edited_mm": 13.2,
+    "baseline_assembly_volume_mm3": 40609.693012380856,
+    "edited_assembly_volume_mm3": 40609.87327446225,
+    "cold_reopen_edited_volume_mm3": 40609.87327446225,
+    "restored_assembly_volume_mm3": 40609.693012380856,
+    "all_six_links_resolved": true,
+    "edit_propagated_and_persisted": true,
+    "original_parameter_restored": true
+  },
+  "full_assembly_mesh_export": {
+    "part_count": 8,
+    "export_errors": 0,
+    "all_closed_two_manifold_at_0.00001mm": true,
+    "mesh_audit": "rear-shell-native-loadpath-candidate-mesh-audit-2026-10-30.json"
+  },
+  "not_yet_validated": [
+    "full native rear-shell feature history",
+    "mechanical strength or proof-load capacity",
+    "equivalence to the original defective rear-shell mesh",
+    "production assembly or production 3MF replacement"
+  ]
+}

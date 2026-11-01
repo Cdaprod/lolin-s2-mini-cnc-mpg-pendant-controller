@@ -1,0 +1,106 @@
+{
+  "document": "hardware/freecad/pendant.FCStd",
+  "fixture": {
+    "body": "Body_HookReference",
+    "cached_shape": {
+      "bbox_mm": [
+        -17.0,
+        17.0,
+        55.5,
+        79.5,
+        -36.0,
+        0.0
+      ],
+      "solid_count": 1,
+      "valid": true,
+      "volume_mm3": 4828.0
+    },
+    "label": "Body_HookReference (validation only)",
+    "tip": "HookReferenceSolid"
+  },
+  "freecad_version": [
+    "1",
+    "1",
+    "1",
+    "20260414 (Git shallow)",
+    "Unknown",
+    "2026/04/14 22:09:59",
+    "(HEAD detached at 0108fd4b4)",
+    "0108fd4b4850cc46e625b60e53cea7a7bbe69f8d"
+  ],
+  "interpretation_limit": "This checks the saved validation-only helper, not the actual physical bracket. Cached geometry, overlap, or zero overlap is not a strength or fit certification.",
+  "recomputed": false,
+  "saved": false,
+  "schema_version": 1,
+  "shell_checks": [
+    {
+      "active_pocket": "SmallHangerPocketBody",
+      "fixture_overlap_with_pocket_cut_mm3": 0.0,
+      "fixture_overlap_with_shell_mm3": 1084.244447470654,
+      "pocket_base_feature": "PreserveOriginalFrontExterior",
+      "pocket_removed_volume_shape": {
+        "bbox_mm": [
+          -20.85850927093489,
+          20.894246815430645,
+          77.3586399550553,
+          86.68910767539026,
+          -19.0,
+          0.0
+        ],
+        "solid_count": 1,
+        "valid": true,
+        "volume_mm3": 964.0672064533966
+      },
+      "shell_body": "Body",
+      "shell_cached_shape": {
+        "bbox_mm": [
+          -42.77437713757541,
+          42.81020751811004,
+          -92.36472522473227,
+          86.68910767539026,
+          -19.00000000000015,
+          0.0
+        ],
+        "solid_count": 1,
+        "valid": true,
+        "volume_mm3": 37683.517480502655
+      },
+      "side": "front"
+    },
+    {
+      "active_pocket": "SmallHangerPocketBody002",
+      "fixture_overlap_with_pocket_cut_mm3": 0.0,
+      "fixture_overlap_with_shell_mm3": 2612.6609588745614,
+      "pocket_base_feature": "USBConformalCoverSeatBody002",
+      "pocket_removed_volume_shape": {
+        "bbox_mm": [
+          -31.446778761357884,
+          31.44677876135787,
+          65.80619078286585,
+          86.68846292863208,
+          -34.89728249455484,
+          -18.999999999999996
+        ],
+        "solid_count": 1,
+        "valid": true,
+        "volume_mm3": 929.4302798894586
+      },
+      "shell_body": "Body002",
+      "shell_cached_shape": {
+        "bbox_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ],
+        "solid_count": 1,
+        "valid": true,
+        "volume_mm3": 40961.35900828918
+      },
+      "side": "rear"
+    }
+  ],
+  "source_sha256": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881"
+}

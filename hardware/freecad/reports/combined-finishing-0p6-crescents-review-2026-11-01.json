@@ -1,0 +1,453 @@
+{
+  "status": "disposable combined finishing review; not production approved",
+  "assembly": "hardware/freecad/master-driven-leadins-candidate/pendant-modular-combined-finishing-0p6-crescents-review-2026-11-01.FCStd",
+  "source_assembly": "hardware/freecad/master-driven-leadins-candidate/pendant-modular-assembly-bezel-r0p50-review.FCStd",
+  "rear_shell_source": "hardware/freecad/pendant-bodies/rear-shell-fresh-fuse-structural-review-2026-11-01.FCStd",
+  "anti_slip_source": "hardware/freecad/pendant-bodies/rear-shell-anti-slip-crescent-pads-parametric-0p6-corrected-labels-review-2026-11-01.FCStd",
+  "live_link_count": 9,
+  "static_interim_components": [
+    "Interim_Body",
+    "Interim_EncoderFaceplatePocketUnsplit"
+  ],
+  "assembly_root_after_reopen": {
+    "valid": true,
+    "solid_count": 11,
+    "volume_mm3": 112237.38723959307,
+    "area_mm2": 85675.88712189629,
+    "faces": 1541,
+    "bounds_mm": [
+      -64.21622504107172,
+      64.21622504107174,
+      -92.36472522473227,
+      86.68910767539026,
+      -37.37581745606413,
+      5.000000000000091
+    ]
+  },
+  "rear_shell": {
+    "before_save": {
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40847.86169758013,
+      "area_mm2": 30826.046428494166,
+      "faces": 522,
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.31234947270411,
+        86.68846292863208,
+        -36.89446791210996,
+        0.0
+      ]
+    },
+    "after_reopen": {
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40847.86169758013,
+      "area_mm2": 30826.046428494166,
+      "faces": 522,
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.31234947270411,
+        86.68846292863208,
+        -36.89446791210996,
+        0.0
+      ]
+    },
+    "mesh": {
+      "closed": true,
+      "facets": 16050,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_facets": 0
+    },
+    "placement_preserved": true
+  },
+  "m2_passages": {
+    "profile_fully_constrained": true,
+    "profile_count": 6,
+    "nominal_diameter_mm": 2.3,
+    "tested_shank_diameter_mm": 2.0,
+    "nominal_radial_clearance_mm": 0.15,
+    "full_shell_axis_gauge_intersections": [
+      {
+        "profile_index": 0,
+        "center_mm": [
+          -16.97,
+          76.85
+        ],
+        "passage_radius_mm": 1.15,
+        "tested_shank_radius_mm": 1.0,
+        "shell_intersection_mm3": 0.0
+      },
+      {
+        "profile_index": 1,
+        "center_mm": [
+          16.97,
+          76.85
+        ],
+        "passage_radius_mm": 1.15,
+        "tested_shank_radius_mm": 1.0,
+        "shell_intersection_mm3": 0.0
+      },
+      {
+        "profile_index": 2,
+        "center_mm": [
+          -27.0,
+          58.5
+        ],
+        "passage_radius_mm": 1.15,
+        "tested_shank_radius_mm": 1.0,
+        "shell_intersection_mm3": 0.0
+      },
+      {
+        "profile_index": 3,
+        "center_mm": [
+          27.0,
+          58.5
+        ],
+        "passage_radius_mm": 1.15,
+        "tested_shank_radius_mm": 1.0,
+        "shell_intersection_mm3": 0.0
+      },
+      {
+        "profile_index": 4,
+        "center_mm": [
+          18.0,
+          -17.75661828744584
+        ],
+        "passage_radius_mm": 1.15,
+        "tested_shank_radius_mm": 1.0,
+        "shell_intersection_mm3": 0.0
+      },
+      {
+        "profile_index": 5,
+        "center_mm": [
+          -18.0,
+          -17.75661828744584
+        ],
+        "passage_radius_mm": 1.15,
+        "tested_shank_radius_mm": 1.0,
+        "shell_intersection_mm3": 0.0
+      }
+    ]
+  },
+  "magnet_keepouts": {
+    "upper_magnet_clearance_tool_volume_mm3": 523.8899613583418,
+    "upper_magnet_clearance_intersections_mm3": {
+      "SmallHangerPocketBody002": 168.0003731388091,
+      "Body002FullWidthSeat": 168.00037313880952,
+      "legacy_rear_tip": 168.00037313880856,
+      "fresh_fuse_base": 168.00037313880952,
+      "final_rear_tip": 168.00037313881006
+    },
+    "upper_magnet_clearance_feature_history": [
+      {
+        "feature": "Pad007",
+        "intersection_mm3": 523.8899613583418
+      },
+      {
+        "feature": "Pocket",
+        "intersection_mm3": 0.0
+      },
+      {
+        "feature": "Pad019",
+        "intersection_mm3": 447.27339945010806
+      },
+      {
+        "feature": "Pocket015",
+        "intersection_mm3": 168.00037313880944
+      },
+      {
+        "feature": "Pad020",
+        "intersection_mm3": 168.00037313880944
+      },
+      {
+        "feature": "SmallHangerPocketBody002",
+        "intersection_mm3": 168.0003731388091
+      },
+      {
+        "feature": "Body002FullWidthSeat",
+        "intersection_mm3": 168.00037313880952
+      },
+      {
+        "feature": "RearBossToWallLoadPaths",
+        "intersection_mm3": 83.94558225767145
+      },
+      {
+        "feature": "RearBossShoulderTransitions",
+        "intersection_mm3": 168.00037313880912
+      },
+      {
+        "feature": "RearBossWallRamps45",
+        "intersection_mm3": 168.00037313880912
+      },
+      {
+        "feature": "fresh_fuse_candidate_final_tip",
+        "intersection_mm3": 168.00037313881006
+      }
+    ],
+    "upper_condition": "Pocket removes the upper clearance volume, Pad019 Mag Bulk restores part of it, and Pocket015 Magnet Slot removes part again. The remaining 168.000373 mm3 is present through the saved downstream source and candidate; this follows the feature sequence and is not a new candidate collision.",
+    "pocket015_magnet_slot_tool_volume_mm3": 4071.5040790523813,
+    "pocket015_magnet_slot_candidate_overlap_mm3": 0.0,
+    "pocket015_magnet_slot_candidate_overlap_valid": true
+  },
+  "r050_bezel_link": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 13349.004070174205,
+    "area_mm2": 13400.874406498768,
+    "faces": 227,
+    "bounds_mm": [
+      -64.21622504107172,
+      64.21622504107174,
+      -41.666577146181105,
+      79.1773324592688,
+      -27.499999999999996,
+      5.000000000000091
+    ]
+  },
+  "anti_slip_pad_profiles": {
+    "UpperCrescentAntiSlipProfile": {
+      "fully_constrained": true,
+      "constraint_count": 4
+    },
+    "LowerCrescentAntiSlipProfile": {
+      "fully_constrained": true,
+      "constraint_count": 4
+    }
+  },
+  "anti_slip_pad_height_variant": {
+    "UpperCrescentPad": {
+      "total_pad_length_mm": 0.7,
+      "seat_engagement_mm": 0.1,
+      "proud_height_mm": 0.6,
+      "label": "Upper crescent pad \u2014 0.10 mm seat + 0.60 mm proud"
+    },
+    "LowerCrescentPad": {
+      "total_pad_length_mm": 0.7,
+      "seat_engagement_mm": 0.1,
+      "proud_height_mm": 0.6,
+      "label": "Lower crescent pad \u2014 0.10 mm seat + 0.60 mm proud"
+    }
+  },
+  "anti_slip_pads": {
+    "Review_AntiSlipPadUpper": {
+      "shape": {
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 120.76070795136236,
+        "area_mm2": 397.16255642226395,
+        "faces": 6,
+        "bounds_mm": [
+          -15.682714237495915,
+          15.682714237495915,
+          65.74886183692368,
+          76.39668293873657,
+          -37.37581745606413,
+          -36.212922916237545
+        ]
+      },
+      "rear_shell_overlap_mm3": 0.0,
+      "contact_plane": {
+        "face": 6,
+        "area_mm2": 172.5152970733745,
+        "normal": [
+          0.0,
+          0.043619387365336416,
+          0.9990482215818579
+        ],
+        "center_mm": [
+          -1.3486336613438565e-14,
+          71.48180542709397,
+          -37.16256239413298
+        ],
+        "constant_mm": -34.00919930878537
+      }
+    },
+    "Review_AntiSlipPadLower": {
+      "shape": {
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 45.91815444918735,
+        "area_mm2": 167.04869987135663,
+        "faces": 6,
+        "bounds_mm": [
+          -10.946608584388663,
+          10.946608584388654,
+          -62.92097763241925,
+          -56.13705169356974,
+          -31.589269634831094,
+          -30.59507640111913
+        ]
+      },
+      "rear_shell_overlap_mm3": 0.0,
+      "contact_plane": {
+        "face": 6,
+        "area_mm2": 65.59736349883913,
+        "normal": [
+          0.0,
+          0.04361938736533663,
+          0.9990482215818578
+        ],
+        "center_mm": [
+          -2.149577174245798e-14,
+          -59.93032361099904,
+          -31.42498493071475
+        ],
+        "constant_mm": -34.0091993087854
+      }
+    }
+  },
+  "anti_slip_contact_plane_angle_deg": 0.0,
+  "anti_slip_contact_plane_offset_mm": 2.842170943040401e-14,
+  "reversible_component_parameter_propagation": {
+    "rear": {
+      "parameter": "LowerWebP2XAbs",
+      "change": "9.9 -> 10.0 -> 9.9 mm",
+      "baseline": {
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 40847.86169758013,
+        "area_mm2": 30826.046428494166,
+        "faces": 522,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.89446791210996,
+          0.0
+        ]
+      },
+      "edited": {
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 40842.00696134979,
+        "area_mm2": 30824.005216715002,
+        "faces": 522,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.89446791210996,
+          0.0
+        ]
+      },
+      "restored": {
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 40847.86169758013,
+        "area_mm2": 30826.046428494166,
+        "faces": 522,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.89446791210996,
+          0.0
+        ]
+      }
+    },
+    "bezel": {
+      "parameter": "DisplayBezelFilletRadius",
+      "change": "0.50 -> 0.55 -> 0.50 mm",
+      "baseline": {
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 13349.004070174205,
+        "area_mm2": 13400.874406498768,
+        "faces": 227,
+        "bounds_mm": [
+          -64.21622504107172,
+          64.21622504107174,
+          -41.666577146181105,
+          79.1773324592688,
+          -27.499999999999996,
+          5.000000000000091
+        ]
+      },
+      "edited": {
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 13345.995490889669,
+        "area_mm2": 13395.14377829557,
+        "faces": 227,
+        "bounds_mm": [
+          -64.21622504107172,
+          64.21622504107174,
+          -41.666577146181105,
+          79.1773324592688,
+          -27.499999999999996,
+          5.000000000000091
+        ]
+      },
+      "restored": {
+        "valid": true,
+        "solid_count": 1,
+        "volume_mm3": 13349.004070174205,
+        "area_mm2": 13400.874406498768,
+        "faces": 227,
+        "bounds_mm": [
+          -64.21622504107172,
+          64.21622504107174,
+          -41.666577146181105,
+          79.1773324592688,
+          -27.499999999999996,
+          5.000000000000091
+        ]
+      }
+    },
+    "assembly_volume_baseline_mm3": 112237.38723959307,
+    "assembly_volume_after_restore_mm3": 112237.38723959307,
+    "source_component_documents_saved": false
+  },
+  "rear_neighbor_intersections_mm3": [
+    {
+      "neighbor": "Interim_Body",
+      "volume_mm3": 0.0
+    },
+    {
+      "neighbor": "Interim_EncoderFaceplatePocketUnsplit",
+      "volume_mm3": 0.0
+    },
+    {
+      "neighbor": "Editable_Body_DisplayRetainer_EditableV2",
+      "volume_mm3": 0.0
+    },
+    {
+      "neighbor": "Editable_Body_USBTetheredCover",
+      "volume_mm3": 0.780471884577827
+    },
+    {
+      "neighbor": "Editable_Body_FaceplateLocator_A",
+      "volume_mm3": 0.0
+    },
+    {
+      "neighbor": "Editable_Body_FaceplateLocator_B",
+      "volume_mm3": 0.0
+    },
+    {
+      "neighbor": "Editable_Body006",
+      "volume_mm3": 0.0
+    },
+    {
+      "neighbor": "Editable_UpperFaceplateBezel",
+      "volume_mm3": 0.0
+    }
+  ],
+  "save_close_reopen_recompute": "passed",
+  "protected_monolith_and_production_assembly_modified": false,
+  "limitations": [
+    "Rear shell is a hybrid review Body with a stored-shape base.",
+    "Legacy 475.701580 mm3 cached-stage volume delta is not a spatial material map.",
+    "The original cached rear-shell feature chain has BRep/mesh defects.",
+    "No PLA strength rating or 5x pendant proof-load claim is established."
+  ],
+  "interim_labelled_live_links": [
+    "Interim_Body002"
+  ]
+}

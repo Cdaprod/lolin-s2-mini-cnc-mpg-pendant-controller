@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "component": "display-retainer.FCStd",
+  "body": "Body_DisplayRetainer_EditableV2",
+  "assembly_link": "Editable_Body_DisplayRetainer_EditableV2",
+  "master_sheet": "InternalHardware",
+  "master_alias": "ShellMountPassageDiameter",
+  "test_value": "2.32 mm",
+  "source_sha256": {
+    "pendant-master.FCStd": "d3b226b50cbbefd20a4f414afd60532d320b7b32dacca38844360035b4e2ffe7",
+    "pendant-modular-assembly.FCStd": "d727c69f3e3bc68857fc29aa29438fc2a6f7a59954a6f64b3766d466fa57bbdb",
+    "display-retainer.FCStd": "066e82cb63553b66c423395e7fdc52fdca88a4694697d98d1482e7e249f4065b",
+    "usb-tethered-cover.FCStd": "94779f401b69d1e61eabf2f1602aedb1fe8e91b79f6cc6a3b8fb21450f3805aa",
+    "faceplate-locators.FCStd": "c9935342278c2ca59dcbc90120b9a146c5d9edbe6aff3e812e8a10d1057cdfba",
+    "breakout-board.FCStd": "6d2dc08a8ea0502186a2ab6003a278d7344ece23852c889699727bbad4d7dd9d"
+  },
+  "workdir_retained": false,
+  "original_value": "2.3 mm",
+  "master_cell": "B7",
+  "baseline": {
+    "body": {
+      "area": 2183.563637888774,
+      "bbox": [
+        -29.42019278301042,
+        29.423440320911695,
+        -16.0,
+        25.8,
+        -10.06146722824298,
+        -7.061467228242978
+      ],
+      "solids": 1,
+      "valid": true,
+      "volume": 2050.792480333789
+    },
+    "body_state": [
+      "Up-to-date"
+    ],
+    "documents": {
+      "breakout_board": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-bodies/breakout-board.FCStd",
+      "display_retainer": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-bodies/display-retainer.FCStd",
+      "faceplate_locators": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-bodies/faceplate-locators.FCStd",
+      "pendant_master": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-master.FCStd",
+      "pendant_modular_assembly": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-modular-assembly.FCStd",
+      "usb_tethered_cover": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-bodies/usb-tethered-cover.FCStd"
+    },
+    "errors": [],
+    "expressions": [
+      {
+        "expression": "pendant_master#<<InternalHardware>>.ShellMountPassageDiameter / 2",
+        "object": "DisplayRetainerMountingPatternV2",
+        "property": "Constraints[2]",
+        "status": "Valid"
+      },
+      {
+        "expression": "pendant_master#<<InternalHardware>>.ShellMountPassageDiameter / 2",
+        "object": "DisplayRetainerMountingPatternV2",
+        "property": "Constraints[5]",
+        "status": "Valid"
+      }
+    ],
+    "link": {
+      "area": 2183.563637888774,
+      "bbox": [
+        -29.42019278301042,
+        29.423440320911695,
+        -16.0,
+        25.8,
+        -10.06146722824298,
+        -7.061467228242978
+      ],
+      "solids": 1,
+      "valid": true,
+      "volume": 2050.792480333789
+    },
+    "link_matches_body": true,
+    "master_value": "2.3 mm",
+    "tip": "RetainerShellClearancePocketV3",
+    "tip_state": [
+      "Up-to-date"
+    ]
+  },
+  "baseline_refresh_errors": [],
+  "resolved_test_value": "2.32 mm",
+  "changed": {
+    "body": {
+      "area": 2183.650345846013,
+      "bbox": [
+        -29.42019278301042,
+        29.423440320911695,
+        -16.0,
+        25.8,
+        -10.06146722824298,
+        -7.061467228242978
+      ],
+      "solids": 1,
+      "valid": true,
+      "volume": 2050.3570555920014
+    },
+    "body_state": [
+      "Up-to-date"
+    ],
+    "documents": {
+      "breakout_board": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-bodies/breakout-board.FCStd",
+      "display_retainer": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-bodies/display-retainer.FCStd",
+      "faceplate_locators": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-bodies/faceplate-locators.FCStd",
+      "pendant_master": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-master.FCStd",
+      "pendant_modular_assembly": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-modular-assembly.FCStd",
+      "usb_tethered_cover": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-bodies/usb-tethered-cover.FCStd"
+    },
+    "errors": [],
+    "expressions": [
+      {
+        "expression": "pendant_master#<<InternalHardware>>.ShellMountPassageDiameter / 2",
+        "object": "DisplayRetainerMountingPatternV2",
+        "property": "Constraints[2]",
+        "status": "Valid"
+      },
+      {
+        "expression": "pendant_master#<<InternalHardware>>.ShellMountPassageDiameter / 2",
+        "object": "DisplayRetainerMountingPatternV2",
+        "property": "Constraints[5]",
+        "status": "Valid"
+      }
+    ],
+    "link": {
+      "area": 2183.650345846013,
+      "bbox": [
+        -29.42019278301042,
+        29.423440320911695,
+        -16.0,
+        25.8,
+        -10.06146722824298,
+        -7.061467228242978
+      ],
+      "solids": 1,
+      "valid": true,
+      "volume": 2050.3570555920014
+    },
+    "link_matches_body": true,
+    "master_value": "2.32 mm",
+    "tip": "RetainerShellClearancePocketV3",
+    "tip_state": [
+      "Up-to-date"
+    ]
+  },
+  "changed_refresh_errors": [],
+  "restored": {
+    "body": {
+      "area": 2183.563637888774,
+      "bbox": [
+        -29.42019278301042,
+        29.423440320911695,
+        -16.0,
+        25.8,
+        -10.06146722824298,
+        -7.061467228242978
+      ],
+      "solids": 1,
+      "valid": true,
+      "volume": 2050.792480333789
+    },
+    "body_state": [
+      "Up-to-date"
+    ],
+    "documents": {
+      "breakout_board": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-bodies/breakout-board.FCStd",
+      "display_retainer": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-bodies/display-retainer.FCStd",
+      "faceplate_locators": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-bodies/faceplate-locators.FCStd",
+      "pendant_master": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-master.FCStd",
+      "pendant_modular_assembly": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-modular-assembly.FCStd",
+      "usb_tethered_cover": "/var/folders/pr/6z22z3yj5h5cx53wb7ws_cvh0000gn/T/pendant-master-propagation-shmauxkn/pendant-bodies/usb-tethered-cover.FCStd"
+    },
+    "errors": [],
+    "expressions": [
+      {
+        "expression": "pendant_master#<<InternalHardware>>.ShellMountPassageDiameter / 2",
+        "object": "DisplayRetainerMountingPatternV2",
+        "property": "Constraints[2]",
+        "status": "Valid"
+      },
+      {
+        "expression": "pendant_master#<<InternalHardware>>.ShellMountPassageDiameter / 2",
+        "object": "DisplayRetainerMountingPatternV2",
+        "property": "Constraints[5]",
+        "status": "Valid"
+      }
+    ],
+    "link": {
+      "area": 2183.563637888774,
+      "bbox": [
+        -29.42019278301042,
+        29.423440320911695,
+        -16.0,
+        25.8,
+        -10.06146722824298,
+        -7.061467228242978
+      ],
+      "solids": 1,
+      "valid": true,
+      "volume": 2050.792480333789
+    },
+    "link_matches_body": true,
+    "master_value": "2.3 mm",
+    "tip": "RetainerShellClearancePocketV3",
+    "tip_state": [
+      "Up-to-date"
+    ]
+  },
+  "restored_refresh_errors": [],
+  "restored_brep_comparison": {
+    "baseline_valid": true,
+    "errors": [],
+    "forward_mm3": 0.0,
+    "forward_valid": true,
+    "link_valid": true,
+    "reverse_mm3": 0.0,
+    "reverse_valid": true,
+    "sum_mm3": 0.0
+  },
+  "result": "PASS"
+}

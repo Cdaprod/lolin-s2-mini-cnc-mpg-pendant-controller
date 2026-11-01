@@ -1,0 +1,232 @@
+{
+  "document": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-encoder-fused-working.FCStd",
+  "errors": [],
+  "freecad_version": [
+    "1",
+    "1",
+    "1",
+    "20260414 (Git shallow)",
+    "Unknown",
+    "2026/04/14 22:09:59",
+    "(HEAD detached at 0108fd4b4)",
+    "0108fd4b4850cc46e625b60e53cea7a7bbe69f8d"
+  ],
+  "objects": {
+    "Body_EncoderFacePlateLandSplit": {
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.61910721046303,
+        -4.7423856032506615,
+        -19.000000000000007,
+        0.0
+      ],
+      "edge_count": 135,
+      "face_count": 40,
+      "links": {
+        "BaseFeature": {
+          "document": "pendant_encoder_fused_working",
+          "object": "BaseFeature003"
+        },
+        "Profile": [
+          {
+            "document": "pendant_encoder_fused_working",
+            "object": "Body_EncoderFacePlateLandSplitProfile"
+          },
+          []
+        ]
+      },
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "solid_count": 1,
+      "surface_area_mm2": 1425.0561719102222,
+      "surface_families": {
+        "BSplineSurface": {
+          "area_mm2": 700.2829764616278,
+          "face_count": 33,
+          "parameters": {}
+        },
+        "Cylinder": {
+          "area_mm2": 34.68470608315107,
+          "face_count": 2,
+          "parameters": {
+            "Radius=4.5": 2
+          }
+        },
+        "Plane": {
+          "area_mm2": 690.0884893654434,
+          "face_count": 5,
+          "parameters": {}
+        }
+      },
+      "type": "PartDesign::Pocket",
+      "valid": true,
+      "volume_mm3": 300.1436445825821
+    },
+    "EncoderCaptureLipTransfer": {
+      "bounds_mm": [
+        -12.873893309103426,
+        12.873893309103432,
+        -24.226903703723565,
+        -19.03294899470472,
+        -1.8000000000000014,
+        0.8000000000000004
+      ],
+      "edge_count": 42,
+      "face_count": 22,
+      "links": {
+        "Base": {
+          "document": "pendant_encoder_fused_working",
+          "object": "EncoderCaptureLedge"
+        },
+        "Tool": {
+          "document": "pendant_encoder_fused_working",
+          "object": "EncoderCrownGlassBackClearance"
+        }
+      },
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "solid_count": 4,
+      "surface_area_mm2": 60.11231290217422,
+      "surface_families": {
+        "BSplineSurface": {
+          "area_mm2": 30.918655951229074,
+          "face_count": 12,
+          "parameters": {}
+        },
+        "Cylinder": {
+          "area_mm2": 16.36478604412084,
+          "face_count": 4,
+          "parameters": {
+            "Radius=30.25": 2,
+            "Radius=33.0": 2
+          }
+        },
+        "Plane": {
+          "area_mm2": 12.828870906824303,
+          "face_count": 6,
+          "parameters": {}
+        }
+      },
+      "type": "Part::Cut",
+      "valid": true,
+      "volume_mm3": 13.078755309676716
+    },
+    "EncoderFaceplateRetentionKeep": {
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.61910721046303,
+        -4.7423856032506615,
+        -19.000000000000007,
+        0.8000000000000004
+      ],
+      "edge_count": 177,
+      "face_count": 62,
+      "links": {
+        "Base": {
+          "document": "pendant_encoder_fused_working",
+          "object": "Body_EncoderFacePlateLandSplit"
+        },
+        "Tool": {
+          "document": "pendant_encoder_fused_working",
+          "object": "EncoderCaptureLipTransfer"
+        }
+      },
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "solid_count": 5,
+      "surface_area_mm2": 1485.1684848123966,
+      "surface_families": {
+        "BSplineSurface": {
+          "area_mm2": 731.2016324128567,
+          "face_count": 45,
+          "parameters": {}
+        },
+        "Cylinder": {
+          "area_mm2": 51.04949212727191,
+          "face_count": 6,
+          "parameters": {
+            "Radius=30.25": 2,
+            "Radius=33.0": 2,
+            "Radius=4.5": 2
+          }
+        },
+        "Plane": {
+          "area_mm2": 702.9173602722677,
+          "face_count": 11,
+          "parameters": {}
+        }
+      },
+      "type": "Part::Fuse",
+      "valid": true,
+      "volume_mm3": 313.26270218362816
+    },
+    "EncoderPocketShellReleaseNoFaceplateRetention": {
+      "bounds_mm": [
+        -60.0,
+        60.0,
+        -89.47819377262843,
+        -13.48538852425944,
+        -27.50000000000054,
+        2.5000000000000666
+      ],
+      "edge_count": 110,
+      "face_count": 28,
+      "links": {
+        "Base": {
+          "document": "pendant_encoder_fused_working",
+          "object": "EncoderPocketShellRelease"
+        },
+        "Tool": {
+          "document": "pendant_encoder_fused_working",
+          "object": "EncoderFaceplateRetentionKeep"
+        }
+      },
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "solid_count": 1,
+      "surface_area_mm2": 3910.865192944945,
+      "surface_families": {
+        "BSplineSurface": {
+          "area_mm2": 137.0362901412898,
+          "face_count": 5,
+          "parameters": {}
+        },
+        "Cylinder": {
+          "area_mm2": 712.5487445037621,
+          "face_count": 13,
+          "parameters": {
+            "Radius=0.8": 3,
+            "Radius=16.797096292": 1,
+            "Radius=16.937054962": 1,
+            "Radius=21.5": 1,
+            "Radius=21.7": 1,
+            "Radius=30.25": 1,
+            "Radius=33.0": 2,
+            "Radius=37.624795653": 1,
+            "Radius=90.826056563": 1,
+            "Radius=90.853889531": 1
+          }
+        },
+        "Plane": {
+          "area_mm2": 2530.4160942626954,
+          "face_count": 5,
+          "parameters": {}
+        },
+        "Toroid": {
+          "area_mm2": 530.8640640371979,
+          "face_count": 5,
+          "parameters": {
+            "MajorRadius=18.697096292": 1,
+            "MajorRadius=18.837054962": 1,
+            "MajorRadius=35.724795653": 1,
+            "MajorRadius=88.926056563": 1,
+            "MajorRadius=88.953889531": 1,
+            "MinorRadius=1.9": 5
+          }
+        }
+      },
+      "type": "Part::Cut",
+      "valid": true,
+      "volume_mm3": 3529.381623575534
+    }
+  },
+  "sha256": "c20e68fcc2a17782a37aecc9eac1ae7388192e94479077532331948ac01a6d30"
+}

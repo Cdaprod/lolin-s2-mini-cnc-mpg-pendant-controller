@@ -1,0 +1,461 @@
+{
+  "candidate_root": "master-driven-leadins-candidate/",
+  "protected_monolith_modified": false,
+  "production_assembly_modified": false,
+  "master_parameter": {
+    "sheet": "InternalHardware",
+    "alias": "FastenerEntryRadialDepth",
+    "cell": "B9",
+    "baseline_mm": 0.15,
+    "perturbed_mm": 0.2,
+    "profile_and_pocket_relation": "radial expansion equals depth; fixed -45 deg taper preserves nominal bore at the lead-in bottom"
+  },
+  "expressions": {
+    "sketch_constraint_indices_retainer": [
+      {
+        "constraint_index": 2,
+        "nominal_radius_mm": 1.15,
+        "expression": "1.150000000 mm + pendant_master#<<InternalHardware>>.FastenerEntryRadialDepth"
+      },
+      {
+        "constraint_index": 5,
+        "nominal_radius_mm": 1.15,
+        "expression": "1.150000000 mm + pendant_master#<<InternalHardware>>.FastenerEntryRadialDepth"
+      },
+      {
+        "constraint_index": 8,
+        "nominal_radius_mm": 1.1,
+        "expression": "1.100000000 mm + pendant_master#<<InternalHardware>>.FastenerEntryRadialDepth"
+      },
+      {
+        "constraint_index": 11,
+        "nominal_radius_mm": 1.1,
+        "expression": "1.100000000 mm + pendant_master#<<InternalHardware>>.FastenerEntryRadialDepth"
+      },
+      {
+        "constraint_index": 14,
+        "nominal_radius_mm": 1.1,
+        "expression": "1.100000000 mm + pendant_master#<<InternalHardware>>.FastenerEntryRadialDepth"
+      }
+    ],
+    "locator_constraint_indices": [
+      0,
+      0
+    ],
+    "pocket_length": "pendant_master#<<InternalHardware>>.FastenerEntryRadialDepth",
+    "taper_angle_deg": -45.0
+  },
+  "baseline_component_metrics": {
+    "display_retainer": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 2050.3855204146566,
+      "area_mm2": 2180.459385290039,
+      "bounds_mm": [
+        -29.42019278301042,
+        29.423440320911695,
+        -16.0,
+        25.799999999999997,
+        -10.06146722824298,
+        -7.061467228242979
+      ]
+    },
+    "locators": {
+      "Body_FaceplateLocator_A": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 88.21013732209859,
+        "area_mm2": 145.63727704700136,
+        "bounds_mm": [
+          -32.36,
+          -25.16,
+          22.946299999999997,
+          30.1463,
+          -3.5,
+          -0.8
+        ]
+      },
+      "Body_FaceplateLocator_B": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 88.2101373220986,
+        "area_mm2": 145.63727704700136,
+        "bounds_mm": [
+          22.4,
+          29.6,
+          61.4,
+          68.6,
+          -3.5,
+          -0.8
+        ]
+      }
+    }
+  },
+  "perturbed_component_metrics": {
+    "display_retainer": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 2050.0607623248466,
+      "area_mm2": 2179.4515535478117,
+      "bounds_mm": [
+        -29.42019278301042,
+        29.423440320911695,
+        -16.0,
+        25.799999999999997,
+        -10.06146722824298,
+        -7.061467228242978
+      ]
+    },
+    "locators": {
+      "Body_FaceplateLocator_A": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 88.14206948127081,
+        "area_mm2": 145.44841485454384,
+        "bounds_mm": [
+          -32.36,
+          -25.16,
+          22.946299999999997,
+          30.1463,
+          -3.5,
+          -0.8
+        ]
+      },
+      "Body_FaceplateLocator_B": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 88.1420694812708,
+        "area_mm2": 145.44841485454384,
+        "bounds_mm": [
+          22.4,
+          29.6,
+          61.4,
+          68.6,
+          -3.5,
+          -0.8
+        ]
+      }
+    }
+  },
+  "restored_component_metrics": {
+    "display_retainer": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 2050.385520414657,
+      "area_mm2": 2180.4593852900384,
+      "bounds_mm": [
+        -29.42019278301042,
+        29.423440320911695,
+        -16.0,
+        25.799999999999997,
+        -10.06146722824298,
+        -7.061467228242978
+      ]
+    },
+    "locators": {
+      "Body_FaceplateLocator_A": {
+        "metrics": {
+          "valid": true,
+          "solids": 1,
+          "volume_mm3": 88.21013732209859,
+          "area_mm2": 145.63727704700136,
+          "bounds_mm": [
+            -32.36,
+            -25.16,
+            22.946299999999997,
+            30.1463,
+            -3.5,
+            -0.8
+          ]
+        },
+        "symdiff_mm3": 0.0
+      },
+      "Body_FaceplateLocator_B": {
+        "metrics": {
+          "valid": true,
+          "solids": 1,
+          "volume_mm3": 88.2101373220986,
+          "area_mm2": 145.63727704700136,
+          "bounds_mm": [
+            22.4,
+            29.6,
+            61.4,
+            68.6,
+            -3.5,
+            -0.8
+          ]
+        },
+        "symdiff_mm3": 0.0
+      }
+    },
+    "retainer_symdiff_mm3": 0.0
+  },
+  "nominal_clearance_gauge_checks": [
+    {
+      "component": "display-retainer",
+      "center_mm": [
+        -25.8,
+        -10.5
+      ],
+      "nominal_radius_mm": 1.15,
+      "interference_mm3": 0.0
+    },
+    {
+      "component": "display-retainer",
+      "center_mm": [
+        25.8,
+        -10.5
+      ],
+      "nominal_radius_mm": 1.15,
+      "interference_mm3": 0.0
+    },
+    {
+      "component": "display-retainer",
+      "center_mm": [
+        -11.811,
+        -12.605
+      ],
+      "nominal_radius_mm": 1.1,
+      "interference_mm3": 0.0
+    },
+    {
+      "component": "display-retainer",
+      "center_mm": [
+        11.811,
+        -12.605
+      ],
+      "nominal_radius_mm": 1.1,
+      "interference_mm3": 0.0
+    },
+    {
+      "component": "display-retainer",
+      "center_mm": [
+        0.0,
+        22.449
+      ],
+      "nominal_radius_mm": 1.1,
+      "interference_mm3": 0.0
+    },
+    {
+      "component": "Body_FaceplateLocator_A",
+      "center_mm": [
+        -28.76,
+        26.5463
+      ],
+      "nominal_radius_mm": 1.15,
+      "interference_mm3": 0.0
+    },
+    {
+      "component": "Body_FaceplateLocator_B",
+      "center_mm": [
+        26.0,
+        65.0
+      ],
+      "nominal_radius_mm": 1.15,
+      "interference_mm3": 0.0
+    }
+  ],
+  "cold_reopen_component_expression_count": 10,
+  "assembly_live_links_before_cold_reopen": [
+    {
+      "link": "Editable_Body_DisplayRetainer_EditableV2",
+      "target_document": "display_retainer_mounting_leadin_candidate",
+      "target_file": "pendant-bodies/display-retainer-mounting-leadin-candidate.FCStd",
+      "target_object": "Body_DisplayRetainer_EditableV2",
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "target_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 2050.3855204146575,
+        "area_mm2": 2180.4593852900384,
+        "bounds_mm": [
+          -29.42019278301042,
+          29.423440320911695,
+          -16.0,
+          25.8,
+          -10.06146722824298,
+          -7.061467228242978
+        ]
+      }
+    },
+    {
+      "link": "Editable_Body_USBTetheredCover",
+      "target_document": "usb_tethered_cover",
+      "target_file": "pendant-bodies/usb-tethered-cover.FCStd",
+      "target_object": "Body_USBTetheredCover",
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "target_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 665.2206904482824,
+        "area_mm2": 733.8375573313688,
+        "bounds_mm": [
+          4.106023947664252,
+          39.68837681046618,
+          -9.571563058751954,
+          22.48728578733798,
+          -32.42093848788702,
+          0.0
+        ]
+      }
+    },
+    {
+      "link": "Editable_Body_FaceplateLocator_A",
+      "target_document": "faceplate_locators_leadin_candidate",
+      "target_file": "pendant-bodies/faceplate-locators-leadin-candidate.FCStd",
+      "target_object": "Body_FaceplateLocator_A",
+      "placement": "Placement [Pos=(0,0,-1.5), Yaw-Pitch-Roll=(0,0,0)]",
+      "target_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 88.21013732209859,
+        "area_mm2": 145.63727704700136,
+        "bounds_mm": [
+          -32.36,
+          -25.16,
+          22.946299999999997,
+          30.1463,
+          -3.5,
+          -0.8
+        ]
+      }
+    },
+    {
+      "link": "Editable_Body_FaceplateLocator_B",
+      "target_document": "faceplate_locators_leadin_candidate",
+      "target_file": "pendant-bodies/faceplate-locators-leadin-candidate.FCStd",
+      "target_object": "Body_FaceplateLocator_B",
+      "placement": "Placement [Pos=(0,0,-1.5), Yaw-Pitch-Roll=(0,0,0)]",
+      "target_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 88.2101373220986,
+        "area_mm2": 145.63727704700136,
+        "bounds_mm": [
+          22.4,
+          29.6,
+          61.4,
+          68.6,
+          -3.5,
+          -0.8
+        ]
+      }
+    },
+    {
+      "link": "Editable_Body006",
+      "target_document": "breakout_board",
+      "target_file": "pendant-bodies/breakout-board.FCStd",
+      "target_object": "Body006",
+      "placement": "Placement [Pos=(0,0,-13.2), Yaw-Pitch-Roll=(0,0,0)]",
+      "target_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 2660.5453836083534,
+        "area_mm2": 3692.169917154918,
+        "bounds_mm": [
+          -30.0,
+          30.0,
+          20.0,
+          50.0,
+          -14.799999999999999,
+          -13.2
+        ]
+      }
+    },
+    {
+      "link": "Interim_Body002",
+      "target_document": "rear_shell_loadpath_repair_candidate",
+      "target_file": "pendant-bodies/rear-shell-loadpath-repair-candidate.FCStd",
+      "target_object": "RearShell",
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+      "target_metrics": {
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 40609.693012380856,
+        "area_mm2": 30634.260536984068,
+        "bounds_mm": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ]
+      }
+    }
+  ],
+  "assembly_live_links_after_cold_reopen": [
+    {
+      "link": "Editable_Body_DisplayRetainer_EditableV2",
+      "target_object": "Body_DisplayRetainer_EditableV2",
+      "target_document": "display_retainer_mounting_leadin_candidate",
+      "target_file": "pendant-bodies/display-retainer-mounting-leadin-candidate.FCStd",
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]"
+    },
+    {
+      "link": "Editable_Body_USBTetheredCover",
+      "target_object": "Body_USBTetheredCover",
+      "target_document": "usb_tethered_cover",
+      "target_file": "pendant-bodies/usb-tethered-cover.FCStd",
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]"
+    },
+    {
+      "link": "Editable_Body_FaceplateLocator_A",
+      "target_object": "Body_FaceplateLocator_A",
+      "target_document": "faceplate_locators_leadin_candidate",
+      "target_file": "pendant-bodies/faceplate-locators-leadin-candidate.FCStd",
+      "placement": "Placement [Pos=(0,0,-1.5), Yaw-Pitch-Roll=(0,0,0)]"
+    },
+    {
+      "link": "Editable_Body_FaceplateLocator_B",
+      "target_object": "Body_FaceplateLocator_B",
+      "target_document": "faceplate_locators_leadin_candidate",
+      "target_file": "pendant-bodies/faceplate-locators-leadin-candidate.FCStd",
+      "placement": "Placement [Pos=(0,0,-1.5), Yaw-Pitch-Roll=(0,0,0)]"
+    },
+    {
+      "link": "Editable_Body006",
+      "target_object": "Body006",
+      "target_document": "breakout_board",
+      "target_file": "pendant-bodies/breakout-board.FCStd",
+      "placement": "Placement [Pos=(0,0,-13.2), Yaw-Pitch-Roll=(0,0,0)]"
+    },
+    {
+      "link": "Interim_Body002",
+      "target_object": "RearShell",
+      "target_document": "rear_shell_loadpath_repair_candidate",
+      "target_file": "pendant-bodies/rear-shell-loadpath-repair-candidate.FCStd",
+      "placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]"
+    }
+  ],
+  "assembly_root_before_cold_reopen": {
+    "valid": true,
+    "solids": 9,
+    "volume_mm3": 111841.7739735076,
+    "area_mm2": 84942.81248690553,
+    "bounds_mm": [
+      -64.21622504107172,
+      64.21622504107174,
+      -92.36472522473227,
+      86.68910767539026,
+      -36.844984332370686,
+      5.000000000000091
+    ]
+  },
+  "assembly_root_after_cold_reopen": {
+    "valid": true,
+    "solids": 9,
+    "volume_mm3": 111841.7739735076,
+    "area_mm2": 84942.81248690553,
+    "bounds_mm": [
+      -64.21622504107172,
+      64.21622504107174,
+      -92.36472522473227,
+      86.68910767539026,
+      -36.844984332370686,
+      5.000000000000091
+    ]
+  },
+  "save_close_reopen_recompute": "passed",
+  "qualification": "Parametric interface validated for lead-in radial/depth only; this does not establish screw preload, structural strength, or full assembly design readiness."
+}
