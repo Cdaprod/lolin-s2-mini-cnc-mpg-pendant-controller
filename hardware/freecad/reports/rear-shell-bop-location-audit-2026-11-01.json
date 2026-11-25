@@ -1,0 +1,2741 @@
+{
+  "candidate": "/private/tmp/pendant-cnc-freecad-candidate/hardware/freecad/pendant-bodies/rear-shell-native-loadpath-selective-refine-review-2026-11-01.FCStd",
+  "body_tip": "RearCrescentAntiSlipSeatPocket",
+  "recompute_errors": [],
+  "final": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 41080.89424651939,
+    "area_mm2": 30697.513987678416,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ],
+    "freecad_bop_error_lines": 28,
+    "mesh": {
+      "facets": 31174,
+      "closed": true,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_facets": 0
+    }
+  },
+  "stages": [
+    {
+      "feature": "FreshFusedBase",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40485.69794853681,
+      "curve_on_surface_pair_count": 6,
+      "fault_pairs": [
+        {
+          "status": 10,
+          "max_distance_mm": 9.762381199417185e-06,
+          "max_parameter": 0.008361745549216211,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.5297,
+                3.0311,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.0496,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.762381213408297e-06,
+          "max_parameter": 0.008361721188986081,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.8797,
+                3.0311,
+                -22.4445,
+                31.7103,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.0496,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.4123491230749866e-05,
+          "max_parameter": 0.9721761689874803,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.7386,
+                -4.0496,
+                -22.4445,
+                30.2681,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.0496,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.412349123323755e-05,
+          "max_parameter": 0.97217616898772,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.3886,
+                -4.0496,
+                -22.4445,
+                31.9181,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.0496,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.144882209421807e-06,
+          "max_parameter": 0.008356978131347571,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.663,
+                3.0311,
+                -23.6945,
+                26.8394,
+                10.6436,
+                -20.3083
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -5.5828,
+                -23.6945,
+                28.825,
+                11.645,
+                -19.0
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.1175734760823091e-05,
+          "max_parameter": 0.9720289502707343,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                27.3422,
+                -2.3725,
+                -21.1945,
+                30.7384,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                21.7945,
+                -2.3725,
+                -21.1945,
+                31.83,
+                8.4347,
+                -19.0
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "feature": "MiddleLeftNativeLoadPath",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40717.55471007796,
+      "curve_on_surface_pair_count": 6,
+      "fault_pairs": [
+        {
+          "status": 10,
+          "max_distance_mm": 9.762381199417185e-06,
+          "max_parameter": 0.008361745549216211,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.5297,
+                3.0311,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.0496,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.762381213408297e-06,
+          "max_parameter": 0.008361721188986081,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.8797,
+                3.0311,
+                -22.4445,
+                31.7103,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.0496,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.4123491230749866e-05,
+          "max_parameter": 0.9721761689874803,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.7386,
+                -4.0496,
+                -22.4445,
+                30.2681,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.0496,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.412349123323755e-05,
+          "max_parameter": 0.97217616898772,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.3886,
+                -4.0496,
+                -22.4445,
+                31.9181,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.0496,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.144882209421807e-06,
+          "max_parameter": 0.008356978131347571,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.663,
+                3.0311,
+                -23.6945,
+                26.8394,
+                10.6436,
+                -20.3083
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -5.5828,
+                -23.6945,
+                28.825,
+                11.645,
+                -19.0
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.1175734760823091e-05,
+          "max_parameter": 0.9720289502707343,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                27.3422,
+                -2.3725,
+                -21.1945,
+                30.7384,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                21.7945,
+                -2.3725,
+                -21.1945,
+                31.83,
+                8.4347,
+                -19.0
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "feature": "MiddleRightNativeLoadPath",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40952.28939942549,
+      "curve_on_surface_pair_count": 11,
+      "fault_pairs": [
+        {
+          "status": 10,
+          "max_distance_mm": 0.5105302859356259,
+          "max_parameter": 0.9979453777544749,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -20.2634,
+                58.708,
+                -18.8,
+                -20.0031,
+                60.402,
+                -17.8636
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -31.1374,
+                51.5,
+                -25.0,
+                -20.0,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.00010473396400765654,
+          "max_parameter": 0.9845466252138655,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                15.8196,
+                75.6992,
+                -17.4044,
+                18.12,
+                78.0008,
+                -16.7781
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                15.82,
+                75.7,
+                -21.0,
+                18.12,
+                78.0,
+                -16.7787
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.412349123323755e-05,
+          "max_parameter": 0.97217616898772,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.3886,
+                -4.0496,
+                -22.4445,
+                31.9181,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.76238119692397e-06,
+          "max_parameter": 0.008361708147372932,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.5297,
+                3.0311,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.762381211379518e-06,
+          "max_parameter": 0.008361745100475585,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.8797,
+                3.0311,
+                -22.4445,
+                31.7103,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.4123491230749866e-05,
+          "max_parameter": 0.9721761689874803,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.7386,
+                -4.0496,
+                -22.4445,
+                30.2681,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.06167900712219756,
+          "max_parameter": 0.9276647375560092,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                20.0689,
+                59.48,
+                -18.8,
+                21.3283,
+                62.6027,
+                -16.2677
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                20.0,
+                51.5,
+                -25.0,
+                31.1213,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 5.660364745406737e-06,
+          "max_parameter": 0.9891056885674903,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                22.2345,
+                63.6274,
+                -25.0004,
+                26.9464,
+                65.4998,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                20.0,
+                51.5,
+                -25.0,
+                31.1213,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.1175734758924097e-05,
+          "max_parameter": 0.9720289410965828,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                27.3422,
+                -2.3725,
+                -21.1945,
+                30.7384,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                21.7945,
+                -4.1073,
+                -21.1945,
+                32.0315,
+                10.3611,
+                -15.9613
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.144882209935978e-06,
+          "max_parameter": 0.008356962929302639,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.663,
+                3.0311,
+                -23.6945,
+                26.8394,
+                10.6436,
+                -20.3083
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -6.8593,
+                -23.6945,
+                29.513,
+                13.0931,
+                -15.3987
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.0028560079247488554,
+          "max_parameter": 0.9912151157207597,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.2941,
+                -6.8594,
+                -16.9498,
+                22.6852,
+                -6.6009,
+                -16.1356
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -6.8593,
+                -23.6945,
+                29.513,
+                13.0931,
+                -15.3987
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "feature": "LowerLeftNativeLoadPath",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 41044.177462362946,
+      "curve_on_surface_pair_count": 13,
+      "fault_pairs": [
+        {
+          "status": 10,
+          "max_distance_mm": 0.06167900712219756,
+          "max_parameter": 0.9276647375560092,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                20.0689,
+                59.48,
+                -18.8,
+                21.3283,
+                62.6027,
+                -16.2677
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                20.0,
+                51.5,
+                -25.0,
+                31.1213,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 5.660364745406737e-06,
+          "max_parameter": 0.9891056885674903,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                22.2345,
+                63.6274,
+                -25.0004,
+                26.9464,
+                65.4998,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                20.0,
+                51.5,
+                -25.0,
+                31.1213,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.00010473396400765654,
+          "max_parameter": 0.9845466252138655,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                15.8196,
+                75.6992,
+                -17.4044,
+                18.12,
+                78.0008,
+                -16.7781
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                15.82,
+                75.7,
+                -21.0,
+                18.12,
+                78.0,
+                -16.7787
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.412349123323755e-05,
+          "max_parameter": 0.97217616898772,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.3886,
+                -4.0496,
+                -22.4445,
+                31.9181,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.76238119692397e-06,
+          "max_parameter": 0.008361708147372932,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.5297,
+                3.0311,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.762381211379518e-06,
+          "max_parameter": 0.008361745100475585,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.8797,
+                3.0311,
+                -22.4445,
+                31.7103,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.4123491230749866e-05,
+          "max_parameter": 0.9721761689874803,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.7386,
+                -4.0496,
+                -22.4445,
+                30.2681,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.5105302859356259,
+          "max_parameter": 0.9979453777544749,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -20.2634,
+                58.708,
+                -18.8,
+                -20.0031,
+                60.402,
+                -17.8636
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -31.1374,
+                51.5,
+                -25.0,
+                -20.0,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.1175734758924097e-05,
+          "max_parameter": 0.9720289410965828,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                27.3422,
+                -2.3725,
+                -21.1945,
+                30.7384,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                21.7945,
+                -4.1073,
+                -21.1945,
+                32.0315,
+                10.3611,
+                -15.9613
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.144882209935978e-06,
+          "max_parameter": 0.008356962929302639,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.663,
+                3.0311,
+                -23.6945,
+                26.8394,
+                10.6436,
+                -20.3083
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -6.8593,
+                -23.6945,
+                29.513,
+                13.0931,
+                -15.3987
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.0028560079247488554,
+          "max_parameter": 0.9912151157207597,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.2941,
+                -6.8594,
+                -16.9498,
+                22.6852,
+                -6.6009,
+                -16.1356
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -6.8593,
+                -23.6945,
+                29.513,
+                13.0931,
+                -15.3987
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.000321111144637017,
+          "max_parameter": 0.9969550661930818,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -17.9545,
+                -17.7566,
+                -15.6417,
+                -16.85,
+                -16.6062,
+                -15.2871
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -18.0637,
+                -18.9066,
+                -16.3705,
+                -16.85,
+                -16.6076,
+                -15.2846
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 2.523974090484396e-05,
+          "max_parameter": 0.9200310395291876,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -19.5385,
+                -21.905,
+                -18.7268,
+                -13.8919,
+                -17.7566,
+                -17.9
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -19.5386,
+                -22.0404,
+                -18.7268,
+                -13.7162,
+                -17.7566,
+                -17.9
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "feature": "LowerRightNativeLoadPath",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 41136.05638525544,
+      "curve_on_surface_pair_count": 13,
+      "fault_pairs": [
+        {
+          "status": 10,
+          "max_distance_mm": 0.06167900712219756,
+          "max_parameter": 0.9276647375560092,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                20.0689,
+                59.48,
+                -18.8,
+                21.3283,
+                62.6027,
+                -16.2677
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                20.0,
+                51.5,
+                -25.0,
+                31.1213,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 5.660364745406737e-06,
+          "max_parameter": 0.9891056885674903,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                22.2345,
+                63.6274,
+                -25.0004,
+                26.9464,
+                65.4998,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                20.0,
+                51.5,
+                -25.0,
+                31.1213,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.00010473396400765654,
+          "max_parameter": 0.9845466252138655,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                15.8196,
+                75.6992,
+                -17.4044,
+                18.12,
+                78.0008,
+                -16.7781
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                15.82,
+                75.7,
+                -21.0,
+                18.12,
+                78.0,
+                -16.7787
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.412349123323755e-05,
+          "max_parameter": 0.97217616898772,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.3886,
+                -4.0496,
+                -22.4445,
+                31.9181,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.76238119692397e-06,
+          "max_parameter": 0.008361708147372932,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.5297,
+                3.0311,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.762381211379518e-06,
+          "max_parameter": 0.008361745100475585,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.8797,
+                3.0311,
+                -22.4445,
+                31.7103,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.4123491230749866e-05,
+          "max_parameter": 0.9721761689874803,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.7386,
+                -4.0496,
+                -22.4445,
+                30.2681,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.000321111144637017,
+          "max_parameter": 0.9969550661930818,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -17.9545,
+                -17.7566,
+                -15.6417,
+                -16.85,
+                -16.6062,
+                -15.2871
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -18.0637,
+                -18.9066,
+                -16.3705,
+                -16.85,
+                -16.6076,
+                -15.2846
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.5105302859356259,
+          "max_parameter": 0.9979453777544749,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -20.2634,
+                58.708,
+                -18.8,
+                -20.0031,
+                60.402,
+                -17.8636
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -31.1374,
+                51.5,
+                -25.0,
+                -20.0,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.1175734758924097e-05,
+          "max_parameter": 0.9720289410965828,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                27.3422,
+                -2.3725,
+                -21.1945,
+                30.7384,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                21.7945,
+                -4.1073,
+                -21.1945,
+                32.0315,
+                10.3611,
+                -15.9613
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.144882209935978e-06,
+          "max_parameter": 0.008356962929302639,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.663,
+                3.0311,
+                -23.6945,
+                26.8394,
+                10.6436,
+                -20.3083
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -6.8593,
+                -23.6945,
+                29.513,
+                13.0931,
+                -15.3987
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.0028560079247488554,
+          "max_parameter": 0.9912151157207597,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.2941,
+                -6.8594,
+                -16.9498,
+                22.6852,
+                -6.6009,
+                -16.1356
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -6.8593,
+                -23.6945,
+                29.513,
+                13.0931,
+                -15.3987
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 2.523974090484396e-05,
+          "max_parameter": 0.9200310395291876,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -19.5385,
+                -21.905,
+                -18.7268,
+                -13.8919,
+                -17.7566,
+                -17.9
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -19.5386,
+                -22.0404,
+                -18.7268,
+                -13.7162,
+                -17.7566,
+                -17.9
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "feature": "RearM2ClearancePocket",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 41106.142704508326,
+      "curve_on_surface_pair_count": 14,
+      "fault_pairs": [
+        {
+          "status": 10,
+          "max_distance_mm": 0.06167900712219756,
+          "max_parameter": 0.9276647375560092,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                20.0689,
+                59.48,
+                -18.8,
+                21.3283,
+                62.6027,
+                -16.2677
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                20.0,
+                51.5,
+                -25.0,
+                31.1213,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 5.660364745406737e-06,
+          "max_parameter": 0.9891056885674903,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                22.2345,
+                63.6274,
+                -25.0004,
+                26.9464,
+                65.4998,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                20.0,
+                51.5,
+                -25.0,
+                31.1213,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.412349123323755e-05,
+          "max_parameter": 0.97217616898772,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.3886,
+                -4.0496,
+                -22.4445,
+                31.9181,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.76238119692397e-06,
+          "max_parameter": 0.008361708147372932,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.5297,
+                3.0311,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.762381211379518e-06,
+          "max_parameter": 0.008361745100475585,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.8797,
+                3.0311,
+                -22.4445,
+                31.7103,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.4123491230749866e-05,
+          "max_parameter": 0.9721761689874803,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.7386,
+                -4.0496,
+                -22.4445,
+                30.2681,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.000321111144637017,
+          "max_parameter": 0.9969550661930818,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -17.9545,
+                -17.7566,
+                -15.6417,
+                -16.85,
+                -16.6062,
+                -15.2871
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -18.0637,
+                -18.9066,
+                -16.3705,
+                -16.85,
+                -16.6076,
+                -15.2846
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.5105302859356259,
+          "max_parameter": 0.9979453777544749,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -20.2634,
+                58.708,
+                -18.8,
+                -20.0031,
+                60.402,
+                -17.8636
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -31.1374,
+                51.5,
+                -25.0,
+                -20.0,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.1175734758924097e-05,
+          "max_parameter": 0.9720289410965828,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                27.3422,
+                -2.3725,
+                -21.1945,
+                30.7384,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                21.7945,
+                -4.1073,
+                -21.1945,
+                32.0315,
+                10.3611,
+                -15.9613
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.144882209935978e-06,
+          "max_parameter": 0.008356962929302639,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.663,
+                3.0311,
+                -23.6945,
+                26.8394,
+                10.6436,
+                -20.3083
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -6.8593,
+                -23.6945,
+                29.513,
+                13.0931,
+                -15.3987
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.0028560079247488554,
+          "max_parameter": 0.9912151157207597,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.2941,
+                -6.8594,
+                -16.9498,
+                22.6852,
+                -6.6009,
+                -16.1356
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -6.8593,
+                -23.6945,
+                29.513,
+                13.0931,
+                -15.3987
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.1448891398957434e-07,
+          "max_parameter": 0.05631336004062567,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -18.1212,
+                75.6989,
+                -17.4046,
+                -15.82,
+                78.0012,
+                -16.7778
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -18.12,
+                75.7,
+                -21.0,
+                -15.82,
+                78.0,
+                -16.7786
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 5.4585309751107725e-05,
+          "max_parameter": 0.9732586375231039,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                15.8196,
+                75.6992,
+                -17.4044,
+                18.12,
+                78.0008,
+                -16.7781
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                15.82,
+                75.7,
+                -21.0,
+                18.12,
+                78.0,
+                -16.7787
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 2.523974090484396e-05,
+          "max_parameter": 0.9200310395291876,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -19.5385,
+                -21.905,
+                -18.7268,
+                -13.8919,
+                -17.7566,
+                -17.9
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -19.5386,
+                -22.0404,
+                -18.7268,
+                -13.7162,
+                -17.7566,
+                -17.9
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "feature": "StructuralBottomPerimeterFillet",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 41104.695176231464,
+      "curve_on_surface_pair_count": 14,
+      "fault_pairs": [
+        {
+          "status": 10,
+          "max_distance_mm": 0.06167900712219756,
+          "max_parameter": 0.9276647375560092,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                20.0689,
+                59.48,
+                -18.8,
+                21.3283,
+                62.6027,
+                -16.2677
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                20.0,
+                51.5,
+                -25.0,
+                31.1213,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 5.660364745406737e-06,
+          "max_parameter": 0.9891056885674903,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                22.2345,
+                63.6274,
+                -25.0004,
+                26.9464,
+                65.4998,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                20.0,
+                51.5,
+                -25.0,
+                31.1213,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 5.4585309751107725e-05,
+          "max_parameter": 0.9732586375231039,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                15.8196,
+                75.6992,
+                -17.4044,
+                18.12,
+                78.0008,
+                -16.7781
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                15.82,
+                75.7,
+                -21.0,
+                18.12,
+                78.0,
+                -16.7787
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.412349123323755e-05,
+          "max_parameter": 0.97217616898772,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.3886,
+                -4.0496,
+                -22.4445,
+                31.9181,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.76238119692397e-06,
+          "max_parameter": 0.008361708147372932,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.5297,
+                3.0311,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.762381211379518e-06,
+          "max_parameter": 0.008361745100475585,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.8797,
+                3.0311,
+                -22.4445,
+                31.7103,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.4123491230749866e-05,
+          "max_parameter": 0.9721761689874803,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.7386,
+                -4.0496,
+                -22.4445,
+                30.2681,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.1448891398957434e-07,
+          "max_parameter": 0.05631336004062567,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -18.1212,
+                75.6989,
+                -17.4046,
+                -15.82,
+                78.0012,
+                -16.7778
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -18.12,
+                75.7,
+                -21.0,
+                -15.82,
+                78.0,
+                -16.7786
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.1175734758924097e-05,
+          "max_parameter": 0.9720289410965828,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                27.3422,
+                -2.3725,
+                -21.1945,
+                30.7384,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                21.7945,
+                -4.1073,
+                -21.1945,
+                32.0315,
+                10.3611,
+                -15.9613
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.144882209935978e-06,
+          "max_parameter": 0.008356962929302639,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.663,
+                3.0311,
+                -23.6945,
+                26.8394,
+                10.6436,
+                -20.3083
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -6.8593,
+                -23.6945,
+                29.513,
+                13.0931,
+                -15.3987
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.0028560079247488554,
+          "max_parameter": 0.9912151157207597,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.2941,
+                -6.8594,
+                -16.9498,
+                22.6852,
+                -6.6009,
+                -16.1356
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -6.8593,
+                -23.6945,
+                29.513,
+                13.0931,
+                -15.3987
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.5105302859356259,
+          "max_parameter": 0.9979453777544749,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -20.2634,
+                58.708,
+                -18.8,
+                -20.0031,
+                60.402,
+                -17.8636
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -31.1374,
+                51.5,
+                -25.0,
+                -20.0,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.000321111144637017,
+          "max_parameter": 0.9969550661930818,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -17.9545,
+                -17.7566,
+                -15.6417,
+                -16.85,
+                -16.6062,
+                -15.2871
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -18.0637,
+                -18.9066,
+                -16.3705,
+                -16.85,
+                -16.6076,
+                -15.2846
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 2.523974090484396e-05,
+          "max_parameter": 0.9200310395291876,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -19.5385,
+                -21.905,
+                -18.7268,
+                -13.8919,
+                -17.7566,
+                -17.9
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -19.5386,
+                -22.0404,
+                -18.7268,
+                -13.7162,
+                -17.7566,
+                -17.9
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "feature": "RearCrescentAntiSlipSeatPocket",
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 41080.89424651939,
+      "curve_on_surface_pair_count": 14,
+      "fault_pairs": [
+        {
+          "status": 10,
+          "max_distance_mm": 0.06167900712219756,
+          "max_parameter": 0.9276647375560092,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                20.0689,
+                59.48,
+                -18.8,
+                21.3283,
+                62.6027,
+                -16.2677
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                20.0,
+                51.5,
+                -25.0,
+                31.1213,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 5.660364745406737e-06,
+          "max_parameter": 0.9891056885674903,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                22.2345,
+                63.6274,
+                -25.0004,
+                26.9464,
+                65.4998,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                20.0,
+                51.5,
+                -25.0,
+                31.1213,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 5.4585309751107725e-05,
+          "max_parameter": 0.9732586375231039,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                15.8196,
+                75.6992,
+                -17.4044,
+                18.12,
+                78.0008,
+                -16.7781
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                15.82,
+                75.7,
+                -21.0,
+                18.12,
+                78.0,
+                -16.7787
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.412349123323755e-05,
+          "max_parameter": 0.97217616898772,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.3886,
+                -4.0496,
+                -22.4445,
+                31.9181,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.76238119692397e-06,
+          "max_parameter": 0.008361708147372932,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                26.5297,
+                3.0311,
+                -22.4445,
+                33.3603,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.762381211379518e-06,
+          "max_parameter": 0.008361745100475585,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.8797,
+                3.0311,
+                -22.4445,
+                31.7103,
+                10.1118,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.4123491230749866e-05,
+          "max_parameter": 0.9721761689874803,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                24.7386,
+                -4.0496,
+                -22.4445,
+                30.2681,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                24.7392,
+                -4.3235,
+                -22.4445,
+                33.3603,
+                10.3907,
+                -18.6249
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.1448891398957434e-07,
+          "max_parameter": 0.05631336004062567,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -18.1212,
+                75.6989,
+                -17.4046,
+                -15.82,
+                78.0012,
+                -16.7778
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -18.12,
+                75.7,
+                -21.0,
+                -15.82,
+                78.0,
+                -16.7786
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 1.1175734758924097e-05,
+          "max_parameter": 0.9720289410965828,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                27.3422,
+                -2.3725,
+                -21.1945,
+                30.7384,
+                3.0311,
+                -19.0
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                21.7945,
+                -4.1073,
+                -21.1945,
+                32.0315,
+                10.3611,
+                -15.9613
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 9.144882209935978e-06,
+          "max_parameter": 0.008356962929302639,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.663,
+                3.0311,
+                -23.6945,
+                26.8394,
+                10.6436,
+                -20.3083
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -6.8593,
+                -23.6945,
+                29.513,
+                13.0931,
+                -15.3987
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.0028560079247488554,
+          "max_parameter": 0.9912151157207597,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                19.2941,
+                -6.8594,
+                -16.9498,
+                22.6852,
+                -6.6009,
+                -16.1356
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                19.2945,
+                -6.8593,
+                -23.6945,
+                29.513,
+                13.0931,
+                -15.3987
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.5105302859356259,
+          "max_parameter": 0.9979453777544749,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -20.2634,
+                58.708,
+                -18.8,
+                -20.0031,
+                60.402,
+                -17.8636
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -31.1374,
+                51.5,
+                -25.0,
+                -20.0,
+                65.5,
+                -15.8034
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 0.000321111144637017,
+          "max_parameter": 0.9969550661930818,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -17.9545,
+                -17.7566,
+                -15.6417,
+                -16.85,
+                -16.6062,
+                -15.2871
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -18.0637,
+                -18.9066,
+                -16.3705,
+                -16.85,
+                -16.6076,
+                -15.2846
+              ]
+            }
+          ]
+        },
+        {
+          "status": 10,
+          "max_distance_mm": 2.523974090484396e-05,
+          "max_parameter": 0.9200310395291876,
+          "faulty_shape_pair": [
+            {
+              "topabs_type": 6,
+              "bounds_mm": [
+                -19.5385,
+                -21.905,
+                -18.7268,
+                -13.8919,
+                -17.7566,
+                -17.9
+              ]
+            },
+            {
+              "topabs_type": 4,
+              "bounds_mm": [
+                -19.5386,
+                -22.0404,
+                -18.7268,
+                -13.7162,
+                -17.7566,
+                -17.9
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "documents_saved": false
+}

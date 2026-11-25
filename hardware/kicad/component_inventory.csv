@@ -1,0 +1,41 @@
+Reference,Component,Quantity,Category,Status,Footprint,Notes
+U1,Seeed XIAO ESP32-S3,1,Assembly/functional block,Installed,Not a fabricated PCB footprint,See schematic symbol
+DS1,Seeed Round Display 1.28in,1,Assembly/functional block,Installed,Not a fabricated PCB footprint,See schematic symbol
+U2,MCP23017 breakout 0x20,1,Assembly/functional block,Installed,Not a fabricated PCB footprint,See schematic symbol
+ENC1,Salvaged MPG encoder 3V3,1,Assembly/functional block,Installed,Not a fabricated PCB footprint,See schematic symbol
+PCB1,Salvaged MBL1475 selector PCB,1,Assembly/functional block,Installed,Not a fabricated PCB footprint,See schematic symbol
+J1,Buttons harness - planned contacts,1,Assembly/functional block,Planned / verify,Not a fabricated PCB footprint,See schematic symbol
+SW8,E-STOP NC independent safety,1,Assembly/functional block,Installed,Not a fabricated PCB footprint,See schematic symbol
+J2,Separate AUX stop status (optional),1,Assembly/functional block,Planned / verify,Not a fabricated PCB footprint,See schematic symbol
+J3,USB-C panel extension / USB2,1,Assembly/functional block,Planned / verify,Not a fabricated PCB footprint,See schematic symbol
+SD1,microSD card,1,Media,Optional,,Capacity TBD
+SW1,Six-position axis selector,1,Part of PCB1,Installed,,Do not double-count purchasing
+SW2,Three-position multiplier selector,1,Part of PCB1,Installed,,Do not double-count purchasing
+LED1,Selector PCB indicator LED,1,Part of PCB1,Installed,,Voltage unverified
+SW3,SELECT momentary,1,Control,Planned / verify,,GPB2
+SW4,BACK momentary,1,Control,Planned / verify,,GPB3
+SW5,FN momentary,1,Control,Planned / verify,,GPB4
+SW6,CANCEL momentary,1,Control,Planned / verify,,GPB5
+SW7,Deadman/enable control,1,Control,Planned / verify,,GPB6
+M1,Front shell,1,3D print,In design,,FreeCAD
+M2,Faceplate,1,3D print,In design,,FreeCAD
+M3,Rear shell,1,3D print,In design,,FreeCAD
+M4,Display retainer,1,3D print,In design,,FreeCAD
+M5,Hanging slot feature,1,Integrated feature,In design,,FreeCAD
+HW1,Enclosure screws,TBD,Fastener,TBD,,Size/count pending
+HW2,Threaded inserts,TBD,Fastener,TBD,,Size/count pending
+HW3,Magnets,TBD,Fastener,TBD,,Well dimensions pending
+HW4,Display mounting hardware,TBD,Fastener,TBD,,Confirm display
+HW5,Encoder nut and washer,1,Fastener,Existing / verify,,Salvaged
+C1,USB-C panel extension,1,Cable,Planned,,"Check CC, shield, VBUS"
+C2,Internal USB-C cable,1,Cable,Planned,,Short
+C3,Encoder six-core harness,1,Cable,Existing,,A-/B- unused
+C4,Selector harness,1,Cable,Existing,,MBL1475
+C5,I2C / power harness,1,Cable,Planned,,XIAO to MCP
+C6,JST 1.25 wire-to-wire connectors,TBD,Connector,Planned,,Count/polarity TBD
+C7,Heat shrink / wire markers,TBD,Consumable,Planned,,Harness
+BAT1,Rechargeable battery,1,Power,Optional,,Chemistry TBD
+PWR1,Battery protection/charger,1,Power,Optional,,Architecture TBD
+PWR2,Protected USB host VBUS supply,1,Power,Conditional,,Only if host mode enabled
+EXT1,CH34x controller bridge,0,External,NOT IN PENDANT,,Exists on Doesbot controller
+U3,LM393 comparator,0,Removed,DO NOT FIT,,Direct encoder wiring

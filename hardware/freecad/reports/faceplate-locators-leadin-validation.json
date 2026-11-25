@@ -1,0 +1,95 @@
+{
+  "source": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-bodies/faceplate-locators.FCStd",
+  "candidate": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-bodies/faceplate-locators-leadin-candidate.FCStd",
+  "lead_radial_expansion_mm": 0.15,
+  "lead_depth_mm": 0.15,
+  "taper_angle_deg": -45.0,
+  "bodies": {
+    "Body_FaceplateLocator_A": {
+      "before": {
+        "volume_mm3": 88.29496032374551,
+        "area_mm2": 146.2429023329109,
+        "faces": 6,
+        "edges": 9,
+        "solids": 1,
+        "valid": true,
+        "bounds_mm": [
+          -32.36,
+          -25.16,
+          22.946299999999997,
+          30.1463,
+          -3.5,
+          -0.7999999999999998
+        ]
+      },
+      "after": {
+        "volume_mm3": 88.21013732209859,
+        "area_mm2": 145.63727704700136,
+        "faces": 7,
+        "edges": 11,
+        "solids": 1,
+        "valid": true,
+        "bounds_mm": [
+          -32.36,
+          -25.16,
+          22.946299999999997,
+          30.1463,
+          -3.5,
+          -0.8
+        ]
+      },
+      "removed_mm3": 0.08482300164692447,
+      "added_mm3": 0.0,
+      "nominal_bore_gauge_interference_mm3": 0.0,
+      "fully_constrained_profile": true,
+      "mesh_closed": true,
+      "facets": 2394,
+      "boundary_edges": 0,
+      "over_incident_edges": 0,
+      "placement": "Placement [Pos=(0,0,-1.5), Yaw-Pitch-Roll=(0,0,0)]"
+    },
+    "Body_FaceplateLocator_B": {
+      "before": {
+        "volume_mm3": 88.29496032374553,
+        "area_mm2": 146.2429023329109,
+        "faces": 6,
+        "edges": 9,
+        "solids": 1,
+        "valid": true,
+        "bounds_mm": [
+          22.4,
+          29.6,
+          61.4,
+          68.6,
+          -3.5,
+          -0.7999999999999998
+        ]
+      },
+      "after": {
+        "volume_mm3": 88.2101373220986,
+        "area_mm2": 145.63727704700136,
+        "faces": 7,
+        "edges": 11,
+        "solids": 1,
+        "valid": true,
+        "bounds_mm": [
+          22.4,
+          29.6,
+          61.4,
+          68.6,
+          -3.5,
+          -0.8
+        ]
+      },
+      "removed_mm3": 0.08482300164692447,
+      "added_mm3": 0.0,
+      "nominal_bore_gauge_interference_mm3": 0.0,
+      "fully_constrained_profile": true,
+      "mesh_closed": true,
+      "facets": 2392,
+      "boundary_edges": 0,
+      "over_incident_edges": 0,
+      "placement": "Placement [Pos=(0,0,-1.5), Yaw-Pitch-Roll=(0,0,0)]"
+    }
+  }
+}
