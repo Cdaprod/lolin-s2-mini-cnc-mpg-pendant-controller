@@ -1,0 +1,17 @@
+name: Hardware source policy
+on:
+  pull_request:
+    branches: [hardware-integration-clean]
+    paths:
+      - 'hardware/**'
+      - '.gitignore'
+      - '.github/workflows/hardware-source-policy.yml'
+jobs:
+  source-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python3 hardware/scripts/validate_sources.py
