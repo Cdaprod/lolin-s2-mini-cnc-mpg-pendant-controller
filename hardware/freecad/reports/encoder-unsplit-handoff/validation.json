@@ -1,0 +1,307 @@
+{
+  "schema_version": 1,
+  "candidate": "encoder-faceplate-pocket-unsplit-user-split.FCStd",
+  "source_document": "pendant-encoder-fused-working.FCStd",
+  "errors": [],
+  "stages": [
+    {
+      "stage": "open",
+      "geometry": {
+        "type": "Part::Feature",
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 14630.092839744844,
+        "area_mm2": 10416.05115992548,
+        "analytic_bbox_mm": [
+          -60.0,
+          -89.47819377262843,
+          -27.50000000000054,
+          60.0,
+          -4.7423856032506615,
+          2.5000000000000666
+        ],
+        "mesh_bbox_mm": [
+          [
+            -37.60915797312436,
+            -87.3163021545412,
+            -9.0
+          ],
+          [
+            37.6378812190344,
+            -17.96201987354831,
+            2.5
+          ]
+        ],
+        "faces": 103,
+        "edges": 293,
+        "mesh_sha256": "8a6b704929bb74651751f6370eb9e6079b5a4e1d68ab3101de4df6cfb8a4ce7b",
+        "mesh_vertices": 9317,
+        "mesh_triangles": 18658,
+        "out_links": [],
+        "in_links": []
+      }
+    },
+    {
+      "stage": "target_recompute",
+      "geometry": {
+        "type": "Part::Feature",
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 14630.092839744844,
+        "area_mm2": 10416.05115992548,
+        "analytic_bbox_mm": [
+          -37.60915797312436,
+          -87.3163021545412,
+          -9.0,
+          37.6378812190344,
+          -17.96201987354831,
+          2.5
+        ],
+        "mesh_bbox_mm": [
+          [
+            -37.60915797312436,
+            -87.3163021545412,
+            -9.0
+          ],
+          [
+            37.6378812190344,
+            -17.96201987354831,
+            2.5
+          ]
+        ],
+        "faces": 103,
+        "edges": 293,
+        "mesh_sha256": "8a6b704929bb74651751f6370eb9e6079b5a4e1d68ab3101de4df6cfb8a4ce7b",
+        "mesh_vertices": 9317,
+        "mesh_triangles": 18658,
+        "out_links": [],
+        "in_links": []
+      }
+    },
+    {
+      "stage": "save_reopen_recompute",
+      "before_recompute": {
+        "type": "Part::Feature",
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 14630.092839744844,
+        "area_mm2": 10416.05115992548,
+        "analytic_bbox_mm": [
+          -60.0,
+          -89.47819377262843,
+          -27.50000000000054,
+          60.0,
+          -4.7423856032506615,
+          2.5000000000000666
+        ],
+        "mesh_bbox_mm": [
+          [
+            -37.60915797312436,
+            -87.3163021545412,
+            -9.0
+          ],
+          [
+            37.6378812190344,
+            -17.96201987354831,
+            2.5
+          ]
+        ],
+        "faces": 103,
+        "edges": 293,
+        "mesh_sha256": "8a6b704929bb74651751f6370eb9e6079b5a4e1d68ab3101de4df6cfb8a4ce7b",
+        "mesh_vertices": 9317,
+        "mesh_triangles": 18658,
+        "out_links": [],
+        "in_links": []
+      },
+      "after_recompute": {
+        "type": "Part::Feature",
+        "valid": true,
+        "solids": 1,
+        "volume_mm3": 14630.092839744844,
+        "area_mm2": 10416.05115992548,
+        "analytic_bbox_mm": [
+          -37.60915797312436,
+          -87.3163021545412,
+          -9.0,
+          37.6378812190344,
+          -17.96201987354831,
+          2.5
+        ],
+        "mesh_bbox_mm": [
+          [
+            -37.60915797312436,
+            -87.3163021545412,
+            -9.0
+          ],
+          [
+            37.6378812190344,
+            -17.96201987354831,
+            2.5
+          ]
+        ],
+        "faces": 103,
+        "edges": 293,
+        "mesh_sha256": "8a6b704929bb74651751f6370eb9e6079b5a4e1d68ab3101de4df6cfb8a4ce7b",
+        "mesh_vertices": 9317,
+        "mesh_triangles": 18658,
+        "out_links": [],
+        "in_links": []
+      }
+    }
+  ],
+  "screw_hole_surfaces": [
+    {
+      "xy_mm": [
+        0.0,
+        -85.3
+      ],
+      "cylindrical_radii_mm": [
+        0.8,
+        1.1
+      ]
+    },
+    {
+      "xy_mm": [
+        -29.7047,
+        -33.85
+      ],
+      "cylindrical_radii_mm": [
+        0.8
+      ]
+    },
+    {
+      "xy_mm": [
+        29.7047,
+        -33.85
+      ],
+      "cylindrical_radii_mm": [
+        0.8
+      ]
+    },
+    {
+      "xy_mm": [
+        -21.997,
+        -63.3214
+      ],
+      "cylindrical_radii_mm": [
+        1.6,
+        3.4
+      ]
+    },
+    {
+      "xy_mm": [
+        21.997,
+        -63.3214
+      ],
+      "cylindrical_radii_mm": [
+        1.6,
+        3.4
+      ]
+    },
+    {
+      "xy_mm": [
+        0.0,
+        -25.2214
+      ],
+      "cylindrical_radii_mm": [
+        1.6,
+        3.4
+      ]
+    }
+  ],
+  "result": "PASS",
+  "source_file_sha256": "c20e68fcc2a17782a37aecc9eac1ae7388192e94479077532331948ac01a6d30",
+  "input_shapes": {
+    "Body_EncoderFacePlate": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 11100.641731465465,
+      "area_mm2": 8814.56596413975,
+      "faces": 80,
+      "edges": 234
+    },
+    "EncoderPocketShellReleaseNoFaceplateRetention": {
+      "valid": true,
+      "solids": 1,
+      "volume_mm3": 3529.381623575534,
+      "area_mm2": 3910.865192944945,
+      "faces": 28,
+      "edges": 110
+    }
+  },
+  "boolean_checks": {
+    "common_volume_mm3": 0.0,
+    "faceplate_material_missing_from_fusion_mm3": 0.0,
+    "pocket_material_missing_from_fusion_mm3": 0.0,
+    "input_volume_sum_mm3": 14630.023355040998,
+    "fused_volume_mm3": 14630.092839744844,
+    "fuse_volume_delta_mm3": 0.06948470384668326
+  },
+  "screw_surface_checks": [
+    {
+      "xy_mm": [
+        0.0,
+        -85.3
+      ],
+      "cylindrical_radii_mm": [
+        0.8,
+        1.1
+      ]
+    },
+    {
+      "xy_mm": [
+        -29.7047,
+        -33.85
+      ],
+      "cylindrical_radii_mm": [
+        0.8
+      ]
+    },
+    {
+      "xy_mm": [
+        29.7047,
+        -33.85
+      ],
+      "cylindrical_radii_mm": [
+        0.8
+      ]
+    },
+    {
+      "xy_mm": [
+        -21.997,
+        -63.3214
+      ],
+      "cylindrical_radii_mm": [
+        1.6,
+        3.4
+      ]
+    },
+    {
+      "xy_mm": [
+        21.997,
+        -63.3214
+      ],
+      "cylindrical_radii_mm": [
+        1.6,
+        3.4
+      ]
+    },
+    {
+      "xy_mm": [
+        0.0,
+        -25.2214
+      ],
+      "cylindrical_radii_mm": [
+        1.6,
+        3.4
+      ]
+    }
+  ],
+  "notes": [
+    "This is an intentionally static fused BREP for the user to sketch and split; the production monolith and native encoder feature histories were not modified.",
+    "The source histories emit out-of-scope recomputation warnings and can change geometric frames when recomputed; they were not used as a live dependency in the handoff.",
+    "The analytic BRep bounding box tightens after recompute, while tessellation coordinates and mesh hash, volume, area, face/edge counts, and solid count remain unchanged.",
+    "The fused geometry retains the saved holes and pilot passages by construction; the report records detectable cylindrical surfaces at the existing fastener-pattern coordinates."
+  ]
+}

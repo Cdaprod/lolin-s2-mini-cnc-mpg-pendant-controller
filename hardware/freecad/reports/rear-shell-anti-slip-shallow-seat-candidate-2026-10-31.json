@@ -1,0 +1,128 @@
+{
+  "date": "2026-10-31",
+  "status": "disposable_review_candidate_not_production",
+  "candidate_file": "hardware/freecad/pendant-bodies/rear-shell-anti-slip-shallow-parametric-seat-candidate.FCStd",
+  "source_candidate": "hardware/freecad/pendant-bodies/rear-shell-anti-slip-contact-candidate.FCStd",
+  "protected_documents_modified": false,
+  "parameters_mm": {
+    "baseline": {
+      "seat_depth": 0.2,
+      "pad_thickness": 0.45,
+      "pad_proud_height": 0.25
+    },
+    "candidate": {
+      "seat_depth": 0.1,
+      "pad_thickness": 0.35,
+      "pad_proud_height": 0.25,
+      "pad_thickness_formula": "SeatDepth + PadProudHeight"
+    },
+    "pad_profile_offset": {
+      "source": "AntiSlipSeatProfiles.Placement",
+      "Y_coefficient": 0.043619387365336,
+      "Z_coefficient": 0.999048221581858,
+      "note": "Follows the existing 2.5 degree seat-floor plane"
+    }
+  },
+  "geometry": {
+    "shell_volume_baseline_mm3": 40560.734288696,
+    "shell_volume_candidate_mm3": 40584.545561171,
+    "shell_volume_change_mm3": 23.811272475,
+    "pad_volumes_baseline_mm3": {
+      "upper": 74.292275962,
+      "lower": 27.226368549
+    },
+    "pad_volumes_candidate_mm3": {
+      "upper": 57.782881304,
+      "lower": 21.176064427
+    },
+    "contact_areas_mm2": {
+      "upper": 165.093946583,
+      "lower": 60.503041221
+    },
+    "contact_plane_normal": [
+      0.0,
+      -0.043619387365336,
+      -0.999048221581858
+    ],
+    "contact_plane_offset_mm": 33.659199309,
+    "pad_shell_common_volume_mm3": 0.0,
+    "max_pad_shell_distance_mm": 7.2e-15
+  },
+  "lower_web_section_samples": {
+    "method": "9 points on the lower crescent mid-radius (13.490916 mm) over 225 to 315 degrees; rays from seat-floor plane along inward normal",
+    "center_mm": [
+      0.0,
+      -48.010117532,
+      -31.14467022
+    ],
+    "baseline_range_mm": [
+      2.446988,
+      2.515207
+    ],
+    "candidate_range_mm": [
+      2.545578,
+      2.613535
+    ],
+    "minimum_increase_mm": 0.09859,
+    "global_minimum_certified": false
+  },
+  "validation": {
+    "native_feature_recompute": true,
+    "reversible_parameter_test_0p10_to_0p20_to_0p10": true,
+    "returned_to_baseline_at_0p20_mm3_tolerance": 1e-7,
+    "save_close_reopen_recompute": true,
+    "shell_valid_one_solid": true,
+    "mesh_settings": {
+      "linear_deflection_mm": 0.08,
+      "angular_deflection_api_parameter": 0.1
+    },
+    "mesh_results": {
+      "rear_shell": {
+        "facets": 92486,
+        "boundary_edges": 0,
+        "overincident_edges": 0,
+        "degenerate_triangles": 0
+      },
+      "upper_pad": {
+        "facets": 756,
+        "boundary_edges": 0,
+        "overincident_edges": 0,
+        "degenerate_triangles": 0
+      },
+      "lower_pad": {
+        "facets": 756,
+        "boundary_edges": 0,
+        "overincident_edges": 0,
+        "degenerate_triangles": 0
+      }
+    },
+    "feature_error_states": [],
+    "assembly_link_validation": true,
+    "assembly_candidate": "hardware/freecad/pendant-modular-rear-anti-slip-shallow-review-candidate.FCStd",
+    "assembly_cold_reopen": {
+      "link_count": 8,
+      "broken_links": 0,
+      "root_valid": true,
+      "root_solids": 11,
+      "source_parameter_refresh_0p10_to_0p20_to_0p10": true,
+      "relocation_tested": false
+    },
+    "structural_capacity_validated": false
+  },
+  "rejected_trial": {
+    "seat_depth_mm": 0.1,
+    "pad_thickness_mm": 0.35,
+    "pad_profiles_followed_seat_floor": false,
+    "combined_pad_shell_intersection_mm3": 22.55969878,
+    "disposition": "rejected; replaced by the parametric profile-placement candidate"
+  },
+  "corrected_prior_probe": {
+    "point_mm": [
+      0.0,
+      -59.509362,
+      null
+    ],
+    "distance_from_lower_profile_mm": 0.585985,
+    "2mm_global_z_result_is_seat_wall_measurement": false
+  }
+}

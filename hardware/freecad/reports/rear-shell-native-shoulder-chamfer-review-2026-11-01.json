@@ -1,0 +1,112 @@
+{
+  "status": "disposable review candidate; not production-approved",
+  "candidate": "/private/tmp/pendant-cnc-freecad-candidate/hardware/freecad/pendant-bodies/rear-shell-native-shoulder-chamfer-review-2026-11-01.FCStd",
+  "source_candidate": "/private/tmp/pendant-cnc-freecad-candidate/hardware/freecad/pendant-bodies/rear-shell-fresh-fuse-structural-review-2026-11-01.FCStd",
+  "protected_monolith_modified": false,
+  "production_assembly_modified": false,
+  "operation": "Native PartDesign Chamfer, 1.0 mm, on the two original upper-boss underside circular arcs",
+  "edge_selection": {
+    "method": "geometric match using curve type, global bounds, Z plane, and arc length",
+    "matched_edges": [
+      "Edge339",
+      "Edge701"
+    ],
+    "source_feature_edges": [
+      "Edge1373",
+      "Edge339"
+    ],
+    "global_z_mm": -25.0
+  },
+  "before": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40847.861699959045,
+    "area_mm2": 30826.046429104634,
+    "face_count": 522,
+    "edge_count": 1509,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ],
+    "mesh_closed": true,
+    "mesh_facets": 16050,
+    "mesh_boundary_edges": 0,
+    "mesh_overincident_edges": 0,
+    "mesh_degenerate_facets": 0
+  },
+  "after": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40832.352288278475,
+    "area_mm2": 30809.612565586773,
+    "face_count": 525,
+    "edge_count": 1517,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ],
+    "mesh_closed": true,
+    "mesh_facets": 16116,
+    "mesh_boundary_edges": 0,
+    "mesh_overincident_edges": 0,
+    "mesh_degenerate_facets": 0
+  },
+  "removed_material": {
+    "volume_mm3": 15.509038697618735,
+    "bounds_mm": [
+      -30.564136698253783,
+      30.564136698253783,
+      45.62312990901498,
+      73.36351256318923,
+      -34.247909157822086,
+      -19.0
+    ],
+    "valid": true,
+    "solid_count": 2
+  },
+  "added_material_mm3": 0.0,
+  "clearance_deltas": {
+    "m2_before_mm3": 0.0,
+    "m2_after_mm3": 0.0,
+    "magnet_before_mm3": 168.00028016072343,
+    "magnet_after_mm3": 168.00028016072372,
+    "m2_delta_mm3": 0.0,
+    "magnet_delta_mm3": 2.8421709430404007e-13
+  },
+  "cold_reopen_recompute": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40832.352288278475,
+    "area_mm2": 30809.612565586773,
+    "face_count": 525,
+    "edge_count": 1517,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ],
+    "mesh_closed": true,
+    "mesh_facets": 16116,
+    "mesh_boundary_edges": 0,
+    "mesh_overincident_edges": 0,
+    "mesh_degenerate_facets": 0
+  },
+  "legacy_reference": {
+    "feature": "RearBossShoulderTransitions",
+    "source_design_note": "Local 45-degree bevels at two abrupt 90-degree boss underside junctions.",
+    "legacy_net_volume_delta_mm3": -14.961449683135,
+    "candidate_chamfer_volume_delta_mm3": -15.509411680570338,
+    "exact_brep_equivalence": false
+  }
+}

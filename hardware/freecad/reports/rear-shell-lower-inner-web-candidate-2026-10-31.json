@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-31",
+  "status": "disposable review candidate; not production",
+  "candidate": "hardware/freecad/pendant-bodies/rear-shell-lower-inner-web-candidate.FCStd",
+  "source_base": "rear-shell-loadpath-parametric-profile-candidate.FCStd",
+  "source_shape": "Body002FullWidthSeat.Shape from pendant.FCStd",
+  "new_features": [
+    {"name": "LowerLeftInnerWebPad", "type": "PartDesign::Pad", "length_mm": 8.5, "incremental_volume_mm3": 131.6621606458, "sketch_fully_constrained": true},
+    {"name": "LowerRightInnerWebPad", "type": "PartDesign::Pad", "length_mm": 8.5, "incremental_volume_mm3": 131.6544916043, "sketch_fully_constrained": true}
+  ],
+  "candidate_tip": {
+    "name": "LowerRightInnerWebPad",
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40873.009664631034,
+    "area_mm2": 30824.129738538224,
+    "face_count": 494,
+    "bounds_mm": [-39.9096613290, 39.8791791364, -88.3123494727, 86.6884629286, -36.8449843324, 0.0],
+    "feature_errors_after_reopen": []
+  },
+  "save_reopen_recompute": {
+    "passed": true,
+    "reopened_volume_mm3": 40873.009664631034,
+    "mesh_closed": true,
+    "mesh_triangles": 19162,
+    "stl_edge_incidence": {
+      "weld_tolerance_mm": 0.00001,
+      "unique_welded_edges": 28743,
+      "boundary_edges": 0,
+      "edges_with_more_than_two_incident_facets": 0,
+      "degenerate_triangles": 0
+    }
+  },
+  "reserved_volume_delta_mm3": {
+    "Pocket - Magnet Clearance": 0.0,
+    "Pocket015 - Magnet Slot": 0.0,
+    "Rear M2 screw passages (recovered)": 0.0
+  },
+  "geometry_comparison": {
+    "clean_base_volume_mm3": 40485.6574282847,
+    "legacy_stored_tip_volume_mm3": 40961.35900828918,
+    "legacy_net_addition_over_clean_base_mm3": 475.70158000448,
+    "candidate_net_addition_over_clean_base_mm3": 387.35223634633,
+    "candidate_minus_legacy_brep_volume_mm3": -88.34934365815,
+    "method": "0.5 mm XY raster of 0.25 mm tessellated vertical ray sections; approximate spatial localization only",
+    "mesh_volume_error_percent": {
+      "clean_base": -0.1497264487,
+      "legacy_tip": -0.4755813620,
+      "candidate": -0.0820071923
+    },
+    "interpretation": "Most visible load-path addition maps around the lower boss zones; the later ramp addition maps around upper bosses. The legacy Tip mesh does not reproduce its stored BREP volume closely, so the spatial map is not an exact difference and cannot prove intended geometry."
+  },
+  "limitations": [
+    "Hybrid candidate: imported static shell base with editable native support features.",
+    "Web sketches are fully constrained with Block constraints but are not yet master-driven dimensional sketches.",
+    "The fixed-section Pad matches only a sampled Y section; legacy web geometry varies with Y.",
+    "Not integrated into the production assembly.",
+    "No strength or 5x proof-load claim; pendant mass and physical test remain unavailable."
+  ],
+  "protected_documents_modified": false
+}

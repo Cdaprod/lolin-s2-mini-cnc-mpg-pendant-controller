@@ -1,0 +1,13 @@
+{
+  "assembly": "master-driven-leadins-candidate/pendant-modular-assembly-live-bezel-candidate.FCStd",
+  "freecadcmd_export_seconds": 8.689,
+  "deflection_mm": 0.2,
+  "link_count": 7,
+  "static_interim_count": 2,
+  "validated_shapes": 9,
+  "images": [
+    "pendant-modular-assembly-bottom.png",
+    "pendant-modular-assembly-top.png",
+    "static-interim-components-bottom.png"
+  ]
+}

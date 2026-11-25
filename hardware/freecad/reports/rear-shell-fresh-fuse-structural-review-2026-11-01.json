@@ -1,0 +1,193 @@
+{
+  "date": "2026-11-01",
+  "status": "validated disposable review candidate; not production-approved",
+  "candidate": "hardware/freecad/pendant-bodies/rear-shell-fresh-fuse-structural-review-2026-11-01.FCStd",
+  "builder": "hardware/freecad/scripts/build_rear_shell_fresh_fuse_structural_review.py",
+  "base_reconstruction": {
+    "source_shapes": [
+      "SmallHangerPocketBody002.Shape",
+      "Body002FullLandTransferTool.Shape"
+    ],
+    "operation": "fresh Part fuse, without removeSplitter or post-fuse fix",
+    "previous_base": {
+      "volume_mm3": 40485.6574282847,
+      "surface_area_mm2": 30525.353379738182,
+      "faces": 400,
+      "edges": 1181,
+      "bop_check_errors": 336
+    },
+    "fresh_fused_base": {
+      "volume_mm3": 40485.69794853681,
+      "surface_area_mm2": 30525.35572674759,
+      "faces": 423,
+      "edges": 1213,
+      "bop_check_errors": 12,
+      "valid": true,
+      "solid_count": 1,
+      "bounds_match_previous_base": true,
+      "mesh_closed": true
+    },
+    "base_volume_delta_mm3": 0.04052025211
+  },
+  "native_finishing_chain": {
+    "boss_to_wall_support_pads": 4,
+    "lower_inner_web_pads": 2,
+    "m2_passage_pocket": "preserved",
+    "bottom_perimeter_fillet_radius_mm": 0.25,
+    "bottom_perimeter_fillet_edge_count": 19,
+    "anti_slip_seat_pocket_depth_mm": 0.1,
+    "support_sketches_fully_constrained": 6,
+    "component_local_parameters": 21,
+    "parameter_expressions": 42
+  },
+  "final_tip": {
+    "name": "FinishOrder_AntiSlipSeatPocket",
+    "state_after_reopen_recompute": ["Up-to-date"],
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40847.86169758013,
+    "surface_area_mm2": 30826.046428494166,
+    "faces": 522,
+    "edges": 1509,
+    "bounds_mm": [-39.909661329020054, 39.87917913641778, -88.31234947270411, 86.68846292863208, -36.89446791210996, 0.0],
+    "bop_check_errors": 42,
+    "mesh_linear_deflection_mm": 0.08,
+    "mesh_angular_deflection_rad": 0.35,
+    "mesh_facets": 16050,
+    "mesh_reports_solid": true,
+    "mesh_boundary_edges": 0,
+    "mesh_overincident_edges": 0,
+    "mesh_degenerate_facets": 0
+  },
+  "disposable_review_assembly_fit": {
+    "source_assembly": "pendant-modular-rear-shell-tpu-parametric-crescent-review-assembly-2026-10-31.FCStd",
+    "saved": false,
+    "production_assembly_modified": false,
+    "root_valid": true,
+    "root_solid_count": 11,
+    "resolved_link_count": 8,
+    "rear_link_valid_single_solid": true,
+    "rear_link_placement_preserved": true,
+    "positive_volume_intersections_mm3": {
+      "front_shell": 0.0,
+      "upper_faceplate": 0.0,
+      "encoder_faceplate_pocket_interim": 0.0,
+      "display_retainer": 0.0,
+      "usb_tethered_cover_intended_engagement": 0.7804718846,
+      "faceplate_locator_a": 0.0,
+      "faceplate_locator_b": 0.0,
+      "breakout_board": 0.0,
+      "upper_tpu_crescent": 0.0,
+      "lower_tpu_crescent": 0.0
+    },
+    "reversible_native_parameter_propagation": {
+      "parameter": "UpperBossXAbs",
+      "values_mm": [24.8, 24.9, 24.8],
+      "component_tip_volume_delta_mm3": -1.4834245223,
+      "assembly_link_volume_delta_mm3": -1.4834245223,
+      "assembly_root_volume_delta_mm3": -1.4834505189,
+      "component_restoration_error_mm3": 0.0,
+      "link_restoration_error_mm3": 0.0,
+      "root_restoration_error_mm3": -0.0000000000291,
+      "placement_preserved": true,
+      "assembly_saved": false
+    },
+    "evidence_scope": "in-memory placement, Boolean common-volume, and reversible component-parameter propagation checks; no saved assembly modification, dimensional tolerance analysis, or physical fit test"
+  },
+  "comparison": {
+    "previous_review_tip_volume_mm3": 40847.86169758013,
+    "fresh_fuse_review_tip_volume_delta_mm3": 0.0,
+    "previous_final_bop_errors": 352,
+    "fresh_fuse_final_bop_errors": 42,
+    "same_final_volume_area_face_and_edge_counts": true,
+    "exact_brep_equivalence": "not established",
+    "cached_legacy_tip_volume_mm3": 40961.35900828918,
+    "cached_legacy_tip_minus_clean_base_volume_delta_mm3": 475.701580004483,
+    "cached_legacy_tip_minus_candidate_volume_delta_mm3": 113.49731070905,
+    "warning": "These are saved-shape volume deltas, not exact material symmetric-difference volumes. The legacy final Tip is non-manifold when meshed and fails BOPCheck; do not interpret its cached volume as an unquestioned target."
+  },
+  "refinement_probe": {
+    "tested": "PartDesign Pad Refine=False on support Pads",
+    "result": "rejected",
+    "first_pad_bop_errors": 12,
+    "full_chain_tip_bop_errors": 48,
+    "validated_setting_retained": "Refine=True"
+  },
+  "bop_error_localization": {
+    "error_class": "BOPAlgo_InvalidCurveOnSurface",
+    "base_error_count": 12,
+    "base_problem_faces": [
+      {"face": "Face202", "radius_mm": 9.0, "axis": "X", "axis_center_mm": [20.0, 3.031095, -13.444532], "reported_error_lines": 8},
+      {"face": "Face388", "radius_mm": 10.25, "axis": "X", "axis_center_mm": [19.294499, 3.031095, -13.444532], "reported_error_lines": 2},
+      {"face": "Face402", "radius_mm": 7.75, "axis": "X", "axis_center_mm": [45.0, 3.031095, -13.444532], "reported_error_lines": 2}
+    ],
+    "base_feature_correspondence": [
+      "USBEnclosureTetherPassage",
+      "USBConformalCoverSeatBody002",
+      "SmallHangerPocketBody002",
+      "Body002FullLandTransferTool"
+    ],
+    "base_error_function": "Side USB tether passage and conformal seat cylinders; this inherited topology issue is separate from the screw-boss load-path volume difference.",
+    "final_error_count": 42,
+    "new_error_lines_after_support_chain": 30,
+    "support_region_cylinders": [
+      {"radius_mm": 2.05, "axis": "Z", "center_xy_mm": [-27.0, 58.5]},
+      {"radius_mm": 1.15, "axis": "Z", "center_xy_mm": [-16.97, 76.85]},
+      {"radius_mm": 1.15, "axis": "Z", "center_xy_mm": [16.97, 76.85]},
+      {"radius_mm": 7.0, "axis": "Z", "center_xy_mm": [27.0, 58.5]},
+      {"radius_mm": 2.05, "axis": "Z", "center_xy_mm": [-18.0, -17.7566]},
+      {"radius_mm": 1.15, "axis": "Z", "center_xy_mm": [-18.0, -17.7566]},
+      {"radius_mm": 1.15, "axis": "Z", "center_xy_mm": [27.0, 58.5]}
+    ],
+    "interpretation": "The inherited 12 lines are spatially associated with the side USB passage. The additional 30 lines are localized to cylindrical screw-boss/support regions. This localizes BOP diagnostics but does not prove those surfaces cause the non-manifold legacy mesh or justify modifying the mechanical features."
+  },
+  "hanger_pocket_rebuild_probe": {
+    "disposable_only": true,
+    "saved_documents_modified": false,
+    "base_source": "USBConformalCoverSeatBody002.Shape",
+    "base_bop_errors": 2,
+    "profile_sketch": "SmallHangerProfileBody002",
+    "profile_geometry_count": 4,
+    "profile_constraint_count": 14,
+    "profile_fully_constrained": true,
+    "native_feature": "PartDesign::Pocket, length 22 mm, one side, Refine=True",
+    "saved_pocket": {
+      "volume_mm3": 38207.25187571011,
+      "surface_area_mm2": 29173.1974356438,
+      "faces": 191,
+      "edges": 545,
+      "bop_errors": 12,
+      "mesh_facets": 8908
+    },
+    "rebuilt_pocket": {
+      "volume_mm3": 38207.2518757101,
+      "surface_area_mm2": 29173.197435643797,
+      "faces": 191,
+      "edges": 545,
+      "bop_errors": 12,
+      "mesh_facets": 8908,
+      "mesh_facet_signature_matches_saved": true,
+      "mesh_boundary_edges": 0,
+      "mesh_overincident_edges": 0
+    },
+    "result": "Native feature recomputation reproduces the saved geometry but does not reduce the BOPCheck errors; do not promote this as a repair or repeat an equivalent pocket-only rebuild.",
+    "next_target": "Investigate the upstream USB-seat/base surfaces and the BOP-invalid curve-on-surface subelements before changing the hanger pocket."
+  },
+  "material_function_investigation": {
+    "features": {
+      "RearBossToWallLoadPaths": 383.733575396684,
+      "RearBossShoulderTransitions": -14.961449683135,
+      "RearBossWallRamps45": 106.929454290895
+    },
+    "functional_regions": "Boss-to-wall webs and shoulders around the four screw mounting regions, plus ramped transitions into the enclosure wall. These are structural load-transfer features; the cached volume deltas do not quantify the exact physical material difference.",
+    "localization_evidence": "The previously generated 0.5 mm occupancy sampling estimates about 262.875 mm3 of net changed occupancy in four boss-to-wall regions. The legacy mesh is open, so this is approximate only. Upper replacement wedges match only inside their defined prisms; lower webs add approximately 10.56 mm3 each in areas absent from the saved legacy Tip. The remaining difference is not spatially classified.",
+    "structural_redundancy_or_strength": "not established"
+  },
+  "preservation": {
+    "protected_monolith_modified": false,
+    "production_modular_assembly_modified": false,
+    "candidate_is_hybrid_static_base_plus_native_features": true,
+    "structural_capacity_verified": false,
+    "5x_complete_pendant_proof_load_verified": false
+  }
+}

@@ -1,0 +1,892 @@
+{
+  "document": "hardware/freecad/pendant.FCStd",
+  "features": [
+    {
+      "label": "Front shell boss-to-wall load paths (lofted)",
+      "name": "FrontBossToWallLoadPaths",
+      "owners": [
+        "Body"
+      ],
+      "properties": {
+        "BaseFeature": "FrontFullWidthReceiver",
+        "DesignNote": "Integrated lofted transitions for four rear/front shell screw bosses. Derived from the existing master screw support sketch and clipped to the front envelope and component clearances.",
+        "Placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+        "Suppressed": "False"
+      },
+      "saved_state_flags": [
+        "Up-to-date"
+      ],
+      "shape": {
+        "bbox_mm_cached_shape": [
+          -42.77437713757541,
+          42.81020751811004,
+          -92.36472522473227,
+          86.68910767539026,
+          -19.00000000000015,
+          0.0
+        ],
+        "edge_count_cached_shape": 1588,
+        "face_count_cached_shape": 544,
+        "is_valid_cached_shape": true,
+        "solid_count_cached_shape": 1,
+        "vertex_count_cached_shape": 1047,
+        "volume_mm3_cached_shape": 37548.75385085744
+      },
+      "type_id": "PartDesign::Feature"
+    },
+    {
+      "label": "Rear shell boss-to-wall load paths (lofted)",
+      "name": "RearBossToWallLoadPaths",
+      "owners": [
+        "Body002"
+      ],
+      "properties": {
+        "BaseFeature": "Body002FullWidthSeat",
+        "DesignNote": "Integrated lofted transitions for four rear shell screw bosses. Clipped to the rear envelope, screw passages, and magnet well keepouts.",
+        "Placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+        "Suppressed": "False"
+      },
+      "saved_state_flags": [
+        "Up-to-date"
+      ],
+      "shape": {
+        "bbox_mm_cached_shape": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ],
+        "edge_count_cached_shape": 1450,
+        "face_count_cached_shape": 506,
+        "is_valid_cached_shape": true,
+        "solid_count_cached_shape": 1,
+        "vertex_count_cached_shape": 953,
+        "volume_mm3_cached_shape": 40869.39100368142
+      },
+      "type_id": "PartDesign::Feature"
+    },
+    {
+      "label": "Rear boss underside transitions - 1 mm 45 degree chamfers",
+      "name": "RearBossShoulderTransitions",
+      "owners": [
+        "Body002"
+      ],
+      "properties": {
+        "BaseFeature": "RearBossToWallLoadPaths",
+        "DesignNote": "Local 45-degree bevels at the two abrupt 90-degree boss underside junctions. Captured from the validated load-path B-rep because native PartDesign Chamfer recompute produced invalid geometry. Screw bore axes and other pad edges are unchanged.",
+        "Placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+        "SourceEdges": "Edge1373, Edge339",
+        "Suppressed": "False"
+      },
+      "saved_state_flags": [
+        "Up-to-date"
+      ],
+      "shape": {
+        "bbox_mm_cached_shape": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ],
+        "edge_count_cached_shape": 1458,
+        "face_count_cached_shape": 509,
+        "is_valid_cached_shape": true,
+        "solid_count_cached_shape": 1,
+        "vertex_count_cached_shape": 958,
+        "volume_mm3_cached_shape": 40854.429553998285
+      },
+      "type_id": "PartDesign::Feature"
+    },
+    {
+      "label": "Front high-to-low mounting transitions",
+      "name": "FrontHighToLowTransitions",
+      "owners": [
+        "Body"
+      ],
+      "properties": {
+        "BaseFeature": "FrontBossToWallLoadPaths",
+        "DesignNote": "Downstream closed lofts joining the front middle screw supports to the taller adjacent faceplate bosses. Legacy AdditiveLofts remain suppressed; actual hole volumes are subtracted before fusion.",
+        "Placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+        "RegenerationScript": "hardware/freecad/regenerate_front_high_low_transitions.py",
+        "Suppressed": "False"
+      },
+      "saved_state_flags": [
+        "Up-to-date"
+      ],
+      "shape": {
+        "bbox_mm_cached_shape": [
+          -42.77437713757541,
+          42.81020751811004,
+          -92.36472522473227,
+          86.68910767539026,
+          -19.00000000000015,
+          0.0
+        ],
+        "edge_count_cached_shape": 1644,
+        "face_count_cached_shape": 560,
+        "is_valid_cached_shape": true,
+        "solid_count_cached_shape": 1,
+        "vertex_count_cached_shape": 1085,
+        "volume_mm3_cached_shape": 37690.119840806634
+      },
+      "type_id": "PartDesign::Feature"
+    },
+    {
+      "label": "Rear screw-pad to wall ramps (45 degrees)",
+      "name": "RearBossWallRamps45",
+      "owners": [
+        "Body002"
+      ],
+      "properties": {
+        "BaseFeature": "RearBossShoulderTransitions",
+        "DesignNote": "Localized 45-degree triangular transitions from rear screw-pad regions toward the inner wall. Ramp material is cut by the actual M2 passage volume. The magnet clearance tool does not intersect either ramp.",
+        "Placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+        "RegenerationMethod": "hardware/freecad/regenerate_rear_boss_wall_ramps.py",
+        "Suppressed": "False"
+      },
+      "saved_state_flags": [
+        "Up-to-date"
+      ],
+      "shape": {
+        "bbox_mm_cached_shape": [
+          -39.909661329020054,
+          39.87917913641778,
+          -88.31234947270411,
+          86.68846292863208,
+          -36.844984332370686,
+          0.0
+        ],
+        "edge_count_cached_shape": 1517,
+        "face_count_cached_shape": 534,
+        "is_valid_cached_shape": true,
+        "solid_count_cached_shape": 1,
+        "vertex_count_cached_shape": 998,
+        "volume_mm3_cached_shape": 40961.35900828918
+      },
+      "type_id": "PartDesign::Feature"
+    }
+  ],
+  "freecad_version": [
+    "1",
+    "1",
+    "1",
+    "20260414 (Git shallow)",
+    "Unknown",
+    "2026/04/14 22:09:59",
+    "(HEAD detached at 0108fd4b4)",
+    "0108fd4b4850cc46e625b60e53cea7a7bbe69f8d"
+  ],
+  "method": "Read-only document inspection; no recompute or save performed.",
+  "related_sketches": [
+    {
+      "constraints": [
+        {
+          "first": 0,
+          "index": 0,
+          "second": 2,
+          "third": -2000,
+          "type": "Tangent",
+          "value": 1.5707963267948966
+        },
+        {
+          "first": 0,
+          "index": 1,
+          "second": 3,
+          "third": -2000,
+          "type": "Tangent",
+          "value": -1.5707963267948966
+        },
+        {
+          "first": 1,
+          "index": 2,
+          "second": 2,
+          "third": -2000,
+          "type": "Tangent",
+          "value": 1.5707963267948966
+        },
+        {
+          "first": 1,
+          "index": 3,
+          "second": 3,
+          "third": -2000,
+          "type": "Tangent",
+          "value": -1.5707963267948966
+        },
+        {
+          "first": 0,
+          "index": 4,
+          "second": 1,
+          "third": -2000,
+          "type": "Equal",
+          "value": 0.0
+        },
+        {
+          "first": 0,
+          "index": 5,
+          "second": 1,
+          "third": -2000,
+          "type": "Distance",
+          "value": 30.0
+        },
+        {
+          "first": 1,
+          "index": 6,
+          "second": 0,
+          "third": -2,
+          "type": "Symmetric",
+          "value": 0.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": false,
+      "geometry": [
+        "ArcOfCircle (Radius : 1.79017, Position : (-15, 81.3377, 0), Direction : (0, 0, 1), Parameter : (1.5708, 4.71239))",
+        "ArcOfCircle (Radius : 1.79017, Position : (15, 81.3377, 0), Direction : (0, 0, 1), Parameter : (4.71239, 7.85398))",
+        "<Line segment (-15,83.1279,0) (15,83.1279,0) >",
+        "<Line segment (-15,79.5475,0) (15,79.5475,0) >"
+      ],
+      "label": "Hanger Pocket Sketch001",
+      "name": "Sketch015",
+      "owners": [
+        "Body"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "first": 0,
+          "index": 0,
+          "second": -2000,
+          "third": -2000,
+          "type": "Block",
+          "value": 0.0
+        },
+        {
+          "first": 1,
+          "index": 1,
+          "second": -2000,
+          "third": -2000,
+          "type": "Block",
+          "value": 0.0
+        },
+        {
+          "first": 2,
+          "index": 2,
+          "second": -2000,
+          "third": -2000,
+          "type": "Block",
+          "value": 0.0
+        },
+        {
+          "first": 3,
+          "index": 3,
+          "second": -2000,
+          "third": -2000,
+          "type": "Block",
+          "value": 0.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": true,
+      "geometry": [
+        "Circle (Radius : 5.1, Position : (-28.76, 26.5463, 0), Direction : (0, 0, 1))",
+        "Circle (Radius : 5.1, Position : (28.76, 26.5463, 0), Direction : (0, 0, 1))",
+        "Circle (Radius : 5.1, Position : (-26, 65, 0), Direction : (0, 0, 1))",
+        "Circle (Radius : 5.1, Position : (26, 65, 0), Direction : (0, 0, 1))"
+      ],
+      "label": "FaceplateBossSketch",
+      "name": "FaceplateBossSketch",
+      "owners": [
+        "Body"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "first": 0,
+          "index": 0,
+          "second": -2000,
+          "third": -2000,
+          "type": "Block",
+          "value": 0.0
+        },
+        {
+          "first": 1,
+          "index": 1,
+          "second": -2000,
+          "third": -2000,
+          "type": "Block",
+          "value": 0.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": true,
+      "geometry": [
+        "Circle (Radius : 4.6, Position : (-25.8, -10.5, 0), Direction : (0, 0, 1))",
+        "Circle (Radius : 4.6, Position : (25.8, -10.5, 0), Direction : (0, 0, 1))"
+      ],
+      "label": "DisplayBracketBossSketch",
+      "name": "DisplayBracketBossSketch",
+      "owners": [
+        "Body"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "first": 0,
+          "index": 0,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": -27.0
+        },
+        {
+          "first": 0,
+          "index": 1,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceY",
+          "value": 58.5
+        },
+        {
+          "first": 0,
+          "index": 2,
+          "second": -2000,
+          "third": -2000,
+          "type": "Radius",
+          "value": 7.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": true,
+      "geometry": [
+        "Circle (Radius : 7, Position : (-27, 58.5, 0), Direction : (0, 0, 1))"
+      ],
+      "label": "MiddleLeftSupportTransitionRoot",
+      "name": "MiddleLeftSupportTransitionRoot",
+      "owners": [
+        "Body"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "first": 0,
+          "index": 0,
+          "second": -2000,
+          "third": -2000,
+          "type": "Block",
+          "value": 0.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": true,
+      "geometry": [
+        "Circle (Radius : 5.1, Position : (-26, 65, 0), Direction : (0, 0, 1))"
+      ],
+      "label": "MiddleLeftSupportTransitionTop",
+      "name": "MiddleLeftSupportTransitionTop",
+      "owners": [
+        "Body"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "first": 0,
+          "index": 0,
+          "second": -2000,
+          "third": -2000,
+          "type": "Block",
+          "value": 0.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": true,
+      "geometry": [
+        "Circle (Radius : 4.2, Position : (-18, -17.7566, 0), Direction : (0, 0, 1))"
+      ],
+      "label": "LowerLeftSupportTransitionRoot",
+      "name": "LowerLeftSupportTransitionRoot",
+      "owners": [
+        "Body"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "first": 0,
+          "index": 0,
+          "second": -2000,
+          "third": -2000,
+          "type": "Block",
+          "value": 0.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": true,
+      "geometry": [
+        "Circle (Radius : 3.5, Position : (-22.196, -17.7566, 0), Direction : (0, 0, 1))"
+      ],
+      "label": "LowerLeftSupportTransitionTop",
+      "name": "LowerLeftSupportTransitionTop",
+      "owners": [
+        "Body"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "first": 0,
+          "index": 0,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": 27.0
+        },
+        {
+          "first": 0,
+          "index": 1,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceY",
+          "value": 58.5
+        },
+        {
+          "first": 0,
+          "index": 2,
+          "second": -2000,
+          "third": -2000,
+          "type": "Radius",
+          "value": 7.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": true,
+      "geometry": [
+        "Circle (Radius : 7, Position : (27, 58.5, 0), Direction : (0, 0, 1))"
+      ],
+      "label": "MiddleRightSupportTransitionRoot",
+      "name": "MiddleRightSupportTransitionRoot",
+      "owners": [
+        "Body"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "first": 0,
+          "index": 0,
+          "second": -2000,
+          "third": -2000,
+          "type": "Block",
+          "value": 0.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": true,
+      "geometry": [
+        "Circle (Radius : 5.1, Position : (26, 65, 0), Direction : (0, 0, 1))"
+      ],
+      "label": "MiddleRightSupportTransitionTop",
+      "name": "MiddleRightSupportTransitionTop",
+      "owners": [
+        "Body"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "first": 0,
+          "index": 0,
+          "second": -2000,
+          "third": -2000,
+          "type": "Block",
+          "value": 0.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": true,
+      "geometry": [
+        "Circle (Radius : 4.2, Position : (18, -17.7566, 0), Direction : (0, 0, 1))"
+      ],
+      "label": "LowerRightSupportTransitionRoot",
+      "name": "LowerRightSupportTransitionRoot",
+      "owners": [
+        "Body"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "first": 0,
+          "index": 0,
+          "second": -2000,
+          "third": -2000,
+          "type": "Block",
+          "value": 0.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": true,
+      "geometry": [
+        "Circle (Radius : 3.5, Position : (22.196, -17.7566, 0), Direction : (0, 0, 1))"
+      ],
+      "label": "LowerRightSupportTransitionTop",
+      "name": "LowerRightSupportTransitionTop",
+      "owners": [
+        "Body"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "first": 1,
+          "index": 0,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": 16.3
+        },
+        {
+          "first": 1,
+          "index": 1,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceY",
+          "value": 1.0
+        },
+        {
+          "first": 1,
+          "index": 2,
+          "second": -2000,
+          "third": -2000,
+          "type": "Radius",
+          "value": 1.5
+        },
+        {
+          "first": 1,
+          "index": 3,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": 16.3
+        },
+        {
+          "first": 1,
+          "index": 4,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": 16.3
+        },
+        {
+          "first": 3,
+          "index": 5,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": -16.3
+        },
+        {
+          "first": 3,
+          "index": 6,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceY",
+          "value": 1.0
+        },
+        {
+          "first": 3,
+          "index": 7,
+          "second": -2000,
+          "third": -2000,
+          "type": "Radius",
+          "value": 1.5
+        },
+        {
+          "first": 3,
+          "index": 8,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": -16.3
+        },
+        {
+          "first": 3,
+          "index": 9,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": -16.3
+        },
+        {
+          "first": 0,
+          "index": 10,
+          "second": 1,
+          "third": -2000,
+          "type": "Coincident",
+          "value": 0.0
+        },
+        {
+          "first": 2,
+          "index": 11,
+          "second": 1,
+          "third": -2000,
+          "type": "Coincident",
+          "value": 0.0
+        },
+        {
+          "first": 2,
+          "index": 12,
+          "second": 3,
+          "third": -2000,
+          "type": "Coincident",
+          "value": 0.0
+        },
+        {
+          "first": 0,
+          "index": 13,
+          "second": 3,
+          "third": -2000,
+          "type": "Coincident",
+          "value": 0.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": true,
+      "geometry": [
+        "<Line segment (-16.3,2.5,0) (16.3,2.5,0) >",
+        "ArcOfCircle (Radius : 1.5, Position : (16.3, 1, 0), Direction : (0, 0, 1), Parameter : (4.71239, 7.85398))",
+        "<Line segment (16.3,-0.5,0) (-16.3,-0.5,0) >",
+        "ArcOfCircle (Radius : 1.5, Position : (-16.3, 1, 0), Direction : (0, 0, 1), Parameter : (1.5708, 4.71239))"
+      ],
+      "label": "SmallHangerProfileBody",
+      "name": "SmallHangerProfileBody",
+      "owners": [
+        "Body"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [
+        {
+          "first": 1,
+          "index": 0,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": 16.3
+        },
+        {
+          "first": 1,
+          "index": 1,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceY",
+          "value": 1.0
+        },
+        {
+          "first": 1,
+          "index": 2,
+          "second": -2000,
+          "third": -2000,
+          "type": "Radius",
+          "value": 1.5
+        },
+        {
+          "first": 1,
+          "index": 3,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": 16.3
+        },
+        {
+          "first": 1,
+          "index": 4,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": 16.3
+        },
+        {
+          "first": 3,
+          "index": 5,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": -16.3
+        },
+        {
+          "first": 3,
+          "index": 6,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceY",
+          "value": 1.0
+        },
+        {
+          "first": 3,
+          "index": 7,
+          "second": -2000,
+          "third": -2000,
+          "type": "Radius",
+          "value": 1.5
+        },
+        {
+          "first": 3,
+          "index": 8,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": -16.3
+        },
+        {
+          "first": 3,
+          "index": 9,
+          "second": -2000,
+          "third": -2000,
+          "type": "DistanceX",
+          "value": -16.3
+        },
+        {
+          "first": 0,
+          "index": 10,
+          "second": 1,
+          "third": -2000,
+          "type": "Coincident",
+          "value": 0.0
+        },
+        {
+          "first": 2,
+          "index": 11,
+          "second": 1,
+          "third": -2000,
+          "type": "Coincident",
+          "value": 0.0
+        },
+        {
+          "first": 2,
+          "index": 12,
+          "second": 3,
+          "third": -2000,
+          "type": "Coincident",
+          "value": 0.0
+        },
+        {
+          "first": 0,
+          "index": 13,
+          "second": 3,
+          "third": -2000,
+          "type": "Coincident",
+          "value": 0.0
+        }
+      ],
+      "degrees_of_freedom": 0,
+      "fully_constrained": true,
+      "geometry": [
+        "<Line segment (-16.3,2.5,0) (16.3,2.5,0) >",
+        "ArcOfCircle (Radius : 1.5, Position : (16.3, 1, 0), Direction : (0, 0, 1), Parameter : (4.71239, 7.85398))",
+        "<Line segment (16.3,-0.5,0) (-16.3,-0.5,0) >",
+        "ArcOfCircle (Radius : 1.5, Position : (-16.3, 1, 0), Direction : (0, 0, 1), Parameter : (1.5708, 4.71239))"
+      ],
+      "label": "SmallHangerProfileBody002",
+      "name": "SmallHangerProfileBody002",
+      "owners": [
+        "Body002"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [],
+      "degrees_of_freedom": 0,
+      "fully_constrained": false,
+      "geometry": [
+        "Circle (Radius : 3.1, Position : (-21.997, -63.321, 0), Direction : (0, 0, 1))",
+        "Circle (Radius : 3.1, Position : (0, -25.221, 0), Direction : (0, 0, 1))",
+        "Circle (Radius : 3.1, Position : (21.997, -63.321, 0), Direction : (0, 0, 1))"
+      ],
+      "label": "Encoder pocket mounting bosses (3x \u00d86.2)",
+      "name": "EncoderPocketBossSketch",
+      "owners": [
+        "Body_EncoderPocket"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    },
+    {
+      "constraints": [],
+      "degrees_of_freedom": 0,
+      "fully_constrained": false,
+      "geometry": [
+        "<Line segment (-24.7474,-62.9922,0) (-29.517,-65.3035,0) >",
+        "<Line segment (-29.517,-65.3035,0) (-27.6157,-68.6978,0) >",
+        "<Line segment (-27.6157,-68.6978,0) (-23.1534,-65.8381,0) >",
+        "<Line segment (-23.1534,-65.8381,0) (-24.7474,-62.9922,0) >",
+        "<Line segment (1.63093,-23.5484,0) (1.94525,-18.2577,0) >",
+        "<Line segment (1.94525,-18.2577,0) (-1.94525,-18.2577,0) >",
+        "<Line segment (-1.94525,-18.2577,0) (-1.63093,-23.5484,0) >",
+        "<Line segment (-1.63093,-23.5484,0) (1.63093,-23.5484,0) >",
+        "<Line segment (23.1534,-65.8381,0) (27.6157,-68.6978,0) >",
+        "<Line segment (27.6157,-68.6978,0) (29.517,-65.3035,0) >",
+        "<Line segment (29.517,-65.3035,0) (24.7474,-62.9922,0) >",
+        "<Line segment (24.7474,-62.9922,0) (23.1534,-65.8381,0) >"
+      ],
+      "label": "Radial boss-to-wall webs (within \u00d866 rim)",
+      "name": "EncoderPocketBossWebSketch",
+      "owners": [
+        "Body_EncoderPocket"
+      ],
+      "saved_state_flags": [
+        "Up-to-date"
+      ]
+    }
+  ],
+  "schema_version": 1,
+  "shape_caveat": "Shape validity and metrics describe stored cached shapes only; they are not recomputation or strength evidence.",
+  "source_sha256": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881"
+}
