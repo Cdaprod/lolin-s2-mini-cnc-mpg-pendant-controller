@@ -28,3 +28,16 @@ hardware/kicad/.history/
 
 # Generated pendant mesh sidecars (rebuild from FreeCAD when needed)
 hardware/printing/pendant/meshes/*.stl
+
+# Local CAD experiments and generated exports
+.workbench/
+build/
+.pytest_cache/
+*.FCStd2
+*.FCStd3
+*.step
+*.stp
+*.stl
+*.obj
+*.ply
+hardware/printing/pendant/*single-plate*.3mf
