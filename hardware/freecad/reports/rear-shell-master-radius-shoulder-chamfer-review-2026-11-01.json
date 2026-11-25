@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-01",
+  "branch": "hardware-integration",
+  "status": "validated disposable review candidate; not production-approved",
+  "source_component": "pendant-bodies/rear-shell-native-loadpath-master-radius-review-2026-11-01.FCStd",
+  "candidate_component": "pendant-bodies/rear-shell-native-loadpath-master-radius-shoulder-chamfer-review-2026-11-01.FCStd",
+  "candidate_assembly": "pendant-modular-rear-loadpath-master-radius-shoulder-chamfer-review-2026-11-01.FCStd",
+  "feature": {
+    "type": "PartDesign::Chamfer",
+    "name": "NativeUpperBossShoulderChamfer",
+    "size_mm": 1.0,
+    "matched_source_arcs": ["Edge1189", "Edge232"],
+    "selection_basis": "curve type, global bounds, Z plane, and arc length"
+  },
+  "component_validation": {
+    "save_close_reopen_recompute": true,
+    "final_tip": "NativeUpperBossShoulderChamfer",
+    "valid": true,
+    "solid_count": 1,
+    "invalid_feature_states": [],
+    "volume_before_mm3": 41080.89424651939,
+    "volume_after_mm3": 41065.3699326572,
+    "chamfer_volume_delta_mm3": -15.524313862188137,
+    "area_after_mm2": 30681.080124099382,
+    "face_count_after": 466,
+    "freecad_bop_error_lines_before": 28,
+    "freecad_bop_error_lines_after": 26,
+    "mesh": {
+      "linear_deflection_mm": 0.12,
+      "angular_deflection_rad": 0.18,
+      "facets": 31304,
+      "closed": true,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_facets": 0
+    }
+  },
+  "m2_clearance": {
+    "tool_volume_mm3": 29.914245247482047,
+    "intersection_before_mm3": 0.0,
+    "intersection_after_mm3": 0.0,
+    "delta_mm3": 0.0
+  },
+  "master_parameter_probe": {
+    "alias": "InternalHardware.MiddleSupportRadius",
+    "values_mm": [7.0, 7.05, 7.0],
+    "component_volumes_mm3": [41065.3699326572, 41080.033680408844, 41065.36993265721],
+    "changed_state_valid_one_solid": true,
+    "restoration_error_mm3": 7.275957614183426e-12,
+    "changed_state_saved": false
+  },
+  "assembly_validation": {
+    "source_assembly": "pendant-modular-rear-loadpath-master-radius-review-2026-11-01.FCStd",
+    "save_close_reopen_recompute": true,
+    "resolved_live_links": 9,
+    "unresolved_links": 0,
+    "rear_link_target": "RearShellBody",
+    "rear_link_component_file": "pendant-bodies/rear-shell-native-loadpath-master-radius-shoulder-chamfer-review-2026-11-01.FCStd",
+    "link_placement_preserved": true,
+    "rear_link_valid_one_solid": true,
+    "assembly_root_valid": true,
+    "assembly_root_solid_count": 11,
+    "front_rear_common_volume_check": "passed at 1e-5 mm3 tolerance before save; exact value was not captured",
+    "production_assembly_modified": false
+  },
+  "protected_monolith_modified": false,
+  "remaining_limitations": [
+    "The rear shell remains a hybrid review component with a stored-shape base.",
+    "26 FreeCAD BOP error lines remain after the chamfer.",
+    "No FEM or physical 5x pendant-weight proof-load test was performed.",
+    "This candidate is not promoted as the canonical rear-shell source."
+  ]
+}

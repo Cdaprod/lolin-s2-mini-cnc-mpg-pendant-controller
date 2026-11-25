@@ -1,0 +1,216 @@
+{
+  "source": "hardware/freecad/pendant-modular-assembly.FCStd",
+  "linear_deflection_mm": 0.08,
+  "angular_deflection_rad": 0.2,
+  "errors": [],
+  "parts": [
+    {
+      "object": "Interim_Body",
+      "label": "INTERIM \u2014 Front shell (static source BREP)",
+      "filename": "front-shell.stl",
+      "source_type": "Part::Feature",
+      "volume_mm3": 37683.517480502655,
+      "source_bbox_mm": [
+        -42.77437713757541,
+        -92.36472522473227,
+        -19.00000000000015,
+        42.81020751811004,
+        86.68910767539026,
+        0.0
+      ],
+      "local_mesh_bbox_mm": [
+        -39.76972961425781,
+        -86.62451171875,
+        1.4921397450962104e-13,
+        39.75938415527344,
+        89.52537536621094,
+        19.0
+      ],
+      "facets": 31638,
+      "vertices": 15809,
+      "solid_mesh": true
+    },
+    {
+      "object": "Interim_Body002",
+      "label": "INTERIM \u2014 Rear shell (static source BREP)",
+      "filename": "rear-shell.stl",
+      "source_type": "Part::Feature",
+      "volume_mm3": 40961.35900828918,
+      "source_bbox_mm": [
+        -39.909661329020054,
+        -88.31234947270411,
+        -36.844984332370686,
+        39.87917913641778,
+        86.68846292863208,
+        0.0
+      ],
+      "local_mesh_bbox_mm": [
+        -36.12184143066406,
+        -84.75232696533203,
+        0.001203455962240696,
+        36.1523323059082,
+        87.49950408935547,
+        22.259258270263672
+      ],
+      "facets": 22935,
+      "vertices": 11570,
+      "solid_mesh": false
+    },
+    {
+      "object": "Interim_Body003",
+      "label": "INTERIM \u2014 Upper faceplate (static source BREP)",
+      "filename": "upper-faceplate.stl",
+      "source_type": "Part::Feature",
+      "volume_mm3": 13363.330856364399,
+      "source_bbox_mm": [
+        -64.21622504107172,
+        -41.666577146181105,
+        -27.499999999999996,
+        64.21622504107174,
+        79.1773324592688,
+        5.000000000000091
+      ],
+      "local_mesh_bbox_mm": [
+        -36.26567077636719,
+        -38.55537796020508,
+        23.669546127319336,
+        36.265689849853516,
+        60.11136245727539,
+        32.5
+      ],
+      "facets": 13850,
+      "vertices": 6905,
+      "solid_mesh": true
+    },
+    {
+      "object": "Interim_EncoderFaceplatePocketUnsplit",
+      "label": "INTERIM \u2014 encoder faceplate + pocket (one fused solid)",
+      "filename": "encoder-faceplate-pocket-fused.stl",
+      "source_type": "Part::Feature",
+      "volume_mm3": 14630.092839744844,
+      "source_bbox_mm": [
+        -60.0,
+        -89.47819377262843,
+        -27.50000000000054,
+        60.0,
+        -4.7423856032506615,
+        2.5000000000000666
+      ],
+      "local_mesh_bbox_mm": [
+        -37.60915756225586,
+        -40.20600891113281,
+        18.5,
+        37.637882232666016,
+        29.129945755004883,
+        30.0
+      ],
+      "facets": 7356,
+      "vertices": 3666,
+      "solid_mesh": true
+    },
+    {
+      "object": "Editable_Body_DisplayRetainer_EditableV2",
+      "label": "Body_DisplayRetainer_EDITABLE (master-driven) \u2014 editable source link",
+      "filename": "display-retainer.stl",
+      "source_type": "App::Link",
+      "volume_mm3": 2050.792480333789,
+      "source_bbox_mm": [
+        -29.42019278301042,
+        -16.0,
+        -10.06146722824298,
+        29.423440320911695,
+        25.8,
+        -7.061467228242978
+      ],
+      "local_mesh_bbox_mm": [
+        -29.421815872192383,
+        -20.899999618530273,
+        -1.7763568394002505e-15,
+        29.421815872192383,
+        20.899999618530273,
+        3.0
+      ],
+      "facets": 1856,
+      "vertices": 920,
+      "solid_mesh": true
+    },
+    {
+      "object": "Editable_Body_USBTetheredCover",
+      "label": "Body_USB_Cover_TPU \u2014 editable source link",
+      "filename": "usb-cover.stl",
+      "source_type": "App::Link",
+      "volume_mm3": 665.2206904482824,
+      "source_bbox_mm": [
+        4.106023947664252,
+        -9.571563058751954,
+        -32.42093848788702,
+        39.68837681046618,
+        22.48728578733798,
+        0.0
+      ],
+      "local_mesh_bbox_mm": [
+        3.620652914047241,
+        -12.172703742980957,
+        10.22640609741211,
+        14.879395484924316,
+        5.322959899902344,
+        27.726398468017578
+      ],
+      "facets": 1854,
+      "vertices": 927,
+      "solid_mesh": true
+    },
+    {
+      "object": "Editable_Body_FaceplateLocator_A",
+      "label": "Body_FaceplateLocator_A \u2014 editable source link",
+      "filename": "faceplate-locator-a.stl",
+      "source_type": "App::Link",
+      "volume_mm3": 88.29496032374551,
+      "source_bbox_mm": [
+        -32.36,
+        22.946299999999997,
+        -3.5,
+        -25.16,
+        30.1463,
+        -0.7999999999999998
+      ],
+      "local_mesh_bbox_mm": [
+        -3.595525026321411,
+        -3.5988810062408447,
+        0.0,
+        3.5999999046325684,
+        3.5988810062408447,
+        2.700000047683716
+      ],
+      "facets": 884,
+      "vertices": 442,
+      "solid_mesh": true
+    },
+    {
+      "object": "Editable_Body_FaceplateLocator_B",
+      "label": "Body_FaceplateLocator_B \u2014 editable source link",
+      "filename": "faceplate-locator-b.stl",
+      "source_type": "App::Link",
+      "volume_mm3": 88.29496032374553,
+      "source_bbox_mm": [
+        22.4,
+        61.4,
+        -3.5,
+        29.6,
+        68.6,
+        -0.7999999999999998
+      ],
+      "local_mesh_bbox_mm": [
+        -3.595525026321411,
+        -3.5988810062408447,
+        0.0,
+        3.5999999046325684,
+        3.5988810062408447,
+        2.700000047683716
+      ],
+      "facets": 884,
+      "vertices": 442,
+      "solid_mesh": true
+    }
+  ]
+}

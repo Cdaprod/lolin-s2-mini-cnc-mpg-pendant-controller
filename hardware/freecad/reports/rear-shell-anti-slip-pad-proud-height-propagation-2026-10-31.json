@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-31",
+  "status": "validated_reversible_parameter_test_review_only",
+  "component": "hardware/freecad/pendant-bodies/rear-shell-anti-slip-shallow-parametric-seat-candidate.FCStd",
+  "assembly": "hardware/freecad/pendant-modular-rear-anti-slip-shallow-review-candidate.FCStd",
+  "production_documents_modified": false,
+  "test": {
+    "parameter": "AntiSlipParameters.PadProudHeight",
+    "alias_cell": "B3",
+    "saved_value_mm": 0.25,
+    "test_value_mm": 0.35,
+    "restored_value_mm": 0.25,
+    "seat_depth_mm": 0.1,
+    "formula": "PadThickness = SeatDepth + PadProudHeight",
+    "pad_thickness_saved_mm": 0.35,
+    "pad_thickness_test_mm": 0.45
+  },
+  "volumes_mm3": {
+    "shell_saved": 40584.545561170875,
+    "shell_test": 40584.545561170875,
+    "upper_pad_saved": 57.782881303977035,
+    "upper_pad_test": 74.29227596225587,
+    "lower_pad_saved": 21.17606442735022,
+    "lower_pad_test": 27.22636854945018,
+    "upper_pad_delta": 16.509394658278836,
+    "lower_pad_delta": 6.050304122099959,
+    "upper_link_delta": 16.509394658278836,
+    "lower_link_delta": 6.050304122099959,
+    "shell_restore_error": 0.0,
+    "upper_pad_restore_error": -1.4210854715202004e-14,
+    "lower_pad_restore_error": 1.0658141036401503e-14
+  },
+  "assembly": {
+    "cold_opened_and_recomputed": true,
+    "resolved_live_links": 8,
+    "upper_and_lower_links_updated": true,
+    "documents_saved_after_test": false
+  },
+  "engineering_note": "A 0.10 mm increase in proud height adds 0.10 mm of magnet-to-steel separation at the pad contact locations. No magnetic holding, TPU retention, friction, strength, or production suitability claim is made."
+}

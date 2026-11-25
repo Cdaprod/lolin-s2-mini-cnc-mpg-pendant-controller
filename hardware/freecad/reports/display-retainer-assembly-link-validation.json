@@ -1,0 +1,48 @@
+{
+  "candidate_assembly": "../pendant-modular-retainer-leadin-candidate.FCStd",
+  "source_assembly": "../pendant-modular-design-improvements-candidate.FCStd",
+  "component_candidate": "../pendant-bodies/display-retainer-mounting-leadin-candidate.FCStd",
+  "changed_link": "Editable_Body_DisplayRetainer_EditableV2",
+  "linked_body": "Body_DisplayRetainer_EditableV2",
+  "placement_mm": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "cold_reopen_recompute": "passed",
+  "all_app_links": {
+    "count": 6,
+    "valid_one_solid_targets": true
+  },
+  "assembly_root": {
+    "name": "AssemblyRoot",
+    "valid": true,
+    "solids": 9,
+    "volume_mm3": 111841.94090749629
+  },
+  "modules": [
+    {
+      "name": "ShellModule",
+      "valid": true,
+      "solids": 2,
+      "volume_mm3": 78293.37531350105
+    },
+    {
+      "name": "FaceplateModule",
+      "valid": true,
+      "solids": 4,
+      "volume_mm3": 28171.893425706654
+    },
+    {
+      "name": "OtherEditableComponents",
+      "valid": true,
+      "solids": 3,
+      "volume_mm3": 5376.152262566993
+    }
+  ],
+  "production_assembly_modified": false,
+  "limitations": [
+    "This review assembly inherits the hybrid rear-shell candidate, static interim shell/faceplate representations, and fused encoder interim representation from its source candidate.",
+    "Assembly link validity is not a structural load validation or a complete editable modularization result."
+  ]
+}

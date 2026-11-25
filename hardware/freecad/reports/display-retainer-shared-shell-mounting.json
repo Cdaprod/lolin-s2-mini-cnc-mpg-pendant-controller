@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-29",
+  "branch": "hardware-integration",
+  "component": "hardware/freecad/pendant-bodies/display-retainer.FCStd",
+  "master": "hardware/freecad/pendant-master.FCStd",
+  "parameter": {
+    "sheet": "InternalHardware",
+    "cell": "B7",
+    "alias": "ShellMountPassageDiameter",
+    "baseline_mm": 2.3,
+    "test_mm": 2.32,
+    "expression": "pendant_master#<<InternalHardware>>.ShellMountPassageDiameter / 2",
+    "consumers": [
+      "DisplayRetainerMountingPatternV2.Constraints[2]",
+      "DisplayRetainerMountingPatternV2.Constraints[5]"
+    ],
+    "relative_component_link": "../pendant-master.FCStd"
+  },
+  "baseline_geometry": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 2050.792480333789,
+    "area_mm2": 2183.563637888774,
+    "bounds_mm": [-29.42019278301042, 29.423440320911695, -16.0, 25.8, -10.06146722824298, -7.061467228242978],
+    "source_candidate_brep_symmetric_difference_mm3": 0.0,
+    "source_candidate_boolean_results_valid": true
+  },
+  "propagation": {
+    "baseline_component_volume_mm3": 2050.792480333789,
+    "changed_component_volume_mm3": 2050.357055592002,
+    "changed_live_link_volume_mm3": 2050.3570555920014,
+    "restored_component_volume_mm3": 2050.792480333789,
+    "restored_live_link_volume_mm3": 2050.792480333789,
+    "all_shapes_valid_single_solid": true,
+    "bounds_unchanged": true,
+    "refresh_errors": [],
+    "fresh_process_open_changed_and_restored_assembly": true,
+    "reopen_recompute": true,
+    "standalone_component_open_autoloaded_master": true,
+    "both_expressions_valid_after_standalone_open": true
+  },
+  "dependency_audit": {
+    "root_body": "Body_DisplayRetainer_EditableV2",
+    "tip": "RetainerShellClearancePocketV3",
+    "object_dependency_closure_count": 10,
+    "expanded_dependency_closure_count": 10,
+    "master_expressions_explicitly_allowed": true,
+    "external_file_exists_and_is_relative": true,
+    "extraction_readiness": "BLOCKED",
+    "blocker": "LocalParameters remains an active unowned document object in the dependency chain"
+  },
+  "source_sha256_before": {
+    "master": "3e2f041254ec1b6743a44bf1e1abb3925cc06bee913a4cd8a3b4eb304890fbfb",
+    "component": "8d1247566eee3e2b492e04a21061ad68483e5820b92d374928d284137c1622ca"
+  },
+  "source_sha256_after": {
+    "master": "5027bf0a9d3329ae3468e93c2f428f285ad8f291014e39d7fde9dd46942ca622",
+    "component": "4637bb84bc9897500b41f7c8e9d543df235c464babd235dce51662e8b5e20709"
+  },
+  "authoritative_monolith_modified": false,
+  "modular_assembly_modified": false
+}

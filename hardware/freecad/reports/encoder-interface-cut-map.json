@@ -1,0 +1,4342 @@
+{
+  "schema_version": 1,
+  "method": "Deduplicated active Tip-root component-boundary edges from existing serialized audit manifests; categories are name-based triage only, not geometric conclusions.",
+  "roots": [
+    {
+      "body": "Body_EncoderFacePlate",
+      "tip": "EncoderFaceplateReceiverM2Hole",
+      "expanded_dependency_closure_count": 183,
+      "boundary_crossing_count": 68,
+      "sketch_external_reference_count": 29,
+      "readiness": "BLOCKED",
+      "source": {
+        "document_internal_name": "remove_warp_bypass",
+        "filename": "pendant-encoder-fused-working.FCStd",
+        "freecad_version_observed": "1.1.1 (0108fd4b4850cc46e625b60e53cea7a7bbe69f8d)",
+        "sha256": "c20e68fcc2a17782a37aecc9eac1ae7388192e94479077532331948ac01a6d30"
+      },
+      "manifest": "hardware/freecad/reports/encoder-faceplate-tip-boundary-manifest.json",
+      "manifest_sha256": "91b3c135cffd6ef08c15246dce5df9bb11c52bc76ae8c804e840ff227e25b4e3",
+      "edges": [
+        {
+          "source_object": "EncoderFaceplateReceiverM2Binder",
+          "property": "Support",
+          "source_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "target_object": "EncoderPocketSliceZ0",
+          "target_owners": [],
+          "subelement": "Solid2",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "RC16NativeFaceplateWithLand",
+          "property": "Tool",
+          "source_owners": [],
+          "target_object": "Body_EncoderFacePlateLandSplit",
+          "target_owners": [
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "RC16NativeFaceplateWithLand",
+          "property": "Base",
+          "source_owners": [],
+          "target_object": "EncoderFrontM2Countersink",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "Body_EncoderFacePlateFullWidthSeat",
+          "property": "Group",
+          "source_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "target_object": "Body_EncoderFacePlateFullLandTransferTool",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "EncoderFrontM2Countersink",
+            "Body_EncoderFacePlateFullWidthSeat"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "Body_EncoderFacePlateFullLandTransferTool",
+          "property": "",
+          "source_owners": [],
+          "target_object": "Body_EncoderFacePlateLandSplit",
+          "target_owners": [
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "EncoderFrontM2Countersink",
+            "Body_EncoderFacePlateFullWidthSeat",
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "Body_EncoderFacePlateLandSplit",
+          "property": "",
+          "source_owners": [
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "target_object": "DualSided_OpposedWedge_Seam",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "BaseFeature003",
+          "property": "BaseFeature",
+          "source_owners": [
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "target_object": "FrontFullLandTransferRestricted",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "FrontFullLandTransfer",
+          "property": "Base",
+          "source_owners": [],
+          "target_object": "SmallHangerPocketBody",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "FrontFullLandCutter",
+          "property": "",
+          "source_owners": [],
+          "target_object": "FrontFullWidthSeatLoft",
+          "target_owners": [
+            "FrontFullLandCutter"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "FrontFullLandProfile0",
+          "property": "Support",
+          "source_owners": [
+            "FrontFullLandCutter"
+          ],
+          "target_object": "WidthControlled_StableFaceplateBaseOutline",
+          "target_owners": [
+            "Body003"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile0"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "WidthControlled_StableFaceplateBaseOutline",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile1",
+            "WidthControlled_StableFaceplateBaseOutline"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "FrontFullLandProfile1",
+          "property": "",
+          "source_owners": [
+            "FrontFullLandCutter"
+          ],
+          "target_object": "DualSided_OpposedWedge_Seam",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile1"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "FrontFullLandProfile1",
+          "property": "Support",
+          "source_owners": [
+            "FrontFullLandCutter"
+          ],
+          "target_object": "WidthControlled_StableFaceplateBaseOutline",
+          "target_owners": [
+            "Body003"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile1"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "PreserveOriginalFrontExterior",
+          "property": "Group",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "FrontExteriorLimitTool",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "FrontExteriorLimitTool",
+          "property": "",
+          "source_owners": [],
+          "target_object": "FrontExteriorLimitSource",
+          "target_owners": [
+            "FrontExteriorLimitTool"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "FrontExteriorLimitSource",
+          "property": "BaseFeature",
+          "source_owners": [
+            "FrontExteriorLimitTool"
+          ],
+          "target_object": "FrontEnvelopeLoft",
+          "target_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool",
+            "FrontExteriorLimitSource"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedEnvelopeProfile1",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool",
+            "FrontExteriorLimitSource",
+            "FrontEnvelopeLoft",
+            "WidthControlled_FrontMatchedEnvelopeProfile1"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedEnvelopeProfile0",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool",
+            "FrontExteriorLimitSource",
+            "FrontEnvelopeLoft",
+            "WidthControlled_FrontMatchedEnvelopeProfile0"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedEnvelopeProfile2",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool",
+            "FrontExteriorLimitSource",
+            "FrontEnvelopeLoft",
+            "WidthControlled_FrontMatchedEnvelopeProfile2"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBConformalCoverSeatBody",
+          "property": "Group",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "USBSeatToolForBody",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "USB15mmCableAccessBody",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "PendantDimensions",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBExternalAccessSketchBody",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "PendantDimensions",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBExternalAccessSketchBody"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBRecessStructuralBulk",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "PendantDimensions",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBRecessStructuralBulk"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBRecessStructuralBulkSketch",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "PendantDimensions",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBRecessStructuralBulk",
+            "USBRecessStructuralBulkSketch"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "Sketch020",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "InternalHardware",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBRecessStructuralBulk",
+            "SideButton19mmNutClearance",
+            "SideButton15mmPanelPassage",
+            "SideButtonRecessedHeadSeat",
+            "SideButtonStructuralLand",
+            "DisplayBracketM2Threads",
+            "DisplayBracketStructuralBosses",
+            "FaceplateM2ReceivingHoles",
+            "FaceplateTaperedReceivers",
+            "FaceplateStructuralBosses",
+            "FrontTaperedSeats",
+            "Hole",
+            "Sketch020"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedProfile2",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone",
+            "FrontMatchedInnerCavity",
+            "AdditiveLoft",
+            "WidthControlled_FrontMatchedProfile2"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedProfile1",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone",
+            "FrontMatchedInnerCavity",
+            "AdditiveLoft",
+            "WidthControlled_FrontMatchedProfile1"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedProfile0",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone",
+            "FrontMatchedInnerCavity",
+            "AdditiveLoft",
+            "WidthControlled_FrontMatchedProfile0"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedProfile5",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone",
+            "FrontMatchedInnerCavity",
+            "WidthControlled_FrontMatchedProfile5"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedProfile3",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone",
+            "FrontMatchedInnerCavity",
+            "WidthControlled_FrontMatchedProfile3"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedProfile4",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone",
+            "FrontMatchedInnerCavity",
+            "WidthControlled_FrontMatchedProfile4"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "MiddleLeftSupportTransitionRoot",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "InternalHardware",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBRecessStructuralBulk",
+            "SideButton19mmNutClearance",
+            "SideButton15mmPanelPassage",
+            "SideButtonRecessedHeadSeat",
+            "SideButtonStructuralLand",
+            "DisplayBracketM2Threads",
+            "DisplayBracketStructuralBosses",
+            "FaceplateM2ReceivingHoles",
+            "FaceplateTaperedReceivers",
+            "FaceplateStructuralBosses",
+            "FrontTaperedSeats",
+            "Hole",
+            "LowerRightSupportTransition",
+            "MiddleRightSupportTransition",
+            "LowerLeftSupportTransition",
+            "MiddleLeftSupportTransition",
+            "MiddleLeftSupportTransitionRoot"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "RepositionedScrewSupportSketch",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "InternalHardware",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBRecessStructuralBulk",
+            "SideButton19mmNutClearance",
+            "SideButton15mmPanelPassage",
+            "SideButtonRecessedHeadSeat",
+            "SideButtonStructuralLand",
+            "DisplayBracketM2Threads",
+            "DisplayBracketStructuralBosses",
+            "FaceplateM2ReceivingHoles",
+            "FaceplateTaperedReceivers",
+            "FaceplateStructuralBosses",
+            "FrontTaperedSeats",
+            "Hole",
+            "LowerRightSupportTransition",
+            "MiddleRightSupportTransition",
+            "LowerLeftSupportTransition",
+            "MiddleLeftSupportTransition",
+            "RepositionedScrewSupports",
+            "RepositionedScrewSupportSketch"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "MiddleRightSupportTransitionRoot",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "InternalHardware",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBRecessStructuralBulk",
+            "SideButton19mmNutClearance",
+            "SideButton15mmPanelPassage",
+            "SideButtonRecessedHeadSeat",
+            "SideButtonStructuralLand",
+            "DisplayBracketM2Threads",
+            "DisplayBracketStructuralBosses",
+            "FaceplateM2ReceivingHoles",
+            "FaceplateTaperedReceivers",
+            "FaceplateStructuralBosses",
+            "FrontTaperedSeats",
+            "Hole",
+            "LowerRightSupportTransition",
+            "MiddleRightSupportTransition",
+            "MiddleRightSupportTransitionRoot"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBSeatToolForBody",
+          "property": "",
+          "source_owners": [],
+          "target_object": "USBSeatToolForBodySource",
+          "target_owners": [
+            "USBSeatToolForBody"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "USBSeatToolForBodySource",
+          "property": "BaseFeature",
+          "source_owners": [
+            "USBSeatToolForBody"
+          ],
+          "target_object": "USBConformalSeatToolBounded",
+          "target_owners": [
+            "USBConformalSeatTool"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "USBConformalSeatToolBounded",
+          "property": "Group",
+          "source_owners": [
+            "USBConformalSeatTool"
+          ],
+          "target_object": "USBConformalSeatToolInnerEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "USBConformalSeatToolInnerEnvelope",
+          "property": "",
+          "source_owners": [],
+          "target_object": "USBConformalSeatToolInnerEnvelopeSource",
+          "target_owners": [
+            "USBConformalSeatToolInnerEnvelope"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolInnerEnvelope"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "USBConformalSeatToolInnerEnvelopeSource",
+          "property": "BaseFeature",
+          "source_owners": [
+            "USBConformalSeatToolInnerEnvelope"
+          ],
+          "target_object": "CompleteExteriorEnvelope",
+          "target_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolInnerEnvelope",
+            "USBConformalSeatToolInnerEnvelopeSource"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "CompleteExteriorEnvelope",
+          "property": "Group",
+          "source_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "target_object": "RearEnvelopeForUSBCover",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "RearEnvelopeForUSBCover",
+          "property": "",
+          "source_owners": [],
+          "target_object": "RearEnvelopeForUSBCoverSource",
+          "target_owners": [
+            "RearEnvelopeForUSBCover"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope",
+            "RearEnvelopeForUSBCover"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "RearEnvelopeForUSBCoverSource",
+          "property": "BaseFeature",
+          "source_owners": [
+            "RearEnvelopeForUSBCover"
+          ],
+          "target_object": "RearEnvelopeBackThickness",
+          "target_owners": [
+            "RearExteriorEnvelope"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope",
+            "RearEnvelopeForUSBCover",
+            "RearEnvelopeForUSBCoverSource"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_RearMatchedEnvelopeProfile0",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "RearExteriorEnvelope"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope",
+            "RearEnvelopeForUSBCover",
+            "RearEnvelopeForUSBCoverSource",
+            "RearEnvelopeBackThickness",
+            "RearEnvelopeLoft",
+            "WidthControlled_RearMatchedEnvelopeProfile0"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_RearMatchedEnvelopeProfile1",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "RearExteriorEnvelope"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope",
+            "RearEnvelopeForUSBCover",
+            "RearEnvelopeForUSBCoverSource",
+            "RearEnvelopeBackThickness",
+            "WidthControlled_RearMatchedEnvelopeProfile1"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBConformalSeatToolSurfaceBand",
+          "property": "Group",
+          "source_owners": [
+            "USBConformalSeatTool"
+          ],
+          "target_object": "USBConformalSeatToolLimit",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "USBConformalSeatToolSource",
+          "property": "BaseFeature",
+          "source_owners": [
+            "USBConformalSeatTool"
+          ],
+          "target_object": "CompleteExteriorEnvelope",
+          "target_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBConformalSeatToolLimit",
+          "property": "",
+          "source_owners": [],
+          "target_object": "USBConformalSeatToolRadiusPad",
+          "target_owners": [
+            "USBConformalSeatToolLimit"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolLimit"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "SmallHangerProfileBody",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "HangerParameters",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "SmallHangerProfileBody"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "FrontOriginalMatingLand",
+          "property": "Support",
+          "source_owners": [],
+          "target_object": "SmallHangerPocketBody",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "Face13",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontMatingLandProjection",
+            "FrontOriginalMatingLand"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "EncoderFaceplateSource",
+          "property": "BaseFeature",
+          "source_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "target_object": "EncoderNutReliefs",
+          "target_owners": [
+            "Body003"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "Sketch014",
+          "property": "ExternalGeometry",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "Edge3",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Sketch014",
+          "property": "ExternalGeometry",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "Edge4",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Sketch014",
+          "property": "ExternalGeometry",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "Edge2",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Sketch014",
+          "property": "ExternalGeometry",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "Edge1",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Sketch014",
+          "property": "",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Sketch001",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Sketch",
+          "property": "AttachmentSupport",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "Origin002",
+          "target_owners": [],
+          "subelement": "XY_Plane001",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "Sketch001",
+          "property": "AttachmentSupport",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "Origin002",
+          "target_owners": [],
+          "subelement": "XY_Plane001",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch001"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "Boolean",
+          "property": "Group",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Body005",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Body005",
+          "property": "",
+          "source_owners": [],
+          "target_object": "Clone",
+          "target_owners": [
+            "Body005"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "Clone",
+          "property": "BaseFeature",
+          "source_owners": [
+            "Body005"
+          ],
+          "target_object": "FrontMatchedInnerCavity",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Sketch016",
+          "property": "ExternalGeometry",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "Edge5",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Pocket011",
+            "Pocket010",
+            "Pad012",
+            "Sketch016"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Pad009",
+          "property": "",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "PendantDimensions",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Pocket011",
+            "Pocket010",
+            "Pad012",
+            "Pad011",
+            "Fillet005",
+            "Pad009"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "EncoderFaceplateRetentionKeep",
+          "property": "Base",
+          "source_owners": [],
+          "target_object": "Body_EncoderFacePlateLandSplit",
+          "target_owners": [
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "EncoderCaptureLipTransfer",
+          "property": "Base",
+          "source_owners": [],
+          "target_object": "EncoderCaptureLedge",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "EncoderCaptureLipTransfer",
+          "property": "Tool",
+          "source_owners": [],
+          "target_object": "EncoderCrownGlassBackClearance",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "EncoderPocketShellRelease",
+          "property": "Base",
+          "source_owners": [],
+          "target_object": "EncoderPocketWallM2Countersink",
+          "target_owners": [
+            "Body_EncoderPocket"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderPocketShellRelease"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "EncoderPocketSourceBase",
+          "property": "BaseFeature",
+          "source_owners": [
+            "Body_EncoderPocket"
+          ],
+          "target_object": "Body_EncoderFacePlateFullWidthSeat",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderPocketShellRelease",
+            "EncoderPocketWallM2Countersink",
+            "EncoderPocketWallM2_3x120",
+            "EncoderPocketSplit",
+            "EncoderPocketSourceBase"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "EncoderShellTrimTool",
+          "property": "Base",
+          "source_owners": [],
+          "target_object": "EncoderFaceplateSplitProfile",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderFaceplateReceiverM2Hole",
+            "EncoderFaceplateReceiverM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderPocketShellRelease",
+            "EncoderShellTrimTool"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        }
+      ]
+    },
+    {
+      "body": "Body_EncoderPocket",
+      "tip": "EncoderPocketShellM2Hole",
+      "expanded_dependency_closure_count": 183,
+      "boundary_crossing_count": 68,
+      "sketch_external_reference_count": 29,
+      "readiness": "BLOCKED",
+      "source": {
+        "document_internal_name": "remove_warp_bypass",
+        "filename": "pendant-encoder-fused-working.FCStd",
+        "freecad_version_observed": "1.1.1 (0108fd4b4850cc46e625b60e53cea7a7bbe69f8d)",
+        "sha256": "c20e68fcc2a17782a37aecc9eac1ae7388192e94479077532331948ac01a6d30"
+      },
+      "manifest": "hardware/freecad/reports/encoder-pocket-tip-boundary-manifest.json",
+      "manifest_sha256": "81e5aa1be09a78cb90b7a9ebf7f74187289ad132ddca2667c95701f5fdef08d2",
+      "edges": [
+        {
+          "source_object": "EncoderPocketShellM2Binder",
+          "property": "Support",
+          "source_owners": [
+            "Body_EncoderPocket"
+          ],
+          "target_object": "EncoderPocketSliceZ0",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "EncoderFaceplateRetentionKeep",
+          "property": "Base",
+          "source_owners": [],
+          "target_object": "Body_EncoderFacePlateLandSplit",
+          "target_owners": [
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "EncoderCaptureLipTransfer",
+          "property": "Base",
+          "source_owners": [],
+          "target_object": "EncoderCaptureLedge",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "EncoderCaptureLipTransfer",
+          "property": "Tool",
+          "source_owners": [],
+          "target_object": "EncoderCrownGlassBackClearance",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "EncoderFaceplateSource",
+          "property": "BaseFeature",
+          "source_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "target_object": "EncoderNutReliefs",
+          "target_owners": [
+            "Body003"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "Boolean",
+          "property": "Group",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Body005",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Body005",
+          "property": "",
+          "source_owners": [],
+          "target_object": "Clone",
+          "target_owners": [
+            "Body005"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "Clone",
+          "property": "BaseFeature",
+          "source_owners": [
+            "Body005"
+          ],
+          "target_object": "FrontMatchedInnerCavity",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedProfile0",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone",
+            "FrontMatchedInnerCavity",
+            "AdditiveLoft",
+            "WidthControlled_FrontMatchedProfile0"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedProfile2",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone",
+            "FrontMatchedInnerCavity",
+            "AdditiveLoft",
+            "WidthControlled_FrontMatchedProfile2"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedProfile1",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone",
+            "FrontMatchedInnerCavity",
+            "AdditiveLoft",
+            "WidthControlled_FrontMatchedProfile1"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedProfile3",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone",
+            "FrontMatchedInnerCavity",
+            "WidthControlled_FrontMatchedProfile3"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedProfile5",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone",
+            "FrontMatchedInnerCavity",
+            "WidthControlled_FrontMatchedProfile5"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedProfile4",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Body005",
+            "Clone",
+            "FrontMatchedInnerCavity",
+            "WidthControlled_FrontMatchedProfile4"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "Sketch016",
+          "property": "ExternalGeometry",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "Edge5",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Pocket011",
+            "Pocket010",
+            "Pad012",
+            "Sketch016"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Sketch",
+          "property": "AttachmentSupport",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "Origin002",
+          "target_owners": [],
+          "subelement": "XY_Plane001",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "Pad009",
+          "property": "",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "PendantDimensions",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Boolean",
+            "Pocket011",
+            "Pocket010",
+            "Pad012",
+            "Pad011",
+            "Fillet005",
+            "Pad009"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_StableFaceplateBaseOutline",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile1",
+            "WidthControlled_StableFaceplateBaseOutline"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "Sketch014",
+          "property": "ExternalGeometry",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "Edge3",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Sketch014",
+          "property": "ExternalGeometry",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "Edge4",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Sketch014",
+          "property": "ExternalGeometry",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "Edge2",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Sketch014",
+          "property": "ExternalGeometry",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Sketch",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "Edge1",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Sketch014",
+          "property": "",
+          "source_owners": [
+            "Body003"
+          ],
+          "target_object": "Sketch001",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "Sketch001",
+          "property": "AttachmentSupport",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "Origin002",
+          "target_owners": [],
+          "subelement": "XY_Plane001",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderFaceplateRetentionKeep",
+            "EncoderCaptureLipTransfer",
+            "EncoderCrownGlassBackClearance",
+            "KeepDisplayBezelWithUpperFaceplate",
+            "EncoderFaceplateSplit",
+            "EncoderFaceplateSource",
+            "EncoderNutReliefs",
+            "Pocket017",
+            "Pocket014",
+            "Pad013",
+            "Pocket013",
+            "Pocket012",
+            "Binder013",
+            "Sketch014",
+            "Sketch001"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "Body_EncoderFacePlateLandSplit",
+          "property": "",
+          "source_owners": [
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "target_object": "DualSided_OpposedWedge_Seam",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "BaseFeature003",
+          "property": "BaseFeature",
+          "source_owners": [
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "target_object": "FrontFullLandTransferRestricted",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "FrontOriginalMatingLand",
+          "property": "Support",
+          "source_owners": [],
+          "target_object": "SmallHangerPocketBody",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "Face13",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontMatingLandProjection",
+            "FrontOriginalMatingLand"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "PreserveOriginalFrontExterior",
+          "property": "Group",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "FrontExteriorLimitTool",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "USBConformalCoverSeatBody",
+          "property": "Group",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "USBSeatToolForBody",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "USB15mmCableAccessBody",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "PendantDimensions",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBRecessStructuralBulk",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "PendantDimensions",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBRecessStructuralBulk"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "Sketch020",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "InternalHardware",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBRecessStructuralBulk",
+            "SideButton19mmNutClearance",
+            "SideButton15mmPanelPassage",
+            "SideButtonRecessedHeadSeat",
+            "SideButtonStructuralLand",
+            "DisplayBracketM2Threads",
+            "DisplayBracketStructuralBosses",
+            "FaceplateM2ReceivingHoles",
+            "FaceplateTaperedReceivers",
+            "FaceplateStructuralBosses",
+            "FrontTaperedSeats",
+            "Hole",
+            "Sketch020"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "MiddleLeftSupportTransitionRoot",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "InternalHardware",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBRecessStructuralBulk",
+            "SideButton19mmNutClearance",
+            "SideButton15mmPanelPassage",
+            "SideButtonRecessedHeadSeat",
+            "SideButtonStructuralLand",
+            "DisplayBracketM2Threads",
+            "DisplayBracketStructuralBosses",
+            "FaceplateM2ReceivingHoles",
+            "FaceplateTaperedReceivers",
+            "FaceplateStructuralBosses",
+            "FrontTaperedSeats",
+            "Hole",
+            "LowerRightSupportTransition",
+            "MiddleRightSupportTransition",
+            "LowerLeftSupportTransition",
+            "MiddleLeftSupportTransition",
+            "MiddleLeftSupportTransitionRoot"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "RepositionedScrewSupportSketch",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "InternalHardware",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBRecessStructuralBulk",
+            "SideButton19mmNutClearance",
+            "SideButton15mmPanelPassage",
+            "SideButtonRecessedHeadSeat",
+            "SideButtonStructuralLand",
+            "DisplayBracketM2Threads",
+            "DisplayBracketStructuralBosses",
+            "FaceplateM2ReceivingHoles",
+            "FaceplateTaperedReceivers",
+            "FaceplateStructuralBosses",
+            "FrontTaperedSeats",
+            "Hole",
+            "LowerRightSupportTransition",
+            "MiddleRightSupportTransition",
+            "LowerLeftSupportTransition",
+            "MiddleLeftSupportTransition",
+            "RepositionedScrewSupports",
+            "RepositionedScrewSupportSketch"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "MiddleRightSupportTransitionRoot",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "InternalHardware",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBRecessStructuralBulk",
+            "SideButton19mmNutClearance",
+            "SideButton15mmPanelPassage",
+            "SideButtonRecessedHeadSeat",
+            "SideButtonStructuralLand",
+            "DisplayBracketM2Threads",
+            "DisplayBracketStructuralBosses",
+            "FaceplateM2ReceivingHoles",
+            "FaceplateTaperedReceivers",
+            "FaceplateStructuralBosses",
+            "FrontTaperedSeats",
+            "Hole",
+            "LowerRightSupportTransition",
+            "MiddleRightSupportTransition",
+            "MiddleRightSupportTransitionRoot"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBRecessStructuralBulkSketch",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "PendantDimensions",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBRecessStructuralBulk",
+            "USBRecessStructuralBulkSketch"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBExternalAccessSketchBody",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "PendantDimensions",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBFemaleConnectorInternalRelief",
+            "USB15mmCableAccessBody",
+            "USBExternalAccessSketchBody"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBSeatToolForBody",
+          "property": "",
+          "source_owners": [],
+          "target_object": "USBSeatToolForBodySource",
+          "target_owners": [
+            "USBSeatToolForBody"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "USBSeatToolForBodySource",
+          "property": "BaseFeature",
+          "source_owners": [
+            "USBSeatToolForBody"
+          ],
+          "target_object": "USBConformalSeatToolBounded",
+          "target_owners": [
+            "USBConformalSeatTool"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "USBConformalSeatToolBounded",
+          "property": "Group",
+          "source_owners": [
+            "USBConformalSeatTool"
+          ],
+          "target_object": "USBConformalSeatToolInnerEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "USBConformalSeatToolInnerEnvelope",
+          "property": "",
+          "source_owners": [],
+          "target_object": "USBConformalSeatToolInnerEnvelopeSource",
+          "target_owners": [
+            "USBConformalSeatToolInnerEnvelope"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolInnerEnvelope"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "USBConformalSeatToolInnerEnvelopeSource",
+          "property": "BaseFeature",
+          "source_owners": [
+            "USBConformalSeatToolInnerEnvelope"
+          ],
+          "target_object": "CompleteExteriorEnvelope",
+          "target_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolInnerEnvelope",
+            "USBConformalSeatToolInnerEnvelopeSource"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "CompleteExteriorEnvelope",
+          "property": "Group",
+          "source_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "target_object": "RearEnvelopeForUSBCover",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedEnvelopeProfile2",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool",
+            "FrontExteriorLimitSource",
+            "FrontEnvelopeLoft",
+            "WidthControlled_FrontMatchedEnvelopeProfile2"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedEnvelopeProfile0",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool",
+            "FrontExteriorLimitSource",
+            "FrontEnvelopeLoft",
+            "WidthControlled_FrontMatchedEnvelopeProfile0"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_FrontMatchedEnvelopeProfile1",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool",
+            "FrontExteriorLimitSource",
+            "FrontEnvelopeLoft",
+            "WidthControlled_FrontMatchedEnvelopeProfile1"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "RearEnvelopeForUSBCover",
+          "property": "",
+          "source_owners": [],
+          "target_object": "RearEnvelopeForUSBCoverSource",
+          "target_owners": [
+            "RearEnvelopeForUSBCover"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope",
+            "RearEnvelopeForUSBCover"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "RearEnvelopeForUSBCoverSource",
+          "property": "BaseFeature",
+          "source_owners": [
+            "RearEnvelopeForUSBCover"
+          ],
+          "target_object": "RearEnvelopeBackThickness",
+          "target_owners": [
+            "RearExteriorEnvelope"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope",
+            "RearEnvelopeForUSBCover",
+            "RearEnvelopeForUSBCoverSource"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_RearMatchedEnvelopeProfile0",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "RearExteriorEnvelope"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope",
+            "RearEnvelopeForUSBCover",
+            "RearEnvelopeForUSBCoverSource",
+            "RearEnvelopeBackThickness",
+            "RearEnvelopeLoft",
+            "WidthControlled_RearMatchedEnvelopeProfile0"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "WidthControlled_RearMatchedEnvelopeProfile1",
+          "property": "EnvelopeControl",
+          "source_owners": [
+            "RearExteriorEnvelope"
+          ],
+          "target_object": "ExteriorEnvelope",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource",
+            "CompleteExteriorEnvelope",
+            "RearEnvelopeForUSBCover",
+            "RearEnvelopeForUSBCoverSource",
+            "RearEnvelopeBackThickness",
+            "WidthControlled_RearMatchedEnvelopeProfile1"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBConformalSeatToolSurfaceBand",
+          "property": "Group",
+          "source_owners": [
+            "USBConformalSeatTool"
+          ],
+          "target_object": "USBConformalSeatToolLimit",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "USBConformalSeatToolSource",
+          "property": "BaseFeature",
+          "source_owners": [
+            "USBConformalSeatTool"
+          ],
+          "target_object": "CompleteExteriorEnvelope",
+          "target_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolSource"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "USBConformalSeatToolLimit",
+          "property": "",
+          "source_owners": [],
+          "target_object": "USBConformalSeatToolRadiusPad",
+          "target_owners": [
+            "USBConformalSeatToolLimit"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "SideButtonRemoveFragileSeatRim",
+            "USBEnclosureTetherPassage",
+            "USBConformalCoverSeatBody",
+            "USBSeatToolForBody",
+            "USBSeatToolForBodySource",
+            "USBConformalSeatToolBounded",
+            "USBConformalSeatToolSurfaceBand",
+            "USBConformalSeatToolLimit"
+          ],
+          "category": "other-active-boundary"
+        },
+        {
+          "source_object": "FrontExteriorLimitTool",
+          "property": "",
+          "source_owners": [],
+          "target_object": "FrontExteriorLimitSource",
+          "target_owners": [
+            "FrontExteriorLimitTool"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "FrontExteriorLimitSource",
+          "property": "BaseFeature",
+          "source_owners": [
+            "FrontExteriorLimitTool"
+          ],
+          "target_object": "FrontEnvelopeLoft",
+          "target_owners": [
+            "FrontExteriorEnvelope"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "PreserveOriginalFrontExterior",
+            "FrontExteriorLimitTool",
+            "FrontExteriorLimitSource"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "SmallHangerProfileBody",
+          "property": "",
+          "source_owners": [
+            "Body"
+          ],
+          "target_object": "HangerParameters",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "SmallHangerPocketBody",
+            "SmallHangerProfileBody"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "FrontFullLandTransfer",
+          "property": "Base",
+          "source_owners": [],
+          "target_object": "SmallHangerPocketBody",
+          "target_owners": [
+            "Body"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "FrontFullLandCutter",
+          "property": "",
+          "source_owners": [],
+          "target_object": "FrontFullWidthSeatLoft",
+          "target_owners": [
+            "FrontFullLandCutter"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter"
+          ],
+          "category": "shell-or-upper-assembly-construction"
+        },
+        {
+          "source_object": "FrontFullLandProfile0",
+          "property": "Support",
+          "source_owners": [
+            "FrontFullLandCutter"
+          ],
+          "target_object": "WidthControlled_StableFaceplateBaseOutline",
+          "target_owners": [
+            "Body003"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile0"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "FrontFullLandProfile1",
+          "property": "",
+          "source_owners": [
+            "FrontFullLandCutter"
+          ],
+          "target_object": "DualSided_OpposedWedge_Seam",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile1"
+          ],
+          "category": "shared-parameter-or-datum"
+        },
+        {
+          "source_object": "FrontFullLandProfile1",
+          "property": "Support",
+          "source_owners": [
+            "FrontFullLandCutter"
+          ],
+          "target_object": "WidthControlled_StableFaceplateBaseOutline",
+          "target_owners": [
+            "Body003"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "Body_EncoderFacePlateLandSplit",
+            "BaseFeature003",
+            "FrontFullLandTransferRestricted",
+            "FrontFullLandTransfer",
+            "FrontFullLandCutter",
+            "FrontFullWidthSeatLoft",
+            "FrontFullLandProfile1"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "EncoderPocketShellRelease",
+          "property": "Base",
+          "source_owners": [],
+          "target_object": "EncoderPocketWallM2Countersink",
+          "target_owners": [
+            "Body_EncoderPocket"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderPocketShellRelease"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "EncoderPocketSourceBase",
+          "property": "BaseFeature",
+          "source_owners": [
+            "Body_EncoderPocket"
+          ],
+          "target_object": "Body_EncoderFacePlateFullWidthSeat",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderPocketShellRelease",
+            "EncoderPocketWallM2Countersink",
+            "EncoderPocketWallM2_3x120",
+            "EncoderPocketSplit",
+            "EncoderPocketSourceBase"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "Body_EncoderFacePlateFullWidthSeat",
+          "property": "Group",
+          "source_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "target_object": "Body_EncoderFacePlateFullLandTransferTool",
+          "target_owners": [],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "EncoderFrontM2Countersink",
+            "Body_EncoderFacePlateFullWidthSeat"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "Body_EncoderFacePlateFullLandTransferTool",
+          "property": "",
+          "source_owners": [],
+          "target_object": "Body_EncoderFacePlateLandSplit",
+          "target_owners": [
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand",
+            "EncoderFrontM2Countersink",
+            "Body_EncoderFacePlateFullWidthSeat",
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "EncoderShellTrimTool",
+          "property": "Base",
+          "source_owners": [],
+          "target_object": "EncoderFaceplateSplitProfile",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "EncoderPocketShellReleaseNoFaceplateRetention",
+            "EncoderPocketShellRelease",
+            "EncoderShellTrimTool"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "RC16NativeFaceplateWithLand",
+          "property": "Tool",
+          "source_owners": [],
+          "target_object": "Body_EncoderFacePlateLandSplit",
+          "target_owners": [
+            "Body_EncoderFacePlateFullLandTransferTool"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        },
+        {
+          "source_object": "RC16NativeFaceplateWithLand",
+          "property": "Base",
+          "source_owners": [],
+          "target_object": "EncoderFrontM2Countersink",
+          "target_owners": [
+            "Body_EncoderFacePlate"
+          ],
+          "subelement": "",
+          "tip_to_source_path": [
+            "EncoderPocketShellM2Hole",
+            "EncoderPocketShellM2Binder",
+            "EncoderPocketSliceZ0",
+            "RC16NativeFaceplateWithLand"
+          ],
+          "category": "encoder-interface-or-encoder-feature"
+        }
+      ]
+    }
+  ],
+  "shared_edges": [
+    [
+      "BaseFeature003",
+      "BaseFeature",
+      "FrontFullLandTransferRestricted",
+      ""
+    ],
+    [
+      "Body005",
+      "",
+      "Clone",
+      ""
+    ],
+    [
+      "Body_EncoderFacePlateFullLandTransferTool",
+      "",
+      "Body_EncoderFacePlateLandSplit",
+      ""
+    ],
+    [
+      "Body_EncoderFacePlateFullWidthSeat",
+      "Group",
+      "Body_EncoderFacePlateFullLandTransferTool",
+      ""
+    ],
+    [
+      "Body_EncoderFacePlateLandSplit",
+      "",
+      "DualSided_OpposedWedge_Seam",
+      ""
+    ],
+    [
+      "Boolean",
+      "Group",
+      "Body005",
+      ""
+    ],
+    [
+      "Clone",
+      "BaseFeature",
+      "FrontMatchedInnerCavity",
+      ""
+    ],
+    [
+      "CompleteExteriorEnvelope",
+      "Group",
+      "RearEnvelopeForUSBCover",
+      ""
+    ],
+    [
+      "EncoderCaptureLipTransfer",
+      "Base",
+      "EncoderCaptureLedge",
+      ""
+    ],
+    [
+      "EncoderCaptureLipTransfer",
+      "Tool",
+      "EncoderCrownGlassBackClearance",
+      ""
+    ],
+    [
+      "EncoderFaceplateRetentionKeep",
+      "Base",
+      "Body_EncoderFacePlateLandSplit",
+      ""
+    ],
+    [
+      "EncoderFaceplateSource",
+      "BaseFeature",
+      "EncoderNutReliefs",
+      ""
+    ],
+    [
+      "EncoderPocketShellRelease",
+      "Base",
+      "EncoderPocketWallM2Countersink",
+      ""
+    ],
+    [
+      "EncoderPocketSourceBase",
+      "BaseFeature",
+      "Body_EncoderFacePlateFullWidthSeat",
+      ""
+    ],
+    [
+      "EncoderShellTrimTool",
+      "Base",
+      "EncoderFaceplateSplitProfile",
+      ""
+    ],
+    [
+      "FrontExteriorLimitSource",
+      "BaseFeature",
+      "FrontEnvelopeLoft",
+      ""
+    ],
+    [
+      "FrontExteriorLimitTool",
+      "",
+      "FrontExteriorLimitSource",
+      ""
+    ],
+    [
+      "FrontFullLandCutter",
+      "",
+      "FrontFullWidthSeatLoft",
+      ""
+    ],
+    [
+      "FrontFullLandProfile0",
+      "Support",
+      "WidthControlled_StableFaceplateBaseOutline",
+      ""
+    ],
+    [
+      "FrontFullLandProfile1",
+      "",
+      "DualSided_OpposedWedge_Seam",
+      ""
+    ],
+    [
+      "FrontFullLandProfile1",
+      "Support",
+      "WidthControlled_StableFaceplateBaseOutline",
+      ""
+    ],
+    [
+      "FrontFullLandTransfer",
+      "Base",
+      "SmallHangerPocketBody",
+      ""
+    ],
+    [
+      "FrontOriginalMatingLand",
+      "Support",
+      "SmallHangerPocketBody",
+      "Face13"
+    ],
+    [
+      "MiddleLeftSupportTransitionRoot",
+      "",
+      "InternalHardware",
+      ""
+    ],
+    [
+      "MiddleRightSupportTransitionRoot",
+      "",
+      "InternalHardware",
+      ""
+    ],
+    [
+      "Pad009",
+      "",
+      "PendantDimensions",
+      ""
+    ],
+    [
+      "PreserveOriginalFrontExterior",
+      "Group",
+      "FrontExteriorLimitTool",
+      ""
+    ],
+    [
+      "RC16NativeFaceplateWithLand",
+      "Base",
+      "EncoderFrontM2Countersink",
+      ""
+    ],
+    [
+      "RC16NativeFaceplateWithLand",
+      "Tool",
+      "Body_EncoderFacePlateLandSplit",
+      ""
+    ],
+    [
+      "RearEnvelopeForUSBCover",
+      "",
+      "RearEnvelopeForUSBCoverSource",
+      ""
+    ],
+    [
+      "RearEnvelopeForUSBCoverSource",
+      "BaseFeature",
+      "RearEnvelopeBackThickness",
+      ""
+    ],
+    [
+      "RepositionedScrewSupportSketch",
+      "",
+      "InternalHardware",
+      ""
+    ],
+    [
+      "Sketch",
+      "AttachmentSupport",
+      "Origin002",
+      "XY_Plane001"
+    ],
+    [
+      "Sketch001",
+      "AttachmentSupport",
+      "Origin002",
+      "XY_Plane001"
+    ],
+    [
+      "Sketch014",
+      "",
+      "Sketch001",
+      ""
+    ],
+    [
+      "Sketch014",
+      "ExternalGeometry",
+      "Sketch",
+      "Edge1"
+    ],
+    [
+      "Sketch014",
+      "ExternalGeometry",
+      "Sketch",
+      "Edge2"
+    ],
+    [
+      "Sketch014",
+      "ExternalGeometry",
+      "Sketch",
+      "Edge3"
+    ],
+    [
+      "Sketch014",
+      "ExternalGeometry",
+      "Sketch",
+      "Edge4"
+    ],
+    [
+      "Sketch016",
+      "ExternalGeometry",
+      "Sketch",
+      "Edge5"
+    ],
+    [
+      "Sketch020",
+      "",
+      "InternalHardware",
+      ""
+    ],
+    [
+      "SmallHangerProfileBody",
+      "",
+      "HangerParameters",
+      ""
+    ],
+    [
+      "USB15mmCableAccessBody",
+      "",
+      "PendantDimensions",
+      ""
+    ],
+    [
+      "USBConformalCoverSeatBody",
+      "Group",
+      "USBSeatToolForBody",
+      ""
+    ],
+    [
+      "USBConformalSeatToolBounded",
+      "Group",
+      "USBConformalSeatToolInnerEnvelope",
+      ""
+    ],
+    [
+      "USBConformalSeatToolInnerEnvelope",
+      "",
+      "USBConformalSeatToolInnerEnvelopeSource",
+      ""
+    ],
+    [
+      "USBConformalSeatToolInnerEnvelopeSource",
+      "BaseFeature",
+      "CompleteExteriorEnvelope",
+      ""
+    ],
+    [
+      "USBConformalSeatToolLimit",
+      "",
+      "USBConformalSeatToolRadiusPad",
+      ""
+    ],
+    [
+      "USBConformalSeatToolSource",
+      "BaseFeature",
+      "CompleteExteriorEnvelope",
+      ""
+    ],
+    [
+      "USBConformalSeatToolSurfaceBand",
+      "Group",
+      "USBConformalSeatToolLimit",
+      ""
+    ],
+    [
+      "USBExternalAccessSketchBody",
+      "",
+      "PendantDimensions",
+      ""
+    ],
+    [
+      "USBRecessStructuralBulk",
+      "",
+      "PendantDimensions",
+      ""
+    ],
+    [
+      "USBRecessStructuralBulkSketch",
+      "",
+      "PendantDimensions",
+      ""
+    ],
+    [
+      "USBSeatToolForBody",
+      "",
+      "USBSeatToolForBodySource",
+      ""
+    ],
+    [
+      "USBSeatToolForBodySource",
+      "BaseFeature",
+      "USBConformalSeatToolBounded",
+      ""
+    ],
+    [
+      "WidthControlled_FrontMatchedEnvelopeProfile0",
+      "EnvelopeControl",
+      "ExteriorEnvelope",
+      ""
+    ],
+    [
+      "WidthControlled_FrontMatchedEnvelopeProfile1",
+      "EnvelopeControl",
+      "ExteriorEnvelope",
+      ""
+    ],
+    [
+      "WidthControlled_FrontMatchedEnvelopeProfile2",
+      "EnvelopeControl",
+      "ExteriorEnvelope",
+      ""
+    ],
+    [
+      "WidthControlled_FrontMatchedProfile0",
+      "EnvelopeControl",
+      "ExteriorEnvelope",
+      ""
+    ],
+    [
+      "WidthControlled_FrontMatchedProfile1",
+      "EnvelopeControl",
+      "ExteriorEnvelope",
+      ""
+    ],
+    [
+      "WidthControlled_FrontMatchedProfile2",
+      "EnvelopeControl",
+      "ExteriorEnvelope",
+      ""
+    ],
+    [
+      "WidthControlled_FrontMatchedProfile3",
+      "EnvelopeControl",
+      "ExteriorEnvelope",
+      ""
+    ],
+    [
+      "WidthControlled_FrontMatchedProfile4",
+      "EnvelopeControl",
+      "ExteriorEnvelope",
+      ""
+    ],
+    [
+      "WidthControlled_FrontMatchedProfile5",
+      "EnvelopeControl",
+      "ExteriorEnvelope",
+      ""
+    ],
+    [
+      "WidthControlled_RearMatchedEnvelopeProfile0",
+      "EnvelopeControl",
+      "ExteriorEnvelope",
+      ""
+    ],
+    [
+      "WidthControlled_RearMatchedEnvelopeProfile1",
+      "EnvelopeControl",
+      "ExteriorEnvelope",
+      ""
+    ],
+    [
+      "WidthControlled_StableFaceplateBaseOutline",
+      "EnvelopeControl",
+      "ExteriorEnvelope",
+      ""
+    ]
+  ]
+}

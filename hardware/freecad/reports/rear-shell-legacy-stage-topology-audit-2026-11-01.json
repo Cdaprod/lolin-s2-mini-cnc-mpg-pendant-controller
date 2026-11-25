@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-01",
+  "branch": "hardware-integration",
+  "method": "read-only headless FreeCAD BOP checks on saved cached Shapes; no document recompute or save",
+  "protected_monolith_modified": false,
+  "legacy_stages": [
+    {"object": "Body002FullWidthSeat", "volume_mm3": 40485.6574282847, "valid": true, "solid_count": 1, "bop_findings": 336},
+    {"object": "RearBossToWallLoadPaths", "volume_mm3": 40869.39100368142, "valid": true, "solid_count": 1, "bop_findings": 2440, "stage_delta_mm3": 383.73357539672},
+    {"object": "RearBossShoulderTransitions", "volume_mm3": 40854.429553998285, "valid": true, "solid_count": 1, "bop_findings": 740, "stage_delta_mm3": -14.961449683135},
+    {"object": "RearBossWallRamps45", "volume_mm3": 40961.35900828918, "valid": true, "solid_count": 1, "bop_findings": 740, "stage_delta_mm3": 106.929454290895}
+  ],
+  "net_saved_stage_delta_mm3": 475.70158000448,
+  "bop_finding_types_seen": ["BOPAlgo SelfIntersect", "BOPAlgo TooSmallEdge", "BOPAlgo_InvalidCurveOnSurface"],
+  "support_design_intent": {
+    "function": "four screw-boss-to-shell-wall reinforcement paths",
+    "profiles": [
+      {"path": "middle left", "root_xy_radius_mm": [-27, 58.5, 7.0], "wall_xy_radius_mm": [-26, 65, 5.1], "root_wall_z_mm": [-18.8, -15.6]},
+      {"path": "middle right", "root_xy_radius_mm": [27, 58.5, 7.0], "wall_xy_radius_mm": [26, 65, 5.1], "root_wall_z_mm": [-18.8, -15.6]},
+      {"path": "lower left", "root_xy_radius_mm": [-18, -17.7566, 4.2], "wall_xy_radius_mm": [-22.196, -17.7566, 3.5], "root_wall_z_mm": [-18.8, -14.9]},
+      {"path": "lower right", "root_xy_radius_mm": [18, -17.7566, 4.2], "wall_xy_radius_mm": [22.196, -17.7566, 3.5], "root_wall_z_mm": [-18.8, -14.9]}
+    ]
+  },
+  "approximate_0p5mm_mesh_occupancy": {
+    "region_sampling_is_exact_brep_difference": false,
+    "four_regions_added_mm3": 283.625,
+    "four_regions_removed_mm3": 20.750,
+    "net_mm3": 262.875,
+    "regions": [
+      {"name": "upper left", "added_mm3": 46.5, "removed_mm3": 3.75, "net_mm3": 42.75, "sampled_added_extent_mm": [[-33.75, -23.25], [48.25, 64.75], [-30.75, -19.75]]},
+      {"name": "upper right", "added_mm3": 46.75, "removed_mm3": 6.125, "net_mm3": 40.625, "sampled_added_extent_mm": [[23.25, 33.75], [49.25, 68.75], [-30.75, -19.75]]},
+      {"name": "lower left", "added_mm3": 96.25, "removed_mm3": 5.625, "net_mm3": 90.625, "sampled_added_extent_mm": [[-25.25, -10.25], [-26.75, -10.75], [-29.25, -20.75]]},
+      {"name": "lower right", "added_mm3": 94.125, "removed_mm3": 5.25, "net_mm3": 88.875, "sampled_added_extent_mm": [[10.25, 24.75], [-24.75, -8.25], [-29.25, -21.25]]}
+    ],
+    "limits": "The legacy final mesh is open and under-represents its saved BRep; occupancy cannot account for the exact 475.701580 mm3 BRep delta."
+  },
+  "native_reconstruction_reference": {
+    "candidate": "pendant-bodies/rear-shell-native-loadpath-manifold-review-2026-11-01.FCStd",
+    "base_bop_findings": 12,
+    "after_middle_left": 24,
+    "after_middle_right": 36,
+    "after_lower_left": 40,
+    "after_lower_right": 40,
+    "final_tip_bop_findings": 42,
+    "final_tip_valid_one_solid": true,
+    "exported_mesh_boundary_edges": 0,
+    "exported_mesh_overincident_edges": 0
+  },
+  "conclusion": "The 475.701580 mm3 is a net of three cached stage operations, not a removable region. The geometry's intended function is reinforcement between screw bosses and shell walls, but exact pointwise equivalence to defective legacy BReps is not established. Preserve supports pending intended-geometry and structural review."
+}

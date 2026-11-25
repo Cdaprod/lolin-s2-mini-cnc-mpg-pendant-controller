@@ -1,0 +1,94 @@
+{
+  "date": "2026-11-01",
+  "status": "review_candidate_validated",
+  "branch": "hardware-integration",
+  "assembly": "pendant-modular-rear-loadpath-crescents-independent-review-2026-11-01.FCStd",
+  "pad_component": "pendant-bodies/crescent-contact-pads-native-review-2026-11-01.FCStd",
+  "preview": "images/rear-shell-crescents-review-2026-11-01/rear-shell-with-crescent-pads-bottom.png",
+  "source_component": {
+    "object_count": 24,
+    "bodies": [
+      {"name": "UpperCrescentContactPad", "tip": "PadUpper", "valid": true, "solid_count": 1, "volume_mm3": 57.782881303977035},
+      {"name": "LowerCrescentContactPad", "tip": "PadLower", "valid": true, "solid_count": 1, "volume_mm3": 21.17606442735022}
+    ],
+    "contains_rear_shell_body": false,
+    "native_features": ["Sketcher::SketchObject", "PartDesign::Pad"],
+    "outline_reference": "AntiSlipSeatProfiles",
+    "parameters": {
+      "SeatDepth_mm": 0.10,
+      "PadProudHeight_mm": 0.25,
+      "PadThickness_expression": "SeatDepth + PadProudHeight"
+    },
+    "original_pad_geometry_comparison": "Boolean symmetric-difference volume 0 mm3 against previous two-pad review source"
+  },
+  "assembly": {
+    "resolved_live_links": 9,
+    "upper_pad_link_target": "UpperCrescentContactPad",
+    "lower_pad_link_target": "LowerCrescentContactPad",
+    "pad_link_targets_use_dedicated_source_document": true,
+    "link_source_path_storage": "repo-relative",
+    "static_interim_faceplate_representations": 2,
+    "shell_components": {
+      "front": "Editable_FrontShell_Receiver",
+      "rear": "Editable_RearShell_Loadpaths"
+    }
+  },
+  "parameter_probe": {
+    "method": "Spreadsheet.set('B3', value), recompute pad source, then recompute assembly; no candidate files saved during the altered state",
+    "pad_proud_height_mm": [0.25, 0.35, 0.25],
+    "upper_pad_volume_mm3": [57.782881303977035, 74.29227596225601, 57.78288130397702],
+    "lower_pad_volume_mm3": [21.17606442735022, 27.22636854945018, 21.17606442735023],
+    "restoration_volume_error_mm3": {
+      "upper": -1.4210854715202004e-14,
+      "lower": 1.0658141036401503e-14
+    },
+    "assembly_link_refresh": "observed after source-document and assembly recompute"
+  },
+  "prior_clearance_measurements_reused_for_identical_geometry": {
+    "rear_shell_common_volume_with_upper_pad_mm3": 0,
+    "rear_shell_common_volume_with_lower_pad_mm3": 0,
+    "front_shell_common_volume_with_either_pad_mm3": 0,
+    "pad_to_pad_common_volume_mm3": 0,
+    "upper_lower_contact_plane_normal_dot": 1.0,
+    "contact_plane_offset_delta_mm": 2.13e-14,
+    "upper_contact_area_mm2": 165.093946583,
+    "lower_contact_area_mm2": 60.503041221
+  },
+  "current_master_radius_review_assembly_seat_contact_check": {
+    "assembly": "pendant-modular-rear-loadpath-master-radius-review-2026-11-01.FCStd",
+    "method": "For each linked pad, intersect the inward-facing planar face with the linked rear-shell solid and compare common area to full face area; separately measure full-body common volume and exposed-face plane equations.",
+    "upper_pad": {
+      "inward_face_area_mm2": 165.0939465827907,
+      "inward_face_common_area_with_rear_shell_mm2": 165.0939465827907,
+      "contact_area_fraction": 1.0,
+      "rear_shell_common_volume_mm3": 0.0
+    },
+    "lower_pad": {
+      "inward_face_area_mm2": 60.50304122100029,
+      "inward_face_common_area_with_rear_shell_mm2": 60.50304122100029,
+      "contact_area_fraction": 1.0,
+      "rear_shell_common_volume_mm3": 0.0
+    },
+    "exposed_face_planes": {
+      "normal_angle_deg": 0.0,
+      "absolute_plane_offset_difference_mm": 7.34e-14,
+      "result": "coplanar within numerical tolerance"
+    },
+    "cad_geometry_check": "passed for modeled contact area and no positive-volume overlap",
+    "physical_tpu_grip_magnet_and_retention_tests": "not performed"
+  },
+  "cold_open": {
+    "assembly_link_count": 9,
+    "upper_pad_valid_one_solid": true,
+    "lower_pad_valid_one_solid": true,
+    "source_has_only_two_pad_bodies": true,
+    "assembly_recompute_succeeded": true
+  },
+  "limitations": [
+    "This is a review-only assembly; the protected monolith and production assembly are unchanged.",
+    "The shell components in the assembly remain hybrid review candidates and are not presented as fully native-history shell modules.",
+    "TPU/rubber grip, wear, adhesion, magnetic holding force, and tabletop stability have not been physically tested.",
+    "The added 0.25 mm proud height increases magnet-to-steel separation by 0.25 mm at the pad contact plane.",
+    "The intended load capacity and complete-assembly structural performance have not been established."
+  ]
+}

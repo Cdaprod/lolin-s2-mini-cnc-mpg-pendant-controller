@@ -1,0 +1,106 @@
+{
+  "status": "validated disposable component study; not production-approved",
+  "source": "hardware/freecad/pendant-bodies/rear-shell-parametric-shoulder-chamfer-review-2026-11-01.FCStd",
+  "candidate": "hardware/freecad/pendant-bodies/rear-shell-parametric-bottom-fillet-review-2026-11-01.FCStd",
+  "protected_monolith_modified": false,
+  "production_assembly_modified": false,
+  "feature": "StructuralFirstBottomPerimeterFinish",
+  "parameter": {
+    "spreadsheet": "StructuralSupportParameters",
+    "alias": "BottomPerimeterFilletRadius",
+    "cell": "B24",
+    "expression": "StructuralSupportParameters.BottomPerimeterFilletRadius",
+    "baseline_mm": 0.25,
+    "reversible_probe_mm": [
+      0.25,
+      0.3,
+      0.25
+    ]
+  },
+  "baseline_after_expression_binding": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40832.35228589934,
+    "area_mm2": 30809.61256497631,
+    "face_count": 525,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ],
+    "mesh_closed": true,
+    "mesh_facets": 16094,
+    "mesh_boundary_edges": 0,
+    "mesh_overincident_edges": 0,
+    "mesh_degenerate_facets": 0
+  },
+  "edited_at_0p30_mm": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40831.763123264056,
+    "area_mm2": 30807.467507603928,
+    "face_count": 525,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.893107695847895,
+      0.0
+    ],
+    "mesh_closed": true,
+    "mesh_facets": 16070,
+    "mesh_boundary_edges": 0,
+    "mesh_overincident_edges": 0,
+    "mesh_degenerate_facets": 0
+  },
+  "restored_at_0p25_mm": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40832.35228589934,
+    "area_mm2": 30809.61256497631,
+    "face_count": 525,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ],
+    "mesh_closed": true,
+    "mesh_facets": 16094,
+    "mesh_boundary_edges": 0,
+    "mesh_overincident_edges": 0,
+    "mesh_degenerate_facets": 0
+  },
+  "cold_open_recompute": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40832.352285899346,
+    "area_mm2": 30809.612564976305,
+    "face_count": 525,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.89446791210996,
+      0.0
+    ],
+    "mesh_closed": true,
+    "mesh_facets": 16116,
+    "mesh_boundary_edges": 0,
+    "mesh_overincident_edges": 0,
+    "mesh_degenerate_facets": 0
+  },
+  "save_close_reopen_recompute": "passed",
+  "limitations": [
+    "The component base is still a stored-shape review base.",
+    "The legacy 475.701580 mm3 load-path stage difference remains unresolved.",
+    "Mesh closure is not a structural proof-load result."
+  ]
+}

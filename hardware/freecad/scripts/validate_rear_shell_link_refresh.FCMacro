@@ -1,0 +1,130 @@
+"""Disposable test of source-component edit -> save -> assembly refresh.
+
+Required environment variables point only to disposable copies:
+PENDANT_TEST_ASSEMBLY, PENDANT_TEST_COMPONENT, PENDANT_TEST_REPORT.
+"""
+import json
+import os
+
+import FreeCAD as App
+
+
+def required(name):
+    value = os.environ.get(name)
+    if not value:
+        raise RuntimeError("Set " + name)
+    return os.path.abspath(value)
+
+
+assembly_path = required("PENDANT_TEST_ASSEMBLY")
+component_path = required("PENDANT_TEST_COMPONENT")
+report_path = required("PENDANT_TEST_REPORT")
+baseline = None
+changed = None
+restored = None
+assembly = None
+component = None
+
+
+def linked_state(doc):
+    link = doc.getObject("Interim_Body002")
+    target = link.LinkedObject
+    if link is None or target is None:
+        raise RuntimeError("Rear-shell App::Link is unresolved")
+    links = [obj for obj in doc.Objects if obj.TypeId == "App::Link"]
+    broken = [obj.Name for obj in links if obj.LinkedObject is None]
+    if broken:
+        raise RuntimeError("Assembly has unresolved links: " + ", ".join(broken))
+    shape = link.Shape
+    if not shape.isValid() or len(shape.Solids) != 1:
+        raise RuntimeError("Linked rear shell is not one valid solid")
+    return link, target, shape
+
+
+def reopen_assembly():
+    global assembly
+    if assembly is not None:
+        name = assembly.Name
+        App.closeDocument(name)
+        assembly = None
+    for doc in list(App.listDocuments().values()):
+        if os.path.realpath(doc.FileName or "") == os.path.realpath(component_path):
+            App.closeDocument(doc.Name)
+    assembly = App.openDocument(assembly_path)
+    assembly.recompute()
+    return linked_state(assembly)
+
+
+try:
+    assembly = App.openDocument(assembly_path)
+    component = App.openDocument(component_path)
+    link = assembly.getObject("Interim_Body002")
+    target = component.getObject("RearShell")
+    if link is None or target is None:
+        raise RuntimeError("Candidate assembly or source Body is missing")
+    link.setLink(target)
+    assembly.recompute()
+    assembly.save()
+    baseline = link.Shape.Volume
+
+    pad = component.getObject("UpperLeftSupportPad")
+    if pad is None:
+        raise RuntimeError("Native support Pad is missing")
+    pad.Length = App.Units.Quantity("13.2 mm")
+    component.recompute()
+    if not target.Shape.isValid():
+        raise RuntimeError("Edited source Body became invalid")
+    component.save()
+    assembly.recompute()
+    link.touch()
+    assembly.recompute()
+    changed = link.Shape.Volume
+    if abs(changed - baseline) < 0.01:
+        raise RuntimeError("Assembly link did not refresh after source edit")
+
+    # A cold assembly open must consume the saved source component.
+    _, target, refreshed_shape = reopen_assembly()
+    cold_changed = refreshed_shape.Volume
+    if abs(cold_changed - changed) > 1e-5:
+        raise RuntimeError("Cold-open assembly did not retain the edited source")
+
+    # Restore the source parameter, save, close, and cold-open again.
+    component = target.Document
+    pad = component.getObject("UpperLeftSupportPad")
+    pad.Length = App.Units.Quantity("13.0 mm")
+    component.recompute()
+    component.save()
+    _, target, restored_shape = reopen_assembly()
+    restored = restored_shape.Volume
+    if abs(restored - baseline) > 1e-5:
+        raise RuntimeError("Restored source did not recover assembly baseline")
+
+    report = {
+        "assembly": assembly_path,
+        "component": component_path,
+        "link": "Interim_Body002",
+        "resolved_assembly_links": len(
+            [obj for obj in assembly.Objects if obj.TypeId == "App::Link"]),
+        "source_parameter": "UpperLeftSupportPad.Length",
+        "baseline_mm": 13.0,
+        "edited_mm": 13.2,
+        "baseline_volume_mm3": baseline,
+        "edited_assembly_volume_mm3": changed,
+        "cold_reopen_edited_volume_mm3": cold_changed,
+        "restored_assembly_volume_mm3": restored,
+        "edit_propagated_to_link": abs(changed - baseline) > 0.01,
+        "edit_persisted_after_reopen": abs(cold_changed - changed) <= 1e-5,
+        "restored_after_reopen": abs(restored - baseline) <= 1e-5,
+    }
+    os.makedirs(os.path.dirname(report_path), exist_ok=True)
+    with open(report_path, "w") as stream:
+        json.dump(report, stream, indent=2)
+    print("REAR_LINK_REFRESH_TEST=" + json.dumps(report), flush=True)
+finally:
+    if assembly is not None:
+        name = assembly.Name
+        App.closeDocument(name)
+    # Close any component documents opened by App::Link after assembly close.
+    for doc in list(App.listDocuments().values()):
+        if os.path.realpath(doc.FileName or "") == os.path.realpath(component_path):
+            App.closeDocument(doc.Name)

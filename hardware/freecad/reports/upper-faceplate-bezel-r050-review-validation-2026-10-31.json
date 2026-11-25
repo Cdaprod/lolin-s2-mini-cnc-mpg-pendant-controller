@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-31",
+  "status": "validated disposable review candidate; not production-approved",
+  "source_component": "hardware/freecad/master-driven-leadins-candidate/pendant-bodies/upper-faceplate-bezel-hybrid-candidate.FCStd",
+  "candidate_component": "hardware/freecad/master-driven-leadins-candidate/pendant-bodies/upper-faceplate-bezel-hybrid-r0p50-review.FCStd",
+  "candidate_assembly": "hardware/freecad/master-driven-leadins-candidate/pendant-modular-assembly-bezel-r0p50-review.FCStd",
+  "native_feature": {
+    "type": "PartDesign::Fillet",
+    "name": "DisplayBezelSoftEdge",
+    "parameter": "BezelParameters.DisplayBezelFilletRadius",
+    "baseline_radius_mm": 0.3,
+    "candidate_radius_mm": 0.5
+  },
+  "before": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 13358.173073210684,
+    "area_mm2": 13423.796919311562,
+    "faces": 227,
+    "bounds_mm": [-64.21622504107172, 64.21622504107174, -41.666577146181105, 79.1773324592688, -27.5, 5.000000000000091]
+  },
+  "after_cold_reopen_recompute": {
+    "valid": true,
+    "solids": 1,
+    "volume_mm3": 13349.004070174205,
+    "area_mm2": 13400.874406498768,
+    "faces": 227,
+    "bounds_mm": [-64.21622504107172, 64.21622504107174, -41.666577146181105, 79.1773324592688, -27.5, 5.000000000000091],
+    "mesh": {
+      "linear_deflection_mm": 0.12,
+      "angular_deflection_rad": 0.25,
+      "facets": 13626,
+      "closed": true,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_facets": 0
+    }
+  },
+  "difference": {
+    "volume_removed_mm3": 9.169005125117167,
+    "volume_added_mm3": 0.0,
+    "same_envelope": true,
+    "cylindrical_bore_radius_mm": 20.0,
+    "outer_rim_cylinder_radius_mm": 22.5,
+    "cylindrical_lip_height_reduction_mm": 0.2,
+    "remaining_flat_annulus_between_blends_mm": 1.5
+  },
+  "assembly": {
+    "app_link_count": 7,
+    "broken_links": [],
+    "bezel_link_placement_preserved": true,
+    "neighbor_intersection_volumes_mm3": {
+      "display_retainer": 0.0,
+      "usb_tethered_cover": 0.0,
+      "faceplate_locator_a": 0.0,
+      "faceplate_locator_b": 0.0,
+      "breakout_board": 0.0,
+      "rear_shell_review_link": 0.0
+    }
+  },
+  "production_monolith_modified": false,
+  "production_assembly_modified": false,
+  "limitations": [
+    "Hybrid component base remains imported static geometry; only the bezel fillet is native and parametric.",
+    "Appearance and tactile acceptance remain for user review.",
+    "Rear-shell support reconstruction remains review-only with an unresolved 113.497 mm3 difference to the cached legacy Tip."
+  ],
+  "preview": "hardware/freecad/reports/images/display-bezel-r0p50/before-after.png"
+}
