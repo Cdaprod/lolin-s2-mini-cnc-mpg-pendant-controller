@@ -47,11 +47,28 @@ def build_inputs(config, state, shared_i2c=None):
     )
 
 
-def build_display(config):
+def build_shared_spi(config):
+    """Allocate the single Round Display SPI bus, including SD MISO."""
+    pins = ("display_sck_pin", "display_mosi_pin", "sd_sck_pin",
+            "sd_mosi_pin", "sd_miso_pin")
+    missing = [name for name in pins if not config.get(name)]
+    if missing:
+        raise ValueError("shared SPI missing pins: " + ", ".join(missing))
+    if (config["display_sck_pin"] != config["sd_sck_pin"] or
+            config["display_mosi_pin"] != config["sd_mosi_pin"]):
+        raise ValueError("display and SD must use the same SCK/MOSI pins")
+    import board
+    import busio
+    return busio.SPI(getattr(board, config["display_sck_pin"]),
+                     MOSI=getattr(board, config["display_mosi_pin"]),
+                     MISO=getattr(board, config["sd_miso_pin"]))
+
+
+def build_display(config, shared_spi=None):
     if config.get("display_enabled"):
         if config.get("display_renderer") == "round":
             from src.display.round_ui.display import from_config
-            return from_config(config)
+            return from_config(config, shared_spi=shared_spi)
         from src.display.displayio_backend import from_config
         return from_config(config)
     return ConsoleDisplay()
@@ -71,7 +88,9 @@ def build_storage(config, shared_spi=None):
         jobs_path = root + "/jobs"
         macros_path = root + "/macros"
         config_path = root + "/config"
-    storage = SDStorage(jobs_path, macros_path, config_path)
+    storage = SDStorage(
+        jobs_path, macros_path, config_path,
+        missing_is_unconfigured=not config.get("sd_enabled"))
     if status is not None and status != "available":
         storage.status = status
         storage.error = error

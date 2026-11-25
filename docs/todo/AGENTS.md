@@ -61,7 +61,7 @@ enable CNC motion merely to satisfy a task; each roadmap exit gate applies.
 ## 2026-10-02 — Current XIAO harness architecture
 
 - [x] Make the XIAO ESP32-S3/Round Display settings template canonical, with
-  native GPIO42/GPIO41 encoder inputs and the complete GPA0–GPB6 harness map.
+  native GPIO39/GPIO40 encoder inputs and the complete GPA0–GPB6 harness map.
 - [x] Resolve MCP23017 virtual pins through a shared-I2C polling backend with
   pull-ups, active-low semantics, address/pin validation, and safe gates.
 - [x] Preserve the unassigned LED and GRBL UART and label the prior LOLIN

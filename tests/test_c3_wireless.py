@@ -2,6 +2,10 @@
 import unittest
 
 from src.controller.c3_wireless import C3WirelessController
+from src.controller.actions import ActionDispatcher
+from src.display.ui import ROTATE_CW, UIManager
+from src.input.manager import InputManager, SyntheticInputAdapter
+from src.safety.state_machine import SafetyStateMachine
 from src.state import PendantState
 from src.transport import c3_espnow_protocol as proto
 
@@ -21,14 +25,23 @@ class Esp:
         self.active = False
         self.sent = []
         self.peers = []
+        self.fail_types = set()
+        self.incoming = []
     def register_peer(self, mac):
         peer = Peer(mac)
         self.peers.append(peer)
         return peer
     def send(self, packet, peer):
+        if proto.decode(packet)[0] in self.fail_types:
+            raise OSError("simulated ESP-NOW send failure")
         self.sent.append((packet, peer.mac if peer else None))
     def read(self):
-        return None
+        return self.incoming.pop(0) if self.incoming else None
+
+
+class Packet:
+    def __init__(self, mac, msg):
+        self.mac, self.msg = mac, msg
 
 
 class WirelessTests(unittest.TestCase):
@@ -36,6 +49,7 @@ class WirelessTests(unittest.TestCase):
         self.time = [100.0]
         self.esp = Esp()
         self.state = PendantState()
+        self.state.input_valid = True
         self.ctrl = C3WirelessController(
             self.state, radio=Radio(), esp=self.esp, now=lambda: self.time[0],
             session=123)
@@ -48,6 +62,64 @@ class WirelessTests(unittest.TestCase):
         self.ctrl.transport.events.append(
             (proto.UART_RESPONSE, 0, line.encode("ascii") + b"\n"))
         self.ctrl.poll()
+
+    def test_feed_hold_reports_unpaired_transport_failure(self):
+        self.ctrl.transport.paired = False
+        actions = ActionDispatcher(
+            self.state, self.ctrl, SafetyStateMachine(self.state))
+        self.assertFalse(actions.dispatch("FEED_HOLD"))
+        self.assertEqual(self.state.error,
+                         "C3 is not paired; feed hold was not sent")
+        self.assertEqual(self.esp.sent, [])
+
+    def test_peer_change_invalidates_partial_and_stale_controller_status(self):
+        self.status("<Idle|MPos:1,2,3>")
+        self.ctrl._partial.extend(b"<Hold|MPos:4,")
+        new_peer = bytes.fromhex("112233445566")
+        pair_ack = proto.encode(
+            proto.PAIR_ACK, 123, payload=bytes((1, 1)) +
+            Radio.mac_address + bytes((255,)))
+        self.esp.incoming.append(Packet(new_peer, pair_ack))
+
+        self.ctrl.poll()
+
+        self.assertEqual(self.ctrl.transport.peer, new_peer)
+        self.assertEqual(self.ctrl._partial, bytearray())
+        self.assertIsNone(self.ctrl._last_status)
+        self.assertIsNone(self.ctrl._status_peer)
+        self.assertEqual(self.state.connection_state, "disconnected")
+
+    def test_display_reports_pairing_radio_and_grbl_independently(self):
+        from src.display.round_ui.renderer import RoundRenderer
+        from src.display.ui import UIManager
+        from tests.test_round_ui import Display, scene_factory
+        ui = UIManager(self.state)
+        ui.complete_boot()
+        renderer = RoundRenderer(Display(), scene_factory)
+        renderer.bind_ui(ui)
+        self.ctrl.transport.paired = False
+        self.ctrl.poll()
+        renderer.render(self.state)
+        self.assertEqual(renderer.state_label.value, "ESP-NOW PAIRING")
+        self.ctrl.transport.paired = True
+        self.ctrl.poll()
+        renderer.render(self.state)
+        self.assertEqual(renderer.state_label.value, "ESP-NOW LINKED")
+        self.assertEqual(renderer.motion.text.value, "GRBL OFFLINE")
+        self.assertEqual(self.state.connection_state, "disconnected")
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        renderer.render(self.state)
+        self.assertEqual(self.state.link_state, "GRBL_FRESH")
+        self.assertEqual(renderer.state_label.value, "ESP-NOW LINKED")
+        self.time[0] += .51
+        self.ctrl.poll()
+        renderer.render(self.state)
+        self.assertEqual(renderer.motion.text.value, "GRBL OFFLINE")
+        self.assertEqual(self.state.connection_state, "disconnected")
+        self.ctrl.transport.paired = False
+        self.ctrl.poll()
+        renderer.render(self.state)
+        self.assertEqual(renderer.state_label.value, "ESP-NOW LOST")
 
     def test_no_motion_without_fresh_grbl_status(self):
         self.state.deadman_enabled = True
@@ -103,12 +175,193 @@ class WirelessTests(unittest.TestCase):
         self.assertFalse(self.ctrl._stop_pending)
         self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
 
-    def test_deadman_and_axis_rejected(self):
+    def test_disarmed_or_dry_run_stop_ack_releases_local_latch(self):
+        """Suppressed physical output is explicit and does not deadlock dry-run."""
+        self.state.deadman_enabled = True
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        self.assertTrue(self.ctrl.cancel_jog())
+        seq = self.ctrl._stop_seq
+        self.ctrl.transport.events.append((proto.MPG_STOP_ACK, seq,
+            bytes((proto.RESULT_STOP_SUPPRESSED,))))
+        self.ctrl.poll()
+        self.assertFalse(self.ctrl._stop_pending)
+        self.assertIsNone(self.ctrl._stop_seq)
+        # The next request still passes through normal readiness, deadman,
+        # selector, session, and C3 admission checks.
+        self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
+
+    def test_feed_hold_uses_distinct_grbl_realtime_packet(self):
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        self.assertTrue(self.ctrl.realtime("hold"))
+        frame, peer = self.esp.sent[-1]
+        kind, session, sequence, payload = proto.decode(frame)
+        self.assertEqual((kind, session, peer, payload),
+                         (proto.MPG_FEED_HOLD, 123,
+                          self.ctrl.transport.peer, b""))
+        self.assertEqual(sequence, self.ctrl._hold_seq)
+        self.assertTrue(self.ctrl._hold_pending)
+        self.ctrl.transport.events.append((proto.MPG_FEED_HOLD_ACK, sequence,
+            bytes((proto.RESULT_STOP_SUPPRESSED,))))
+        self.ctrl.poll()
+        self.assertFalse(self.ctrl._hold_pending)
+        self.assertEqual(self.state.error,
+                         "C3 feed hold proposed only (dry-run)")
+        # Jog-cancel remains a separate protocol operation.
+        self.assertTrue(self.ctrl.cancel_jog())
+        self.assertEqual(proto.decode(self.esp.sent[-1][0])[0], proto.MPG_STOP)
+
+    def test_feed_hold_retries_and_does_not_replay_after_peer_change(self):
+        self.assertTrue(self.ctrl.realtime("hold"))
+        first = self.ctrl._hold_seq
+        self.time[0] += .081
+        self.ctrl.poll()
+        self.assertTrue(self.ctrl._hold_pending)
+        self.assertNotEqual(self.ctrl._hold_seq, first)
+        replacement = bytes.fromhex("112233445566")
+        pair_ack = proto.encode(proto.PAIR_ACK, 123, payload=bytes((1, 1)) +
+                                Radio.mac_address + bytes((255,)))
+        self.esp.incoming.append(Packet(replacement, pair_ack))
+        self.ctrl.poll()
+        self.assertFalse(self.ctrl._hold_pending)
+        self.assertEqual(self.state.error,
+                         "C3 feed hold interrupted by peer change")
+        self.assertNotEqual(proto.decode(self.esp.sent[-1][0])[0],
+                            proto.MPG_FEED_HOLD)
+
+    def test_unknown_stop_ack_result_stays_inhibited_and_retries(self):
+        self.state.deadman_enabled = True
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        self.assertTrue(self.ctrl.cancel_jog())
+        first_seq = self.ctrl._stop_seq
+        self.ctrl.transport.events.append(
+            (proto.MPG_STOP_ACK, first_seq, b"\x03"))
+        self.ctrl.poll()
+        self.assertTrue(self.ctrl._stop_pending)
+        self.assertFalse(self.ctrl.queue_jog("X", 0.01, 200))
+        self.time[0] += 0.09
+        self.ctrl.poll()
+        self.assertNotEqual(self.ctrl._stop_seq, first_seq)
+        self.assertTrue(self.ctrl._stop_pending)
+
+    def test_link_loss_retries_unsent_stop_before_rearming_after_repair(self):
+        self.state.deadman_enabled = True
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
+        self.state.jog_active = True
+
+        # Let the real pairing transport hit its heartbeat timeout before a
+        # STOP can be sent or acknowledged.
+        self.time[0] += 5.1
+        self.ctrl.poll()
+        self.assertTrue(self.ctrl._stop_pending)
+        self.assertIsNone(self.ctrl._stop_seq)
+        self.assertFalse(self.ctrl.queue_jog("X", 0.01, 200))
+
+        # Pairing returns with the same controller session. The latched stop
+        # must be transmitted, and a new jog stays blocked until its ACK.
+        self.ctrl.transport.peer = bytes.fromhex("010203040506")
+        self.ctrl.transport.paired = True
+        self.ctrl.transport.last_rx = self.time[0]
+        self.ctrl.poll()
+        self.assertTrue(self.ctrl._stop_pending)
+        self.assertIsNotNone(self.ctrl._stop_seq)
+        sent_kinds = [proto.decode(frame)[0] for frame, _peer in self.esp.sent]
+        self.assertEqual(sent_kinds.count(proto.MPG_STOP), 1)
+        self.assertFalse(self.ctrl.queue_jog("X", 0.01, 200))
+
+        self.ctrl.transport.events.append(
+            (proto.MPG_STOP_ACK, self.ctrl._stop_seq, b"\x01"))
+        self.ctrl.poll()
+        self.assertFalse(self.ctrl._stop_pending)
+        # The receiver must also supply a fresh post-reconnect GRBL report;
+        # cached pre-loss Idle state cannot restore controller readiness.
+        self.assertFalse(self.ctrl.queue_jog("X", 0.01, 200))
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        self.assertTrue(self.ctrl.queue_jog("X", 0.01, 200))
+
+    def test_stop_send_error_is_bounded_and_recovers_after_retry_interval(self):
+        self.state.deadman_enabled = True
+        self.status("<Idle|MPos:0,0,0|FS:0,0>")
+        self.esp.fail_types.add(proto.MPG_STOP)
+        stop_count = lambda: sum(
+            proto.decode(frame)[0] == proto.MPG_STOP
+            for frame, _peer in self.esp.sent
+        )
+
+        self.assertFalse(self.ctrl.cancel_jog())
+        self.assertEqual(self.ctrl._stop_attempts, 1)
+        self.ctrl.poll()
+        self.assertEqual(self.ctrl._stop_attempts, 1)
+        self.assertEqual(stop_count(), 0)
+
+        self.time[0] += 0.081
+        self.ctrl.poll()
+        self.assertEqual(self.ctrl._stop_attempts, 2)
+        self.assertEqual(stop_count(), 0)
+
+        self.esp.fail_types.clear()
+        self.time[0] += 0.081
+        self.ctrl.poll()
+        self.assertEqual(self.ctrl._stop_attempts, 3)
+        self.assertIsNotNone(self.ctrl._stop_seq)
+        self.assertEqual(proto.decode(self.esp.sent[-1][0])[0], proto.MPG_STOP)
+        self.assertFalse(self.ctrl.queue_jog("X", 0.01, 200))
+
+    def test_deadman_rejection_and_fourth_axis_a_packet(self):
         self.status("<Idle|MPos:0,0,0|FS:0,0>")
         self.assertFalse(self.ctrl.queue_jog("X", .01, 200))
         self.state.deadman_enabled = True
+        self.state.selectors_valid = False
         self.assertFalse(self.ctrl.queue_jog("A", .01, 200))
+        self.state.selectors_valid = True
+        self.state.input_valid = False
+        self.assertFalse(self.ctrl.queue_jog("A", .01, 200))
+        self.state.input_valid = None
+        self.assertFalse(self.ctrl.queue_jog("A", .01, 200))
+        self.state.input_valid = True
+        self.assertTrue(self.ctrl.queue_jog("A", .01, 200))
+        frame, _peer = self.esp.sent[-1]
+        kind, _session, _seq, payload = proto.decode(frame)
+        self.assertEqual(kind, proto.MPG_JOG)
+        self.assertEqual(payload[0], ord("A"))
+        self.ctrl._pending_seq = None  # test fixture: no physical ACK expected
+        self.assertFalse(self.ctrl.queue_jog("B", .01, 200))
         self.assertFalse(self.ctrl.queue_jog("X", 2, 200))
+
+    def test_physical_input_pipeline_emits_exact_fourth_axis_frame(self):
+        self.state.connection_state = "connected"
+        self.state.machine_state = "idle"
+        adapter = SyntheticInputAdapter()
+        inputs = InputManager(self.state, adapter, counts_per_detent=4)
+        ui = UIManager(self.state)
+        ui.complete_boot()
+        actions = ActionDispatcher(
+            self.state, self.ctrl, SafetyStateMachine(self.state),
+            jog_feed=500)
+
+        adapter.set(axes=("X",), multipliers=("X1",), deadman=True,
+                    mpg_delta=0)
+        inputs.poll(0)
+        ui.apply_selector_context()
+        ui.refresh_context()
+        adapter.set(axes=("4",), multipliers=("X10",), deadman=True,
+                    mpg_delta=0)
+        transition = inputs.poll(1)
+        self.assertEqual(transition.events, [])
+        ui.apply_selector_context()
+        ui.refresh_context()
+
+        adapter.set(mpg_delta=4)
+        detent = inputs.poll(2)
+        self.assertEqual(detent.events, [ROTATE_CW])
+        command = ui.handle(detent.events[0])
+        self.assertEqual(command.name, "JOG")
+        self.assertTrue(actions.jog(command.value))
+
+        frame, peer = self.esp.sent[-1]
+        self.assertEqual(peer, self.ctrl.transport.peer)
+        self.assertEqual(frame, bytes.fromhex(
+            "01307b0000000000080041010a000000f401"))
 
 
 if __name__ == "__main__":

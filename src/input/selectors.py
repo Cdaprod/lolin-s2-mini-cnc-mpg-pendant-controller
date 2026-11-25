@@ -2,7 +2,9 @@
 
 DEFAULT_AXIS_MAP = {
     "X": "AXIS_X", "Y": "AXIS_Y", "Z": "AXIS_Z",
-    "4": "FILES", "5": "CONFIG", "6": "PREVIEW",
+    # The manufacturer's selector position 4 is the machine's fourth axis.
+    # Menus remain available through the touchscreen and momentary controls.
+    "4": "AXIS_A", "5": "CONFIG", "6": "PREVIEW",
 }
 MOTION_AXES = ("X", "Y", "Z", "A", "B", "C")
 PAGE_FOR_FUNCTION = {

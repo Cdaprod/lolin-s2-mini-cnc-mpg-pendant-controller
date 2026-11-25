@@ -1,22 +1,170 @@
 """Map the authoritative UIManager view model onto a round CNC instrument."""
 
+import math
+import time
+
+from ..navigation import menu_window_start
+from . import bezel_palette, theme
+from .effects import (TOUCH_BITMAP_CENTER, TOUCH_HOLD_PROGRESS,
+                      TOUCH_HOLD_PULSE_AMPLITUDE,
+                      TOUCH_HOLD_PULSE_PERIOD_S, TOUCH_PALETTE_SIZE,
+                      touch_level)
+
 from .components import (AxisReadout, ConnectivityGlyphs, IncrementBadge,
                          InstrumentRing, MenuHighlight, MotionPrompt, Overlay,
                          SelectorFeedback, TextComponent)
+from .rotor import (BEZEL_SEGMENT_COUNT, BEZEL_SEGMENT_OFFSET_RAD, BezelRotor,
+                   update_bezel_segment_levels)
+
+# At 24 updates/s, keep tangential motion below one pixel per update at the
+# retained marker radii. Integer DisplayIO coordinates then produce a regular
+# one-pixel cadence instead of the visible multi-pixel jumps from faster rates.
+HUD_ORBIT_RATES = (0.22, -0.20)
+# Detail screens refresh state at 20 Hz; user actions, safety transitions,
+# page swipes, and retained animation frames bypass this model cadence.
+NONHOME_MODEL_INTERVAL_MS = 50
+# Keep the page handoff fluid while making the destination feel immediate.
+PAGE_SWIPE_DURATION = 0.36
+_PROFILE_TICKS_MASK = (1 << 29) - 1
+_PROFILE_TICKS_HALF = 1 << 28
+
+
+def _profile_ticks_diff(newer, older):
+    diff = (newer - older) & _PROFILE_TICKS_MASK
+    return ((diff + _PROFILE_TICKS_HALF) & _PROFILE_TICKS_MASK) - \
+        _PROFILE_TICKS_HALF
+
+
+def _detail_status_color(label, value, colors):
+    """Use restrained semantic colors for safety and hardware diagnostics."""
+    key = str(label).strip().lower()
+    state = str(value).strip().upper()
+    if key == "remote stop":
+        if state == "CLEAR":
+            return colors["success"]
+        if state == "ACTIVE":
+            return colors["danger"]
+        if state in ("UNKNOWN", "UNAVAILABLE", "RECOVERY_REQUIRED"):
+            return colors["warning"]
+    elif key == "hold-to-run":
+        if state == "ACTIVE":
+            return colors["accent"]
+        if state in ("INACTIVE", "UNKNOWN", "UNAVAILABLE", "UNCONFIGURED"):
+            return colors["warning"]
+    elif key in ("input sample", "selector sample"):
+        if state == "VALID":
+            return colors["success"]
+        if state in ("INVALID", "UNAVAILABLE"):
+            return colors["danger"]
+        if state in ("UNKNOWN", "UNCONFIGURED"):
+            return colors["warning"]
+    elif key in ("input error", "selector error"):
+        if state in ("NONE", ""):
+            return colors["success"]
+        return colors["danger"]
+    elif key == "mcp23017" and state in ("NOT DETECTED", "UNAVAILABLE"):
+        return colors["warning"]
+    return None
 
 
 class RoundRenderer:
     """Mutate a small persistent scene; never issue controller operations."""
 
-    def __init__(self, display, scene_factory):
+    def __init__(self, display, scene_factory, animations=True,
+                 bezel_rotation_enabled=True, bezel_ambient_period_s=46.0,
+                 bezel_encoder_gain=0.04, bezel_max_speed_rad_s=0.35,
+                 bezel_inertia_s=0.9,
+                 bezel_direction_change_min_s=20.0,
+                 bezel_direction_change_max_s=40.0,
+                 bezel_frame_rate=24):
         self.display = display
         self.ui = None
         self.render_count = 0
         self.skipped_count = 0
+        self.animations = bool(animations)
+        self.bezel_rotation_enabled = bool(bezel_rotation_enabled)
+        self.bezel_rotor = BezelRotor(
+            bezel_ambient_period_s, bezel_encoder_gain,
+            bezel_max_speed_rad_s, bezel_inertia_s,
+            bezel_direction_change_min_s, bezel_direction_change_max_s,
+            bezel_frame_rate)
+        try:
+            import supervisor
+            self._profile_ticks_ms = supervisor.ticks_ms
+        except (ImportError, AttributeError):
+            self._profile_ticks_ms = lambda: int(time.monotonic() * 1000)
+        self.last_model_ms = 0
+        self.last_update_ms = 0
+        self.last_refresh_ms = 0
+        self._last_render_signature = None
+        self._last_home_signature = None
+        self._halo_until = 0
+        self._halo_started = 0
+        self._halo_visible = False
+        self._halo_dirty = False
+        self._halo_palette = None
+        self._halo_progress = 1.0
+        self._halo_phase = -1
+        self._halo_duration = 0.10
+        self._halo_held = False
+        self._halo_releasing = False
+        self._halo_release_started = 0.0
+        self._halo_release_duration = 0.08
+        self._halo_release_progress = 0.0
+        self._halo_move_at = 0.0
+        self._halo_position = None
+        self._halo_accent = theme.TEXT
+        self._last_animation_now = None
+        self._highlight_dirty = False
+        self._highlight_phase = -1
+        self._nav_until = 0.0
+        self._nav_visible = False
+        self._nav_dirty = False
+        self._nav_signature = None
+        self._displayed_page = None
+        self._displayed_screen = None
+        self._page_transition = None
+        self._page_transition_dirty = False
+        self._encoder_dirty = False
         scene = scene_factory(display)
         self.root = scene["root"]
+        self.touch_halo = scene.get("touch_halo")
+        self.nav_group = scene.get("nav_group")
+        self.nav_dots = scene.get("nav_dots", ())
+        self.hud_markers = scene.get("hud_markers", ())
+        self.hud_trails = scene.get("hud_trails", ())
+        self.hud_frame_count = scene.get("hud_frame_count", 0)
+        self._hud_tile_indexes = [-1] * len(self.hud_markers)
+        self.bezel_segments = scene.get("rotor_segments", ())
+        self.bezel_segment_palettes = scene.get("rotor_palettes", ())
+        self.bezel_palette_bank = scene.get("rotor_palette_bank", ())
+        self.rotor_tile_count = scene.get("rotor_tile_count", 0)
+        self._rotor_color = scene.get("rotor_color", theme.CYAN)
+        self._rotor_brightness_levels = [-1] * len(self.bezel_segments)
+        self._rotor_target_levels = [0] * len(self.bezel_segments)
+        self._hud_phase = -1
+        self._hud_dirty = False
+        self._last_nonhome_model_ticks = None
+        self._last_nonhome_safety_signature = None
+        self.palettes = scene.get("palettes", {})
+        self._bezel_palette = self.palettes.get("bezel")
+        self._bezel_base_palette = bezel_palette.PALETTES.get(
+            scene.get("bezel_name") or bezel_palette.DEFAULT_BEZEL)
+        self._bezel_alarm_active = False
+        self._halo_palette = self.palettes.get("halo")
+        self.themed_text = scene.get("themed_text", ())
+        self.active_theme = None
         self.home_group = scene.get("home_group")
         self.menu_group = scene.get("menu_group")
+        self.encoder_marker = scene.get("encoder_marker")
+        self.encoder_trail = scene.get("encoder_trail")
+        self.encoder_far_trail = scene.get("encoder_far_trail")
+        self.encoder_palettes = scene.get("encoder_palettes", ())
+        self._encoder_angle = -90.0
+        self._encoder_seen_timestamp = None
+        self._encoder_started = 0.0
+        self._encoder_direction = 0
+        self._encoder_phase = -1
         self.ring = InstrumentRing(scene["ring"])
         self.state_label = TextComponent(scene["state_label"])
         self.axis_feedback = SelectorFeedback(scene["axis_feedback"], "AXIS")
@@ -27,24 +175,805 @@ class RoundRenderer:
         self.connectivity = ConnectivityGlyphs(scene["connectivity"])
         self.menu_title = TextComponent(scene["menu_title"])
         self.menu = [TextComponent(line) for line in scene["menu"]]
+        self.menu_separators = scene.get("menu_separators", ())
+        self.menu_colors = scene.get("menu_colors", (None, None))
         self.menu_highlight = MenuHighlight(scene["menu_highlight"])
         self.menu_footer = TextComponent(scene["menu_footer"])
         self.overlay = Overlay(scene["overlay_group"], scene["overlay_title"],
                                scene["overlay_detail"])
         self.display.root_group = self.root
 
+    def _refresh_if_manual(self):
+        """Avoid synchronous transfers when DisplayIO already auto-refreshes."""
+        if getattr(self.display, "auto_refresh", None) is True:
+            return
+        self.display.refresh(minimum_frames_per_second=0)
+
+    def _apply_rotor_color(self, color):
+        """Recolor retained rotor palettes and bind their current levels."""
+        self._rotor_color = color
+        if self.bezel_palette_bank:
+            for level, palette in enumerate(self.bezel_palette_bank):
+                percent = level * 100 // 15
+                for shade in range(1, 16):
+                    value = theme.shade_color(color, shade * percent // 15)
+                    if palette[shade] != value:
+                        palette[shade] = value
+            update_bezel_segment_levels(
+                self.bezel_rotor.angle, self._rotor_target_levels,
+                phase_offset=BEZEL_SEGMENT_OFFSET_RAD)
+            for index, sprite in enumerate(self.bezel_segments):
+                level = self._rotor_target_levels[index]
+                sprite.pixel_shader = self.bezel_palette_bank[level]
+                self._rotor_brightness_levels[index] = level
+            self._hud_dirty = True
+            return True
+        if not self.bezel_segment_palettes:
+            return False
+        update_bezel_segment_levels(
+            self.bezel_rotor.angle, self._rotor_target_levels)
+        changed = False
+        for index, palette in enumerate(self.bezel_segment_palettes):
+            level = self._rotor_target_levels[index]
+            percent = level * 100 // 15
+            for shade in range(1, 16):
+                value = theme.shade_color(color, shade * percent // 15)
+                if palette[shade] != value:
+                    palette[shade] = value
+                    changed = True
+            self._rotor_brightness_levels[index] = level
+        if changed:
+            self._hud_dirty = True
+        return changed
+
+    def _apply_page_theme(self, active_page):
+        """Recolor retained DisplayIO objects without rebuilding the screen."""
+        name = theme.PAGE_THEMES.get(str(active_page or "HOME").upper(),
+                                     "industrial")
+        if name == self.active_theme:
+            return False
+        colors = theme.select(name)
+        self.active_theme = name
+        # Keep the configured bezel geometry, but tint its retained palette
+        # to the current page. This keeps navigation identity coherent without
+        # rebuilding bitmaps or touching the selected artwork.
+        bezel_variant = theme.PAGE_BEZEL_PALETTES.get(name)
+        if bezel_variant is not None:
+            self._bezel_base_palette = bezel_palette.PALETTES.get(
+                bezel_variant, self._bezel_base_palette)
+            if not self._bezel_alarm_active:
+                self._apply_bezel_palette(self._bezel_base_palette)
+        if self.palettes:
+            dial = self.palettes["dial"]
+            dial[0] = colors["background"]
+            for index in (1, 2, 3, 4, 5):
+                dial[index] = colors["panel"]
+            focus = self.palettes["focus"]
+            focus[0] = colors["panel"]
+            focus[1] = colors.get("focus_border", colors["muted"])
+            focus[2] = colors["accent"]
+            self.palettes["separator"][0] = colors["separator"]
+            self._halo_accent = colors["accent"]
+            self._update_halo_palette(self._halo_progress)
+            self._apply_rotor_color(colors["accent"])
+            for index, palette in enumerate(self.palettes.get("hud_markers", ())):
+                color = colors["accent"] if index == 0 else colors["highlight"]
+                for shade in range(1, 16):
+                    palette[shade] = theme.shade_color(
+                        color, shade * 100 // 15)
+            for index, palette in enumerate(self.palettes.get("hud_trails", ())):
+                color = colors["accent"] if index == 0 else colors["highlight"]
+                palette[1] = theme.shade_color(color, 22)
+            if self.encoder_palettes:
+                self.encoder_palettes[0][1] = colors["accent"]
+                self.encoder_palettes[0][2] = theme.shade_color(colors["accent"], 64)
+                self.encoder_palettes[0][3] = theme.shade_color(colors["accent"], 28)
+                self.encoder_palettes[1][1] = theme.shade_color(colors["accent"], 36)
+                if len(self.encoder_palettes) > 2:
+                    self.encoder_palettes[2][1] = theme.shade_color(
+                        colors["accent"], 16)
+        if hasattr(self.ring.node, "colors"):
+            self.ring.node.colors = colors
+            self.ring.signature = None
+        for line, token in self.themed_text:
+            if hasattr(line, "set_color"):
+                line.set_color(colors[token])
+        self.menu_colors = (colors["text"], colors["muted"])
+        return True
+
     def bind_ui(self, ui):
         self.ui = ui
+
+    def _set_bezel_alarm(self, overlay):
+        """Retint only the retained bezel palette for a critical alarm."""
+        active = bool(overlay and overlay[0] in ("E-STOP", "ALARM"))
+        if active == self._bezel_alarm_active or self._bezel_palette is None:
+            return False
+        colors = (bezel_palette.PALETTES["red_alarm"] if active else
+                  self._bezel_base_palette)
+        if colors is None:
+            return False
+        changed = self._apply_bezel_palette(colors)
+        self._bezel_alarm_active = active
+        return changed
+
+    def _apply_bezel_palette(self, colors):
+        """Update existing palette entries, preserving transparent index 0."""
+        if colors is None or self._bezel_palette is None:
+            return False
+        changed = False
+        for index in range(1, min(16, len(colors))):
+            if self._bezel_palette[index] != colors[index]:
+                self._bezel_palette[index] = colors[index]
+                changed = True
+        return changed
+
+    def touch_feedback(self, point, until):
+        """Show a preallocated, temporary touch target; never dispatch actions."""
+        if not self.animations or self.touch_halo is None:
+            return
+        if point is None:
+            return
+        x, y = int(point[0]), int(point[1])
+        if not (0 <= x < 240 and 0 <= y < 240):
+            return
+        self.touch_halo.x = x - TOUCH_BITMAP_CENTER
+        self.touch_halo.y = y - TOUCH_BITMAP_CENTER
+        self._halo_position = (x, y)
+        self._halo_move_at = (
+            self._last_animation_now if self._last_animation_now is not None
+            else max(0.0, float(until) - 0.10))
+        self.touch_halo.hidden = False
+        self._halo_visible = True
+        self._halo_until = float(until)
+        self._halo_started = (
+            self._last_animation_now if self._last_animation_now is not None
+            else max(0.0, self._halo_until - 0.10)
+        )
+        self._halo_progress = 0.0
+        self._halo_held = False
+        self._halo_releasing = False
+        self._halo_phase = -1
+        # Keep wave duration independent from the short lease that marks an
+        # active contact; TouchInput renews that lease while a finger is down.
+        self._halo_duration = 0.10
+        self._update_halo_palette(0.0)
+        self._halo_dirty = True
+
+    def touch_move(self, point, now):
+        """Move the held contact glow with the finger without restarting it.
+
+        The input sampler may run at 120 Hz, while a full GC9A01 refresh can
+        take tens of milliseconds. Cap visual repositioning at 30 Hz so touch
+        tracking remains responsive without flooding the SPI display.
+        """
+        if (not self.animations or self.touch_halo is None or
+                not self._halo_visible or point is None):
+            return False
+        x, y = int(point[0]), int(point[1])
+        if not (0 <= x < 240 and 0 <= y < 240):
+            return False
+        position = (x, y)
+        if position == self._halo_position:
+            return False
+        now = float(now)
+        if now - self._halo_move_at < 1.0 / 30.0:
+            return False
+        self.touch_halo.x = x - TOUCH_BITMAP_CENTER
+        self.touch_halo.y = y - TOUCH_BITMAP_CENTER
+        self._halo_position = position
+        self._halo_move_at = now
+        self._halo_dirty = True
+        return True
+
+    def touch_hold(self, until):
+        """Renew contact lifetime without resetting the held glow pulse."""
+        if not self.animations or self.touch_halo is None or not self._halo_visible:
+            return
+        self._halo_until = max(self._halo_until, float(until))
+        if not self._halo_held:
+            self._halo_held = True
+            self._halo_progress = TOUCH_HOLD_PROGRESS
+            if self._update_halo_palette(self._halo_progress):
+                self._halo_dirty = True
+
+    def touch_release(self, now):
+        """Fade the held contact glow quickly; do not restart a large ripple."""
+        if not self.animations or self.touch_halo is None or not self._halo_visible:
+            return
+        now = float(now)
+        # Fade the same compact press indication that was visible under the
+        # finger. Do not advance the outward wave on release.
+        self._halo_held = False
+        self._halo_releasing = True
+        self._halo_release_started = now
+        self._halo_release_progress = self._halo_progress
+        self._halo_release_duration = 0.08
+        self._halo_until = now + self._halo_release_duration
+        self._halo_phase = -1
+
+    def _update_halo_palette(self, progress, fade=100):
+        if self._halo_palette is None:
+            return False
+        progress = max(0.0, min(1.0, float(progress)))
+        fade = max(0, min(100, int(fade)))
+        changed = False
+        for index in range(1, TOUCH_PALETTE_SIZE):
+            strength = touch_level(index, progress) * fade // 100
+            color = theme.shade_color(self._halo_accent, strength)
+            if self._halo_palette[index] != color:
+                self._halo_palette[index] = color
+                changed = True
+        return changed
+
+    def animate(self, now):
+        """Expire transient indicators without blocking or allocating bitmaps."""
+        now = float(now)
+        self._last_animation_now = now
+        changed = False
+        transition = self._page_transition
+        if transition is not None:
+            half = PAGE_SWIPE_DURATION / 2
+            elapsed = max(0.0, now - transition["started"])
+            if transition["phase"] == "slide":
+                progress = min(1.0, elapsed / PAGE_SWIPE_DURATION)
+                eased = progress * progress * (3.0 - 2.0 * progress)
+                offset = round(-transition["delta"] * 240 * eased)
+                old_group = transition["old_group"]
+                new_group = transition["new_group"]
+                new_offset = transition["delta"] * 240 + offset
+                if old_group.x != offset or new_group.x != new_offset:
+                    old_group.x, new_group.x = offset, new_offset
+                    self._page_transition_dirty = True
+                    changed = True
+                if progress >= 1.0:
+                    old_group.x = 0
+                    new_group.x = 0
+                    old_group.hidden = True
+                    new_group.hidden = False
+                    self._page_transition = None
+                    self._page_transition_dirty = True
+                    changed = True
+            elif transition["phase"] == "out":
+                progress = min(1.0, elapsed / half)
+                # Menu pages share one retained group. Move that group just
+                # far enough to create a visible handoff, then bring the new
+                # content back from the same offset; sending it offscreen made
+                # the circular panel show a conspicuous blank flash.
+                distance = (240 if transition["old_group"] is not
+                            transition["new_group"] else 18)
+                offset = round(-transition["delta"] * distance *
+                               progress * progress)
+                if transition["old_group"].x != offset:
+                    transition["old_group"].x = offset
+                    self._page_transition_dirty = True
+                    changed = True
+                if progress >= 1.0:
+                    old_group, new_group = (transition["old_group"],
+                                            transition["new_group"])
+                    if old_group is not new_group:
+                        old_group.hidden = True
+                        new_group.hidden = False
+                    new_group.x = -transition["delta"] * distance
+                    transition["phase"] = "commit"
+                    self._page_transition_dirty = True
+                    changed = True
+            elif transition["phase"] == "in":
+                progress = min(1.0, elapsed / half)
+                distance = (240 if transition["old_group"] is not
+                            transition["new_group"] else 18)
+                offset = round(-transition["delta"] * distance *
+                               (1.0-progress) * (1.0-progress))
+                if transition["new_group"].x != offset:
+                    transition["new_group"].x = offset
+                    self._page_transition_dirty = True
+                    changed = True
+                if progress >= 1.0:
+                    transition["new_group"].x = 0
+                    self._page_transition = None
+                    self._page_transition_dirty = True
+                    changed = True
+        if self.animations and self.ui is not None:
+            state = self.ui.state
+            timestamp = getattr(state, "mpg_activity_timestamp", None)
+            if timestamp is not None and timestamp != self._encoder_seen_timestamp:
+                self._encoder_seen_timestamp = timestamp
+                detents = int(state.mpg_activity)
+                direction = 1 if detents > 0 else (-1 if detents < 0 else 0)
+                if direction:
+                    self._encoder_direction = direction
+                    previous_angle = self._encoder_angle
+                    self._encoder_angle = (previous_angle +
+                                           detents * 22.5) % 360
+                    angle = math.radians(self._encoder_angle)
+                    x = 120 + round(101 * math.cos(angle))
+                    y = 120 + round(101 * math.sin(angle))
+                    if self.encoder_marker is not None:
+                        self.encoder_marker.x = x - 4
+                        self.encoder_marker.y = y - 4
+                        self.encoder_marker.hidden = False
+                    # Keep the afterimages close enough to merge into one
+                    # directional glow instead of three detached beads.
+                    trail_angle = math.radians(
+                        self._encoder_angle - direction * 2.0)
+                    tx = 120 + round(101 * math.cos(trail_angle))
+                    ty = 120 + round(101 * math.sin(trail_angle))
+                    if self.encoder_trail is not None:
+                        self.encoder_trail.x = tx - 2
+                        self.encoder_trail.y = ty - 2
+                        self.encoder_trail.hidden = False
+                    far_angle = math.radians(
+                        self._encoder_angle - direction * 4.0)
+                    fx = 120 + round(101 * math.cos(far_angle))
+                    fy = 120 + round(101 * math.sin(far_angle))
+                    if self.encoder_far_trail is not None:
+                        self.encoder_far_trail.x = fx - 2
+                        self.encoder_far_trail.y = fy - 2
+                        self.encoder_far_trail.hidden = False
+                    self._encoder_started = now
+                    self._encoder_phase = -1
+                    self._encoder_dirty = True
+                    changed = True
+            if self._encoder_started:
+                elapsed = max(0.0, now-self._encoder_started)
+                if elapsed >= 0.24:
+                    if self.encoder_marker is not None:
+                        self.encoder_marker.hidden = True
+                    if self.encoder_trail is not None:
+                        self.encoder_trail.hidden = True
+                    if self.encoder_far_trail is not None:
+                        self.encoder_far_trail.hidden = True
+                    self._encoder_started = 0.0
+                    self._encoder_dirty = True
+                    changed = True
+                else:
+                    phase = int(elapsed*24)
+                    if phase != self._encoder_phase:
+                        self._encoder_phase = phase
+                        strength = max(0, int(100*(1-elapsed/0.24)))
+                        if self.encoder_palettes:
+                            accent = theme.select(self.active_theme or "industrial")["accent"]
+                            self.encoder_palettes[0][1] = theme.shade_color(accent,strength)
+                            self.encoder_palettes[0][2] = theme.shade_color(accent,strength*64//100)
+                            self.encoder_palettes[0][3] = theme.shade_color(accent,strength*28//100)
+                            self.encoder_palettes[1][1] = theme.shade_color(accent,strength*36//100)
+                            if len(self.encoder_palettes) > 2:
+                                self.encoder_palettes[2][1] = theme.shade_color(
+                                    accent, strength * 16 // 100)
+                        self._encoder_dirty = True
+                        changed = True
+        if self.touch_halo is not None and self._halo_visible:
+            if now >= self._halo_until:
+                self.touch_halo.hidden = True
+                self._halo_visible = False
+                self._halo_releasing = False
+                self._halo_dirty = True
+                changed = True
+                self._halo_progress = 1.0
+                self._update_halo_palette(1.0)
+            else:
+                frame = int(now * 30)
+                if frame != self._halo_phase:
+                    self._halo_phase = frame
+                    if self._halo_releasing:
+                        elapsed = max(0.0, now - self._halo_release_started)
+                        fade = int(100 * max(
+                            0.0, 1.0 - elapsed / self._halo_release_duration))
+                        progress = self._halo_release_progress
+                    else:
+                        duration = self._halo_duration
+                        progress = (now - self._halo_started) / duration
+                        if self._halo_held:
+                            # Keep the two compact contours anchored to the
+                            # sampled finger position and breathe their light
+                            # gently in place. This reads as a live touch
+                            # ripple without expanding across nearby controls.
+                            pulse_phase = (
+                                (now - self._halo_started) * 2.0 * math.pi /
+                                TOUCH_HOLD_PULSE_PERIOD_S)
+                            progress = (TOUCH_HOLD_PROGRESS +
+                                        TOUCH_HOLD_PULSE_AMPLITUDE *
+                                        math.sin(pulse_phase))
+                        self._halo_progress = max(0.0, min(1.0, progress))
+                        fade = 100
+                    if self._update_halo_palette(progress, fade):
+                        self._halo_dirty = True
+                        changed = True
+        highlight_frame = int(now * 24)
+        if highlight_frame != self._highlight_phase:
+            self._highlight_phase = highlight_frame
+            if self.menu_highlight.animate():
+                self._highlight_dirty = True
+                changed = True
+        if self.nav_group is not None and self._nav_visible:
+            if float(now) >= self._nav_until:
+                self.nav_group.hidden = True
+                self._nav_visible = False
+                self._nav_dirty = True
+                changed = True
+        if self.hud_markers or self.bezel_segments:
+            overlay = self.ui.active_overlay() if self.ui else None
+            unsafe = bool(overlay and overlay[0] in ("E-STOP", "ALARM"))
+            if unsafe:
+                for sprite, _, _ in self.hud_markers:
+                    if not sprite.hidden:
+                        sprite.hidden = True
+                        self._hud_dirty = True
+                        changed = True
+                for sprite, _, _ in self.hud_trails:
+                    if not sprite.hidden:
+                        sprite.hidden = True
+                        self._hud_dirty = True
+                        changed = True
+                for sprite in self.bezel_segments:
+                    if not sprite.hidden:
+                        sprite.hidden = True
+                        self._hud_dirty = True
+                        changed = True
+            elif not self.animations:
+                for sprite, _, _ in self.hud_markers:
+                    if not sprite.hidden:
+                        sprite.hidden = True
+                        self._hud_dirty = True
+                        changed = True
+                for sprite, _, _ in self.hud_trails:
+                    if not sprite.hidden:
+                        sprite.hidden = True
+                        self._hud_dirty = True
+                        changed = True
+                for sprite in self.bezel_segments:
+                    if sprite.hidden:
+                        sprite.hidden = False
+                        self._hud_dirty = True
+                        changed = True
+            else:
+                state = self.ui.state if self.ui is not None else None
+                encoder_timestamp = getattr(
+                    state, "mpg_activity_timestamp", None) if state else None
+                encoder_delta = getattr(state, "mpg_activity", 0) if state else 0
+                rotor_angle, _ = self.bezel_rotor.update(
+                    now, encoder_timestamp, encoder_delta)
+                if self.bezel_rotation_enabled and self.bezel_rotor.frame_due(now):
+                    self._hud_phase = int(float(now) * self.bezel_rotor.frame_rate)
+                    for index, (sprite, radius, _) in enumerate(self.hud_markers):
+                        if index == 0:
+                            angle = rotor_angle
+                        else:
+                            angle = float(now) * HUD_ORBIT_RATES[index]
+                        if self.hud_frame_count == 16:
+                            center_x = 120 + radius * math.cos(angle)
+                            center_y = 120 + radius * math.sin(angle)
+                            base_x = math.floor(center_x)
+                            base_y = math.floor(center_y)
+                            phase_x = int((center_x-base_x) * 4)
+                            phase_y = int((center_y-base_y) * 4)
+                            tile_index = phase_y * 4 + phase_x
+                            x, y = int(base_x) - 4, int(base_y) - 4
+                            if self._hud_tile_indexes[index] != tile_index:
+                                sprite[0] = tile_index
+                                self._hud_tile_indexes[index] = tile_index
+                                self._hud_dirty = True
+                                changed = True
+                        else:
+                            x = 116 + round(radius * math.cos(angle))
+                            y = 116 + round(radius * math.sin(angle))
+                        if sprite.x != x or sprite.y != y or sprite.hidden:
+                            sprite.x, sprite.y = x, y
+                            sprite.hidden = False
+                            self._hud_dirty = True
+                            changed = True
+                        if index < len(self.hud_trails):
+                            trail, trail_radius, _ = self.hud_trails[index]
+                            trail_rate = (self.bezel_rotor.velocity if index == 0
+                                          else HUD_ORBIT_RATES[index])
+                            trail_angle = angle - trail_rate * 0.20
+                            trail_x = 118 + round(trail_radius * math.cos(trail_angle))
+                            trail_y = 118 + round(trail_radius * math.sin(trail_angle))
+                            if (trail.x != trail_x or trail.y != trail_y or
+                                    trail.hidden):
+                                trail.x, trail.y = trail_x, trail_y
+                                trail.hidden = False
+                                self._hud_dirty = True
+                                changed = True
+                    if self.rotor_tile_count == BEZEL_SEGMENT_COUNT * 16:
+                        update_bezel_segment_levels(
+                            rotor_angle, self._rotor_target_levels,
+                            phase_offset=BEZEL_SEGMENT_OFFSET_RAD)
+                        for index in range(len(self.bezel_segments)):
+                            sprite = self.bezel_segments[index]
+                            level = self._rotor_target_levels[index]
+                            if sprite.hidden:
+                                sprite.hidden = False
+                                self._hud_dirty = True
+                                changed = True
+                            if self._rotor_brightness_levels[index] != level:
+                                if self.bezel_palette_bank:
+                                    sprite.pixel_shader = \
+                                        self.bezel_palette_bank[level]
+                                else:
+                                    palette = self.bezel_segment_palettes[index]
+                                    percent = level * 100 // 15
+                                    for shade in range(1, 16):
+                                        color = theme.shade_color(
+                                            self._rotor_color,
+                                            shade * percent // 15)
+                                        if palette[shade] != color:
+                                            palette[shade] = color
+                                self._rotor_brightness_levels[index] = level
+                                self._hud_dirty = True
+                                changed = True
+                elif not self.bezel_rotation_enabled:
+                    for sprite, _, _ in self.hud_markers[:1]:
+                        if not sprite.hidden:
+                            sprite.hidden = True
+                            self._hud_dirty = True
+                            changed = True
+                    for sprite, _, _ in self.hud_trails[:1]:
+                        if not sprite.hidden:
+                            sprite.hidden = True
+                            self._hud_dirty = True
+                            changed = True
+                    for sprite in self.bezel_segments:
+                        if not sprite.hidden:
+                            sprite.hidden = True
+                            self._hud_dirty = True
+                            changed = True
+        return changed
+
+    def _home_signature(self, state):
+        axis = state.selected_axis
+        position = state.displayed_position().get(axis)
+        return (
+            state.machine_state, state.connection_state, state.transport,
+            state.link_state, axis, state.coordinate_mode, position,
+            state.selected_multiplier, state.deadman_enabled,
+            getattr(state, "input_valid", None),
+            getattr(state, "selectors_valid", True),
+            state.estop_observed, state.estop_latched, state.alarm,
+            state.mpg_activity, state.axis_transition_direction,
+            state.resolution_transition_direction, state.active_page,
+            state.wifi_state, state.storage_state, self.ui.active_overlay(),
+        )
+
+    def _navigation(self, model):
+        """Momentarily expose the physical page's position along the top rim."""
+        if self.nav_group is None or not self.nav_dots:
+            return False
+        signature = (model["screen"], model.get("page_index", 0),
+                     model.get("page_count", 4))
+        if signature == self._nav_signature:
+            return False
+        self._nav_signature = signature
+        if model.get("overlay"):
+            if self._nav_visible:
+                self.nav_group.hidden = True
+                self._nav_visible = False
+                return True
+            return False
+        count = max(1, min(len(self.nav_dots), int(signature[2])))
+        current = max(0, min(count - 1, int(signature[1])))
+        for i, (node, palette) in enumerate(self.nav_dots):
+            node.hidden = i >= count
+            if i < count:
+                # Monotone left to right, all centers on the top circle.
+                x = 67 + (106 * i) // max(1, count - 1)
+                y = 120 - int(math.sqrt(max(0, 108 * 108 - (x - 120) ** 2)))
+                node.x, node.y = x - 3, y - 3
+                palette[1] = 0xFFFFFF if i == current else 0x667176
+        self.nav_group.hidden = False
+        self._nav_visible = True
+        self._nav_until = time.monotonic() + 1.6
+        self._nav_dirty = True
+        return True
+
+    @staticmethod
+    def _empty_state(model, storage_state):
+        """Explain empty browse pages instead of presenting blank rows."""
+        screen = model.get("screen")
+        if screen in ("JOBS", "JOB_BROWSER", "EXPLORER"):
+            items = model.get("items", ())
+            if len(items) == 1 and not items[0][1]:
+                label = str(items[0][0])
+                labels = {
+                    "SD DISABLED": ("SD CARD DISABLED", "ENABLE IN SETTINGS"),
+                    "SD CARD MISSING": ("SD CARD NOT FOUND", "INSERT SD CARD"),
+                    "SD MOUNT ERROR": ("SD CARD ERROR", "CHECK SYSTEM STATUS"),
+                    "NO FILES FOUND": ("NO FILES FOUND", "SD CARD READY"),
+                }
+                if label in labels:
+                    return labels[label]
+            messages = {
+                "available": ("NO FILES FOUND", "SD CARD READY"),
+                "disabled": ("SD CARD DISABLED", "ENABLE IN SETTINGS"),
+                "missing": ("SD CARD NOT FOUND", "INSERT SD CARD"),
+                "mount_error": ("SD CARD ERROR", "CHECK SYSTEM STATUS"),
+            }
+            return messages.get(
+                str(storage_state).lower(),
+                ("FILES UNAVAILABLE", "CHECK SYSTEM STATUS"))
+        if screen in ("MACROS", "MACRO_BROWSER"):
+            return "NO MACROS FOUND", ""
+        return "NO ITEMS AVAILABLE", ""
 
     def render(self, state):
         if self.ui is None:
             raise RuntimeError("RoundRenderer must be bound to UIManager")
+        transition = self._page_transition
+        if transition is not None and self.ui.active_overlay():
+            # Safety messages bypass decorative transitions immediately.
+            old_group, new_group = transition["old_group"], transition["new_group"]
+            old_group.x = new_group.x = 0
+            if old_group is not new_group:
+                old_group.hidden = True
+            self._page_transition = None
+            self._page_transition_dirty = False
+            transition = None
+        if transition is not None and transition["phase"] == "out":
+            self.ui.dirty = True
+            self.render_count += 1
+            self._refresh_if_manual()
+            return True
+        if (transition is not None and transition["phase"] == "in" and
+                self._page_transition_dirty and not self.ui.dirty):
+            self._page_transition_dirty = False
+            self._refresh_if_manual()
+            return True
+        if (self.ui.current_screen == "HOME" and not self.ui.dirty and
+                not (self._halo_dirty or self._nav_dirty or self._hud_dirty
+                     or self._highlight_dirty or self._page_transition_dirty
+                     or self._encoder_dirty)):
+            home_signature = self._home_signature(state)
+            if home_signature == self._last_home_signature:
+                self.skipped_count += 1
+                self.last_model_ms = 0
+                self.last_update_ms = 0
+                self.last_refresh_ms = 0
+                return False
+        elif (self.ui.current_screen == "HOME" and not self.ui.dirty):
+            home_signature = self._home_signature(state)
+            if home_signature == self._last_home_signature:
+                # Only preallocated transient sprites changed. Refresh them
+                # without rebuilding the unchanged view model/components.
+                refresh_started = self._profile_ticks_ms()
+                self.render_count += 1
+                try:
+                    self._refresh_if_manual()
+                except (AttributeError, RuntimeError):
+                    pass
+                self._halo_dirty = False
+                self._nav_dirty = False
+                self._hud_dirty = False
+                self._highlight_dirty = False
+                self._page_transition_dirty = False
+                self._encoder_dirty = False
+                self.last_model_ms = 0
+                self.last_update_ms = 0
+                self.last_refresh_ms = max(
+                    0, _profile_ticks_diff(
+                        self._profile_ticks_ms(), refresh_started))
+                return True
+        if self.ui.current_screen != "HOME":
+            now_ticks = self._profile_ticks_ms()
+            last_ticks = self._last_nonhome_model_ticks
+            safety_signature = (
+                state.estop_observed, state.estop_latched, state.alarm,
+                state.sd_job_state, self.ui.active_overlay())
+            safety_changed = (
+                safety_signature != self._last_nonhome_safety_signature)
+            if (not self.ui.dirty and not safety_changed and
+                    last_ticks is not None and
+                    _profile_ticks_diff(now_ticks, last_ticks) <
+                    NONHOME_MODEL_INTERVAL_MS):
+                # Input, touch, and safety processing stay at the app's full
+                # poll rate. Only menu/detail view-model work is capped;
+                # event-driven UI dirtiness above this branch renders now.
+                transient_dirty = (self._halo_dirty or self._nav_dirty or
+                                   self._hud_dirty or self._highlight_dirty or
+                                   self._page_transition_dirty or self._encoder_dirty)
+                if transient_dirty:
+                    refresh_started = self._profile_ticks_ms()
+                    self.render_count += 1
+                    try:
+                        self._refresh_if_manual()
+                    except (AttributeError, RuntimeError):
+                        pass
+                    self._halo_dirty = False
+                    self._nav_dirty = False
+                    self._hud_dirty = False
+                    self._highlight_dirty = False
+                    self._page_transition_dirty = False
+                    self._encoder_dirty = False
+                    self.last_model_ms = 0
+                    self.last_update_ms = 0
+                    self.last_refresh_ms = max(
+                        0, _profile_ticks_diff(
+                            self._profile_ticks_ms(), refresh_started))
+                    return True
+                self.skipped_count += 1
+                self.last_model_ms = 0
+                self.last_update_ms = 0
+                self.last_refresh_ms = 0
+                return False
+            self._last_nonhome_model_ticks = now_ticks
+            self._last_nonhome_safety_signature = safety_signature
+        model_started = self._profile_ticks_ms()
         model = self.ui.view_model()
+        self._set_bezel_alarm(model.get("overlay"))
+        if self._page_transition is not None and \
+                self._page_transition["phase"] == "commit":
+            self._page_transition["phase"] = "in"
+            self._page_transition["started"] = time.monotonic()
+            self._page_transition_dirty = False
+        else:
+            direction = self.ui.consume_page_swipe_direction()
+            page = model.get("active_page", "HOME")
+            if (direction and self._displayed_page is not None and
+                    page != self._displayed_page and not model.get("overlay") and
+                    self.home_group is not None and self.menu_group is not None):
+                old_group = (self.home_group if self._displayed_screen == "HOME"
+                             else self.menu_group)
+                new_group = (self.home_group if model["screen"] == "HOME"
+                             else self.menu_group)
+                old_group.x = 0
+                new_group.x = 0
+                old_group.hidden = False
+                if old_group is not new_group:
+                    new_group.hidden = False
+                    new_group.x = int(direction) * 240
+                self._page_transition = {
+                    "phase": ("slide" if old_group is not new_group else "out"),
+                    "delta": int(direction),
+                    "started": time.monotonic(), "old_group": old_group,
+                    "new_group": new_group,
+                }
+                self._page_transition_dirty = True
+                if old_group is new_group:
+                    self.ui.dirty = True
+                    self.render_count += 1
+                    self._refresh_if_manual()
+                    return True
+        update_started = self._profile_ticks_ms()
+        self.last_model_ms = max(
+            0, _profile_ticks_diff(update_started, model_started))
+        coordinates = state.displayed_position()
+        selected_axis = state.selected_axis
+        signature = (
+            model, state.machine_state, state.coordinate_mode, selected_axis,
+            coordinates.get(selected_axis), state.wifi_state,
+            state.storage_state,
+        )
+        if (signature == self._last_render_signature and
+                not (self._halo_dirty or self._nav_dirty or self._hud_dirty
+                     or self._highlight_dirty or self._page_transition_dirty
+                     or self._encoder_dirty)):
+            self.skipped_count += 1
+            self.last_update_ms = max(
+                0, _profile_ticks_diff(self._profile_ticks_ms(), update_started))
+            self.last_refresh_ms = 0
+            return False
+        self._last_render_signature = signature
+        self._last_home_signature = (
+            self._home_signature(state)
+            if model["screen"] == "HOME" else None)
+        theme_changed = self._apply_page_theme(model.get("active_page", "HOME"))
+        nav_changed = self._navigation(model)
+        if model.get("overlay") and self._nav_visible:
+            self.nav_group.hidden = True
+            self._nav_visible = False
+            nav_changed = True
         is_home = model["screen"] == "HOME"
-        if self.home_group is not None:
-            self.home_group.hidden = not is_home
-        if self.menu_group is not None:
-            self.menu_group.hidden = is_home
+        transition = self._page_transition
+        if (transition is not None and transition["phase"] == "slide" and
+                transition["old_group"] is not transition["new_group"]):
+            transition["old_group"].hidden = False
+            transition["new_group"].hidden = False
+        else:
+            if self.home_group is not None:
+                self.home_group.hidden = not is_home
+            if self.menu_group is not None:
+                self.menu_group.hidden = is_home
+        self._displayed_page = model.get("active_page", "HOME")
+        self._displayed_screen = model["screen"]
 
         changed = self.ring.update(
             state.machine_state,
@@ -60,19 +989,44 @@ class RoundRenderer:
             model["resolution_selector"],
             model["resolution_transition_direction"],
         ) or changed
-        state_text = "READY" if model["jog_armed"] else state.machine_state.upper()
+        link = getattr(state, "link_state", "DISCONNECTED")
+        wireless = getattr(state, "transport", "") == "c3-espnow"
+        state_text = ({"GRBL_FRESH": "ESP-NOW LINKED",
+                       "PAIRED_NO_GRBL": "ESP-NOW LINKED",
+                       "PAIRING": "ESP-NOW PAIRING",
+                       "LINK_LOST": "ESP-NOW LOST"}.get(link, "ESP-NOW WAITING")
+                      if wireless else
+                      ("READY" if model["jog_armed"] else state.machine_state.upper()))
+        colors = theme.select(self.active_theme)
+        if (state.estop_observed or state.estop_latched or
+                state.machine_state in ("alarm", "estop")):
+            state_color = colors["danger"]
+        elif wireless:
+            state_color = {
+                "GRBL_FRESH": colors["success"],
+                "PAIRED_NO_GRBL": colors["success"],
+                "PAIRING": colors["warning"],
+                "LINK_LOST": colors["danger"],
+            }.get(link, colors["muted"])
+        elif state.connection_state != "connected":
+            state_color = colors["muted"]
+        elif state.machine_state == "hold":
+            state_color = colors["warning"]
+        elif state.machine_state in ("run", "jog"):
+            state_color = colors["accent"]
+        else:
+            state_color = colors["success"]
         changed = self.state_label.set(state_text) or changed
-        coordinates = state.displayed_position()
-        selected_axis = state.selected_axis
+        changed = self.state_label.set_color(state_color) or changed
         changed = self.axis.update(
             selected_axis, coordinates.get(selected_axis), state.coordinate_mode,
             "mm",
         ) or changed
-        changed = self.increment.update(state.selected_multiplier) or changed
+        changed = self.increment.update(model["resolution_selector"]) or changed
         controller = state.connection_state == "connected"
         changed = self.motion.update(
             model["jog_hold"], model["jog_armed"], model["mpg_activity"],
-            controller,
+            controller, link if wireless else None, colors,
         ) or changed
         wifi = getattr(state, "wifi_state", "DISABLED") in (
             "CONNECTED", "connected"
@@ -81,34 +1035,92 @@ class RoundRenderer:
             wifi, state.storage_state == "available"
         ) or changed
 
-        items = model.get("items", ())
-        if model.get("details"):
-            items = tuple(("{}: {}".format(key, value), True, "")
-                          for key, value in model["details"])
-        selected = min(model.get("selected", 0), max(0, len(items) - 1))
-        window_start = max(0, min(selected - len(self.menu) + 1,
-                                  len(items) - len(self.menu)))
-        visible_items = items[window_start:window_start + len(self.menu)]
-        changed = self.menu_title.set(model["title"]) or changed
-        for index, component in enumerate(self.menu):
-            text = ""
-            if index < len(visible_items):
-                text = visible_items[index][0]
-                if not visible_items[index][1]:
-                    text += "  -"
-            changed = component.set(text) or changed
-        changed = self.menu_highlight.set(
-            selected - window_start, bool(visible_items)
-        ) or changed
-        page = "{}/{}".format(selected + 1, len(items)) if items else "-"
-        changed = self.menu_footer.set(page + "  BACK | HOME") or changed
+        # The menu layer is hidden on the operational HOME instrument. Avoid
+        # rebuilding menu strings and updating six retained rows on every
+        # input poll; the first menu transition updates the complete layer.
+        if not is_home:
+            items = model.get("items", ())
+            # Dynamic browser screens provide a disabled explanatory item
+            # when empty. Render that state in the middle of the list area,
+            # rather than as a selectable row at the top of the page.
+            empty_browser = (
+                model.get("screen") in ("JOBS", "JOB_BROWSER", "EXPLORER")
+                and len(items) == 1 and not items[0][1]
+            )
+            if empty_browser:
+                items = ()
+            selected = min(model.get("selected", 0), max(0, len(items) - 1))
+            window_start = menu_window_start(
+                selected, len(items), len(self.menu))
+            visible_items = items[window_start:window_start + len(self.menu)]
+            changed = self.menu_title.set(model["title"]) or changed
+            separator_count = max(0, min(len(self.menu_separators),
+                                         len(visible_items) - 1))
+            for index, separator in enumerate(self.menu_separators):
+                hidden = index >= separator_count
+                if separator.hidden != hidden:
+                    separator.hidden = hidden
+                    changed = True
+            empty_state = (self._empty_state(model, state.storage_state)
+                           if not visible_items else ("", ""))
+            for index, component in enumerate(self.menu):
+                text = ""
+                if index < len(visible_items):
+                    text = visible_items[index][0]
+                    if not visible_items[index][1]:
+                        text += "  -"
+                elif not visible_items and index == len(self.menu) // 2:
+                    text = empty_state[0]
+                elif not visible_items and index == len(self.menu) // 2 + 1:
+                    text = empty_state[1]
+                changed = component.set(text) or changed
+                row_color = self.menu_colors[0]
+                if index < len(visible_items) and not visible_items[index][1]:
+                    row_color = self.menu_colors[1]
+                elif empty_browser:
+                    row_color = (self.menu_colors[0]
+                                 if index == len(self.menu) // 2 else
+                                 self.menu_colors[1])
+                elif not visible_items:
+                    row_color = self.menu_colors[1]
+                if model.get("details") and index < len(visible_items):
+                    detail_index = window_start + index
+                    if detail_index < len(model["details"]):
+                        label, value = model["details"][detail_index]
+                        semantic_color = _detail_status_color(
+                            label, value, colors)
+                        if semantic_color is not None:
+                            row_color = semantic_color
+                changed = component.set_color(row_color) or changed
+            changed = self.menu_highlight.set(
+                selected - window_start, bool(visible_items),
+                animate=self.animations,
+            ) or changed
+            page = "{}/{}".format(selected + 1, len(items)) if items else "-"
+            changed = self.menu_footer.set(page + "  BACK | HOME") or changed
         changed = self.overlay.update(model.get("overlay")) or changed
+        changed = (theme_changed or self._halo_dirty or self._nav_dirty
+                   or self._hud_dirty or self._highlight_dirty
+                   or self._page_transition_dirty or self._encoder_dirty
+                   or nav_changed or changed)
+        self._halo_dirty = False
+        self._nav_dirty = False
+        self._hud_dirty = False
+        self._highlight_dirty = False
+        self._page_transition_dirty = False
+        self._encoder_dirty = False
+        refresh_started = self._profile_ticks_ms()
+        self.last_update_ms = max(
+            0, _profile_ticks_diff(refresh_started, update_started))
+        self.last_refresh_ms = 0
         if not changed:
             self.skipped_count += 1
             return False
         self.render_count += 1
         try:
-            self.display.refresh(minimum_frames_per_second=0)
+            self._refresh_if_manual()
         except (AttributeError, RuntimeError):
             pass
+        self.last_refresh_ms = max(
+            0, _profile_ticks_diff(self._profile_ticks_ms(), refresh_started))
         return True

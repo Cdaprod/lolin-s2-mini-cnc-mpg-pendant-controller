@@ -38,8 +38,13 @@ BOARD_PROFILES = {
                       "4": "GPA3", "5": "GPA4", "6": "GPA5"},
         "multiplier_pins": {"X1": "GPA6", "X10": "GPA7",
                             "X100": "GPB0"},
-        "button_pins": {"SELECT": "GPB2", "BACK": "GPB3",
-                        "FN": "GPB4", "CANCEL": "GPB5"},
+        # User-confirmed wiring intent: the existing momentary SELECT contact
+        # is wired to both GPB2 (UI SELECT) and GPB6 (hold-to-run). These are
+        # separate MCP inputs with active-low pull-ups, but share one actuator;
+        # this is not an independent safety control. Inputs remain disabled
+        # until the wiring is connected and verified.
+        "button_pins": {"SELECT": "GPB2", "BACK": "",
+                        "FN": "", "CANCEL": ""},
         "estop_observe_pin": "GPB1", "deadman_pin": "GPB6",
         "selector_backend": "mcp23017", "mcp23017_address": 0x20,
         "spi_sck_pin": "D8", "spi_mosi_pin": "D10",
@@ -62,6 +67,7 @@ DISPLAY_PROFILES = {
         "display_cs_pin": "D1", "display_dc_pin": "D3",
         "display_reset_pin": "", "display_backlight_pin": "D6",
         "display_touch_sda_pin": "D4", "display_touch_scl_pin": "D5",
+        "touch_driver": "chsc6x", "touch_irq_pin": "D7",
     },
 }
 

@@ -86,8 +86,15 @@ keys, and tracked defaults fill the remaining schema:
 ```bash
 CIRCUITPY=/path/to/CIRCUITPY ./deploy.sh --dry-run
 CIRCUITPY=/path/to/CIRCUITPY ./deploy.sh
+CIRCUITPY=/path/to/CIRCUITPY ./deploy.sh --runtime-only
 CIRCUITPY=/path/to/CIRCUITPY ./deploy.sh --verify
 ```
+
+Use `--runtime-only` for firmware updates that must leave the device's
+`settings.toml` byte-for-byte unchanged. It requires an existing valid device
+settings file, deploys managed runtime files and the deployment manifest, and
+cannot be combined with local settings overrides. Normal deployment continues
+to add missing tracked defaults to the settings schema.
 
 `--apply-local-settings` intentionally replaces existing non-secret values from
 the ignored local file. `--apply-local-secrets` separately authorizes protected
@@ -134,8 +141,20 @@ CIRCUITPY=/Volumes/CIRCUITPY ./deploy.sh
 
 To observe first boot, connect USB, identify the CDC port with
 `ls /dev/cu.usbmodem*`, then run `screen /dev/cu.usbmodemXXXX 115200` (exit with
-Ctrl-A, then `k`, then `y`). The structured boot lines report display, storage,
-SD, inputs, Wi-Fi, and controller independently.
+Ctrl-A, then `k`, then `y`). CircuitPython `print()` output is available on its
+USB CDC console; the application does not disable or redirect that interface.
+Boot and subsystem messages are emitted during startup and are not replayed to
+a monitor attached later. Each boot emits a bounded `startup_context` record
+with CircuitPython `run_reason`, `safe_mode_reason`, USB serial connection
+state, and processor reset reason when those APIs are available. This
+distinguishes REPL reload, supervisor reload, filesystem auto-reload, and
+hardware reset in a captured serial trace. Runtime diagnostics emit bounded `[event]`
+records for normalized encoder movement, selector/button/E-stop/deadman state,
+touch gestures and errors, Wi-Fi/controller transitions, render/loop/heap
+summaries, and ESP-NOW packet/session/sequence activity. The runtime summary
+is emitted every ten seconds; fast encoder movement is aggregated into that
+summary to avoid slowing the cooperative input loop. Disabled/unplugged input
+backends remain reported as disabled and do not fabricate physical readings.
 
 ## Configuration
 
@@ -268,3 +287,89 @@ python -m compileall -q code.py src tests
 ```
 
 No external Python test dependency is required.
+
+### Optional browser pendant mirror (experimental)
+
+CircuitPython's built-in Web API remains on port 80 (`/fs/`, `/code/`,
+`/cp/serial/`). A separate cooperative HTTP server can show the current
+pendant UI state at `http://<pendant-LAN-IP>:8080/pendant/`.
+
+The example configuration enables the read-only mirror on trusted LANs. To control viewing, set in your local
+`settings.toml`:
+
+```toml
+MPG_MIRROR_ENABLED=true
+MPG_MIRROR_PORT=8080
+MPG_MIRROR_NAVIGATION=false
+```
+
+For experimental, same-LAN **menu-only** remote navigation, explicitly set
+`MPG_MIRROR_NAVIGATION=true`. The server accepts only static submenu entries,
+Back and Home; **no** jogging, macros, job starts, confirmations, or CNC
+commands are dispatched. View mode requires no input permission. The server
+never exposes credentials or detail lists. It is a state-driven approximation,
+**not** an RGB framebuffer capture, and requires Wi-Fi station connectivity.
+Disable it on untrusted networks: port 8080 has no authentication or TLS.
+Device RAM, simultaneous CircuitPython Web API access and touch must be
+commissioned on real hardware before production use.
+
+Deploy with `CIRCUITPY=/Volumes/CIRCUITPY ./deploy.sh --apply-local-settings`.
+Existing device settings do not inherit template changes automatically.
+
+### Round-display commissioning (touch and text)
+
+Touch remains independent of the physical axis selector. A tap in the center
+of HOME should open the main menu. At startup, inspect the serial subsystem
+lines for `touch OK`, `touch ERROR`, or `touch DISABLED`; a new `touch diagnostic:`
+line reports the initialization error category. Runtime I2C poll failures are
+reported under System Info after three consecutive errors. Touch is not
+assumed healthy merely because the SPI display works. Motion stays gated.
+
+The round renderer ships native-size DejaVu Sans BDF fonts and the
+CircuitPython bitmap-font dependency. It uses 10 px compact status labels,
+12 px body text, 14 px bold headings, and 24 px bold primary readouts, avoiding the jagged enlarged
+terminal glyphs and clipped long titles visible in earlier builds. See
+`fonts/README.md` for licensing and regeneration. A terminal-font fallback is
+kept for recovery if the optional bitmap-font dependency cannot load. The
+normal UI only redraws on state or navigation changes; an idle offline screen
+is intentionally stable, not evidence that its loop is stopped.
+
+### Round Display microSD commissioning
+
+The Seeed round display's KE switches control battery sensing (D0) and
+backlight (D6); neither selects SD or touch. The GC9A01 round display is
+initialized before optional SD mounting.
+
+### Shared GC9A01 + microSD bus
+
+PR #22 now passes one SPI object (SCK D8, MOSI D10, MISO D9) to both
+GC9A01 display (CS D1) and SD (CS D2) rather than claiming the pins twice.
+Touch and MCP23017 independently use shared I2C (D4/D5). The display is
+created before SD is mounted and an SD failure must not stop the round UI.
+A combined boot with GC9A01, CHSC6X, Wi-Fi, and SD mounted succeeded with the
+controller disabled, and the one-shot mount-time write/read/remove test passed
+on the installed card. In a later SD-enabled session, the app again reached
+ready with SD mounted, then CircuitPython entered safe mode with a core hard
+fault. The failure has occurred across SD-enabled trials, but its cause is not
+confirmed; shared-SPI/SD interaction remains a hypothesis. With SD disabled,
+display, touch, and Wi-Fi booted normally. Keep SD disabled on this installation
+until the fault is diagnosed. SD defaults off in the template.
+`MPG_SD_WRITE_TEST=true` runs a one-time hidden marker write/read/remove during
+boot, never in the UI loop. Confirm `sd MOUNTED` and readable `/sd/jobs` before
+using stored jobs.
+The signal and SD chip-select assignments match [Seeed's Round Display
+hardware guide](https://wiki.seeedstudio.com/seeedstudio_round_display_usage/)
+and [XIAO Round Display setup guide](https://wiki.seeedstudio.com/get_start_round_display/).
+
+### CHSC6X touch driver (Seeed Round Display)
+
+Manufacturer source identifies the Round Display's touch controller as
+CHSC6X, I2C address `0x2E`, with active-low interrupt on D7. The former
+CST8XX default was incorrect for this board. The firmware now reads the
+five-byte CHSC6X packet through the existing shared I2C bus; other board
+profiles may explicitly select `MPG_TOUCH_DRIVER="cst8xx"`.
+Default: `MPG_TOUCH_DRIVER="chsc6x"` and `MPG_TOUCH_IRQ_PIN="D7"`.
+Physical touches require both `MPG_TOUCH_ENABLED=true` and responsive
+I2C/IRQ hardware. The SD and display are separate from this I2C driver.
+
+Reference: https://github.com/Seeed-Studio/Seeed_Arduino_RoundDisplay/blob/main/src/lv_xiao_round_screen.h

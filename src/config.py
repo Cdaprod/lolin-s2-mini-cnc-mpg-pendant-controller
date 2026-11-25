@@ -109,7 +109,7 @@ def load_config():
         "axis_map": dict((name, _get("MPG_AXIS_MAP_" + name, logical))
                          for name, logical in (
                              ("X", "AXIS_X"), ("Y", "AXIS_Y"),
-                             ("Z", "AXIS_Z"), ("4", "FILES"),
+                             ("Z", "AXIS_Z"), ("4", "AXIS_A"),
                              ("5", "CONFIG"), ("6", "PREVIEW"))),
         "axis_pins": _pin_map("MPG_PIN_AXIS_", ("X", "Y", "Z", "4", "5", "6")),
         "multiplier_pins": _pin_map("MPG_PIN_MULTIPLIER_", ("X1", "X10", "X100")),
@@ -131,6 +131,7 @@ def load_config():
         "display_renderer": _get("MPG_DISPLAY_RENDERER", "").lower(),
         "round_ui_bootstrap": _get_bool("MPG_ROUND_UI_BOOTSTRAP"),
         "sd_enabled": _get_bool("MPG_SD_ENABLED"),
+        "sd_write_test": _get_bool("MPG_SD_WRITE_TEST"),
         "sd_sck_pin": _get("MPG_SD_SCK_PIN", ""),
         "sd_mosi_pin": _get("MPG_SD_MOSI_PIN", ""),
         "sd_miso_pin": _get("MPG_SD_MISO_PIN", ""),
@@ -162,7 +163,28 @@ def load_config():
         "display_backlight_pin": _get("MPG_DISPLAY_BACKLIGHT_PIN", ""),
         "display_touch_sda_pin": _get("MPG_DISPLAY_TOUCH_SDA_PIN", ""),
         "display_touch_scl_pin": _get("MPG_DISPLAY_TOUCH_SCL_PIN", ""),
+        "ui_theme": _get("MPG_UI_THEME", "industrial").lower(),
+        "ui_bezel": _get("MPG_UI_BEZEL", "cyan_reactor").lower(),
+        "ui_animations": _get_bool("MPG_UI_ANIMATIONS", True),
+        "bezel_rotation_enabled": _get_bool("MPG_BEZEL_ROTATION_ENABLED", True),
+        "bezel_ambient_period_s": _get_float("MPG_BEZEL_AMBIENT_PERIOD_S", 46.0),
+        "bezel_encoder_gain": _get_float("MPG_BEZEL_ENCODER_GAIN", 0.04),
+        "bezel_max_speed_rad_s": _get_float("MPG_BEZEL_MAX_SPEED_RAD_S", 0.35),
+        "bezel_inertia_s": _get_float("MPG_BEZEL_INERTIA_S", 0.9),
+        "bezel_direction_change_min_s": _get_float(
+            "MPG_BEZEL_DIRECTION_CHANGE_MIN_S", 20.0),
+        "bezel_direction_change_max_s": _get_float(
+            "MPG_BEZEL_DIRECTION_CHANGE_MAX_S", 40.0),
+        "bezel_frame_rate": _get_int("MPG_BEZEL_FRAME_RATE", 24),
+        "mirror_enabled": _get_bool("MPG_MIRROR_ENABLED", False),
+        "mirror_navigation": _get_bool("MPG_MIRROR_NAVIGATION", False),
+        "mirror_port": _get_int("MPG_MIRROR_PORT", 8080),
         "touch_enabled": _get_bool("MPG_TOUCH_ENABLED"),
+        "touch_driver": _get("MPG_TOUCH_DRIVER", "chsc6x").lower(),
+        "touch_irq_pin": _get("MPG_TOUCH_IRQ_PIN", "D7"),
+        "touch_rotation": _get_int("MPG_TOUCH_ROTATION", 0),
+        "touch_invert_x": _get_bool("MPG_TOUCH_INVERT_X", False),
+        "touch_invert_y": _get_bool("MPG_TOUCH_INVERT_Y", False),
     }
     configured = apply_hardware_profile(config)
     if not configured.get("selector_backend"):

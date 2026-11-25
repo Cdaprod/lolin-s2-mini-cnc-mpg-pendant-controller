@@ -1,14 +1,18 @@
 import os
+import sys
 import tempfile
 import unittest
+import types
+from types import SimpleNamespace
+from unittest.mock import patch
 
-from src.app import PendantApplication
-from src.hardware import scan_i2c
+from src.app import PendantApplication, _diag_ticks_diff_ms
+from src.hardware import build_storage, scan_i2c
 from src.display.console import ConsoleDisplay
 from src.display.indicator import DigitalIndicatorOutput
 from src.display.ui import ROTATE_CW
 from src.input.buttons import DebouncedButton
-from src.input.manager import InputManager, SyntheticInputAdapter
+from src.input.manager import InputManager, NullInputAdapter, SyntheticInputAdapter
 from src.network import MockWiFiService
 from src.state import PendantState
 from src.storage.circuitpython_sd import mount_from_config
@@ -25,6 +29,13 @@ class MutableClock:
 
     def advance(self, seconds):
         self.now += seconds
+
+
+class DiagnosticTickTests(unittest.TestCase):
+    def test_millisecond_delta_handles_circuitpython_tick_wrap(self):
+        period = 1 << 29
+        self.assertEqual(_diag_ticks_diff_ms(4, period - 3), 7)
+        self.assertEqual(_diag_ticks_diff_ms(100, 90), 10)
 
 
 class FakeI2C:
@@ -48,7 +59,178 @@ class FailingI2C(FakeI2C):
         raise OSError("bus fault")
 
 
+class CountingWiFiService(MockWiFiService):
+    def __init__(self):
+        super().__init__()
+        self.poll_count = 0
+        self.connect_count = 0
+
+    def poll(self):
+        self.poll_count += 1
+
+    def connect(self, ssid, password, persist=True):
+        self.connect_count += 1
+        return super().connect(ssid, password, persist)
+
+
 class DiagnosticScanTests(unittest.TestCase):
+    def test_round_display_release_deinitializes_backlight_pin_owner(self):
+        import src.display.round_ui.display as round_display
+        events = []
+        output = SimpleNamespace(deinit=lambda: events.append("backlight"))
+        with patch.dict(sys.modules, {"displayio": SimpleNamespace(
+                release_displays=lambda: events.append("displayio whole"))}), \
+             patch.object(round_display, "_BACKLIGHT_OUTPUT", output):
+            round_display.release_existing_displays()
+            self.assertIsNone(round_display._BACKLIGHT_OUTPUT)
+        self.assertEqual(events, ["displayio whole", "backlight"])
+
+    def test_disabled_sd_does_not_report_absent_optional_jobs_directory_as_error(self):
+        with tempfile.TemporaryDirectory() as root:
+            missing_jobs = os.path.join(root, "jobs")
+            storage, mount = build_storage({
+                "sd_enabled": False, "jobs_path": missing_jobs,
+                "macros_path": os.path.join(root, "macros"),
+            })
+            self.assertIsNone(mount)
+            self.assertEqual(storage.status, "unconfigured")
+            self.assertIsNone(storage.error)
+            self.assertEqual(storage.list_jobs(), [])
+            self.assertEqual(storage.status, "unconfigured")
+
+    def test_application_deinit_releases_owned_optional_resources_once(self):
+        class Resource:
+            def __init__(self):
+                self.closed = 0
+            def deinit(self):
+                self.closed += 1
+        app = object.__new__(PendantApplication)
+        app.mirror = Resource()
+        app.network_service = Resource()
+        app.sd_mount = Resource()
+        app.touch_manager = Resource()
+        app.spi_bus = Resource()
+        app.i2c_bus = Resource()
+        app.display = SimpleNamespace(display=object())
+        resources = {name: getattr(app, name) for name in
+                     ("mirror", "network_service", "sd_mount",
+                      "touch_manager", "spi_bus", "i2c_bus")}
+        with patch("src.display.round_ui.display.release_existing_displays") as release:
+            app.deinit()
+            app.deinit()
+        release.assert_called_once()
+        for name, resource in resources.items():
+            self.assertEqual(resource.closed, 1)
+            if name != "network_service":
+                self.assertIsNone(getattr(app, name))
+
+    def test_sd_failure_is_reported_and_retry_recovers_with_shared_spi(self):
+        from src.storage import circuitpython_sd
+        with tempfile.TemporaryDirectory() as root:
+            board = types.ModuleType("board")
+            for name in ("D8", "D10", "D9", "D2"):
+                setattr(board, name, name)
+            busio = types.ModuleType("busio")
+            busio.SPI = lambda *args, **kwargs: object()
+            sdcardio = types.ModuleType("sdcardio")
+            storage = types.ModuleType("storage")
+            state = {"fail": True, "mounts": 0, "unmounts": 0,
+                     "card_deinits": 0}
+            class Card:
+                def __init__(self, spi, chip_select):
+                    self.spi, self.chip_select = spi, chip_select
+                    if state["fail"]:
+                        raise OSError("card absent")
+                def deinit(self):
+                    state["card_deinits"] += 1
+            sdcardio.SDCard = Card
+            storage.VfsFat = lambda card: ("vfs", card)
+            def mount(vfs, path):
+                state["mounts"] += 1
+                os.makedirs(os.path.join(path, "jobs"), exist_ok=True)
+            storage.mount = mount
+            storage.umount = lambda path: state.__setitem__(
+                "unmounts", state["unmounts"] + 1)
+            shared = object()
+            config = {"sd_enabled": True, "sd_sck_pin": "D8",
+                      "sd_mosi_pin": "D10", "sd_miso_pin": "D9",
+                      "sd_cs_pin": "D2", "sd_mount_path": os.path.join(root, "sd")}
+            with patch.dict(sys.modules, {"board": board, "busio": busio,
+                                          "sdcardio": sdcardio, "storage": storage}):
+                result = circuitpython_sd.mount_from_config(config, shared)
+                self.assertEqual(result[1], "mount_error")
+                self.assertIn("initialize SD card", result[2])
+                state["fail"] = False
+                recovered = circuitpython_sd.mount_from_config(config, shared)
+                recovered[0].deinit()
+                recovered[0].deinit()
+            self.assertEqual(recovered[1], "available")
+            self.assertIs(recovered[0].spi, shared)
+            self.assertEqual(state["mounts"], 1)
+            self.assertEqual(state["unmounts"], 1)
+            self.assertEqual(state["card_deinits"], 1)
+
+    def test_round_display_releases_before_spi_and_mounts_sd_after_lcd(self):
+        import src.app as app_module
+        from src.storage.sdcard import SDStorage
+        with tempfile.TemporaryDirectory() as root:
+            jobs, macros = os.path.join(root, "jobs"), os.path.join(root, "macros")
+            os.mkdir(jobs)
+            os.mkdir(macros)
+            events = []
+            shared = object()
+            def display_factory(config, shared_spi=None):
+                events.append(("display", shared_spi))
+                return ConsoleDisplay(lambda value: None)
+            def storage_factory(config, shared_spi=None):
+                events.append(("sd", shared_spi))
+                return SDStorage(jobs, macros), object()
+            with patch("src.app.sys", SimpleNamespace(
+                    implementation=SimpleNamespace(name="circuitpython"),
+                    modules={})), \
+                 patch("src.display.round_ui.display.release_existing_displays",
+                       side_effect=lambda: events.append(("release", None))), \
+                 patch("src.hardware.build_shared_spi",
+                       side_effect=lambda config: events.append(("spi", None)) or shared), \
+                 patch("src.app.build_display", side_effect=display_factory), \
+                 patch("src.app.build_storage", side_effect=storage_factory):
+                app = PendantApplication.from_config(
+                    {"controller_mode": "disabled", "display_enabled": True,
+                     "display_renderer": "round", "sd_enabled": True,
+                     "jobs_path": jobs, "macros_path": macros},
+                    network_service=MockWiFiService())
+            self.assertEqual([item[0] for item in events],
+                             ["release", "spi", "display", "sd"])
+            self.assertIs(events[2][1], shared)
+            self.assertIs(events[3][1], shared)
+            self.assertIs(app.spi_bus, shared)
+
+    def test_circuitpython_composition_rejects_same_session_reinitialization(self):
+        import src.app as app_module
+        modules = {app_module._CIRCUITPY_COMPOSITION_KEY:
+                   {"deinitialized": False}}
+        circuitpython = SimpleNamespace(
+            implementation=SimpleNamespace(name="circuitpython"),
+            modules=modules)
+        with patch("src.app.sys", circuitpython):
+            with self.assertRaisesRegex(RuntimeError, "one-shot per run"):
+                PendantApplication.from_config({"controller_mode": "disabled"})
+
+    def test_circuitpython_composition_requires_reload_after_deinit(self):
+        circuitpython = SimpleNamespace(
+            implementation=SimpleNamespace(name="circuitpython"), modules={})
+        config = {"controller_mode": "disabled", "display_enabled": False,
+                  "inputs_enabled": False}
+        with patch("src.app.sys", circuitpython):
+            first = PendantApplication.from_config(
+                config, display=ConsoleDisplay(lambda value: None),
+                network_service=MockWiFiService(), shared_i2c=FakeI2C(()))
+            first.deinit()
+            with self.assertRaisesRegex(RuntimeError, "one-shot per run"):
+                PendantApplication.from_config(
+                    config, display=ConsoleDisplay(lambda value: None),
+                    network_service=MockWiFiService(), shared_i2c=FakeI2C(()))
+
     def test_scan_is_read_only_and_reports_addresses(self):
         bus = FakeI2C((0x3C, 0x20))
         self.assertEqual(scan_i2c(bus), ((0x20, 0x3C), None))
@@ -70,7 +252,7 @@ class DiagnosticScanTests(unittest.TestCase):
             self.assertEqual(app.state.storage_state, "available")
             self.assertIsNone(app.state.storage_error)
             self.assertEqual(app.state.subsystems["storage"], "OK")
-            self.assertEqual(app.state.subsystems["sd"], "NOT PRESENT")
+            self.assertEqual(app.state.subsystems["sd"], "DISABLED")
             self.assertEqual(app.state.subsystems["i2c"], "ERROR")
             self.assertIn("OSError", app.state.i2c_error)
 
@@ -82,9 +264,9 @@ class PhysicalInputTests(unittest.TestCase):
         manager = InputManager(state, adapter, counts_per_detent=4)
         adapter.set(axes=("4",), multipliers=("X100",))
         manager.poll(0)
-        self.assertIsNone(state.selected_axis)
-        self.assertEqual(state.selector_function, "FILES")
-        self.assertEqual(state.active_page, "EXPLORER")
+        self.assertEqual(state.selected_axis, "A")
+        self.assertEqual(state.selector_function, "AXIS_A")
+        self.assertEqual(state.active_page, "OPERATIONAL")
         self.assertAlmostEqual(state.jog_increment, 0.1)
         events = []
         for now, pins in enumerate(((0, 0), (0, 1), (1, 1), (1, 0), (0, 0))):
@@ -102,7 +284,7 @@ class PhysicalInputTests(unittest.TestCase):
         expected = (("X", "X", "OPERATIONAL"),
                     ("Y", "Y", "OPERATIONAL"),
                     ("Z", "Z", "OPERATIONAL"),
-                    ("4", None, "EXPLORER"),
+                    ("4", "A", "OPERATIONAL"),
                     ("5", None, "CONFIGURATION"),
                     ("6", None, "PREVIEW"))
         for physical, logical, page in expected:
@@ -123,10 +305,12 @@ class PhysicalInputTests(unittest.TestCase):
         state = PendantState()
         adapter = SyntheticInputAdapter()
         manager = InputManager(state, adapter, counts_per_detent=4)
+        adapter.set(axes=("X",), multipliers=("X1",))
+        manager.poll(0)  # Establish a stable valid selector baseline.
         adapter.set(mpg_delta=8)
-        self.assertEqual(manager.poll(0).events, [ROTATE_CW, ROTATE_CW])
+        self.assertEqual(manager.poll(1).events, [ROTATE_CW, ROTATE_CW])
         adapter.set(mpg_delta=-4)
-        self.assertEqual(manager.poll(1).events, ["ROTATE_CCW"])
+        self.assertEqual(manager.poll(2).events, ["ROTATE_CCW"])
 
     def test_button_debounce_short_and_long(self):
         button = DebouncedButton(debounce=0.03, long_press=0.5)
@@ -145,13 +329,57 @@ class PhysicalInputTests(unittest.TestCase):
 
 
 class ApplicationInputPipelineTests(unittest.TestCase):
-    def make_app(self, root):
+    def test_heap_is_sampled_at_runtime_heartbeat_not_every_poll(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, _, clock = self.make_app(root)
+            with patch("src.app.gc.mem_free", return_value=123456,
+                       create=True) as mem_free:
+                app.poll()
+                self.assertEqual(mem_free.call_count, 0)
+                clock.advance(9.9)
+                app.poll()
+                self.assertEqual(mem_free.call_count, 0)
+                clock.advance(0.1)
+                app.poll()
+                self.assertEqual(mem_free.call_count, 1)
+                self.assertEqual(app.state.free_heap, 123456)
+
+    def test_wifi_association_poll_is_deferred_during_machine_activity(self):
+        with tempfile.TemporaryDirectory() as root:
+            jobs, macros = os.path.join(root, "jobs"), os.path.join(root, "macros")
+            os.mkdir(jobs)
+            os.mkdir(macros)
+            network = CountingWiFiService()
+            clock = MutableClock()
+            app = PendantApplication.from_config(
+                {"controller_mode": "disabled", "jobs_path": jobs,
+                 "macros_path": macros},
+                display=ConsoleDisplay(lambda value: None),
+                network_service=network, clock=clock)
+            app.state.deadman_enabled = True
+            app.poll()
+            self.assertEqual(network.poll_count, 0)
+            app.state.deadman_enabled = False
+            app.state.machine_state = "idle"
+            app.poll()
+            self.assertEqual(network.poll_count, 0)
+            clock.advance(0.05)
+            app.poll()
+            self.assertEqual(network.poll_count, 0)
+            clock.advance(0.049)
+            app.poll()
+            self.assertEqual(network.poll_count, 0)
+            clock.advance(0.001)
+            app.poll()
+            self.assertEqual(network.poll_count, 1)
+
+    def make_app(self, root, adapter=None):
         jobs = os.path.join(root, "jobs")
         macros = os.path.join(root, "macros")
         os.mkdir(jobs)
         os.mkdir(macros)
         clock = MutableClock()
-        adapter = SyntheticInputAdapter()
+        adapter = SyntheticInputAdapter() if adapter is None else adapter
         transport = MockTransport()
         app = PendantApplication.from_config(
             {"controller_mode": "mock", "jobs_path": jobs,
@@ -166,9 +394,151 @@ class ApplicationInputPipelineTests(unittest.TestCase):
         app.state.connection_state = "connected"
         app.state.machine_state = "idle"
         app.state.deadman_enabled = True
-        adapter.set(axes=("X",), multipliers=("X10",), deadman=True)
+        if isinstance(adapter, SyntheticInputAdapter):
+            adapter.set(axes=("X",), multipliers=("X10",), deadman=True)
         app.poll()
         return app, adapter, clock
+
+    def test_unconfigured_inputs_are_not_reported_as_healthy_hardware(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, _, clock = self.make_app(root, NullInputAdapter())
+            clock.advance(10)
+            with patch("src.app.emit") as emit:
+                app.poll()
+            self.assertIsNone(app.state.input_valid)
+            self.assertIsNone(app.ui.view_model()["input_valid"])
+            self.assertFalse(app.ui.view_model()["motion_available"])
+            self.assertFalse(any(
+                call.args[0] == "input_validity"
+                for call in emit.call_args_list if call.args))
+            runtime = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "runtime")
+            self.assertEqual(runtime.kwargs["input_backend"], "disabled")
+            self.assertEqual(runtime.kwargs["input_validity"], "unknown")
+            self.assertEqual(runtime.kwargs["selector_validity"], "unknown")
+            self.assertEqual(runtime.kwargs["axis"], "unknown")
+            self.assertEqual(runtime.kwargs["selector_position"], "unknown")
+            self.assertEqual(runtime.kwargs["increment"], "unknown")
+            self.assertEqual(runtime.kwargs["deadman"], "unknown")
+
+    def test_runtime_reports_current_valid_physical_input_state(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, _, clock = self.make_app(root)
+            app.touch_manager = SimpleNamespace(
+                poll=lambda: (), poll_count=120, sample_count=0,
+                event_count=0, consecutive_errors=0, last_error=None,
+                last_feedback=None,
+                source=SimpleNamespace(read_count=0, bus_busy_count=0,
+                                       irq_idle_count=120))
+            app.ui.enter("MAIN_MENU")
+            app.state.active_page = "CONFIGURATION"
+            clock.advance(10)
+            loop_clock = [clock.now]
+
+            def slow_poll_clock():
+                loop_clock[0] += 0.015
+                return loop_clock[0]
+
+            app.clock = slow_poll_clock
+            with patch("src.app.emit") as emit:
+                app.poll()
+            runtime = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "runtime")
+            self.assertEqual(runtime.kwargs["input_backend"], "configured")
+            self.assertEqual(runtime.kwargs["input_validity"], "valid")
+            self.assertEqual(runtime.kwargs["selector_validity"], "valid")
+            self.assertEqual(runtime.kwargs["axis"], "X")
+            self.assertEqual(runtime.kwargs["selector_position"], "X")
+            self.assertEqual(runtime.kwargs["increment"], "X10")
+            self.assertEqual(runtime.kwargs["deadman"], "active")
+            self.assertEqual(runtime.kwargs["screen"], "MAIN_MENU")
+            self.assertEqual(runtime.kwargs["page"], "CONFIGURATION")
+            self.assertEqual(runtime.kwargs["touch_polls"], 120)
+            self.assertEqual(runtime.kwargs["touch_active_samples"], 0)
+            self.assertEqual(runtime.kwargs["touch_i2c_reads"], 0)
+            self.assertEqual(runtime.kwargs["touch_i2c_busy"], 0)
+            self.assertEqual(runtime.kwargs["touch_irq_idle"], 120)
+            self.assertGreaterEqual(runtime.kwargs["loop_work_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["max_loop_work_ms"], 15)
+            self.assertEqual(runtime.kwargs["loop_overruns"], 1)
+            self.assertEqual(runtime.kwargs["profile_loops"], 1)
+            self.assertGreaterEqual(runtime.kwargs["max_input_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["total_input_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["max_touch_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["total_touch_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["max_transport_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["total_transport_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["max_wifi_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["total_wifi_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["max_display_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["total_display_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["max_mirror_ms"], 15)
+            self.assertGreaterEqual(runtime.kwargs["total_mirror_ms"], 15)
+
+    def test_runtime_reports_unconfigured_deadman_as_unavailable(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            adapter.deadman_configured = False
+            adapter.set(deadman=False)
+            app.poll()
+            clock.advance(10)
+            with patch("src.app.emit") as emit:
+                app.poll()
+            runtime = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "runtime")
+            self.assertEqual(runtime.kwargs["input_validity"], "valid")
+            self.assertEqual(runtime.kwargs["selector_validity"], "valid")
+            self.assertEqual(runtime.kwargs["deadman"], "unavailable")
+            self.assertFalse(app.state.deadman_enabled)
+
+    def test_input_diagnostics_separate_logical_axis_from_selector_position(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            adapter.set(axes=("4",), multipliers=("X1",))
+            with patch("src.app.emit") as emit:
+                app.poll()
+            selector = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "selector_state")
+            self.assertEqual(selector.kwargs["axis"], "A")
+            self.assertEqual(selector.kwargs["selector_position"], "4")
+
+            adapter.set(mpg_delta=4)
+            clock.advance(10)
+            with patch("src.app.emit") as emit:
+                app.poll()
+            operator_input = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "operator_input")
+            encoder_delta = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "encoder_delta")
+            self.assertEqual(operator_input.kwargs["axis"], "A")
+            self.assertEqual(operator_input.kwargs["selector_position"], "4")
+            self.assertEqual(encoder_delta.kwargs["axis"], "A")
+            self.assertEqual(encoder_delta.kwargs["selector_position"], "4")
+            self.assertEqual(encoder_delta.kwargs["delta"], 4)
+
+    def test_runtime_marks_controls_unavailable_after_failed_input_sample(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            adapter.set(valid=False, valid_reason="mcp23017_read_failed")
+            clock.advance(10)
+            with patch("src.app.emit") as emit:
+                app.poll()
+            runtime = next(
+                call for call in emit.call_args_list
+                if call.args and call.args[0] == "runtime")
+            self.assertEqual(runtime.kwargs["input_backend"], "configured")
+            self.assertEqual(runtime.kwargs["input_validity"], "invalid")
+            self.assertEqual(runtime.kwargs["selector_validity"], "invalid")
+            self.assertEqual(runtime.kwargs["axis"], "unavailable")
+            self.assertEqual(runtime.kwargs["selector_position"], "unavailable")
+            self.assertEqual(runtime.kwargs["increment"], "unavailable")
+            self.assertEqual(runtime.kwargs["deadman"], "unavailable")
 
     def rotate_cw(self, app, adapter, clock):
         for a, b in ((0, 0), (0, 1), (1, 1), (1, 0), (0, 0)):
@@ -210,6 +580,10 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(model["axis_selector"], "Y")
             self.assertEqual(model["resolution_selector"], "X100")
             self.assertTrue(model["jog_armed"])
+            self.assertEqual(model["mpg_activity"], 0)
+            adapter.set(mpg_delta=4)
+            app.poll()
+            model = app.ui.view_model()
             self.assertEqual(model["mpg_activity"], 4)
             self.assertEqual(model["axis_transition_direction"], 1)
             self.assertEqual(model["resolution_transition_direction"], 1)
@@ -219,6 +593,10 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             reverse = app.ui.view_model()
             self.assertEqual(reverse["axis_transition_direction"], -1)
             self.assertEqual(reverse["resolution_transition_direction"], -1)
+            self.assertEqual(reverse["mpg_activity"], 0)
+            adapter.set(mpg_delta=-4)
+            app.poll()
+            reverse = app.ui.view_model()
             self.assertEqual(reverse["mpg_activity"], -4)
             clock.advance(0.21)
             adapter.set(mpg_delta=0)
@@ -239,45 +617,40 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertFalse(model["motion_available"])
             self.assertEqual(len(app.transport.writes), writes)
 
-    def test_page_selectors_revoke_motion_before_contextual_wheel(self):
+    def test_fourth_axis_selection_revokes_previous_motion(self):
         with tempfile.TemporaryDirectory() as root:
             app, adapter, _ = self.make_app(root)
             app.controller.queue_jog("X", 0.01, 500)
             app.state.jog_active = True
             before = sum(b"$J=" in data for data in app.transport.writes)
-            adapter.set(axes=("4",), multipliers=("X10",), deadman=True,
-                        mpg_delta=4)
+            adapter.set(axes=("4",), multipliers=("X10",), deadman=False,
+                        mpg_delta=0)
             app.poll()
-            self.assertEqual(app.ui.current_screen, "EXPLORER")
-            self.assertEqual(app.state.active_page, "EXPLORER")
-            self.assertIsNone(app.state.selected_axis)
+            self.assertEqual(app.ui.current_screen, "HOME")
+            self.assertEqual(app.state.selected_axis, "A")
+            self.assertEqual(app.state.selector_function, "AXIS_A")
             self.assertFalse(app.state.jog_active)
             self.assertFalse(any(kind == "jog" for _, kind in app.controller.queue))
             self.assertEqual(
                 sum(b"$J=" in data for data in app.transport.writes), before)
 
-    def test_files_config_and_preview_wheels_are_non_motion(self):
+    def test_config_and_preview_wheels_are_non_motion(self):
         with tempfile.TemporaryDirectory() as root:
             app, adapter, _ = self.make_app(root)
-            for name in ("a.nc", "b.nc"):
-                with open(os.path.join(root, "jobs", name), "w") as output:
-                    output.write("G0 X0\n")
             baseline = sum(b"$J=" in data for data in app.transport.writes)
 
-            adapter.set(axes=("4",), multipliers=("X1",), deadman=True,
-                        mpg_delta=4)
-            app.poll()
-            self.assertEqual(app.ui.current_screen, "EXPLORER")
-            self.assertEqual(app.ui.selected_item().value, "b.nc")
-
             adapter.set(axes=("5",), multipliers=("X1",), deadman=True,
-                        mpg_delta=4)
+                        mpg_delta=0)
             app.poll()
             self.assertEqual(app.ui.current_screen, "CONFIGURATION")
+            adapter.set(mpg_delta=4)
+            app.poll()
             self.assertEqual(app.ui.focus["CONFIGURATION"], 1)
 
             adapter.set(axes=("6",), multipliers=("X100",), deadman=True,
-                        mpg_delta=-4)
+                        mpg_delta=0)
+            app.poll()
+            adapter.set(mpg_delta=-4)
             app.poll()
             self.assertEqual(app.ui.current_screen, "PREVIEW")
             self.assertEqual(app.state.preview_wheel_steps, -1)
@@ -293,10 +666,10 @@ class ApplicationInputPipelineTests(unittest.TestCase):
     def test_returning_to_xyz_restores_motion_only_after_safe_transition(self):
         with tempfile.TemporaryDirectory() as root:
             app, adapter, _ = self.make_app(root)
-            adapter.set(axes=("4",), multipliers=("X1",), deadman=True,
+            adapter.set(axes=("5",), multipliers=("X1",), deadman=True,
                         mpg_delta=4)
             app.poll()
-            self.assertEqual(app.ui.current_screen, "EXPLORER")
+            self.assertEqual(app.ui.current_screen, "CONFIGURATION")
             adapter.set(axes=("Y",), multipliers=("X1",), deadman=True,
                         mpg_delta=0)
             app.poll()
@@ -304,9 +677,136 @@ class ApplicationInputPipelineTests(unittest.TestCase):
             self.assertEqual(app.state.selected_axis, "Y")
             self.assertTrue(app.ui.view_model()["motion_available"])
 
+    def test_encoder_overrun_is_dropped_and_reported_without_jog(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            baseline = sum(b"$J=" in data for data in app.transport.writes)
+            app.state.mpg_activity = 3
+            app.state.mpg_activity_timestamp = clock()
+            adapter.set(mpg_delta=100)
+            clock.advance(0.01)
+            with patch("src.app.emit") as emit:
+                app.poll()
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline)
+            self.assertEqual(app.input_manager.hardware_accumulator, 0)
+            self.assertEqual(app.state.mpg_activity, 0)
+            emit.assert_any_call("encoder_overrun", delta=100, max_detents=4)
+
+            adapter.set(mpg_delta=0)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline)
+
+    def test_invalid_physical_sample_revokes_queued_jog(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            adapter.set(buttons={"SELECT": True}, mpg_delta=0)
+            app.poll()
+            clock.advance(0.04)
+            app.poll()  # SELECT is physically held and debounced.
+            app.state.jog_active = True
+            self.assertTrue(app.controller.queue_command("$J=G91 G21 X0.010 F500", "jog"))
+            adapter.set(valid=False, valid_reason="mcp23017_read_failed",
+                        deadman=True, estop=True, buttons={"SELECT": True},
+                        mpg_delta=4)
+            clock.advance(0.01)
+            with patch("src.app.emit") as emit, patch.object(
+                    app, "handle_ui_event") as handle_ui_event:
+                app.poll()
+            handle_ui_event.assert_not_called()
+            self.assertFalse(app.state.input_valid)
+            self.assertFalse(app.state.deadman_enabled)
+            self.assertTrue(app.state.estop_observed)
+            self.assertTrue(app.state.estop_latched)
+            self.assertFalse(app.state.jog_active)
+            self.assertFalse(any(kind == "jog" for _, kind in app.controller.queue))
+            self.assertIn(b"\x85", app.transport.writes)
+            self.assertFalse(any(b"$J=" in data for data in app.transport.writes))
+            self.assertFalse(app.ui.view_model()["motion_available"])
+            emit.assert_any_call("input_validity", domain="hardware",
+                                 valid=False, reason="mcp23017_read_failed")
+
+    def test_link_loss_clears_partial_encoder_counts_before_recovery(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            adapter.set(mpg_delta=2)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(app.input_manager.hardware_accumulator, 2)
+            baseline = sum(b"$J=" in data for data in app.transport.writes)
+
+            app.transport.disconnect()
+            adapter.set(mpg_delta=0)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(app.state.connection_state, "disconnected")
+            self.assertEqual(app.input_manager.hardware_accumulator, 0)
+
+    def test_conflicting_multiplier_contacts_cannot_issue_jog(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, clock = self.make_app(root)
+            baseline = sum(b"$J=" in data for data in app.transport.writes)
+            adapter.set(axes=("X", "Y"), mpg_delta=4)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline)
+            self.assertFalse(app.state.selectors_valid)
+            self.assertIsNone(app.state.selected_axis)
+
+            adapter.set(axes=("X",), mpg_delta=0)
+            clock.advance(0.01)
+            app.poll()
+            self.assertTrue(app.state.selectors_valid)
+            adapter.set(multipliers=("X1", "X10"), mpg_delta=4)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline)
+            self.assertFalse(app.state.selectors_valid)
+            self.assertEqual(app.ui.view_model()["resolution_selector"],
+                             "INVALID")
+            self.assertFalse(app.ui.view_model()["motion_available"])
+
+            adapter.set(multipliers=("X10",), mpg_delta=4)
+            clock.advance(0.01)
+            app.poll()
+            self.assertTrue(app.state.selectors_valid)
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline)
+            adapter.set(mpg_delta=4)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes), baseline + 1)
+
+            accepted_before_reconnect = sum(
+                b"$J=" in data for data in app.transport.writes)
+            app.transport.disconnect()
+            adapter.set(mpg_delta=2)
+            clock.advance(0.01)
+            app.poll()
+            app.transport.connect()
+            adapter.set(mpg_delta=4)
+            clock.advance(0.01)
+            app.poll()
+            app.transport.inject("Grbl 1.1h ['$' for help]")
+            app.transport.inject("<Idle|MPos:0,0,0,0|FS:0,0>")
+            adapter.set(mpg_delta=0)
+            clock.advance(0.01)
+            app.poll()
+            self.assertEqual(app.state.connection_state, "connected")
+            self.assertEqual(
+                sum(b"$J=" in data for data in app.transport.writes),
+                accepted_before_reconnect)
+            self.assertEqual(app.input_manager.hardware_accumulator, 0)
+
     def test_estop_view_model_requires_explicit_recovery(self):
         with tempfile.TemporaryDirectory() as root:
             app, _, _ = self.make_app(root)
+            app.state.estop_input_configured = True
             app.observe_estop(True)
             self.assertEqual(app.ui.view_model()["estop_state"], "ACTIVE")
             app.observe_estop(False)
@@ -314,6 +814,25 @@ class ApplicationInputPipelineTests(unittest.TestCase):
                              "RECOVERY_REQUIRED")
             app.recover_estop()
             self.assertEqual(app.ui.view_model()["estop_state"], "CLEAR")
+
+    def test_unconfigured_remote_stop_is_unknown_not_clear(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, _, _ = self.make_app(root, NullInputAdapter())
+            app.ui.enter("PREVIEW")
+            self.assertEqual(app.ui.view_model()["estop_state"], "UNKNOWN")
+            details = dict(app.ui.view_model()["details"])
+            self.assertEqual(details["Remote stop"], "UNKNOWN")
+
+    def test_remote_stop_read_failure_is_unavailable_not_clear(self):
+        with tempfile.TemporaryDirectory() as root:
+            app, adapter, _ = self.make_app(root)
+            app.state.estop_input_configured = True
+            adapter.set(valid=False, valid_reason="mcp23017_read_failed")
+            app.poll()
+            app.ui.enter("PREVIEW")
+            self.assertEqual(app.ui.view_model()["estop_state"], "UNAVAILABLE")
+            details = dict(app.ui.view_model()["details"])
+            self.assertEqual(details["Remote stop"], "UNAVAILABLE")
 
     def test_estop_preempts_jog_stream_and_requires_long_recovery(self):
         with tempfile.TemporaryDirectory() as root:
@@ -344,6 +863,40 @@ class ApplicationInputPipelineTests(unittest.TestCase):
 
 
 class StorageHardwareTests(unittest.TestCase):
+    def test_sd_write_probe_round_trips_and_removes_its_marker(self):
+        board = types.ModuleType("board")
+        for name in ("D8", "D10", "D9", "D2"):
+            setattr(board, name, name)
+        busio = types.ModuleType("busio")
+        busio.SPI = lambda *args, **kwargs: object()
+        sdcardio = types.ModuleType("sdcardio")
+        storage = types.ModuleType("storage")
+        class Card:
+            def __init__(self, spi, chip_select):
+                self.spi = spi
+            def deinit(self):
+                pass
+        sdcardio.SDCard = Card
+        storage.VfsFat = lambda card: card
+        storage.mount = lambda _vfs, path: os.makedirs(
+            os.path.join(path, "jobs"), exist_ok=True)
+        storage.umount = lambda _path: None
+        with tempfile.TemporaryDirectory() as root:
+            mount_path = os.path.join(root, "sd")
+            config = {"sd_enabled": True, "sd_write_test": True,
+                      "sd_sck_pin": "D8", "sd_mosi_pin": "D10",
+                      "sd_miso_pin": "D9", "sd_cs_pin": "D2",
+                      "sd_mount_path": mount_path}
+            with patch.dict(sys.modules, {"board": board, "busio": busio,
+                                          "sdcardio": sdcardio,
+                                          "storage": storage}):
+                mount, status, error = mount_from_config(config, object())
+                mount.deinit()
+            self.assertEqual(status, "available")
+            self.assertIsNone(error)
+            self.assertFalse(os.path.exists(os.path.join(
+                mount_path, ".cdaprod-sd-self-test.tmp")))
+
     def test_missing_and_empty_storage_are_safe(self):
         with tempfile.TemporaryDirectory() as root:
             missing = SDStorage(os.path.join(root, "missing"))

@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from src.app import PendantApplication
 from src.display.console import ConsoleDisplay
@@ -19,6 +20,7 @@ def ready_ui():
     state.connection_state = "connected"
     state.machine_state = "idle"
     state.deadman_enabled = True
+    state.input_valid = True
     ui = UIManager(state)
     ui.complete_boot()
     ui.refresh_context()
@@ -26,6 +28,27 @@ def ready_ui():
 
 
 class UIStateMachineTests(unittest.TestCase):
+    def test_detail_rows_are_built_from_one_details_snapshot(self):
+        state = PendantState()
+        state.runtime_version = "10.3.1"
+        ui = UIManager(state)
+        ui.enter("SYSTEM_INFO")
+
+        with patch.object(ui, "details", wraps=ui.details) as details:
+            model = ui.view_model()
+
+        details.assert_called_once_with()
+        self.assertEqual(model["items"][0][0], "CircuitPython: 10.3.1")
+        self.assertEqual(model["items"][0][0],
+                         "{}: {}".format(*model["details"][0]))
+
+    def test_unknown_physical_inputs_never_show_motion_armed(self):
+        state, ui = ready_ui()
+        state.input_valid = None
+        model = ui.view_model()
+        self.assertFalse(model["motion_available"])
+        self.assertFalse(model["jog_armed"])
+
     def test_boot_home_menu_and_back(self):
         state = PendantState()
         ui = UIManager(state)
@@ -40,6 +63,87 @@ class UIStateMachineTests(unittest.TestCase):
         self.assertEqual(ui.handwheel_mode, NAVIGATION)
         ui.handle(BACK)
         self.assertEqual(ui.current_screen, "HOME")
+
+    def test_empty_file_browser_reports_sd_disabled_without_selectable_action(self):
+        state = PendantState()
+        state.storage_state = "unconfigured"
+        state.subsystems = {"sd": "DISABLED"}
+        ui = UIManager(state)
+        ui.enter("JOB_BROWSER")
+
+        item = ui.view_model()["items"][0]
+        self.assertEqual(item[0], "SD DISABLED")
+        self.assertFalse(item[1])
+        self.assertEqual(item[2], "SD storage is disabled")
+
+    def test_empty_file_browser_distinguishes_missing_sd_from_empty_card(self):
+        state = PendantState()
+        state.storage_state = "missing"
+        state.subsystems = {"sd": "NOT PRESENT"}
+        ui = UIManager(state)
+        ui.enter("JOB_BROWSER")
+        self.assertEqual(ui.view_model()["items"][0][0], "SD CARD MISSING")
+
+        state.storage_state = "available"
+        state.subsystems = {"sd": "MOUNTED"}
+        state.storage_error = None
+        ui.set_dynamic_items("jobs", [])
+        self.assertEqual(ui.view_model()["items"][0][0], "NO FILES FOUND")
+        self.assertFalse(ui.view_model()["items"][0][1])
+
+    def test_input_diagnostics_keep_unobserved_controls_unknown(self):
+        state = PendantState()
+        ui = UIManager(state)
+        ui.enter("INPUT_INFO")
+
+        details = dict(ui.view_model()["details"])
+        self.assertEqual(details["Input sample"], "unknown")
+        self.assertEqual(details["Axis"], "unknown")
+        self.assertEqual(details["SELECT button"], "unknown")
+        self.assertEqual(details["Hold-to-run"], "unknown")
+        self.assertEqual(details["Remote stop"], "unknown")
+
+    def test_input_diagnostics_distinguish_valid_press_from_missing_deadman(self):
+        state = PendantState()
+        state.input_valid = True
+        state.selector_backend = "mcp23017"
+        state.selected_physical_axis = "X"
+        state.selected_axis = "X"
+        state.selected_multiplier = "X10"
+        state.button_states = {"SELECT": True}
+        ui = UIManager(state)
+        ui.enter("INPUT_INFO")
+
+        details = dict(ui.view_model()["details"])
+        self.assertEqual(details["Input sample"], "valid")
+        self.assertEqual(details["Axis"], "X")
+        self.assertEqual(details["Increment"], "X10")
+        self.assertEqual(details["SELECT button"], "pressed")
+        self.assertEqual(details["Hold-to-run"], "unconfigured")
+        self.assertEqual(details["Remote stop"], "UNKNOWN")
+
+    def test_input_diagnostics_invalidate_retained_button_sample(self):
+        state = PendantState()
+        state.input_valid = False
+        state.button_states = {"SELECT": None}
+        ui = UIManager(state)
+        ui.enter("INPUT_INFO")
+
+        details = dict(ui.view_model()["details"])
+        self.assertEqual(details["Input sample"], "invalid")
+        self.assertEqual(details["SELECT button"], "unavailable")
+        self.assertEqual(details["Hold-to-run"], "unavailable")
+        self.assertEqual(details["Remote stop"], "unavailable")
+
+    def test_configured_but_missing_button_sample_is_unknown(self):
+        state = PendantState()
+        state.input_valid = True
+        state.button_states = {"SELECT": None}
+        ui = UIManager(state)
+        ui.enter("INPUT_INFO")
+
+        details = dict(ui.view_model()["details"])
+        self.assertEqual(details["SELECT button"], "unknown")
 
     def test_wheel_routes_by_context(self):
         _, ui = ready_ui()
@@ -119,12 +223,20 @@ class UIStateMachineTests(unittest.TestCase):
         self.assertIsNone(ui.handle(SELECT))
         self.assertEqual(ui.current_screen, "MAIN_MENU")
 
-    def test_disabled_entry_cannot_emit_command(self):
+    def test_settings_open_safe_read_only_details(self):
         _, ui = ready_ui()
         ui.enter("MAIN_MENU")
         ui.enter("SETTINGS")
+        ui.state.ui_settings = {"Display": (("Theme", "INDUSTRIAL"),)}
+        ui.focus["SETTINGS"] = 2
         self.assertIsNone(ui.handle(SELECT))
-        self.assertIn("not implemented", ui.toast)
+        self.assertEqual(ui.current_screen, "SETTINGS_INFO")
+        model = ui.view_model()
+        self.assertEqual(model["title"], "DISPLAY SETTINGS")
+        self.assertIn(("Theme", "INDUSTRIAL"), model["details"])
+        self.assertIn(("Edit settings", "use settings.toml"), model["details"])
+        self.assertIsNone(ui.handle(SELECT))
+        self.assertEqual(ui.current_screen, "SETTINGS_INFO")
 
     def test_touch_uses_existing_home_and_menu_navigation(self):
         _, ui = ready_ui()
@@ -141,14 +253,17 @@ class UIStateMachineTests(unittest.TestCase):
         self.assertIsNone(ui.handle(TouchEvent("tap", 200, 205)))
         self.assertEqual(ui.current_screen, "HOME")
 
-    def test_touch_acknowledgement_cannot_bypass_confirmation_or_safety(self):
+    def test_touch_action_selection_opens_confirmation_but_cannot_accept_it(self):
         state = PendantState()
         ui = UIManager(state)
         ui.complete_boot()
         ui.handle(TouchEvent("tap", 120, 120))
         ui.handle(TouchEvent("tap", 120, 60))
         self.assertIsNone(ui.handle(TouchEvent("tap", 120, 60)))
-        self.assertIsNotNone(ui.confirmation)
+        # Touch selects the row but cannot accept the resulting motion dialog.
+        self.assertEqual(ui.confirmation["command"], "ACTION")
+        self.assertFalse(ui.confirmation["accept"])
+        self.assertEqual(ui.current_screen, "MACHINE")
         self.assertEqual(state.connection_state, "disconnected")
 
 
@@ -169,6 +284,7 @@ class UIIntegrationTests(unittest.TestCase):
         app.state.connection_state = "connected"
         app.state.machine_state = "idle"
         app.state.deadman_enabled = True
+        app.state.input_valid = True
         app.state.selected_physical_axis = "X"
         app.state.selected_axis = "X"
         app.ui.refresh_context()
@@ -189,6 +305,10 @@ class UIIntegrationTests(unittest.TestCase):
             self.assertEqual(sum(b"$J=" in w for w in app.transport.writes), 1)
 
             # Navigate directly to Network, then use its real scan command.
+            app.controller.cancel_jog()
+            app.state.jog_active = False
+            app.state.machine_state = "idle"
+            app.state.deadman_enabled = False
             app.ui.enter("NETWORK")
             app.handle_ui_event(ROTATE_CW)  # Scan Networks
             app.handle_ui_event(SELECT)
@@ -215,6 +335,8 @@ class UIIntegrationTests(unittest.TestCase):
             app.handle_ui_event(SELECT)
             app.handle_ui_event(SELECT)  # 'a'
             self.assertEqual(app.ui.view_model()["text"], "•")
+            # Runtime Wi-Fi association is deferred while the deadman is held.
+            app.state.deadman_enabled = False
             app.handle_ui_event(LONG_SELECT)
             self.assertTrue(wifi.connected)
             self.assertEqual(wifi.password_length, 1)

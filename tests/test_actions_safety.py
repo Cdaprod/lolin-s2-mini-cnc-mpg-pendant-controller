@@ -15,6 +15,7 @@ class ActionSafetyTests(unittest.TestCase):
         self.state.connection_state = "connected"
         self.state.machine_state = "idle"
         self.state.deadman_enabled = True
+        self.state.input_valid = True
         self.state.ui_handwheel_mode = "MOTION"
         SelectorModel(self.state).select_axis("X")
         self.transport = MockTransport()
@@ -44,13 +45,19 @@ class ActionSafetyTests(unittest.TestCase):
         self.state.machine_state = "idle"
         self.assertTrue(self.actions.jog(1))
 
+    def test_unknown_input_backend_cannot_authorize_jog(self):
+        self.state.input_valid = None
+        with self.assertRaisesRegex(SafetyError, "physical input sample"):
+            self.actions.jog(1)
+        self.assertEqual(self.controller.queue, [])
+
     def test_action_dispatch(self):
         self.assertTrue(self.actions.dispatch("ZERO_AXIS"))
         self.assertEqual(self.controller.queue[-1][0], "G10 L20 P0 X0")
         self.controller.queue = []
         self.assertTrue(self.actions.dispatch("HOME"))
         self.assertEqual(self.controller.queue[-1][0], "$H")
-        self.actions.dispatch("FEED_HOLD")
+        self.assertTrue(self.actions.dispatch("FEED_HOLD"))
         self.assertEqual(self.transport.writes[-1], b"!")
 
     def test_unlock_is_allowed_from_alarm_but_not_estop(self):

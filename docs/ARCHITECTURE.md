@@ -123,7 +123,7 @@ and verified interfaces where `rotaryio` is intentionally disabled.
 
 `src/hardware_profiles.py` fills otherwise blank assignments without enabling
 hardware. The current XIAO ESP32-S3 profile keeps conditioned MPG A/B on native
-GPIO42/GPIO41 and routes every slow harness contact through an MCP23017 on the
+GPIO39/GPIO40 and routes every slow harness contact through an MCP23017 on the
 Round Display's shared D4/D5 I2C bus. Virtual `GPAx`/`GPBx` names are resolved
 by that backend, never through CircuitPython `board`. The driver configures
 per-input pull-ups and caches one 16-bit read per application poll. The legacy

@@ -1,6 +1,7 @@
 """Cohesive pendant information architecture and contextual event router."""
 
 from .text_entry import TextEntry
+from .navigation import menu_window_start
 
 MOTION = "MOTION"
 NAVIGATION = "NAVIGATION"
@@ -17,6 +18,8 @@ CANCEL = "CANCEL"
 LONG_SELECT = "LONG_SELECT"
 LONG_FN = "LONG_FN"
 HOME = "HOME"
+
+_DETAILS_UNSET = object()
 
 
 class TouchEvent:
@@ -69,7 +72,9 @@ def _disabled(label, reason):
 def build_screens():
     """Build the documented IA; unavailable backends are visibly disabled."""
     screens = {}
-    screens["BOOT"] = Screen("BOOT", "BOOT — Connecting…", None, DISABLED)
+    # Keep startup labels within the round renderer's 150px title column and
+    # the bundled ASCII BDF alphabet.
+    screens["BOOT"] = Screen("BOOT", "CONNECTING", None, DISABLED)
     screens["HOME"] = Screen("HOME", "OPERATIONAL", None, MOTION)
     screens["EXPLORER"] = Screen(
         "EXPLORER", "FILE EXPLORER", None, NAVIGATION, dynamic="jobs"
@@ -159,15 +164,22 @@ def build_screens():
     settings = ("Jog", "Units", "Display", "Controls", "MPG", "Safety",
                 "Storage", "UI")
     screens["SETTINGS"] = Screen("SETTINGS", "SETTINGS", "MAIN_MENU", items=[
-        _disabled(label, "settings editor is not implemented") for label in settings
+        MenuItem(label, "SETTINGS_INFO", value=label) for label in settings
     ])
-    system = ("Firmware", "Hardware", "Storage", "Diagnostics", "Logs",
+    screens["SETTINGS_INFO"] = Screen(
+        "SETTINGS_INFO", "SETTING DETAILS", "SETTINGS"
+    )
+    system = ("Firmware", "Hardware", "Storage", "Input Diagnostics", "Logs",
               "Version", "Restart")
     screens["SYSTEM"] = Screen("SYSTEM", "SYSTEM / ABOUT", "MAIN_MENU", items=[
-        MenuItem(label, "SYSTEM_INFO") if label != "Restart" else
+        MenuItem(label, "INPUT_INFO" if label == "Input Diagnostics"
+                 else "SYSTEM_INFO") if label != "Restart" else
         MenuItem(label, command="CONFIRM_RESTART") for label in system
     ])
     screens["SYSTEM_INFO"] = Screen("SYSTEM_INFO", "SYSTEM INFO", "SYSTEM")
+    screens["INPUT_INFO"] = Screen(
+        "INPUT_INFO", "INPUT STATUS", "SYSTEM", NAVIGATION
+    )
     return screens
 
 
@@ -190,11 +202,13 @@ class UIManager:
         self.text_entry = None
         self.text_purpose = None
         self.detail_title = None
+        self.settings_category = "UI"
         self.network_info = {}
         self.confirmation = None
         self.warning = None
         self.toast = None
         self.dirty = True
+        self.page_swipe_direction = 0
         self._sync_context()
 
     @property
@@ -225,6 +239,11 @@ class UIManager:
     def _changed(self):
         self.dirty = True
         self._sync_context()
+
+    def consume_page_swipe_direction(self):
+        """Consume one swipe direction for presentation-only page motion."""
+        direction, self.page_swipe_direction = self.page_swipe_direction, 0
+        return direction
 
     def _sync_context(self):
         self.state.ui_screen = self.current_screen
@@ -288,22 +307,51 @@ class UIManager:
                                max(0, len(values) - 1))
         self._changed()
 
-    def items(self):
-        details = self.details()
+    def items(self, details=_DETAILS_UNSET):
+        if details is _DETAILS_UNSET:
+            details = self.details()
         if details:
             return [MenuItem("{}: {}".format(key, value))
                     for key, value in details]
         if self.screen.dynamic:
             if self.screen.dynamic == "ssids":
-                return [MenuItem("{}  {} dBm".format(value[0], value[1]),
-                                 value=value[0])
-                        for value in self.dynamic_items["ssids"]]
-            return [MenuItem(str(value), value=value)
-                    for value in self.dynamic_items[self.screen.dynamic]]
+                values = self.dynamic_items["ssids"]
+                if values:
+                    return [MenuItem("{}  {} dBm".format(value[0], value[1]),
+                                     value=value[0]) for value in values]
+                return [_disabled("NO NETWORKS FOUND",
+                                  "Wi-Fi scan returned no networks")]
+            values = self.dynamic_items[self.screen.dynamic]
+            if values:
+                return [MenuItem(str(value), value=value) for value in values]
+            if self.screen.dynamic in ("jobs", "macros"):
+                sd_status = self.state.subsystems.get("sd", "unknown")
+                if sd_status == "DISABLED":
+                    label, reason = "SD DISABLED", "SD storage is disabled"
+                elif self.state.storage_state == "missing":
+                    label, reason = "SD CARD MISSING", "SD card is not mounted"
+                elif self.state.storage_state == "mount_error":
+                    label, reason = "SD MOUNT ERROR", (
+                        self.state.storage_error or "SD mount failed")
+                elif self.state.storage_state == "available":
+                    label, reason = (
+                        ("NO FILES FOUND", "No supported jobs on SD")
+                        if self.screen.dynamic == "jobs" else
+                        ("NO MACROS FOUND", "No macros on SD"))
+                else:
+                    label, reason = "STORAGE UNAVAILABLE", (
+                        self.state.storage_error or
+                        "SD storage is not available")
+                return [_disabled(label, reason)]
+            return []
         return self.screen.items
 
     def details(self):
         """Return sanitized rows for the current read-only information view."""
+        if self.current_screen == "SETTINGS_INFO":
+            configured = getattr(self.state, "ui_settings", {})
+            rows = tuple(configured.get(self.settings_category, ()))
+            return rows + (("Edit settings", "use settings.toml"),)
         if self.current_screen == "CONTROLLER_INFO":
             return (
                 ("Identity", self.state.controller_identity or "unknown"),
@@ -319,9 +367,14 @@ class UIManager:
                 ("Board", self.state.board_profile),
                 ("Display", self.state.display_profile),
                 ("Free heap", self.state.free_heap or "unknown"),
+                ("Main loop", "{} / {}s".format(
+                    self.state.loop_count, self.state.last_loop_duration)),
                 ("Storage", self.state.subsystems.get("storage", "unknown")),
                 ("SD", self.state.subsystems.get("sd", "unknown")),
                 ("I2C", self.state.subsystems.get("i2c", "unknown")),
+                ("I2C devices", ", ".join(
+                    "0x{:02X}".format(address)
+                    for address in self.state.i2c_addresses) or "none"),
                 ("MCP23017", "0x{:02X}".format(self.state.mcp23017_address)
                  if self.state.mcp23017_detected else "not detected"),
                 ("Wi-Fi", self.state.wifi_state),
@@ -332,10 +385,58 @@ class UIManager:
                 ("Controller", self.state.connection_state),
                 ("Selector", self.state.selector_backend),
                 ("Touch", self.state.subsystems.get("touch", "unknown")),
+                ("Mirror", "{} requests / {} errors".format(
+                    self.state.mirror_clients, self.state.mirror_errors)),
                 ("I2C error", self.state.i2c_error or "none"),
                 ("Last error", self.state.network_error or
                  self.state.controller_error or self.state.input_error or
                  self.state.display_error or self.state.storage_error or "none"),
+            )
+        if self.current_screen == "INPUT_INFO":
+            input_valid = self.state.input_valid
+            if input_valid is None:
+                health = "unknown"
+                axis = selector = increment = wheel = "unknown"
+                deadman = stop = "unknown"
+                select = "unknown"
+            elif not input_valid:
+                health = "invalid"
+                axis = selector = increment = wheel = "unavailable"
+                deadman = stop = "unavailable"
+                select = "unavailable"
+            else:
+                health = "valid"
+                if self.state.selectors_valid:
+                    axis = self.state.selected_axis or "OFF"
+                    selector = self.state.selected_physical_axis or "OFF"
+                    increment = self.state.selected_multiplier
+                else:
+                    axis = selector = increment = "invalid"
+                wheel = ("CW" if self.state.mpg_activity > 0 else
+                         "CCW" if self.state.mpg_activity < 0 else "idle")
+                deadman = (
+                    ("active" if self.state.deadman_enabled else "inactive")
+                    if self.state.deadman_input_configured else "unconfigured")
+                stop = self._estop_status()
+                select_state = self.state.button_states.get("SELECT")
+                select = ("pressed" if select_state else "released"
+                          if select_state is not None else
+                          "unknown" if "SELECT" in self.state.button_states
+                          else "unconfigured")
+            return (
+                ("Backend", self.state.selector_backend or "disabled"),
+                ("Input sample", health),
+                ("Axis", axis),
+                ("Selector", selector),
+                ("Increment", increment),
+                ("Wheel", wheel),
+                ("SELECT button", select),
+                ("Hold-to-run", deadman),
+                ("Remote stop", stop),
+                ("MCP23017", "0x{:02X}".format(self.state.mcp23017_address)
+                 if self.state.mcp23017_detected else "not detected"),
+                ("Input error", self.state.input_error or "none"),
+                ("Selector error", self.state.selector_error or "none"),
             )
         if self.current_screen == "NETWORK_INFO":
             return (
@@ -354,8 +455,7 @@ class UIManager:
                 ("Simulated X", "{:+.4f}".format(
                     self.state.preview_position["X"])),
                 ("Multiplier", self.state.selected_multiplier),
-                ("Remote stop", "ACTIVE" if self.state.estop_observed else
-                 "LATCHED" if self.state.estop_latched else "CLEAR"),
+                ("Remote stop", self._estop_status()),
             )
         return ()
 
@@ -425,7 +525,10 @@ class UIManager:
             self._start_text(item.label, "WIFI_PASSWORD", masked=True)
             return None
         if item.target:
-            if item.target in ("CONTROLLER_INFO", "SYSTEM_INFO", "NETWORK_INFO"):
+            if item.target == "SETTINGS_INFO":
+                self.settings_category = str(item.value or "UI")
+                self.detail_title = self.settings_category.upper() + " SETTINGS"
+            elif item.target in ("CONTROLLER_INFO", "SYSTEM_INFO", "NETWORK_INFO"):
                 self.detail_title = item.label
             self.enter(item.target)
             return None
@@ -492,6 +595,32 @@ class UIManager:
 
     def handle(self, event):
         if isinstance(event, TouchEvent):
+            if self.active_overlay() is not None:
+                return None
+            # A physical tap/release selects the row under the finger. Action
+            # rows that can start/resume machine motion remain gated behind the
+            # existing physical confirmation path; navigation and safe UI
+            # commands retain normal menu behavior.
+            if event.kind in ("tap", "release_select") and (
+                    self.current_screen != "HOME" and 58 <= event.y < 190):
+                target = self._touch_row_index(event.y)
+                items = self.items()
+                if target is not None and target < len(items):
+                    item = items[target]
+                    self.focus[self.current_screen] = target
+                    self._changed()
+                    if not item.enabled:
+                        self.toast = item.reason or "Unavailable"
+                        return None
+                    safe_commands = (
+                        "CONFIRM_ACTION", "CONFIRM_JOB_CANCEL",
+                        "CONFIRM_RESTART", "NETWORK_TOGGLE", "NETWORK_SCAN",
+                        "NETWORK_MANUAL_SSID", "NETWORK_SETUP_AP",
+                        "NETWORK_DISCONNECT", "JOB_HOLD",
+                    )
+                    if item.command is None or item.command in safe_commands:
+                        return self._select_item()
+                    return None
             event = self._touch_event(event)
             if event is None:
                 return None
@@ -527,30 +656,88 @@ class UIManager:
         return None
 
     def _touch_event(self, event):
-        """Map large round-screen targets to the existing normalized grammar."""
+        """Map gestures onto menu navigation, never direct CNC actions."""
+        if event.kind in ("swipe_up", "swipe_down"):
+            # Vertical gestures are navigation-only even when the physical
+            # selector currently grants the handwheel motion authority.
+            if self.current_screen == "HOME" or self.confirmation:
+                return None
+            items = self.items()
+            if items:
+                key = self.current_screen
+                target = self._touch_row_index(event.y)
+                if target is None:
+                    delta = 1 if event.kind == "swipe_down" else -1
+                    target = (self.focus.get(key, 0) + delta) % len(items)
+                self.focus[key] = target
+                self._changed()
+            return None
+        if event.kind in ("swipe_left", "swipe_right"):
+            if len(self.stack) == 1 and self.current_screen in (
+                    "HOME", "EXPLORER", "CONFIGURATION", "PREVIEW"):
+                pages = ("OPERATIONAL", "EXPLORER", "CONFIGURATION", "PREVIEW")
+                index = pages.index(self.state.active_page) if (
+                    self.state.active_page in pages) else 0
+                delta = 1 if event.kind == "swipe_left" else -1
+                self.state.active_page = pages[(index + delta) % len(pages)]
+                self.page_swipe_direction = delta
+                self.apply_selector_context()
+                return None
+            return BACK if event.kind == "swipe_right" else HOME
+        if event.kind in ("drag", "release_select"):
+            if self.current_screen == "HOME":
+                return SELECT if event.kind == "release_select" else None
+            if self.confirmation:
+                return None
+            target = self._touch_row_index(event.y)
+            if target is None:
+                return None
+            self.focus[self.current_screen] = target
+            self._changed()
+            return SELECT if event.kind == "release_select" else None
         if event.kind == "long_press":
+            # Touch must not acknowledge an E-stop recovery.
+            if self.state.estop_latched:
+                return None
             return LONG_SELECT
+        if event.kind != "tap":
+            return None
         if self.current_screen == "HOME":
             return SELECT
         if event.y >= 190:
             return BACK if event.x < 120 else HOME
         if event.y < 45:
             return BACK
-        # These bands match the retained round menu's 22px row rhythm.
-        row = (event.y - 58) // 22
+        target = self._touch_row_index(event.y)
+        if target is None:
+            return None
+        self.focus[self.current_screen] = target
+        self._changed()
+        return SELECT
+
+    def _touch_row_index(self, y):
+        """Visible row -> item index, accounting for scrolled menus."""
+        row = (int(y) - 58) // 22
         if not 0 <= row < 6:
             return None
         items = self.items()
         if not items:
             return None
         selected = min(self.focus.get(self.current_screen, 0), len(items) - 1)
-        start = max(0, min(selected - 5, len(items) - 6))
-        target = start + row
-        if target >= len(items):
-            return None
+        target = menu_window_start(selected, len(items), 6) + row
+        return target if target < len(items) else None
+
+    def preview_touch(self, x, y):
+        """Move only the menu highlight on contact; never select or dispatch."""
+        if (self.active_overlay() is not None or self.current_screen == "HOME" or
+                not 58 <= int(y) < 190):
+            return False
+        target = self._touch_row_index(y)
+        if target is None or self.focus.get(self.current_screen, 0) == target:
+            return False
         self.focus[self.current_screen] = target
         self._changed()
-        return SELECT
+        return True
 
     def active_overlay(self):
         if self.state.estop_observed:
@@ -569,15 +756,36 @@ class UIManager:
             return ("TOAST", self.toast, 40)
         return None
 
+    def _estop_status(self):
+        """Report CLEAR only after a configured physical input reads valid."""
+        if getattr(self.state, "input_valid", None) is False and getattr(
+                self.state, "estop_input_configured", False):
+            return "UNAVAILABLE"
+        if self.state.estop_observed:
+            return "ACTIVE"
+        if self.state.estop_latched:
+            return "RECOVERY_REQUIRED"
+        if (not getattr(self.state, "estop_input_configured", False) or
+                getattr(self.state, "input_valid", None) is not True):
+            return "UNKNOWN"
+        return "CLEAR"
+
     def view_model(self):
         """Return backend-independent primitives without exposing passwords."""
-        items = self.items()
+        detail_screen = self.current_screen in (
+            "CONTROLLER_INFO", "SYSTEM_INFO", "INPUT_INFO", "NETWORK_INFO",
+            "PREVIEW", "SETTINGS_INFO",
+        )
+        details = self.details() if detail_screen else None
+        items = self.items(details) if detail_screen else self.items()
         selected = self.focus.get(self.current_screen, 0)
         motion_available = bool(
             self.current_screen == "HOME" and
             self.state.connection_state == "connected" and
             self.state.machine_state in ("idle", "jog") and
             self.state.selected_axis is not None and
+            getattr(self.state, "selectors_valid", True) and
+            getattr(self.state, "input_valid", True) is True and
             self.state.deadman_enabled and not self.state.estop_latched and
             self.state.alarm is None)
         model = {
@@ -586,31 +794,51 @@ class UIManager:
             "items": [(item.label, item.enabled, item.reason) for item in items],
             "overlay": self.active_overlay(), "dirty": self.dirty,
             "axis_selector": self.state.selected_axis or "OFF",
-            "resolution_selector": self.state.selected_multiplier,
+            "resolution_selector": (
+                self.state.selected_multiplier
+                if getattr(self.state, "selectors_valid", True) else "INVALID"),
+            "selectors_valid": getattr(self.state, "selectors_valid", True),
+            "input_valid": getattr(self.state, "input_valid", None),
+            "input_error": getattr(self.state, "input_error", None),
+            "selector_error": getattr(self.state, "selector_error", None),
             "jog_hold": bool(self.state.deadman_enabled),
             "jog_armed": motion_available,
             "mpg_activity": self.state.mpg_activity,
             "axis_transition_direction": self.state.axis_transition_direction,
             "resolution_transition_direction":
                 self.state.resolution_transition_direction,
-            "estop_state": ("ACTIVE" if self.state.estop_observed else
-                            "RECOVERY_REQUIRED" if self.state.estop_latched else
-                            "CLEAR"),
+            "estop_state": self._estop_status(),
             "motion_available": motion_available,
             "active_page": self.state.active_page,
+            # Physical top-level selector order, never a UI permission grant.
+            # Leftmost dot is Operational; rightmost dot is Preview.
+            "page_index": {"EXPLORER": 1, "CONFIGURATION": 2,
+                           "PREVIEW": 3}.get(self.state.active_page, 0),
+            "page_count": 4,
+            "link_state": self.state.link_state,
+            "wireless_status": ({"GRBL_FRESH": "ESP-NOW LINKED",
+                                 "PAIRED_NO_GRBL": "ESP-NOW LINKED",
+                                 "PAIRING": "ESP-NOW PAIRING",
+                                 "LINK_LOST": "ESP-NOW LOST"}.get(self.state.link_state, "ESP-NOW WAITING")
+                                if self.state.transport == "c3-espnow" else None),
+            "grbl_status": ("GRBL ONLINE" if self.state.connection_state == "connected"
+                            else "GRBL OFFLINE"),
             "selector_function": self.state.selector_function,
             "physical_selector": self.state.selected_physical_axis,
         }
         if self.current_screen == "CONTROLLER_INFO":
             model["title"] = self.detail_title or model["title"]
-            model["details"] = self.details()
-        elif self.current_screen == "SYSTEM_INFO":
+            model["details"] = details
+        elif self.current_screen in ("SYSTEM_INFO", "INPUT_INFO"):
             model["title"] = self.detail_title or model["title"]
-            model["details"] = self.details()
+            model["details"] = details
+        elif self.current_screen == "SETTINGS_INFO":
+            model["title"] = self.detail_title or model["title"]
+            model["details"] = details
         elif self.current_screen == "NETWORK_INFO":
-            model["details"] = self.details()
+            model["details"] = details
         elif self.current_screen == "PREVIEW":
-            model["details"] = self.details()
+            model["details"] = details
         if self.current_screen == "TEXT_ENTRY" and self.text_entry:
             model["text"] = self.text_entry.display_value()
             model["character"] = self.text_entry.selected_character

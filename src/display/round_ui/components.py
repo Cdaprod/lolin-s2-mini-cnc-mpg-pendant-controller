@@ -18,6 +18,11 @@ class TextComponent:
         self.value = value
         return self.line.set_text(value)
 
+    def set_color(self, color):
+        if color is not None and hasattr(self.line, "set_color"):
+            return self.line.set_color(color)
+        return False
+
 
 class InstrumentRing:
     """Drive spatial selector regions and relative handwheel activity arcs."""
@@ -81,21 +86,31 @@ class MotionPrompt:
     def __init__(self, line):
         self.text = TextComponent(line)
 
-    def update(self, hold, armed, activity, controller):
+    def update(self, hold, armed, activity, controller, link_state=None,
+               colors=None):
         activity = int(activity)
+        colors = colors or theme.select("industrial")
         if not controller:
-            value = "CONTROLLER OFFLINE"
+            value = ("GRBL OFFLINE" if link_state == "PAIRED_NO_GRBL" else
+                     "MOTION DISARMED")
+            color = colors["warning"]
         elif not hold:
             value = "HOLD TO JOG"
+            color = colors["warning"]
         elif not armed:
             value = "MOTION INHIBITED"
+            color = colors["warning"]
         elif activity > 0:
             value = "CW  " + ">" * min(4, activity)
+            color = colors["accent"]
         elif activity < 0:
             value = "<" * min(4, -activity) + "  CCW"
+            color = colors["accent"]
         else:
             value = "JOG READY"
-        return self.text.set(value)
+            color = colors["success"]
+        changed = self.text.set(value)
+        return self.text.set_color(color) or changed
 
 
 class ConnectivityGlyphs:
@@ -114,14 +129,34 @@ class MenuHighlight:
     def __init__(self, node):
         self.node = node
         self.row = None
+        self.target_y = int(node.y)
 
-    def set(self, row, visible=True):
+    def set(self, row, visible=True, animate=True):
         row = int(row)
-        changed = row != self.row or self.node.hidden == bool(visible)
+        target_y = 58 + row * 22
+        was_hidden = self.node.hidden
+        was_unset = self.row is None
+        changed = row != self.row or was_hidden == bool(visible)
         self.row = row
-        self.node.hidden = not visible
-        self.node.y = 58 + row * 22
+        self.target_y = target_y
+        self.node.hidden = not bool(visible)
+        if not visible or was_hidden or was_unset or not animate:
+            self.node.y = target_y
         return changed
+
+    def animate(self):
+        """Ease the focus rail toward its row with a short friction settle."""
+        if self.node.hidden or self.node.y == self.target_y:
+            return False
+        distance = self.target_y - self.node.y
+        if abs(distance) <= 1:
+            self.node.y = self.target_y
+            return True
+        step = int(round(distance * 0.68))
+        if step == 0:
+            step = 1 if distance > 0 else -1
+        self.node.y += step
+        return True
 
 
 class Overlay:

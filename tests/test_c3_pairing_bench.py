@@ -1,5 +1,7 @@
 """Deterministic tests for C3 radio-level pairing with machine TX forbidden."""
 import unittest
+import contextlib
+import io
 from src.transport.c3_pairing_bench import C3PairingBench, BROADCAST
 from src.transport import c3_espnow_protocol as proto
 
@@ -64,6 +66,77 @@ class PairTests(unittest.TestCase):
         client.poll()
         self.assertFalse(client.paired)
         self.assertFalse(client.info()["motion_enabled"])
+
+    def test_packet_diagnostics_include_session_sequence_and_peer(self):
+        esp = Esp()
+        client = C3PairingBench(Radio(), now=lambda: 12.5, esp=esp, session=7)
+        client.start()
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            client.poll()
+        self.assertIn("event=espnow_tx packet_type=pair session=7 seq=0", output.getvalue())
+        self.assertIn("peer=ff:ff:ff:ff:ff:ff result=driver_accepted_not_ota_ack uptime_ms=12500", output.getvalue())
+
+    def test_pair_accepts_c3_sensor_assignment(self):
+        esp, t = Esp(), [0]
+        client = C3PairingBench(Radio(), now=lambda: t[0], esp=esp, session=7)
+        client.start()
+        client.poll()
+        bridge = bytes.fromhex("aabbccddeeff")
+        ack = proto.encode(proto.PAIR_ACK, 7, payload=bytes((1, 1)) +
+                           Radio.mac_address + bytes((255,)))
+        assignment = proto.encode(proto.SENSOR_ASSIGNMENT, 7, payload=b"\xff")
+        esp.incoming.extend((Packet(bridge, ack), Packet(bridge, assignment)))
+
+        t[0] = 1
+        client.poll()
+
+        self.assertTrue(client.paired)
+        self.assertEqual(client.info()["assigned_function"], 255)
+        self.assertEqual(client.info()["rejected_packets"], 0)
+        self.assertEqual(client.info()["valid_packets"], 2)
+
+    def test_repair_to_new_peer_drops_queued_old_peer_ack(self):
+        esp = Esp()
+        client = C3PairingBench(Radio(), now=lambda: 1, esp=esp, session=7)
+        client.start()
+        first = bytes.fromhex("aabbccddeeff")
+        second = bytes.fromhex("112233445566")
+        pair_ack = lambda: proto.encode(
+            proto.PAIR_ACK, 7, payload=bytes((1, 1)) +
+            Radio.mac_address + bytes((255,)))
+        esp.incoming.append(Packet(first, pair_ack()))
+        client.poll()
+        self.assertEqual(client.peer, first)
+
+        # Both frames are read in one transport poll. The first ACK was valid
+        # when received, but its sequence belongs to the old peer.
+        esp.incoming.extend((
+            Packet(first, proto.encode(proto.MPG_STOP_ACK, 7, sequence=42,
+                                       payload=b"\x01")),
+            Packet(second, pair_ack()),
+        ))
+        client.poll()
+
+        self.assertEqual(client.peer, second)
+        self.assertEqual(client.events, [])
+
+    def test_heartbeat_timeout_discards_queued_peer_events(self):
+        esp, t = Esp(), [0]
+        client = C3PairingBench(Radio(), now=lambda: t[0], esp=esp, session=7)
+        client.start()
+        peer = bytes.fromhex("aabbccddeeff")
+        ack = proto.encode(proto.PAIR_ACK, 7, payload=bytes((1, 1)) +
+                           Radio.mac_address + bytes((255,)))
+        esp.incoming.append(Packet(peer, ack))
+        client.poll()
+        client.events.append((proto.MPG_STOP_ACK, 4, b"\x01"))
+
+        t[0] = 6
+        client.poll()
+
+        self.assertFalse(client.paired)
+        self.assertEqual(client.events, [])
 
     def test_repeated_timeout_does_not_leak_registered_peers(self):
         esp, t = Esp(), [0]

@@ -19,6 +19,12 @@ class PendantState:
         self.selected_physical_axis = "OFF"
         self.selected_axis = None
         self.selector_function = "OFF"
+        self.selectors_valid = True
+        self.selector_error = None
+        # None means no physical input backend is configured; it is not a
+        # positive hardware-health claim. False means a configured read failed.
+        self.input_valid = None
+        self.input_error = None
         self.active_page = "OPERATIONAL"
         self.selected_multiplier = "X1"
         self.base_increment = float(base_increment)
@@ -55,7 +61,13 @@ class PendantState:
         self.touch_error = None
         self.board_profile = ""
         self.display_profile = ""
+        # Curated, password-free configuration snapshot for the on-device
+        # settings information pages. The live settings editor is intentionally
+        # not exposed by the UI; changes are made through settings.toml.
+        self.ui_settings = {}
         self.selector_backend = "disabled"
+        self.deadman_input_configured = False
+        self.button_states = {}
         self.mcp23017_detected = False
         self.mcp23017_address = None
         self.subsystems = {}
@@ -70,6 +82,9 @@ class PendantState:
         self.jog_active = False
         self.estop_observed = False
         self.estop_latched = False
+        # Remote-stop state is unknown unless a configured physical input has
+        # produced a valid sample. Never present an unobserved input as CLEAR.
+        self.estop_input_configured = False
         self.deadman_enabled = False
         self.mpg_activity = 0
         self.mpg_activity_timestamp = None
@@ -87,6 +102,12 @@ class PendantState:
         self.loop_count = 0
         self.last_loop_duration = 0.0
         self.free_heap = None
+        self.i2c_addresses = ()
+        self.mirror_error = None
+        self.mirror_clients = 0
+        self.mirror_errors = 0
+        self.loop_error = None
+        self.loop_error_count = 0
         self.render_count = 0
         self.last_status_age = None
         self.round_ui_bootstrap = False

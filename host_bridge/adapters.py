@@ -207,7 +207,12 @@ class GrblAdapter(ControllerAdapter):
             return self.state
         # A failed realtime cancellation must be retried after the serial
         # transport becomes writable, even with no remaining jog intent.
-        if self._cancel_pending and not self._cancel_sent:
+        # A live segment is marked cancel_pending so stop_jog knows it needs
+        # to send the GRBL jog-cancel byte. Retry only after intent has been
+        # revoked; retrying while a jog is live would cancel every segment on
+        # the next bridge poll.
+        if (self._active_jog is None and self._cancel_pending and
+                not self._cancel_sent):
             self.stop_jog()
         if (self.transport.connected and
                 (self._last_status_poll is None or

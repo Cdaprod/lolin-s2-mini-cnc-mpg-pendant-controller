@@ -1,92 +1,107 @@
-# ESP32-S3 CircuitPython ↔ ESP32-C3 bridge: bench integration
+# ESP32-S3 ↔ ESP32-C3 wireless MPG integration
 
-## Verified baseline
+This document describes the current firmware paths and the safe commissioning
+sequence. Pairing proves only that the radios exchanged protocol messages; it
+does not prove controller readiness or authorize machine motion.
 
-- PR #12 is merged: Protocol v1 reliable session is framed with CRC16, session IDs, motion lease, and host-side admission.
-- PR #13 is merged: USB host *feasibility only*; not a USB host implementation.
-- PR #15 is an unrelated draft USB status-only development track.
-- The flashed third-party ESP32-C3 firmware v1.3.1 is associated with `cda_Lab` and obtains a pfSense DHCP address (observed `192.168.0.91`); its web UI advertises ESP-NOW waiting.
-- **No hardware interoperability has been demonstrated.** The upstream C3 binary ESP-NOW v1 format is now extracted from `include/espnow_protocol.h` and `src/espnow_handler.c`. It is not the pendant PR #12 Protocol v1. The exact locally flashed C3 revision and CircuitPython on-board ESP-NOW API remain unverified.
+## Controller modes
 
-## CircuitPython verification (no CNC attached)
+| `MPG_CONTROLLER_MODE` | Behavior | Motion behavior |
+| --- | --- | --- |
+| `disabled` | No machine controller transport. This is the default. | No controller commands. |
+| `c3_espnow_bench` | Pairs and exchanges radio heartbeats/status diagnostics. | Does not send MPG jog intents. |
+| `c3_espnow` | Uses the dedicated S3↔C3 MPG protocol and GRBL status path. | S3 sends bounded MPG intents only when physical input, deadman, E-stop, selector, and fresh controller-state gates pass. The C3 makes the final admission decision. |
+| `bridge` | Uses Protocol v1 over a UART bridge. | `MPG_BRIDGE_MOTION_ENABLED` applies only to this mode. It does not enable or disable `c3_espnow`. |
 
-1. Keep CNC UART disconnected; leave pendant controller mode `disabled` and bridge motion disabled.
-2. On the actual XIAO ESP32-S3 REPL, check `import espnow; print(espnow)` and `import wifi; print(wifi.radio.enabled)`. Some CircuitPython versions/boards may not expose ESP-NOW.
-3. With the pendant associated to `cda_Lab` and radio enabled, run the receive-only `EspNowBench` harness:
-   ```python
-   from src.transport.espnow_bench import EspNowBench
-   bench = EspNowBench()
-   bench.start()
-   while True:
-       bench.poll()
-       # Debug readouts only; do not connect machine or send PAIR yet.
-   ```
-4. Confirm stable channel compatibility: C3 reported Wi-Fi/ESP-NOW channel 9. The C3 AP advertises 6 as its configured AP channel; AP+STA operation can follow the STA radio channel.
-5. Inspect the exact C3 sources for ESP-NOW packet layouts, pairing and acknowledgement semantics, maximum payload, retransmission, stale data handling, and peer authentication. Document byte-level test vectors.
-6. Implement **a versioned protocol adapter on both ends** or a verified compatibility transport; never send raw Protocol-v1 frames to an unmodified C3 receiver and assume they work.
-7. Only after automated CRC/replay/disconnect tests, bounded receive tests, and bench heartbeat/pairing pass should status-only telemetry be enabled. Hardware motion remains disabled until independent safety approval.
+The default profile in `settings.toml.example` keeps the controller and physical
+inputs disabled. Copying the example therefore cannot select the wireless MPG
+controller accidentally. A device's ignored `settings.toml` is user data; do
+not replace it as part of testing.
 
-## Design boundary
+## S3-to-C3 data path
 
-CircuitPython stays on ESP32-S3. The existing application, physical selectors, encoder, MCP23017, display and PR #12 host bridge remain intact. The receive-only bench module is deliberately not wired into `PendantApplication`. It does **not** interpret C3 packets or issue commands. Never use Wi-Fi/ESP-NOW as an emergency-stop safety chain. An independently wired machine E-stop is required.
+In `c3_espnow` mode, the existing S3 application reads encoder and selector
+state, rejects invalid input snapshots and selector transitions, and forms a
+bounded per-detent intent. The packet carries axis X/Y/Z/A, deadman state,
+signed distance in micrometers, feed, a session ID, and a 16-bit sequence. The
+C3 decodes that vendor-compatible packet and uses its current GRBL status,
+trusted S3 MAC, session/sequence state, deadman bit, source arbiter, and short
+receiver lease before formatting a GRBL `$J=` command.
 
-## C3 integration backlog
+The S3 and C3 implementations are under review in [S3 PR #22](https://github.com/Cdaprod/lolin-s2-mini-cnc-mpg-pendant-controller/pull/22), [C3 MPG PR #6](https://github.com/Cdaprod/esp32-c3-cnc-bridge/pull/6), and [C3 console PR #4](https://github.com/Cdaprod/esp32-c3-cnc-bridge/pull/4). C3 PR #4 is stacked on PR #6. Their open-PR state is not evidence that a particular firmware image is installed on a device.
 
-- Capture and review the *exact flashed local C3 source revision*, including any local NVS sync/DHCP edits (these are not present in this repository).
-- Align the C3 radio protocol with pendant session ACK/NAK, sequence, heartbeats and stale-motion rejection.
-- Ensure stop on deadman release, loss of link, selector change, alarm, and software hang at the *controller side*; evaluate the GRBL hold/cancel semantics with spindle and steppers disabled.
-- Disable/reset-on-Telnet-disconnect only after deciding an explicit, safe controller reset policy.
-- Run real ESP32-S3/C3 cross-device tests and capture results before enabling any jog.
+The C3 firmware defaults to `CONFIG_MPG_ENABLE_MOTION=n` and
+`CONFIG_MPG_DRY_RUN=y`. In that configuration, production packet decoding,
+session/sequence checks, fresh GRBL-state admission, jog formatting, and the
+dry-run log execute, but `$J=` jog commands do not reach UART0. Dry-run requires
+a locally provisioned trusted S3 MAC and a fresh status report. A log or ACK
+must be read according to its result: a dry-run proposal is not a GRBL command
+transmission, and ESP-NOW driver acceptance is not proof of over-the-air
+delivery.
 
-## Implemented vendor-compatible radio diagnostics
+For `MPG_STOP_ACK`, result `1` confirms the C3 wrote GRBL's realtime cancel
+byte. Result `2` means it revoked its software MPG lease but suppressed the
+physical UART byte in a disarmed/dry-run build; the S3 clears its local retry
+latch so a non-actuating diagnostic can continue. The dashboard reports this
+as `event=mpg_stop result=suppressed physical_uart=not_sent`. It does not mean
+the machine stopped; only fresh controller telemetry and the C3 admission gate
+can permit another dry-run proposal. Older C3 firmware returns an error for a
+suppressed stop, which leaves the S3 inhibited.
 
-The `src/transport/c3_espnow_protocol.py` module encodes and strictly decodes the vendor's **10-byte little-endian header** (version, type, 32-bit session, 16-bit sequence, 16-bit length), with 250-byte maximum packet size. The C3 source verifies that the new `PAIR` payload must begin with the sender's six-byte MAC, and replies with a 9-byte `PAIR_ACK` consisting of bridge-type 1, version 1, local sender MAC and assigned function.
+When explicitly built for physical jogging, the C3 keeps a 250 ms receiver
+lease, checks status freshness, rejects duplicate/stale sequences, arbitrates
+the UART against its other sender, and sends GRBL's real-time `0x85` jog-cancel
+on STOP, lease expiry, or ownership loss. The cancel byte can stop an active
+jog but cannot initiate motion. Radio pairing, a valid input packet, or a dry-
+run result alone never authorizes a physical jog. An independent hardwired
+machine E-stop remains required; wireless STOP is not safety-rated.
 
-`src/transport/c3_pairing_bench.py` sends only `PAIR`, `HEARTBEAT`, and `HEARTBEAT_ACK`. No `UART_COMMAND`, G-code, or jog packet is ever sent. The client's paired state only denotes an active radio link. Bench API is a candidate pending a CircuitPython hardware check; this module is intentionally not invoked automatically by the pendant app.
+## C3-to-Doesbot boundary
 
-Example, on an isolated CircuitPython board with the C3 UART **disconnected**:
+The intended machine link is C3 UART0 at 115200 baud, TX GPIO21 and RX GPIO20,
+through the documented 5 V↔3.3 V logic-level shifter. C3 USB Serial/JTAG is a
+separate diagnostics connection. The dashboard's passive serial reader must
+not share/open the C3 UART or send any CNC commands.
 
-```python
-from src.transport.c3_pairing_bench import C3PairingBench
-bench = C3PairingBench()
-bench.start()
-while True:
-    bench.poll()
-    # Inspect bench.info() from a REPL/diagnostic harness.
-```
+The dashboard shows validated GRBL status records that C3 parsed from UART0;
+it marks them stale when fresh reports stop. The S3 also consumes controller
+status forwarded by the C3. Stale status must remain disconnected and cannot
+authorize motion. UART status query `?` is read-only; no `$J=`, spindle, homing,
+or other motion-capable command is permitted during dry-run acceptance.
 
-The S3 must use the same Wi-Fi radio channel as the C3; if both join `cda_Lab` this should be verified from logs.
+## Safe commissioning sequence
 
-## Critical discovered C3 safety gap
+1. Keep the Doesbot motion/spindle disabled. Keep C3 firmware motion disabled
+   and dry-run enabled. Do not flash or enable a motion-capable build for
+   diagnostic testing.
+2. Preserve the saved device configuration. When the documented MCP23017 and
+   encoder harness is connected, enable only the intended S3 input backend and
+   retain the `c3_espnow` controller mode only for the dedicated radio test.
+3. Configure the C3 dry-run build with the S3 Wi-Fi MAC in
+   `CONFIG_MPG_TRUSTED_MAC`. The USB serial UID is not that MAC.
+4. Start the dashboard with one reader per USB device. Verify S3 runtime input
+   snapshots, selector/deadman transitions, encoder deltas, ESP-NOW session and
+   sequence events, C3 accepted/rejected admission, and a matching dry-run
+   proposal. Do not treat a S3 transmit event as confirmed C3 receipt.
+5. Test negative cases: deadman released, invalid selector/MCP read, stale GRBL
+   status, duplicate/out-of-order sequence, timeout, and reconnect. Each must
+   produce no `$J=` UART output; reconnect must not replay old encoder counts.
+6. Use only an isolated GRBL simulator/mock for command-response tests. Do not
+   send motion-capable commands to the Doesbot. Physical input validation can
+   verify the dry-run signal chain without actuating the machine.
 
-The upstream `espnow_rx_task` `ESPNOW_MSG_UART_COMMAND` case forwards arbitrary packet payload to `serial_send_data`, appending a newline if not already present. Its `UART_ACK` confirms forwarding to the UART queue, **not GRBL execution**, and **does not use** the receiver-local motion lease from pendant PR #12.
+Only a separately authorized commissioning process may enable physical motion,
+after physical input, machine interlocks, source ownership, and loss/recovery
+behavior are independently verified. Neither PR #22, PR #6, nor a green build
+changes the board configuration or authorizes motion.
 
-Consequently, merely framing `$J=...` or realtime commands inside a vendor UART_COMMAND is **not sufficient** for safe remote CNC control. Before motion, implement explicit command allowlisting, source arbitration, status freshness, motion lease expiry and cancellation on the C3/controller side, with loss-of-radio fail-safe behavior, and test machine feedback thoroughly. Do not accidentally assume the C3's five-second peer heartbeat timeout is a safe CNC motion stop time.
+## Evidence boundaries
 
-## Remaining acceptance checklist
-
-- [x] Identify upstream C3 binary header layout, PAIR requirements and heartbeat types.
-- [x] Add strict host-testable encode/decode vectors and receive-only radio tests.
-- [x] Add candidate CircuitPython ESP-NOW pairing/heartbeat helper, separate from app motion.
-- [ ] Confirm the actual board's CircuitPython build supports the ESP-NOW class, peer API and Wi-Fi co-existence.
-- [ ] Confirm an actual XIAO S3 MAC-address PAIR_ACK and heartbeat exchanged with the C3 firmware you flashed.
-- [ ] Implement and validate a **safe C3 firmware extension** for a limited CNC command protocol with a receiver-side watchdog and stop callback; requires updating/flashing your local ESP-IDF C3 project.
-- [x] Add optional `MPG_CONTROLLER_MODE="c3_espnow_bench"` composition-root integration. Radio pairing appears as `PAIRED_NO_CONTROLLER`; machine connection remains disconnected and all control actions are denied.
-- [ ] Implement real GRBL status forwarding to the existing pendant display/UI while keeping stale state disconnected.
-- [ ] Integrate motion only after mechanical clearance, controller UART voltage, and deadman / link-loss verification.
-
-## App integration and configuration
-
-To run the radio-only path on a CircuitPython board, set `MPG_CONTROLLER_MODE="c3_espnow_bench"` and keep `MPG_BRIDGE_MOTION_ENABLED="false"`. Associate the pendant Wi-Fi interface with the same WLAN/channel as the C3 and leave its CNC wiring disconnected. This composes a `C3StatusController` instead of the existing GRBL or Protocol-v1 bridge controller, and exposes radio pairing via `state.link_state` while the machine is **always DISCONNECTED**. It does not claim real controller feedback and cannot jog, stream jobs, or issue realtime commands.
-
-Current limitations: `C3PairingBench` uses the candidate CircuitPython ESP-NOW `send`/peer API, which must be tested on the installed board build. A peer that is paired at the radio level is not authenticated for machine control. GRBL status data still requires a safe C3 read-only telemetry path and explicit source arbitration.
-
-## Wireless MPG jog command format
-
-`src/controller/jog_command.py` now implements a strict, bounded per-detent GRBL 1.1 jog command builder. Validates X/Y/Z/A/B/C, finite numeric distance within ±1 mm (excluding zero), positive feed up to 1000 mm/min, and emits `$J=G91 G21 X... F...` with a newline. This is a *formatting and input validation primitive*, not proof of wireless movement. Wire it to the app only after the ESP32-C3 has verified sender authorization, receiver-side motion lease, stale-command rejection, cancellation on all loss paths, and controller-status freshness. Do not insert it directly into the upstream unrestricted `UART_COMMAND` handler to circumvent these gates.
-
-## Receiver-side jog lease implementation (portable reference)
-
-`src/controller/jog_lease.py` now provides an injectable receiver-side motion admission state machine with strict bounded command formatting, exclusive six-byte MAC/session ownership, monotonic half-range uint16 sequence advancement, deadman and idle-state requirements, 250 ms lease expiry and a mandatory cancellation callback when an active lease expires/revokes. Unit tests cover replay, competing owners, denied deadman, timeout, and sequence wraparound. The callback is invoked on the *receiver side*; a pendant-only watchdog cannot satisfy this requirement.
-
-**Deployment boundary:** This reference code runs as Python tests; it is **not installed in the ESP-IDF C3 firmware**. Port admission/expiry logic into the C3 event loop with the real GRBL UART cancel path, and test with its actual hardware and a fail-safe independent stop chain. Never claim wireless jogging is operational because this module exists.
+- Host fixtures prove protocol vectors, admission gates, command formatting,
+  dry-run UART isolation, and lifecycle logic covered by those tests.
+- Prior live radio pairing/heartbeat observations prove radio exchange only;
+  they do not prove current source compatibility or GRBL execution.
+- Physical encoder/MCP input and Doesbot UART telemetry remain unverified until
+  those exact signals are observed through the connected hardware and
+  dashboard. Keep the historical S3 HARD_FAULT issue open until dispositioned
+  with evidence.

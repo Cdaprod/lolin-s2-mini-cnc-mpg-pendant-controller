@@ -76,6 +76,7 @@ class GRBLController(ControllerProtocol):
             self.queue = []
             self.awaiting_response = None
         self.transport.write(REALTIME[name])
+        return True
 
     def cancel_jog(self):
         self.queue = [item for item in self.queue if item[1] != "jog"]

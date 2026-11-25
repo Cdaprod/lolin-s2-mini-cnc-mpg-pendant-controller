@@ -266,17 +266,37 @@ Pink             5            GPA4
 Pink/Black       6            GPA5
 
 
-Firmware axis mapping:
+Firmware axis and function mapping:
 
 X -> AXIS_X / Operational
 Y -> AXIS_Y / Operational
 Z -> AXIS_Z / Operational
-4 -> FILES / Explorer
+4 -> AXIS_A / Operational (Doesbot fourth axis)
 5 -> CONFIG / Configuration
 6 -> PREVIEW / safe Test & Demo
 
-The semantic map is configurable; a verified six-axis profile may map the same
-GPA3/GPA4/GPA5 contacts to AXIS_A/AXIS_B/AXIS_C without changing wiring.
+The semantic map remains configurable. The current four-axis Doesbot mapping
+uses the manufacturer's `4` contact as A. Positions 5 and 6 remain UI functions
+on this profile; remap those only when a controller with corresponding axes is
+commissioned and the C3 adapter supports them.
+
+On a selector change, the S3 clears partial encoder counts and drops encoder
+movement sampled in that same poll. It also clears partial counts on controller
+connection-state changes and discards the first encoder sample after a reset,
+so movement accumulated during a reconnect cannot become a later jog. This
+behavior is host-tested; physical control validation remains pending. The
+selector state is one-hot validated; invalid axis or increment combinations
+are reported as invalid and inhibit jogging until a stable valid state returns.
+The encoder drops and reports a sample larger than four detents per application
+poll, clearing partial counts so a stalled-loop backlog cannot replay as later
+jog requests. These safeguards are host-tested; physical validation remains
+pending the connected harness. A failed MCP23017 I2C snapshot invalidates
+all selector/button/deadman state, inhibits commands, clears encoder counts,
+and revokes any active/queued jog; recovery does not replay counts. If an
+observed E-stop contact is on that bus, the failed sample asserts it and
+requires the normal explicit E-stop recovery path. Button debounce state is reset
+without synthesizing release/short/long actions; after recovery all buttons must
+be released before new button events are accepted.
 
 
 ===============================================================================
@@ -329,25 +349,32 @@ conductors.
 
 LOCAL WIRE       FUNCTION                         CONNECT TO
 -——————————————————————————
-Orange/Black     Momentary button input           MCP23017 GPB2
+Orange/Black     Momentary button signal          MCP23017 GPB2 and GPB6
 Pink/Black       Momentary button common          Common GND
 
 
-GPB2 uses a pull-up.
+GPB2 and GPB6 each use a pull-up. The user-confirmed wiring plan connects the
+same momentary switch output to both input pins.
 
 Button released:
 
-GPB2 = HIGH
+GPB2 = HIGH; GPB6 = HIGH
 
 
 Button pressed:
 
-GPB2 = LOW
+GPB2 = LOW; GPB6 = LOW
 
 
 Firmware function:
 
-GPB2 = SELECT / ACCEPT
+GPB2 = SELECT / ACCEPT; GPB6 = hold-to-run
+
+This shares one physical actuator across the UI SELECT and hold-to-run
+functions. It is not an independent or safety-rated hold-to-run control.
+Electrical connection and simultaneous input behavior still require hardware
+verification; normal firmware configuration remains inputs-disabled until
+that verification is complete.
 
 
 ===============================================================================
@@ -389,11 +416,11 @@ GPA7             Multiplier x10                   MAIN Gray/Black
 
 GPB0             Multiplier x100                  MAIN Orange
 GPB1             Remote E-stop observe            MAIN Blue
-GPB2             SELECT / momentary               LOCAL Orange/Black
+GPB2             SELECT / momentary               LOCAL Orange/Black button
 GPB3             Reserved — BACK                  Future
 GPB4             Reserved — FN                    Future
 GPB5             Reserved — CANCEL                Future
-GPB6             Reserved — DEADMAN               Future
+GPB6             Hold-to-run                      Same LOCAL button signal as GPB2; not connected
 GPB7             Reserved                         Future expansion
 
 
@@ -653,12 +680,30 @@ GPA7      Multiplier x10
 
 GPB0      Multiplier x100
 GPB1      Remote E-stop observe
-GPB2      Existing momentary SELECT button
+GPB2      Existing momentary SELECT button signal
 GPB3      Reserved BACK
 GPB4      Reserved FN
 GPB5      Reserved CANCEL
-GPB6      Reserved DEADMAN
+GPB6      Hold-to-run input from the same physical momentary button as GPB2
 GPB7      Reserved expansion
+
+MOTION HOLD-TO-RUN DEPENDENCY
+-----------------------------
+
+The canonical XIAO profile assigns `MPG_PIN_DEADMAN="GPB6"` for the active-low
+hold-to-run input. The user-confirmed wiring plan routes the same physical
+momentary button to both GPB2 (SELECT) and GPB6 (hold-to-run). These remain two
+separate MCP23017 inputs but share one actuator, so they do not provide
+independent control redundancy. The wiring is not connected yet; keep physical
+inputs disabled until the connection and active levels are verified. The S3
+C3-wireless controller and C3 receiver both fail closed unless
+the MPG packet carries an active deadman signal. Therefore the documented
+encoder and selector connections alone can validate physical input reporting,
+but every jog will remain rejected. Do not repurpose the remote E-stop
+observation as a deadman. Before any motion commissioning, physically connect
+and verify that pressing the shared button asserts GPB2 and GPB6 active-low and
+that release clears both. Controller and motion remain disabled until that
+gate is resolved.
 
 
 ===============================================================================
@@ -685,7 +730,7 @@ MPG_PIN_BUTTON_SELECT      GPB2
 MPG_PIN_BUTTON_BACK        GPB3     RESERVED
 MPG_PIN_BUTTON_FN          GPB4     RESERVED
 MPG_PIN_BUTTON_CANCEL      GPB5     RESERVED
-MPG_PIN_DEADMAN            GPB6     RESERVED
+MPG_PIN_DEADMAN            GPB6     Same physical button as SELECT; not connected
 
 MPG_I2C_SDA_PIN            D4
 MPG_I2C_SCL_PIN            D5
@@ -723,12 +768,12 @@ LOGICAL ALLOCATION COMPLETE:
 [ALLOCATED] x100 -> GPB0
 
 [ALLOCATED] Remote E-stop -> GPB1
-[ALLOCATED] Local momentary SELECT -> GPB2
+[ALLOCATED] Local momentary SELECT -> GPB2; same contact also drives GPB6
 
 [RESERVED] BACK -> GPB3
 [RESERVED] FN -> GPB4
 [RESERVED] CANCEL -> GPB5
-[RESERVED] DEADMAN -> GPB6
+[PLANNED, NOT CONNECTED] HOLD-TO-RUN input <- same button as SELECT on GPB2
 [RESERVED] Expansion -> GPB7
 
 
