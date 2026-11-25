@@ -1,3 +1,32 @@
+## Published hardware history cleanup — 2026-11-25
+
+The user authorized a hardware-only published-history rewrite. Historical
+`hardware/` trees were removed and the selected current hardware snapshot restored
+at engineering branch tips. All 27 branch names were retained. Every one of the
+706 rewritten commits and every branch tip was checked for identical non-hardware
+file trees. Firmware and other source content were not changed. Commit IDs may
+change because of ancestry.
+
+Historical candidate links and old commit IDs in prior reports are archival
+references; remote branches no longer retain those experiments. Recovery is from
+the verified complete offline bundle:
+
+`/Users/davidcannan/Documents/Codex/archives/pendant-before-hardware-rewrite-20261125.bundle`
+
+SHA-256: `9e6e67dad273199c20b932ecd11dfeb03908c21995e839eb75161f95d998830c`.
+
+The separate pre-clean CAD archive remains available too. Do not push old local
+branches or the backup bundle into this remote: doing so can restore the large
+history. Preserve unpushed work before making a fresh clone in Working Copy or
+other clients. Existing clones retain their old objects; fetching does not erase
+them. Normal all-branch clones should receive only the retained hardware payload.
+
+Earlier statements below describing remote recovery branches or a pending history
+proposal describe the pre-rewrite state and are superseded by this section.
+
+
+---
+
 # CNC Pendant FreeCAD files
 
 This branch is a clean working snapshot built from the project commit immediately before CAD files first entered the repository. It keeps the current project source snapshot and the selected FreeCAD files below, without the old sequence of large CAD snapshots in its ancestry.
