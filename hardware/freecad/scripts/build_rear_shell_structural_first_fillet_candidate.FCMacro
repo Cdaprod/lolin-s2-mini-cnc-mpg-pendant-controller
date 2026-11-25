@@ -1,0 +1,181 @@
+"""Build a disposable rear-shell component with support before edge finishing.
+
+Run this macro in FreeCAD. It reads the earlier review candidate, copies its
+profile geometry and constraints into a new PartDesign Body, rebuilds the
+support operations, applies the R0.25 perimeter fillet after reinforcement,
+then cuts the anti-slip seats. It refuses to overwrite any output file.
+
+Set PENDANT_CAD_REVIEW_OUTPUT to a new .FCStd path to select a destination.
+The protected monolith, source review component, and production assembly are
+never saved or modified.
+"""
+import json
+import os
+from pathlib import Path
+
+import FreeCAD as App
+
+
+REPO = Path(__file__).resolve().parents[3]
+SOURCE = REPO / "hardware/freecad/pendant-bodies/rear-shell-recovered-screw-pad-review-candidate-2026-10-31.FCStd"
+DEFAULT_OUTPUT = REPO / "hardware/freecad/pendant-bodies/rear-shell-structural-first-fillet-candidate-2026-10-31.FCStd"
+OUTPUT = Path(os.environ.get("PENDANT_CAD_REVIEW_OUTPUT", str(DEFAULT_OUTPUT))).expanduser().resolve()
+
+if OUTPUT.exists():
+    raise FileExistsError("Refusing to overwrite review candidate: %s" % OUTPUT)
+if not SOURCE.exists():
+    raise FileNotFoundError("Missing source review candidate: %s" % SOURCE)
+
+src = App.openDocument(str(SOURCE))
+src.recompute()
+doc = App.newDocument("rear_shell_structural_first_fillet_candidate")
+body = doc.addObject("PartDesign::Body", "RearShellStructuralFirst")
+body.Label = "Rear shell — structural features before finishing"
+
+base = body.newObject("PartDesign::Feature", "CleanRearShellBase")
+base.Label = "Clean rear shell base (static review source)"
+base.Shape = src.getObject("BaseShell").Shape.copy()
+doc.recompute()
+
+
+def clone_sketch(source, name, label):
+    sketch = doc.addObject("Sketcher::SketchObject", name)
+    body.addObject(sketch)
+    sketch.Label = label
+    sketch.Placement = source.Placement
+    for index, geometry in enumerate(source.Geometry):
+        sketch.addGeometry(geometry, source.getConstruction(index))
+    for constraint in source.Constraints:
+        sketch.addConstraint(constraint)
+    external_count = getattr(source, "ExternalGeometryCount", 0)
+    if external_count:
+        raise RuntimeError("Refusing to clone sketch with external geometry: %s" % source.Name)
+    doc.recompute()
+    if sketch.GeometryCount != source.GeometryCount or len(sketch.Constraints) != len(source.Constraints):
+        raise RuntimeError("Sketch copy is incomplete: %s" % source.Name)
+    return sketch
+
+
+def add_pad(source_feature, source_sketch, name, label):
+    sketch = clone_sketch(source_sketch, name + "Profile", label + " profile")
+    feature = body.newObject("PartDesign::Pad", name)
+    feature.Label = label
+    feature.Profile = sketch
+    feature.Length = source_feature.Length.Value
+    feature.Reversed = source_feature.Reversed
+    feature.Refine = True
+    doc.recompute()
+    if feature.Shape.isNull() or not feature.Shape.isValid() or len(feature.Shape.Solids) != 1:
+        raise RuntimeError("Pad failed to produce one valid solid: %s" % name)
+    return feature
+
+
+def add_pocket(source_feature, source_sketch, name, label):
+    sketch = clone_sketch(source_sketch, name + "Profile", label + " profile")
+    feature = body.newObject("PartDesign::Pocket", name)
+    feature.Label = label
+    feature.Profile = sketch
+    feature.Length = source_feature.Length.Value
+    feature.Reversed = source_feature.Reversed
+    feature.Refine = True
+    doc.recompute()
+    if feature.Shape.isNull() or not feature.Shape.isValid() or len(feature.Shape.Solids) != 1:
+        raise RuntimeError("Pocket failed to produce one valid solid: %s" % name)
+    return feature
+
+
+last = base
+for pad_name, sketch_name in (
+    ("UpperLeftSupportPad", "UpperLeftProfile"),
+    ("UpperRightSupportPad", "UpperRightProfile"),
+    ("LowerLeftSupportPad", "LowerLeftProfile"),
+    ("LowerRightSupportPad", "LowerRightProfile"),
+):
+    source_feature = src.getObject(pad_name)
+    last = add_pad(source_feature, src.getObject(sketch_name), "FinishOrder_" + pad_name,
+                   "Finish-order " + source_feature.Label)
+
+last = add_pocket(src.getObject("RearM2PassageClearance"),
+                  src.getObject("RearM2PassageClearanceSketch"),
+                  "FinishOrder_M2Passages", "Six M2 passages")
+
+for pad_name, sketch_name in (
+    ("LowerLeftInnerWebPad", "LowerLeftInnerWebProfile"),
+    ("LowerRightInnerWebPad", "LowerRightInnerWebProfile"),
+    ("RecoveredRearMountReinforcementPad", "RecoveredRearMountReinforcementSketch"),
+):
+    source_feature = src.getObject(pad_name)
+    last = add_pad(source_feature, src.getObject(sketch_name), "FinishOrder_" + pad_name,
+                   "Finish-order " + source_feature.Label)
+
+last = add_pocket(src.getObject("RecoveredRearM2Clearance"),
+                  src.getObject("RearM2PassageClearanceSketch"),
+                  "FinishOrder_RecoveredM2", "Six M2 passages through reinforcement")
+
+# Select the outer wire of the broad downward-facing contact face, not guessed
+# generated edge indices. Identity mapping resolves this wire to edge names.
+face_candidates = []
+for face_index, face in enumerate(last.Shape.Faces, 1):
+    try:
+        u0, u1, v0, v1 = face.ParameterRange
+        normal = face.normalAt((u0 + u1) / 2.0, (v0 + v1) / 2.0)
+        if normal.z < -0.99 and face.Area > 1000.0:
+            face_candidates.append((face.Area, face_index, face, normal))
+    except Exception:
+        continue
+if not face_candidates:
+    raise RuntimeError("No stable broad downward-facing contact face found")
+face_candidates.sort(key=lambda item: item[0], reverse=True)
+face_area, face_index, face, normal = face_candidates[0]
+outer_wire = face.OuterWire
+edge_names = []
+for edge_index, edge in enumerate(last.Shape.Edges, 1):
+    if any(edge.isSame(wire_edge) for wire_edge in outer_wire.Edges):
+        edge_names.append("Edge%d" % edge_index)
+if len(edge_names) != 19:
+    raise RuntimeError("Expected the measured 19-edge outer perimeter; found %d" % len(edge_names))
+
+fillet = body.newObject("PartDesign::Fillet", "StructuralFirstBottomPerimeterFinish")
+fillet.Label = "Bottom perimeter edge break R0.25 — after support geometry"
+fillet.Base = (last, edge_names)
+fillet.Radius = 0.25
+fillet.Refine = True
+doc.recompute()
+if fillet.Shape.isNull() or not fillet.Shape.isValid() or len(fillet.Shape.Solids) != 1:
+    raise RuntimeError("R0.25 bottom fillet failed after structural features")
+
+seat_source = src.getObject("AntiSlipSeatPocket")
+seat_sketch = clone_sketch(src.getObject("AntiSlipSeatProfiles"),
+                           "FinishOrder_AntiSlipSeatProfiles",
+                           "Shallow crescent anti-slip seat profiles")
+seat = body.newObject("PartDesign::Pocket", "FinishOrder_AntiSlipSeatPocket")
+seat.Label = "Shallow crescent anti-slip seats — after structural finishing"
+seat.Profile = seat_sketch
+seat.Length = seat_source.Length.Value
+seat.Reversed = seat_source.Reversed
+seat.Refine = True
+doc.recompute()
+if seat.Shape.isNull() or not seat.Shape.isValid() or len(seat.Shape.Solids) != 1:
+    raise RuntimeError("Post-fillet anti-slip seat Pocket failed")
+
+body.Tip = seat
+doc.recompute()
+if not body.Shape.isValid() or len(body.Shape.Solids) != 1:
+    raise RuntimeError("Final structural-first component is not one valid solid")
+doc.saveAs(str(OUTPUT))
+print(json.dumps({
+    "output": str(OUTPUT),
+    "body": body.Name,
+    "tip": body.Tip.Name,
+    "volume_mm3": body.Shape.Volume,
+    "solid_count": len(body.Shape.Solids),
+    "valid": body.Shape.isValid(),
+    "fillet_radius_mm": fillet.Radius.Value,
+    "fillet_edges": edge_names,
+    "fillet_source_face_area_mm2": face_area,
+    "fillet_source_normal": [normal.x, normal.y, normal.z],
+}, indent=2))
+
+# Close only the documents created by this macro; never touch the user's GUI doc.
+App.closeDocument(doc.Name)
+App.closeDocument(src.Name)

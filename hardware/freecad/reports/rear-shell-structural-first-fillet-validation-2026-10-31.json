@@ -1,0 +1,309 @@
+{
+  "date": "2026-10-31",
+  "status": "disposable review candidate; not production-approved",
+  "files": {
+    "protected_monolith": "hardware/freecad/pendant.FCStd",
+    "component": "hardware/freecad/pendant-bodies/rear-shell-structural-first-fillet-candidate-2026-10-31.FCStd",
+    "review_assembly": "hardware/freecad/pendant-modular-structural-first-fillet-review-assembly-2026-10-31.FCStd"
+  },
+  "documents_saved_by_validator": false,
+  "protected_saved_baseline": {
+    "recomputed": false,
+    "clean_base": {
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40485.6574282847,
+      "surface_area_mm2": 30525.353379738182,
+      "face_count": 400,
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.31234947270411,
+        86.68846292863208,
+        -36.844984332370686,
+        0.0
+      ]
+    },
+    "legacy_tip": {
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 40961.35900828918,
+      "surface_area_mm2": 30590.90219664095,
+      "face_count": 534,
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.31234947270411,
+        86.68846292863208,
+        -36.844984332370686,
+        0.0
+      ]
+    },
+    "legacy_tip_mesh": {
+      "facets": 15472,
+      "reports_solid": false,
+      "boundary_edges": 313,
+      "overincident_edges": 3,
+      "degenerate_facets": 0
+    },
+    "saved_stage_net_mm3": 475.7015800044828,
+    "stage_deltas_mm3": {
+      "RearBossToWallLoadPaths": 383.733575,
+      "RearBossShoulderTransitions": -14.96145,
+      "RearBossWallRamps45": 106.929454
+    }
+  },
+  "component": {
+    "linked_document_path": "/private/tmp/pendant-cnc-freecad-candidate/hardware/freecad/pendant-bodies/rear-shell-structural-first-fillet-candidate-2026-10-31.FCStd",
+    "body": "RearShellStructuralFirst",
+    "tip": "FinishOrder_AntiSlipSeatPocket",
+    "tip_state": [
+      "Up-to-date"
+    ],
+    "tip_shape": {
+      "valid": true,
+      "solid_count": 1,
+      "volume_mm3": 41211.57993114292,
+      "surface_area_mm2": 30778.49233932317,
+      "face_count": 532,
+      "bounds_mm": [
+        -39.909661329020054,
+        39.87917913641778,
+        -88.31234947270411,
+        86.68846292863208,
+        -36.89446791210996,
+        0.0
+      ]
+    },
+    "tip_mesh": {
+      "facets": 16260,
+      "reports_solid": true,
+      "boundary_edges": 0,
+      "overincident_edges": 0,
+      "degenerate_facets": 0
+    },
+    "support_feature_order": [
+      "4 boss-to-wall Pads",
+      "six M2 passage Pocket",
+      "2 lower inner-web Pads",
+      "six-circle recovered reinforcement Pad",
+      "six M2 passage Pocket",
+      "R0.25 bottom perimeter Fillet",
+      "0.10 mm anti-slip seat Pocket"
+    ],
+    "fillet": {
+      "radius_mm": 0.25,
+      "base_feature": "FinishOrder_RecoveredM2",
+      "selected_edges": [
+        "Edge64",
+        "Edge89",
+        "Edge90",
+        "Edge95",
+        "Edge120",
+        "Edge139",
+        "Edge140",
+        "Edge141",
+        "Edge142",
+        "Edge143",
+        "Edge144",
+        "Edge145",
+        "Edge146",
+        "Edge147",
+        "Edge148",
+        "Edge149",
+        "Edge150",
+        "Edge151",
+        "Edge152"
+      ],
+      "selected_edge_count": 19,
+      "pre_fillet_volume_mm3": 41236.72779199723,
+      "post_fillet_volume_mm3": 41235.38945591297,
+      "removed_volume_mm3": 1.3383360842635739,
+      "source_face_area_mm2": 4243.2288642514,
+      "source_face_normal": [
+        0.0,
+        -0.0436193874,
+        -0.9990482216
+      ]
+    },
+    "seat_pocket": {
+      "length_mm": 0.1,
+      "base_feature": "StructuralFirstBottomPerimeterFinish",
+      "volume_removed_mm3": 23.809522392730287
+    },
+    "sketches": [
+      {
+        "name": "FinishOrder_UpperLeftSupportPadProfile",
+        "geometry_count": 3,
+        "constraint_count": 9,
+        "fully_constrained": true,
+        "external_geometry_count": 0
+      },
+      {
+        "name": "FinishOrder_UpperRightSupportPadProfile",
+        "geometry_count": 3,
+        "constraint_count": 9,
+        "fully_constrained": true,
+        "external_geometry_count": 0
+      },
+      {
+        "name": "FinishOrder_LowerLeftSupportPadProfile",
+        "geometry_count": 3,
+        "constraint_count": 9,
+        "fully_constrained": true,
+        "external_geometry_count": 0
+      },
+      {
+        "name": "FinishOrder_LowerRightSupportPadProfile",
+        "geometry_count": 3,
+        "constraint_count": 9,
+        "fully_constrained": true,
+        "external_geometry_count": 0
+      },
+      {
+        "name": "FinishOrder_LowerLeftInnerWebPadProfile",
+        "geometry_count": 5,
+        "constraint_count": 15,
+        "fully_constrained": true,
+        "external_geometry_count": 0
+      },
+      {
+        "name": "FinishOrder_LowerRightInnerWebPadProfile",
+        "geometry_count": 5,
+        "constraint_count": 15,
+        "fully_constrained": true,
+        "external_geometry_count": 0
+      },
+      {
+        "name": "FinishOrder_RecoveredRearMountReinforcementPadProfile",
+        "geometry_count": 6,
+        "constraint_count": 16,
+        "fully_constrained": true,
+        "external_geometry_count": 0
+      }
+    ],
+    "m2_passage_clearance": {
+      "tool_definition": "RearTaperedSeats.Shape cut Pocket018.Shape",
+      "tool_valid": true,
+      "tool_solid_count": 6,
+      "common_valid": true,
+      "common_volume_mm3": 0.0,
+      "result": "zero material intersection with six M2 clearance volumes"
+    },
+    "linked_parameter_probe": {
+      "feature": "FinishOrder_RecoveredRearMountReinforcementPad",
+      "values_mm": [
+        6.0,
+        6.1,
+        6.0
+      ],
+      "component_delta_mm3": 23.653667855534877,
+      "assembly_delta_mm3": 23.651142942355364,
+      "component_restoration_delta_mm3": 0.0,
+      "assembly_restoration_delta_mm3": 0.0,
+      "scope": "reversible native geometry propagation through the App::Link; volume evidence, not exact BRep equivalence"
+    }
+  },
+  "assembly": {
+    "root": "AssemblyRoot",
+    "valid": true,
+    "solid_count": 11,
+    "link_count": 8,
+    "all_links_valid": true,
+    "rear_link_target": "RearShellStructuralFirst",
+    "rear_link_placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+    "rear_link_valid": true,
+    "rear_link_volume_mm3": 41211.57993114292,
+    "rear_neighbor_intersection_comparison": [
+      {
+        "neighbor": "Interim_Body",
+        "old_common_mm3": 0.0,
+        "new_common_mm3": 0.0,
+        "delta_mm3": 0.0,
+        "both_valid": true
+      },
+      {
+        "neighbor": "Interim_Body003",
+        "old_common_mm3": 0.0,
+        "new_common_mm3": 0.0,
+        "delta_mm3": 0.0,
+        "both_valid": true
+      },
+      {
+        "neighbor": "Interim_EncoderFaceplatePocketUnsplit",
+        "old_common_mm3": 0.0,
+        "new_common_mm3": 0.0,
+        "delta_mm3": 0.0,
+        "both_valid": true
+      },
+      {
+        "neighbor": "Editable_Body_DisplayRetainer_EditableV2",
+        "old_common_mm3": 0.0,
+        "new_common_mm3": 0.0,
+        "delta_mm3": 0.0,
+        "both_valid": true
+      },
+      {
+        "neighbor": "Editable_Body_USBTetheredCover",
+        "old_common_mm3": 0.780471884577827,
+        "new_common_mm3": 0.780471884577827,
+        "delta_mm3": 0.0,
+        "both_valid": true
+      },
+      {
+        "neighbor": "Editable_Body_FaceplateLocator_A",
+        "old_common_mm3": 0.0,
+        "new_common_mm3": 0.0,
+        "delta_mm3": 0.0,
+        "both_valid": true
+      },
+      {
+        "neighbor": "Editable_Body_FaceplateLocator_B",
+        "old_common_mm3": 0.0,
+        "new_common_mm3": 0.0,
+        "delta_mm3": 0.0,
+        "both_valid": true
+      },
+      {
+        "neighbor": "Editable_Body006",
+        "old_common_mm3": 0.0,
+        "new_common_mm3": 0.0,
+        "delta_mm3": 0.0,
+        "both_valid": true
+      },
+      {
+        "neighbor": "Review_AntiSlipPadUpper",
+        "old_common_mm3": 0.0,
+        "new_common_mm3": 0.0,
+        "delta_mm3": 0.0,
+        "both_valid": true
+      },
+      {
+        "neighbor": "Review_AntiSlipPadLower",
+        "old_common_mm3": 0.0,
+        "new_common_mm3": 0.0,
+        "delta_mm3": 0.0,
+        "both_valid": true
+      }
+    ],
+    "known_usb_cover_engagement_mm3": 0.780471884577827
+  },
+  "material_localization": {
+    "legacy_net_brep_delta_mm3": 475.70158,
+    "previous_0p5mm_sampled_net_mm3": 262.875,
+    "regions_net_mm3": {
+      "upper_left": 42.75,
+      "upper_right": 40.625,
+      "lower_left": 90.625,
+      "lower_right": 88.875
+    },
+    "interpretation": "Sampling localizes likely boss-to-wall reinforcement but does not spatially account for the full BRep delta. No material is classified as redundant by this test."
+  },
+  "geometry_scope": {
+    "candidate_minus_saved_legacy_tip_mm3": 250.22092285373947,
+    "candidate_minus_clean_base_mm3": 725.9225028582223,
+    "exact_brep_equivalence_proven": false,
+    "structural_capacity_proven": false,
+    "production_files_modified": false
+  }
+}

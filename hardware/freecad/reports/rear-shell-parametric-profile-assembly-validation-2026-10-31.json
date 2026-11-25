@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-31",
+  "assembly": "hardware/freecad/pendant-modular-rear-parametric-profile-candidate.FCStd",
+  "rear_component": "hardware/freecad/pendant-bodies/rear-shell-loadpath-parametric-profile-candidate.FCStd",
+  "cold_open_recompute_count": 2,
+  "all_app_links_resolved": true,
+  "app_link_count": 6,
+  "rear_link": "Interim_Body002",
+  "linked_object": "RearShell",
+  "link_placement": "Placement [Pos=(0,0,0), Yaw-Pitch-Roll=(0,0,0)]",
+  "source_and_link_shape_match_before_tessellation": true,
+  "shape": {
+    "valid": true,
+    "solid_count": 1,
+    "volume_mm3": 40609.693012380856,
+    "bounds_mm": [
+      -39.909661329020054,
+      39.87917913641778,
+      -88.31234947270411,
+      86.68846292863208,
+      -36.844984332370686,
+      0.0
+    ]
+  },
+  "mesh": {
+    "linear_deflection_mm": 0.08,
+    "angular_deflection_deg": 0.35,
+    "facets": 13600,
+    "boundary_edges": 0,
+    "overincident_edges": 0,
+    "closed": true
+  },
+  "limitations": [
+    "Rear-shell candidate remains based on a static imported clean-shell BREP.",
+    "The 351.665996 mm3 difference from the saved legacy Tip remains unresolved.",
+    "This test does not establish structural load capacity or full assembly interference clearance."
+  ]
+}

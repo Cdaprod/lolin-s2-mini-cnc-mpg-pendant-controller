@@ -1,0 +1,73 @@
+{
+  "bodies": {
+    "Body": {
+      "tip": "RearWedgeStopRelief",
+      "valid": true,
+      "solids": 1,
+      "volume_change": -1132.1705655508995
+    },
+    "Body002": {
+      "tip": "RearShellWedgeUnion",
+      "valid": true,
+      "solids": 1,
+      "volume_change": 622.3024638700881
+    },
+    "Body003": {
+      "tip": "UpperFaceplateWedgeUnion",
+      "valid": true,
+      "solids": 1,
+      "volume_change": 488.5874490658716
+    },
+    "Body_EncoderFacePlate": {
+      "tip": "EncoderFaceplateWedgeUnion",
+      "valid": true,
+      "solids": 1,
+      "volume_change": 316.33628370465885
+    }
+  },
+  "new_interferences": [],
+  "screw_obstructions": [],
+  "hardware_interferences": [],
+  "native_features": [
+    [
+      "FrontOpposedWedgeReceiver",
+      "Valid"
+    ],
+    [
+      "RearOpposedWedgeReceiver",
+      "Valid"
+    ],
+    [
+      "UpperFaceplateWedgeUnion",
+      "Valid"
+    ],
+    [
+      "EncoderFaceplateWedgeUnion",
+      "Valid"
+    ],
+    [
+      "RearShellWedgeUnion",
+      "Valid"
+    ],
+    [
+      "FrontWedgeStopRelief",
+      "Valid"
+    ],
+    [
+      "RearWedgeStopRelief",
+      "Valid"
+    ]
+  ],
+  "parameters": {
+    "TaperAngle": "30.0 deg",
+    "EngagementDepth": "1.0 mm",
+    "ReceiverDepth": "1.25 mm",
+    "OuterInset": "1.8 mm",
+    "InnerInset": "4.3 mm",
+    "FrontNormalClearance": "0.0 mm",
+    "RearNormalClearance": "0.0 mm",
+    "StopRelief": "0.15 mm"
+  },
+  "removed_outside_mating_bands_mm3": 0.0,
+  "saved_copy_reopen_recompute": true
+}

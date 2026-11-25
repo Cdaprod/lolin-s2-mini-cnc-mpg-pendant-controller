@@ -1,0 +1,111 @@
+{
+  "document": "hardware/freecad/pendant.FCStd",
+  "freecad_version": [
+    "1",
+    "1",
+    "1",
+    "20260414 (Git shallow)",
+    "Unknown",
+    "2026/04/14 22:09:59",
+    "(HEAD detached at 0108fd4b4)",
+    "0108fd4b4850cc46e625b60e53cea7a7bbe69f8d"
+  ],
+  "interpretation_limit": "Zero local difference means no cached material change in the tested boxes. It does not rule out remote load transfer, establish global equivalence, validate recomputation, or prove strength.",
+  "method": "Clip stored base and feature shapes to bounded regions, then compare with Boolean differences.",
+  "recomputed": false,
+  "regions": [
+    {
+      "bbox_mm": [
+        -20.0,
+        20.0,
+        78.0,
+        88.0,
+        -37.0,
+        1.0
+      ],
+      "comparisons": [
+        {
+          "base_clipped_solid_count": 1,
+          "base_clipped_valid": true,
+          "base_clipped_volume_mm3": 1770.6775460299934,
+          "base_feature": "FrontFullWidthReceiver",
+          "base_only_valid": true,
+          "base_only_volume_mm3": 0.0,
+          "feature_only_valid": true,
+          "feature_only_volume_mm3": 0.0,
+          "loadpath_clipped_solid_count": 1,
+          "loadpath_clipped_valid": true,
+          "loadpath_clipped_volume_mm3": 1770.6775460299934,
+          "loadpath_feature": "FrontBossToWallLoadPaths",
+          "side": "front",
+          "symmetric_difference_volume_mm3": 0.0
+        },
+        {
+          "base_clipped_solid_count": 1,
+          "base_clipped_valid": true,
+          "base_clipped_volume_mm3": 1929.4911841080375,
+          "base_feature": "Body002FullWidthSeat",
+          "base_only_valid": true,
+          "base_only_volume_mm3": 0.0,
+          "feature_only_valid": true,
+          "feature_only_volume_mm3": 0.0,
+          "loadpath_clipped_solid_count": 1,
+          "loadpath_clipped_valid": true,
+          "loadpath_clipped_volume_mm3": 1929.4911841080386,
+          "loadpath_feature": "RearBossToWallLoadPaths",
+          "side": "rear",
+          "symmetric_difference_volume_mm3": 0.0
+        }
+      ],
+      "name": "hanger_annulus"
+    },
+    {
+      "bbox_mm": [
+        -19.0,
+        19.0,
+        80.4,
+        83.60000000000001,
+        -37.0,
+        1.0
+      ],
+      "comparisons": [
+        {
+          "base_clipped_solid_count": 1,
+          "base_clipped_valid": true,
+          "base_clipped_volume_mm3": 118.88328728829201,
+          "base_feature": "FrontFullWidthReceiver",
+          "base_only_valid": true,
+          "base_only_volume_mm3": 0.0,
+          "feature_only_valid": true,
+          "feature_only_volume_mm3": 0.0,
+          "loadpath_clipped_solid_count": 1,
+          "loadpath_clipped_valid": true,
+          "loadpath_clipped_volume_mm3": 118.88328728829114,
+          "loadpath_feature": "FrontBossToWallLoadPaths",
+          "side": "front",
+          "symmetric_difference_volume_mm3": 0.0
+        },
+        {
+          "base_clipped_solid_count": 1,
+          "base_clipped_valid": true,
+          "base_clipped_volume_mm3": 129.66165717925327,
+          "base_feature": "Body002FullWidthSeat",
+          "base_only_valid": true,
+          "base_only_volume_mm3": 0.0,
+          "feature_only_valid": true,
+          "feature_only_volume_mm3": 0.0,
+          "loadpath_clipped_solid_count": 1,
+          "loadpath_clipped_valid": true,
+          "loadpath_clipped_volume_mm3": 129.66165717925364,
+          "loadpath_feature": "RearBossToWallLoadPaths",
+          "side": "rear",
+          "symmetric_difference_volume_mm3": 0.0
+        }
+      ],
+      "name": "upper_slot_band"
+    }
+  ],
+  "saved": false,
+  "schema_version": 1,
+  "source_sha256": "dc2aeddf7be327c73022a1dc053bf8a27d5cf476e9cd68468a4ee73ab8264881"
+}

@@ -1,0 +1,167 @@
+{
+  "added_volume_mm3": 0.0,
+  "after": {
+    "bounds_mm": [
+      -29.420192783010393,
+      29.423440320911688,
+      -15.999999999999998,
+      25.799999999999997,
+      -10.06146722824298,
+      -7.061467228242979
+    ],
+    "solids": 1,
+    "valid": true,
+    "volume_mm3": 2050.3855204146566
+  },
+  "base_feature": "RetainerShellClearancePocketV3",
+  "before": {
+    "bounds_mm": [
+      -29.420192783010393,
+      29.423440320911688,
+      -15.999999999999998,
+      25.799999999999997,
+      -10.06146722824298,
+      -7.061467228242979
+    ],
+    "solids": 1,
+    "valid": true,
+    "volume_mm3": 2050.7924803337887
+  },
+  "candidate": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-bodies/display-retainer-mounting-leadin-candidate.FCStd",
+  "cold_reopen_mesh_closed": true,
+  "cold_reopen_mesh_facets": 2744,
+  "entry_plane_z_mm": -7.061467228242979,
+  "feature_name": "DisplayRetainerMountingLeadIns",
+  "mesh_facets_after": 2744,
+  "mesh_facets_before": 2040,
+  "mounting_centers_and_nominal_radii_mm": [
+    {
+      "center": [
+        -25.8,
+        -10.5
+      ],
+      "radius": 1.15
+    },
+    {
+      "center": [
+        25.8,
+        -10.5
+      ],
+      "radius": 1.15
+    },
+    {
+      "center": [
+        -11.811,
+        -12.605
+      ],
+      "radius": 1.1
+    },
+    {
+      "center": [
+        11.811,
+        -12.605
+      ],
+      "radius": 1.1
+    },
+    {
+      "center": [
+        0.0,
+        22.449
+      ],
+      "radius": 1.1
+    }
+  ],
+  "native_feature": "PartDesign::Pocket",
+  "profile_fully_constrained": true,
+  "profile_sketch": "DisplayRetainerMountingLeadInProfile",
+  "radial_lead_in_mm": 0.15,
+  "removed_volume_mm3": 0.4069599191394518,
+  "save_reopen_recompute": "passed",
+  "source": "/private/tmp/pendant-hardware-integration/hardware/freecad/pendant-bodies/display-retainer.FCStd",
+  "source_component_modified": false,
+  "taper_angle_deg": -45.0,
+  "through_clearance_checks_after": [
+    {
+      "candidate_interference_mm3": 0.0,
+      "center_mm": [
+        -25.8,
+        -10.5
+      ],
+      "nominal_radius_mm": 1.15
+    },
+    {
+      "candidate_interference_mm3": 0.0,
+      "center_mm": [
+        25.8,
+        -10.5
+      ],
+      "nominal_radius_mm": 1.15
+    },
+    {
+      "candidate_interference_mm3": 0.0,
+      "center_mm": [
+        -11.811,
+        -12.605
+      ],
+      "nominal_radius_mm": 1.1
+    },
+    {
+      "candidate_interference_mm3": 0.0,
+      "center_mm": [
+        11.811,
+        -12.605
+      ],
+      "nominal_radius_mm": 1.1
+    },
+    {
+      "candidate_interference_mm3": 0.0,
+      "center_mm": [
+        0.0,
+        22.449
+      ],
+      "nominal_radius_mm": 1.1
+    }
+  ],
+  "through_clearance_checks_before": [
+    {
+      "center_mm": [
+        -25.8,
+        -10.5
+      ],
+      "nominal_radius_mm": 1.15,
+      "source_interference_mm3": 0.0
+    },
+    {
+      "center_mm": [
+        25.8,
+        -10.5
+      ],
+      "nominal_radius_mm": 1.15,
+      "source_interference_mm3": 0.0
+    },
+    {
+      "center_mm": [
+        -11.811,
+        -12.605
+      ],
+      "nominal_radius_mm": 1.1,
+      "source_interference_mm3": 0.0
+    },
+    {
+      "center_mm": [
+        11.811,
+        -12.605
+      ],
+      "nominal_radius_mm": 1.1,
+      "source_interference_mm3": 0.0
+    },
+    {
+      "center_mm": [
+        0.0,
+        22.449
+      ],
+      "nominal_radius_mm": 1.1,
+      "source_interference_mm3": 0.0
+    }
+  ]
+}

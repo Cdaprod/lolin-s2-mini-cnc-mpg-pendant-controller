@@ -1,0 +1,135 @@
+{
+  "documents": {
+    "modular_assembly": {
+      "file_size_bytes": 2537636,
+      "median_open_seconds": 0.46821183298015967,
+      "runs": [
+        {
+          "document": "pendant-modular-assembly.FCStd",
+          "documents": [
+            {
+              "document": "pendant-bodies/breakout-board.FCStd",
+              "name": "breakout_board",
+              "objects": 11
+            },
+            {
+              "document": "pendant-bodies/display-retainer.FCStd",
+              "name": "display_retainer",
+              "objects": 18
+            },
+            {
+              "document": "pendant-bodies/faceplate-locators.FCStd",
+              "name": "faceplate_locators",
+              "objects": 30
+            },
+            {
+              "document": "pendant-master.FCStd",
+              "name": "pendant_master",
+              "objects": 3
+            },
+            {
+              "document": "pendant-modular-assembly.FCStd",
+              "name": "pendant_modular_assembly",
+              "objects": 20
+            },
+            {
+              "document": "pendant-bodies/usb-tethered-cover.FCStd",
+              "name": "usb_tethered_cover",
+              "objects": 96
+            }
+          ],
+          "file_size_bytes": 2537636,
+          "loaded_documents": 6,
+          "open_seconds": 0.49604245799127966,
+          "process_wall_seconds": 0.8100588750094175,
+          "target_objects": 20,
+          "total_loaded_objects": 178
+        },
+        {
+          "document": "pendant-modular-assembly.FCStd",
+          "documents": [
+            {
+              "document": "pendant-bodies/breakout-board.FCStd",
+              "name": "breakout_board",
+              "objects": 11
+            },
+            {
+              "document": "pendant-bodies/display-retainer.FCStd",
+              "name": "display_retainer",
+              "objects": 18
+            },
+            {
+              "document": "pendant-bodies/faceplate-locators.FCStd",
+              "name": "faceplate_locators",
+              "objects": 30
+            },
+            {
+              "document": "pendant-master.FCStd",
+              "name": "pendant_master",
+              "objects": 3
+            },
+            {
+              "document": "pendant-modular-assembly.FCStd",
+              "name": "pendant_modular_assembly",
+              "objects": 20
+            },
+            {
+              "document": "pendant-bodies/usb-tethered-cover.FCStd",
+              "name": "usb_tethered_cover",
+              "objects": 96
+            }
+          ],
+          "file_size_bytes": 2537636,
+          "loaded_documents": 6,
+          "open_seconds": 0.4403812079690397,
+          "process_wall_seconds": 0.6832630840362981,
+          "target_objects": 20,
+          "total_loaded_objects": 178
+        }
+      ]
+    },
+    "monolith": {
+      "file_size_bytes": 65817113,
+      "median_open_seconds": 5.330060124513693,
+      "runs": [
+        {
+          "document": "pendant.FCStd",
+          "documents": [
+            {
+              "document": "pendant.FCStd",
+              "name": "pendant",
+              "objects": 816
+            }
+          ],
+          "file_size_bytes": 65817113,
+          "loaded_documents": 1,
+          "open_seconds": 5.302690541022457,
+          "process_wall_seconds": 6.044312334037386,
+          "target_objects": 816,
+          "total_loaded_objects": 816
+        },
+        {
+          "document": "pendant.FCStd",
+          "documents": [
+            {
+              "document": "pendant.FCStd",
+              "name": "pendant",
+              "objects": 816
+            }
+          ],
+          "file_size_bytes": 65817113,
+          "loaded_documents": 1,
+          "open_seconds": 5.357429708004929,
+          "process_wall_seconds": 6.096436582971364,
+          "target_objects": 816,
+          "total_loaded_objects": 816
+        }
+      ]
+    }
+  },
+  "measurement": "App.openDocument only; no explicit recompute or save",
+  "modular_source_bundle_bytes": 4711456,
+  "monolith_to_assembly_open_time_ratio": 11.383864629366496,
+  "runs_per_document": 2,
+  "warm_cache_control": "fresh FreeCADCmd process per run; document order alternated; OS cache not flushed"
+}

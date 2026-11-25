@@ -1,0 +1,40 @@
+{
+  "test": "rear-envelope-master-parameter-profile-propagation",
+  "freecad_version": "1.1.1",
+  "master_document": {
+    "path": "hardware/freecad/pendant-master.FCStd",
+    "sha256": "3e2f041254ec1b6743a44bf1e1abb3925cc06bee913a4cd8a3b4eb304890fbfb",
+    "modified_on_disk": false
+  },
+  "source_candidate": {
+    "path": "/tmp/rear-reference-cleanup.FCStd",
+    "sha256": "25f1e36637947c6cf4228db84fd03218ce5338b852cb0449f5a0f138be8f0b8d"
+  },
+  "saved_reopen_probe": "/tmp/rear-envelope-master-probe.FCStd",
+  "expression_engine": "[('ExteriorWidth', 'pendant_master#<<ExteriorEnvelope>>.ExteriorWidth'), ('ReferenceWidth', 'pendant_master#<<ExteriorEnvelope>>.ReferenceWidth')]",
+  "baseline_width_mm": 79.5569559596823,
+  "test_width_mm": 80.0,
+  "profile_sketches": [
+    "WidthControlled_OriginalRearClosureProfile",
+    "WidthControlled_RearMatchedProfile0",
+    "WidthControlled_RearMatchedProfile1",
+    "WidthControlled_RearMatchedProfile2",
+    "WidthControlled_RearMatchedProfile3",
+    "WidthControlled_RearMatchedEnvelopeProfile0",
+    "WidthControlled_RearMatchedEnvelopeProfile1"
+  ],
+  "results": {
+    "expressions_survived_save_reopen": true,
+    "profile_geometry_matches_baseline_at_original_parameter": true,
+    "profile_ratio_updates_to": 1.005568891305271,
+    "all_profile_geometries_change_at_80mm": true,
+    "all_profile_bounding_boxes_change_at_80mm": true,
+    "all_profile_geometries_restore_to_baseline": true,
+    "full_downstream_body_recompute_validated": false,
+    "master_saved_after_temporary_change": false
+  },
+  "limitations": [
+    "The test recomputed the seven controlled profile sketches, not the complete downstream shell feature histories or assembly.",
+    "The test proves expression and profile-level propagation in a disposable document with both documents open; it does not yet prove portability when reopened without the master document or validate the full assembly refresh workflow."
+  ]
+}
